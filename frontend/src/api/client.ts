@@ -45,6 +45,7 @@ export interface MediaFile {
   rating: number | null;
   events: Event[];
   people: Person[];
+  tags: Tag[];
 }
 
 export interface FileList {
@@ -216,6 +217,29 @@ export const api = {
   listTags: () => request<Tag[]>("/api/tags"),
   createTag: (name: string) =>
     request<Tag>("/api/tags", { method: "POST", body: JSON.stringify({ name }) }),
+  updateTag: (id: number, data: { name: string }) =>
+    request<Tag>(`/api/tags/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
+  deleteTag: (id: number) => request<{ ok: boolean }>(`/api/tags/${id}`, { method: "DELETE" }),
+  mergeTags: (sourceId: number, targetId: number) =>
+    request<Tag>("/api/tags/merge", {
+      method: "POST",
+      body: JSON.stringify({ source_id: sourceId, target_id: targetId }),
+    }),
+  updateFileTags: (fileId: number, tagIds: number[]) =>
+    request<{ ok: boolean }>(`/api/files/${fileId}/tags`, {
+      method: "PATCH",
+      body: JSON.stringify({ tag_ids: tagIds }),
+    }),
+  assignTagIds: (tagIds: number[], fileIds: number[]) =>
+    request<{ assigned: number }>("/api/tags/assign-ids", {
+      method: "POST",
+      body: JSON.stringify({ tag_ids: tagIds, file_ids: fileIds }),
+    }),
+  unassignTagIds: (tagIds: number[], fileIds: number[]) =>
+    request<{ removed: number }>("/api/tags/unassign-ids", {
+      method: "POST",
+      body: JSON.stringify({ tag_ids: tagIds, file_ids: fileIds }),
+    }),
 
   listPeople: () => request<Person[]>("/api/people"),
   createPerson: (name: string) =>

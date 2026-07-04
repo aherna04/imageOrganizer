@@ -1,8 +1,10 @@
 import { NavLink, Route, Routes, Navigate } from "react-router-dom";
+import pkg from "../package.json";
 import Inbox from "./pages/Inbox";
 import CalendarPage from "./pages/Calendar";
 import EventsPage from "./pages/Events";
 import PeoplePage from "./pages/People";
+import TagsPage from "./pages/Tags";
 import BrowsePage from "./pages/Browse";
 import Duplicates from "./pages/Duplicates";
 import Review from "./pages/Review";
@@ -12,7 +14,10 @@ export default function App() {
   return (
     <div className="app-shell">
       <nav className="sidebar">
-        <h1>Image Organizer</h1>
+        <div className="sidebar-brand">
+          <h1>Image Organizer</h1>
+          <p className="sidebar-version">{pkg.version}</p>
+        </div>
         <NavLink to="/inbox" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}>
           Inbox
         </NavLink>
@@ -24,6 +29,9 @@ export default function App() {
         </NavLink>
         <NavLink to="/people" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}>
           People
+        </NavLink>
+        <NavLink to="/tags" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}>
+          Tags
         </NavLink>
         <NavLink to="/browse" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}>
           Browse
@@ -48,6 +56,7 @@ export default function App() {
           <Route path="/events" element={<EventsPage />} />
           <Route path="/events/:slug" element={<EventsPage />} />
           <Route path="/people" element={<PeoplePage />} />
+          <Route path="/tags" element={<TagsPage />} />
           <Route path="/browse" element={<BrowsePage />} />
           <Route path="/browse/:kind/:slug" element={<BrowsePage />} />
           <Route path="/duplicates" element={<Duplicates />} />

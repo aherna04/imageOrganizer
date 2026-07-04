@@ -75,8 +75,10 @@ export default function Review() {
       <ApplyPanel
         onApplied={() => {
           qc.invalidateQueries({ queryKey: ["review-queue"] });
+          qc.invalidateQueries({ queryKey: ["organize-preview"] });
           qc.invalidateQueries({ queryKey: ["files"] });
           qc.invalidateQueries({ queryKey: ["operations"] });
+          refetchPreview();
         }}
       />
 

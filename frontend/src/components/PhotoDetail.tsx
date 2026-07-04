@@ -3,6 +3,7 @@ import { useState } from "react";
 import { MediaFile, api } from "../api/client";
 import EventPicker from "./EventPicker";
 import PersonPicker from "./PersonPicker";
+import FileTagPicker from "./FileTagPicker";
 
 interface Props {
   file: MediaFile;
@@ -89,6 +90,16 @@ export default function PhotoDetail({ file, onClose }: Props) {
             onChange={() => {
               qc.invalidateQueries({ queryKey: ["files"] });
               qc.invalidateQueries({ queryKey: ["people"] });
+            }}
+          />
+        </div>
+        <div style={{ marginTop: "1rem" }}>
+          <FileTagPicker
+            fileId={file.id}
+            fileTags={file.tags ?? []}
+            onChange={() => {
+              qc.invalidateQueries({ queryKey: ["files"] });
+              qc.invalidateQueries({ queryKey: ["tags"] });
             }}
           />
         </div>

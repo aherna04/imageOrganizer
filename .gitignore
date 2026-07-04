@@ -19,6 +19,9 @@ Thumbs.db
 .vscode/
 *.swp
 
+# Cursor plans (local only)
+.cursor/plans/
+
 # Env
 .env
 .env.local

@@ -1,6 +1,8 @@
 # Image Organizer
 
-**Version:** 2026.07.04 — see [CHANGELOG.md](CHANGELOG.md)
+**Version:** 2026.07.04a — see [CHANGELOG.md](CHANGELOG.md)
+
+Architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
 Local web app for organizing photos and videos: inbox landing folder, calendar browse, event labels, people and tags, browse by person/tag, deduplication, and safe apply.
 

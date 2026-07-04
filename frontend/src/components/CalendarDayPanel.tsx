@@ -3,9 +3,10 @@ import { useState } from "react";
 import { MediaFile } from "../api/client";
 import { api } from "../api/client";
 import BulkEventAssignBar from "./BulkEventAssignBar";
-import BulkPersonAssignBar from "./BulkPersonAssignBar";
 import PhotoGrid from "./PhotoGrid";
 import PhotoDetail from "./PhotoDetail";
+import SingleFileLabelEditors from "./SingleFileLabelEditors";
+import BulkLabelEditors from "./BulkLabelEditors";
 
 interface Props {
   date: string;
@@ -27,16 +28,14 @@ export default function CalendarDayPanel({ date, location, eventId }: Props) {
     setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   };
 
-  const handleAssigned = () => {
-    setSelectedIds([]);
+  const handleLabelsChange = () => {
     refetch();
     qc.invalidateQueries({ queryKey: ["events"] });
+    qc.invalidateQueries({ queryKey: ["people"] });
+    qc.invalidateQueries({ queryKey: ["tags"] });
   };
 
-  const handlePeopleAssigned = () => {
-    refetch();
-    qc.invalidateQueries({ queryKey: ["people"] });
-  };
+  const selectedFiles = data?.items.filter((f) => selectedIds.includes(f.id)) ?? [];
 
   return (
     <div className="calendar-day-panel">
@@ -47,10 +46,14 @@ export default function CalendarDayPanel({ date, location, eventId }: Props) {
         totalCount={data?.total}
         onSelectAll={() => setSelectedIds(data?.items.map((f) => f.id) ?? [])}
         onClear={() => setSelectedIds([])}
-        onAssigned={handleAssigned}
       />
 
-      <BulkPersonAssignBar selectedIds={selectedIds} onAssigned={handlePeopleAssigned} />
+      {selectedIds.length === 1 && selectedFiles[0] && (
+        <SingleFileLabelEditors file={selectedFiles[0]} onChange={handleLabelsChange} />
+      )}
+      {selectedIds.length >= 2 && (
+        <BulkLabelEditors selectedFiles={selectedFiles} onChange={handleLabelsChange} />
+      )}
 
       <PhotoGrid
         files={data?.items ?? []}
@@ -59,6 +62,8 @@ export default function CalendarDayPanel({ date, location, eventId }: Props) {
         onDoubleClick={setDetailFile}
         multiSelectMode
         size="large"
+        editableLabels
+        onLabelsChange={handleLabelsChange}
       />
       {detailFile && <PhotoDetail file={detailFile} onClose={() => setDetailFile(null)} />}
     </div>

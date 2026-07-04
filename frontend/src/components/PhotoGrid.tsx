@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { MediaFile, api } from "../api/client";
 import { personLabel } from "../utils/personLabel";
+import PhotoCardLabels from "./PhotoCardLabels";
 
 interface Props {
   files: MediaFile[];
@@ -10,6 +11,8 @@ interface Props {
   onDoubleClick?: (file: MediaFile) => void;
   multiSelectMode?: boolean;
   size?: "default" | "large";
+  editableLabels?: boolean;
+  onLabelsChange?: () => void;
 }
 
 export default function PhotoGrid({
@@ -20,10 +23,13 @@ export default function PhotoGrid({
   onDoubleClick,
   multiSelectMode = false,
   size = "default",
+  editableLabels = false,
+  onLabelsChange,
 }: Props) {
   const { data: allPeople = [] } = useQuery({
     queryKey: ["people"],
     queryFn: api.listPeople,
+    enabled: !editableLabels,
   });
 
   if (files.length === 0) {
@@ -61,20 +67,31 @@ export default function PhotoGrid({
             <div className="meta">
               <div>{file.filename}</div>
               {file.capture_day && <div>{file.capture_day}</div>}
-              {file.events?.map((e) => (
-                <span
-                  key={e.id}
-                  className="badge event-badge"
-                  style={{ background: e.color, color: "#fff" }}
-                >
-                  {e.name}
-                </span>
-              ))}
-              {file.people?.map((p) => (
-                <span key={p.id} className="badge person-badge">
-                  {personLabel(p, allPeople)}
-                </span>
-              ))}
+              {editableLabels ? (
+                <PhotoCardLabels file={file} onChange={onLabelsChange} />
+              ) : (
+                <>
+                  {file.events?.map((e) => (
+                    <span
+                      key={e.id}
+                      className="badge event-badge"
+                      style={{ background: e.color, color: "#fff" }}
+                    >
+                      {e.name}
+                    </span>
+                  ))}
+                  {file.people?.map((p) => (
+                    <span key={p.id} className="badge person-badge">
+                      {personLabel(p, allPeople)}
+                    </span>
+                  ))}
+                  {file.tags?.map((t) => (
+                    <span key={t.id} className="badge tag-badge">
+                      {t.name}
+                    </span>
+                  ))}
+                </>
+              )}
             </div>
           </div>
         );

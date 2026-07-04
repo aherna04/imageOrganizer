@@ -94,6 +94,14 @@ CREATE TABLE IF NOT EXISTS file_people (
 
 CREATE INDEX IF NOT EXISTS idx_file_people_person ON file_people(person_id);
 
+CREATE TABLE IF NOT EXISTS file_tags (
+    file_id INTEGER NOT NULL REFERENCES files(id) ON DELETE CASCADE,
+    tag_id INTEGER NOT NULL REFERENCES tags(id) ON DELETE CASCADE,
+    PRIMARY KEY (file_id, tag_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_file_tags_tag ON file_tags(tag_id);
+
 CREATE TABLE IF NOT EXISTS duplicate_groups (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     group_type TEXT NOT NULL CHECK(group_type IN ('exact', 'perceptual')),

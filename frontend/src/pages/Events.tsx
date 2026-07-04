@@ -135,7 +135,12 @@ export default function EventsPage() {
             ))}
           </div>
         )}
-        <PhotoGrid files={eventFiles?.items ?? []} onSelect={setSelected} />
+        <PhotoGrid
+          files={eventFiles?.items ?? []}
+          onSelect={setSelected}
+          editableLabels
+          onLabelsChange={() => qc.invalidateQueries({ queryKey: ["event-files", activeEvent.id] })}
+        />
         {selected && <PhotoDetail file={selected} onClose={() => setSelected(null)} />}
       </div>
     );

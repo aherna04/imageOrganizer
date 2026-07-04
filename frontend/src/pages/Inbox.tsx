@@ -2,9 +2,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { MediaFile, api } from "../api/client";
 import BulkEventAssignBar from "../components/BulkEventAssignBar";
-import BulkPersonAssignBar from "../components/BulkPersonAssignBar";
 import PhotoGrid from "../components/PhotoGrid";
 import PhotoDetail from "../components/PhotoDetail";
+import SingleFileLabelEditors from "../components/SingleFileLabelEditors";
+import BulkLabelEditors from "../components/BulkLabelEditors";
 
 export default function Inbox() {
   const qc = useQueryClient();
@@ -34,16 +35,14 @@ export default function Inbox() {
     setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   };
 
-  const handleAssigned = () => {
-    setSelectedIds([]);
+  const handleLabelsChange = () => {
     refetch();
     qc.invalidateQueries({ queryKey: ["events"] });
+    qc.invalidateQueries({ queryKey: ["people"] });
+    qc.invalidateQueries({ queryKey: ["tags"] });
   };
 
-  const handlePeopleAssigned = () => {
-    refetch();
-    qc.invalidateQueries({ queryKey: ["people"] });
-  };
+  const selectedFiles = data?.items.filter((f) => selectedIds.includes(f.id)) ?? [];
 
   return (
     <div>
@@ -75,10 +74,14 @@ export default function Inbox() {
         totalCount={data?.total}
         onSelectAll={() => setSelectedIds(data?.items.map((f) => f.id) ?? [])}
         onClear={() => setSelectedIds([])}
-        onAssigned={handleAssigned}
       />
 
-      <BulkPersonAssignBar selectedIds={selectedIds} onAssigned={handlePeopleAssigned} />
+      {selectedIds.length === 1 && selectedFiles[0] && (
+        <SingleFileLabelEditors file={selectedFiles[0]} onChange={handleLabelsChange} />
+      )}
+      {selectedIds.length >= 2 && (
+        <BulkLabelEditors selectedFiles={selectedFiles} onChange={handleLabelsChange} />
+      )}
 
       <PhotoGrid
         files={data?.items ?? []}
@@ -86,6 +89,8 @@ export default function Inbox() {
         onToggleSelect={toggleSelect}
         onDoubleClick={setDetailFile}
         multiSelectMode
+        editableLabels
+        onLabelsChange={handleLabelsChange}
       />
       {detailFile && <PhotoDetail file={detailFile} onClose={() => setDetailFile(null)} />}
     </div>

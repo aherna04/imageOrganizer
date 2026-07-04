@@ -31,6 +31,7 @@ from app.models import (
     FileListOut,
     FileOut,
     FilePeopleUpdate,
+    FileTagsUpdate,
     MetadataOut,
     MetadataUpdate,
     OperationLogOut,
@@ -47,11 +48,15 @@ from app.models import (
     ScanStatusOut,
     TagCreate,
     TagOut,
+    TagUpdate,
+    TagsAssignByIds,
+    TagsMerge,
+    TagsUnassignByIds,
 )
 from app.organizer import apply_operations, preview_organize
 from app.scanner import scan_state, start_scan_background
 
-app = FastAPI(title="Image Organizer", version="2026.07.04")
+app = FastAPI(title="Image Organizer", version="2026.07.04a")
 
 app.add_middleware(
     CORSMiddleware,
@@ -108,11 +113,13 @@ def _file_out(conn, row) -> FileOut:
     d = dict(row)
     evts = get_file_events(conn, d["id"])
     people = people_svc.get_file_people(conn, d["id"])
+    tags = tags_svc.get_file_tags(conn, d["id"])
     return FileOut(
-        **{k: d[k] for k in FileOut.model_fields if k not in ("events", "people", "media_type")},
+        **{k: d[k] for k in FileOut.model_fields if k not in ("events", "people", "tags", "media_type")},
         media_type=media_type_for_suffix(Path(d["path"]).suffix),
         events=[_event_out(conn, e) for e in evts],
         people=[_person_out(p) for p in people],
+        tags=[_tag_out(t) for t in tags],
     )
 
 
@@ -176,15 +183,7 @@ def api_list_files(
         clauses.append("f.id IN (SELECT file_id FROM file_people WHERE person_id = ?)")
         params.append(person_id)
     if tag_id:
-        clauses.append(
-            """
-            f.id IN (
-                SELECT fe.file_id FROM file_events fe
-                JOIN event_tags et ON et.event_id = fe.event_id
-                WHERE et.tag_id = ?
-            )
-            """
-        )
+        clauses.append("f.id IN (SELECT file_id FROM file_tags WHERE tag_id = ?)")
         params.append(tag_id)
     where = ("WHERE " + " AND ".join(clauses)) if clauses else ""
     with get_conn() as conn:
@@ -417,6 +416,56 @@ def api_create_tag(body: TagCreate):
     with get_conn() as conn:
         tag = tags_svc.create_tag(conn, body.name)
         return _tag_out(tag)
+
+
+@app.patch("/api/files/{file_id}/tags")
+def api_set_file_tags(file_id: int, body: FileTagsUpdate):
+    with get_conn() as conn:
+        row = conn.execute("SELECT id FROM files WHERE id = ?", (file_id,)).fetchone()
+        if not row:
+            raise HTTPException(404, "File not found")
+        tags_svc.set_file_tags(conn, file_id, body.tag_ids)
+    return {"ok": True}
+
+
+@app.post("/api/tags/assign-ids")
+def api_assign_tag_ids(body: TagsAssignByIds):
+    with get_conn() as conn:
+        count = tags_svc.assign_tags_by_ids(conn, body.tag_ids, body.file_ids)
+    return {"assigned": count}
+
+
+@app.post("/api/tags/unassign-ids")
+def api_unassign_tag_ids(body: TagsUnassignByIds):
+    with get_conn() as conn:
+        count = tags_svc.remove_tags_by_ids(conn, body.tag_ids, body.file_ids)
+    return {"removed": count}
+
+
+@app.patch("/api/tags/{tag_id}", response_model=TagOut)
+def api_update_tag(tag_id: int, body: TagUpdate):
+    with get_conn() as conn:
+        tag = tags_svc.update_tag(conn, tag_id, body.name)
+    if not tag:
+        raise HTTPException(404, "Tag not found")
+    return _tag_out(tag)
+
+
+@app.delete("/api/tags/{tag_id}")
+def api_delete_tag(tag_id: int):
+    with get_conn() as conn:
+        if not tags_svc.delete_tag(conn, tag_id):
+            raise HTTPException(404, "Tag not found")
+    return {"ok": True}
+
+
+@app.post("/api/tags/merge", response_model=TagOut)
+def api_merge_tags(body: TagsMerge):
+    with get_conn() as conn:
+        tag = tags_svc.merge_tags(conn, body.source_id, body.target_id)
+    if not tag:
+        raise HTTPException(404, "Tag not found")
+    return _tag_out(tag)
 
 
 @app.get("/api/people", response_model=list[PersonOut])

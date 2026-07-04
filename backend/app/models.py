@@ -38,6 +38,7 @@ class FileOut(BaseModel):
     rating: int | None = None
     events: list["EventOut"] = []
     people: list["PersonOut"] = []
+    tags: list["TagOut"] = []
 
 
 class FileListOut(BaseModel):
@@ -134,6 +135,29 @@ class TagOut(BaseModel):
 
 class TagCreate(BaseModel):
     name: str
+
+
+class TagUpdate(BaseModel):
+    name: str
+
+
+class TagsUnassignByIds(BaseModel):
+    tag_ids: list[int]
+    file_ids: list[int]
+
+
+class TagsMerge(BaseModel):
+    source_id: int
+    target_id: int
+
+
+class FileTagsUpdate(BaseModel):
+    tag_ids: list[int]
+
+
+class TagsAssignByIds(BaseModel):
+    tag_ids: list[int]
+    file_ids: list[int]
 
 
 class PersonOut(BaseModel):

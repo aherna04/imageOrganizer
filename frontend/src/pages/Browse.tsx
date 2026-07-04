@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { MediaFile, api } from "../api/client";
@@ -9,6 +9,7 @@ import PhotoDetail from "../components/PhotoDetail";
 export default function BrowsePage() {
   const { kind, slug } = useParams();
   const navigate = useNavigate();
+  const qc = useQueryClient();
   const [search, setSearch] = useState("");
   const [detailFile, setDetailFile] = useState<MediaFile | null>(null);
 
@@ -57,7 +58,7 @@ export default function BrowsePage() {
         <h2>Browse</h2>
       </div>
       <p style={{ color: "#8891a0", marginBottom: "1rem" }}>
-        Search photos by person or event tag.
+        Search photos by person or tag on photos.
       </p>
 
       <div className="browse-layout">
@@ -105,7 +106,7 @@ export default function BrowsePage() {
                 </li>
               ))}
               {filteredTags.length === 0 && (
-                <li className="browse-empty">No tags yet. Add tags to events from the Events page.</li>
+                <li className="browse-empty">No tags yet. Tag photos from Inbox or Calendar, or create tags on the Tags page.</li>
               )}
             </ul>
           </section>
@@ -120,7 +121,16 @@ export default function BrowsePage() {
                   {photos?.total ?? 0} photos
                 </span>
               </div>
-              <PhotoGrid files={photos?.items ?? []} onSelect={setDetailFile} />
+              <PhotoGrid
+                files={photos?.items ?? []}
+                onSelect={setDetailFile}
+                editableLabels
+                onLabelsChange={() =>
+                  qc.invalidateQueries({
+                    queryKey: ["browse-files", kind, selectedPerson?.id, selectedTag?.id],
+                  })
+                }
+              />
             </>
           ) : (
             <div className="empty-state">Select a person or tag to browse photos.</div>

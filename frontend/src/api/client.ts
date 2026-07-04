@@ -103,6 +103,45 @@ export interface CalendarMonthEvent {
   photo_count: number;
 }
 
+export interface CalendarMonthPerson {
+  id: number;
+  name: string;
+  slug: string;
+  photo_count: number;
+}
+
+export interface CalendarMonthTag {
+  id: number;
+  name: string;
+  slug: string;
+  photo_count: number;
+}
+
+export interface CalendarMonthLabels {
+  year: number;
+  month: number;
+  events: CalendarMonthEvent[];
+  people: CalendarMonthPerson[];
+  tags: CalendarMonthTag[];
+}
+
+export type CalendarMonthFilter =
+  | { year: number; month: number; kind: "event"; id: number }
+  | { year: number; month: number; kind: "person"; id: number }
+  | { year: number; month: number; kind: "tag"; id: number };
+
+export interface CalendarDayFilter {
+  eventId?: number;
+  personId?: number;
+  tagId?: number;
+}
+
+function appendCalendarFilter(q: URLSearchParams, filter?: CalendarDayFilter) {
+  if (filter?.eventId) q.set("event_id", String(filter.eventId));
+  if (filter?.personId) q.set("person_id", String(filter.personId));
+  if (filter?.tagId) q.set("tag_id", String(filter.tagId));
+}
+
 export interface DuplicateGroup {
   id: number;
   group_type: "exact" | "perceptual";
@@ -165,9 +204,14 @@ export const api = {
   updateMetadata: (id: number, data: Partial<Metadata>) =>
     request<Metadata>(`/api/files/${id}/metadata`, { method: "PATCH", body: JSON.stringify(data) }),
 
-  calendarSummary: (year: number, month: number, location = "archive", eventId?: number) => {
+  calendarSummary: (
+    year: number,
+    month: number,
+    location = "archive",
+    filter?: CalendarDayFilter
+  ) => {
     const q = new URLSearchParams({ year: String(year), month: String(month), location });
-    if (eventId) q.set("event_id", String(eventId));
+    appendCalendarFilter(q, filter);
     return request<{ year: number; month: number; days: CalendarDaySummary[] }>(
       `/api/calendar/summary?${q}`
     );
@@ -178,6 +222,11 @@ export const api = {
     return request<{ months: CalendarMonthSummary[] }>(`/api/calendar/months?${q}`);
   },
 
+  calendarLabels: (year: number, month: number, location = "archive") => {
+    const q = new URLSearchParams({ year: String(year), month: String(month), location });
+    return request<CalendarMonthLabels>(`/api/calendar/labels?${q}`);
+  },
+
   calendarEvents: (year: number, month: number, location = "archive") => {
     const q = new URLSearchParams({ year: String(year), month: String(month), location });
     return request<{ year: number; month: number; events: CalendarMonthEvent[] }>(
@@ -185,9 +234,9 @@ export const api = {
     );
   },
 
-  calendarDay: (date: string, location = "archive", eventId?: number) => {
+  calendarDay: (date: string, location = "archive", filter?: CalendarDayFilter) => {
     const q = new URLSearchParams({ date, location });
-    if (eventId) q.set("event_id", String(eventId));
+    appendCalendarFilter(q, filter);
     return request<FileList>(`/api/calendar/day?${q}`);
   },
 

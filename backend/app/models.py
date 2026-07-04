@@ -109,6 +109,28 @@ class CalendarMonthEventsOut(BaseModel):
     events: list[CalendarMonthEventOut]
 
 
+class CalendarMonthPersonOut(BaseModel):
+    id: int
+    name: str
+    slug: str
+    photo_count: int
+
+
+class CalendarMonthTagOut(BaseModel):
+    id: int
+    name: str
+    slug: str
+    photo_count: int
+
+
+class CalendarMonthLabelsOut(BaseModel):
+    year: int
+    month: int
+    events: list[CalendarMonthEventOut]
+    people: list[CalendarMonthPersonOut]
+    tags: list[CalendarMonthTagOut]
+
+
 class EventCreate(BaseModel):
     name: str
     color: str = "#6366f1"

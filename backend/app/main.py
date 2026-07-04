@@ -15,6 +15,9 @@ from app.models import (
     ApplyResultOut,
     CalendarMonthEventOut,
     CalendarMonthEventsOut,
+    CalendarMonthLabelsOut,
+    CalendarMonthPersonOut,
+    CalendarMonthTagOut,
     CalendarMonthSummary,
     CalendarMonthsOut,
     CalendarSummaryOut,
@@ -56,7 +59,7 @@ from app.models import (
 from app.organizer import apply_operations, preview_organize
 from app.scanner import scan_state, start_scan_background
 
-app = FastAPI(title="Image Organizer", version="2026.07.04a")
+app = FastAPI(title="Image Organizer", version="2026.07.04b")
 
 app.add_middleware(
     CORSMiddleware,
@@ -349,12 +352,104 @@ def api_calendar_events(
     )
 
 
+def _month_location_clauses(month_str: str, location: str) -> tuple[list[str], list]:
+    clauses = ["f.capture_day LIKE ?"]
+    params: list = [f"{month_str}%"]
+    if location == "archive":
+        clauses.append("f.location = 'archive'")
+    elif location == "inbox":
+        clauses.append("f.location = 'inbox'")
+    return clauses, params
+
+
+@app.get("/api/calendar/labels", response_model=CalendarMonthLabelsOut)
+def api_calendar_labels(
+    year: int,
+    month: int = Query(..., ge=1, le=12),
+    location: str = Query("archive"),
+):
+    month_str = f"{year:04d}-{month:02d}"
+    with get_conn() as conn:
+        clauses, params = _month_location_clauses(month_str, location)
+        where = " AND ".join(clauses)
+        event_rows = conn.execute(
+            f"""
+            SELECT e.id, e.name, e.slug, e.color, COUNT(fe.file_id) AS photo_count
+            FROM events e
+            JOIN file_events fe ON fe.event_id = e.id
+            JOIN files f ON f.id = fe.file_id
+            WHERE {where}
+            GROUP BY e.id
+            ORDER BY e.name
+            """,
+            params,
+        ).fetchall()
+        people_rows = conn.execute(
+            f"""
+            SELECT p.id, p.name, p.slug, COUNT(fp.file_id) AS photo_count
+            FROM people p
+            JOIN file_people fp ON fp.person_id = p.id
+            JOIN files f ON f.id = fp.file_id
+            WHERE {where}
+            GROUP BY p.id
+            ORDER BY p.name
+            """,
+            params,
+        ).fetchall()
+        tag_rows = conn.execute(
+            f"""
+            SELECT t.id, t.name, t.slug, COUNT(ft.file_id) AS photo_count
+            FROM tags t
+            JOIN file_tags ft ON ft.tag_id = t.id
+            JOIN files f ON f.id = ft.file_id
+            WHERE {where}
+            GROUP BY t.id
+            ORDER BY t.name
+            """,
+            params,
+        ).fetchall()
+    return CalendarMonthLabelsOut(
+        year=year,
+        month=month,
+        events=[
+            CalendarMonthEventOut(
+                id=r["id"],
+                name=r["name"],
+                slug=r["slug"],
+                color=r["color"],
+                photo_count=r["photo_count"],
+            )
+            for r in event_rows
+        ],
+        people=[
+            CalendarMonthPersonOut(
+                id=r["id"],
+                name=r["name"],
+                slug=r["slug"],
+                photo_count=r["photo_count"],
+            )
+            for r in people_rows
+        ],
+        tags=[
+            CalendarMonthTagOut(
+                id=r["id"],
+                name=r["name"],
+                slug=r["slug"],
+                photo_count=r["photo_count"],
+            )
+            for r in tag_rows
+        ],
+    )
+
+
 @app.get("/api/calendar/summary", response_model=CalendarSummaryOut)
 def api_calendar_summary(
     year: int,
     month: int = Query(..., ge=1, le=12),
     location: str = Query("archive"),
     event_id: int | None = None,
+    person_id: int | None = None,
+    tag_id: int | None = None,
 ):
     month_str = f"{year:04d}-{month:02d}"
     with get_conn() as conn:
@@ -367,6 +462,12 @@ def api_calendar_summary(
         if event_id:
             clauses.append("id IN (SELECT file_id FROM file_events WHERE event_id = ?)")
             params.append(event_id)
+        if person_id:
+            clauses.append("id IN (SELECT file_id FROM file_people WHERE person_id = ?)")
+            params.append(person_id)
+        if tag_id:
+            clauses.append("id IN (SELECT file_id FROM file_tags WHERE tag_id = ?)")
+            params.append(tag_id)
         where = " AND ".join(clauses)
         rows = conn.execute(
             f"""
@@ -398,11 +499,21 @@ def api_calendar_day(
     date: str,
     location: str = Query("archive"),
     event_id: int | None = None,
+    person_id: int | None = None,
+    tag_id: int | None = None,
     page: int = Query(1, ge=1),
     page_size: int = Query(100, ge=1, le=500),
 ):
     loc = None if location == "all" else location
-    return api_list_files(location=loc, capture_day=date, event_id=event_id, page=page, page_size=page_size)
+    return api_list_files(
+        location=loc,
+        capture_day=date,
+        event_id=event_id,
+        person_id=person_id,
+        tag_id=tag_id,
+        page=page,
+        page_size=page_size,
+    )
 
 
 @app.get("/api/tags", response_model=list[TagOut])

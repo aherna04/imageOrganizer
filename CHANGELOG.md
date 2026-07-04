@@ -2,6 +2,21 @@
 
 Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
+## [2026.07.04b] - 2026-07-04
+
+### Added
+
+- Calendar browse mode: all months with photos in a full-width grid; focus mode (day selected) keeps 3-month sidebar + thumbnails
+- Calendar month footers show events, people, and tags; filter month grid and day panel by selection
+- Event detail date span links to calendar day view
+- Select all visible in calendar day panel before any photos are selected
+- `GET /api/calendar/labels` endpoint for per-month event/person/tag counts
+
+### Changed
+
+- Calendar day panel Close button returns to browse mode
+- Fixed browse calendar last-row month stretch causing oversized day cells
+
 ## [2026.07.04a] - 2026-07-04
 
 ### Added

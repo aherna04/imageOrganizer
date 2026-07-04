@@ -11,8 +11,19 @@ export default function BulkEventAssignBar({
   totalCount,
   onSelectAll,
 }: Props) {
+  const total = totalCount ?? 0;
+
   if (selectedIds.length === 0) {
-    return null;
+    if (!onSelectAll || total === 0) {
+      return null;
+    }
+    return (
+      <div className="bulk-event-bar">
+        <button type="button" className="link-btn" onClick={onSelectAll}>
+          Select all {total}
+        </button>
+      </div>
+    );
   }
 
   return (

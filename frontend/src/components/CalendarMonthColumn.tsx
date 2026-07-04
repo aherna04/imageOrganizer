@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { api, CalendarMonthSummary } from "../api/client";
+import { api, CalendarMonthFilter, CalendarMonthSummary } from "../api/client";
+import { monthFilterToDayFilter } from "../utils/calendarFilter";
 import CalendarMonth from "./CalendarMonth";
 import CalendarMonthLabels from "./CalendarMonthLabels";
 
@@ -13,9 +14,9 @@ interface Props {
   month: number;
   location: string;
   selectedDay?: { year: number; month: number; day: number } | null;
-  activeEventId?: number;
+  monthFilter: CalendarMonthFilter | null;
   onSelectDay: (year: number, month: number, day: number) => void;
-  onSelectEvent: (year: number, month: number, eventId: number | undefined) => void;
+  onSelectFilter: (year: number, month: number, filter: CalendarMonthFilter | null) => void;
 }
 
 export default function CalendarMonthColumn({
@@ -23,24 +24,29 @@ export default function CalendarMonthColumn({
   month,
   location,
   selectedDay,
-  activeEventId,
+  monthFilter,
   onSelectDay,
-  onSelectEvent,
+  onSelectFilter,
 }: Props) {
+  const dayFilter = monthFilterToDayFilter(monthFilter, year, month);
+
   const { data: summary } = useQuery({
-    queryKey: ["calendar-summary", year, month, location, activeEventId],
-    queryFn: () => api.calendarSummary(year, month, location, activeEventId),
+    queryKey: ["calendar-summary", year, month, location, dayFilter],
+    queryFn: () => api.calendarSummary(year, month, location, dayFilter),
   });
 
-  const { data: eventsData } = useQuery({
-    queryKey: ["calendar-events", year, month, location],
-    queryFn: () => api.calendarEvents(year, month, location),
+  const { data: labelsData } = useQuery({
+    queryKey: ["calendar-labels", year, month, location],
+    queryFn: () => api.calendarLabels(year, month, location),
   });
 
   const selectedDate =
     selectedDay?.year === year && selectedDay?.month === month
       ? new Date(year, month - 1, selectedDay.day, 12, 0, 0)
       : undefined;
+
+  const activeFilterForMonth =
+    monthFilter?.year === year && monthFilter?.month === month ? monthFilter : null;
 
   return (
     <div className="calendar-month-column">
@@ -58,11 +64,13 @@ export default function CalendarMonthColumn({
           onSelectDay(d.getFullYear(), d.getMonth() + 1, d.getDate());
         }}
       />
-      <CalendarMonthLabels
-        events={eventsData?.events ?? []}
-        activeEventId={activeEventId}
-        onSelectEvent={(eventId) => onSelectEvent(year, month, eventId)}
-      />
+      {labelsData && (
+        <CalendarMonthLabels
+          labels={labelsData}
+          activeFilter={activeFilterForMonth}
+          onSelectFilter={(filter) => onSelectFilter(year, month, filter)}
+        />
+      )}
     </div>
   );
 }

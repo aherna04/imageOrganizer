@@ -5,6 +5,7 @@ import { MediaFile, api } from "../api/client";
 import PhotoGrid from "../components/PhotoGrid";
 import PhotoDetail from "../components/PhotoDetail";
 import TagPicker from "../components/TagPicker";
+import { calendarDayPath } from "../utils/calendarPath";
 
 export default function EventsPage() {
   const { slug } = useParams();
@@ -59,7 +60,8 @@ export default function EventsPage() {
     onSuccess: (ev) => {
       qc.invalidateQueries({ queryKey: ["events"] });
       qc.invalidateQueries({ queryKey: ["tags"] });
-      qc.invalidateQueries({ queryKey: ["calendar-events"] });
+    qc.invalidateQueries({ queryKey: ["calendar-labels"] });
+    qc.invalidateQueries({ queryKey: ["calendar-summary"] });
       qc.invalidateQueries({ queryKey: ["event-files"] });
       setEditing(false);
       if (ev.slug !== slug) {
@@ -122,8 +124,22 @@ export default function EventsPage() {
           </span>
         </div>
         {activeEvent.date_span_start && (
-          <p style={{ color: "#8891a0" }}>
-            {activeEvent.date_span_start} — {activeEvent.date_span_end}
+          <p className="event-date-span">
+            {activeEvent.date_span_start === activeEvent.date_span_end ? (
+              <Link to={calendarDayPath(activeEvent.date_span_start)} className="link-btn">
+                {activeEvent.date_span_start}
+              </Link>
+            ) : (
+              <>
+                <Link to={calendarDayPath(activeEvent.date_span_start)} className="link-btn">
+                  {activeEvent.date_span_start}
+                </Link>
+                {" — "}
+                <Link to={calendarDayPath(activeEvent.date_span_end!)} className="link-btn">
+                  {activeEvent.date_span_end}
+                </Link>
+              </>
+            )}
           </p>
         )}
         {!editing && activeEvent.tags && activeEvent.tags.length > 0 && (

@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { api, CalendarMonthSummary } from "../api/client";
+import { api, CalendarMonthFilter, CalendarMonthSummary } from "../api/client";
 import CalendarDayPanel from "../components/CalendarDayPanel";
 import CalendarThreeMonthView from "../components/CalendarThreeMonthView";
+import { monthFilterToDayFilter } from "../utils/calendarFilter";
 
 function findMonthIndex(months: CalendarMonthSummary[], year: number, month: number): number {
   return months.findIndex((m) => m.year === year && m.month === month);
@@ -40,11 +41,7 @@ export default function CalendarPage() {
 
   const [location, setLocation] = useState("archive");
   const [windowStartIndex, setWindowStartIndex] = useState(0);
-  const [monthEventFilter, setMonthEventFilter] = useState<{
-    year: number;
-    month: number;
-    eventId: number;
-  } | null>(null);
+  const [monthFilter, setMonthFilter] = useState<CalendarMonthFilter | null>(null);
 
   const { data: monthsData } = useQuery({
     queryKey: ["calendar-months", location],
@@ -62,13 +59,10 @@ export default function CalendarPage() {
       navigate(`/calendar/${m.year}/${m.month}`, { replace: true });
       return;
     }
-    setWindowStartIndex(alignWindowStart(idx, activeMonths.length));
-  }, [activeMonths, urlYear, urlMonth, navigate]);
-
-  const visibleMonths = useMemo(
-    () => activeMonths.slice(windowStartIndex, windowStartIndex + 3),
-    [activeMonths, windowStartIndex]
-  );
+    if (dayParam) {
+      setWindowStartIndex(alignWindowStart(idx, activeMonths.length));
+    }
+  }, [activeMonths, urlYear, urlMonth, dayParam, navigate]);
 
   const selectedDay = useMemo(() => {
     if (!dayParam) return null;
@@ -79,45 +73,43 @@ export default function CalendarPage() {
     ? `${selectedDay.year}-${String(selectedDay.month).padStart(2, "0")}-${String(selectedDay.day).padStart(2, "0")}`
     : undefined;
 
-  const dayPanelEventId =
-    monthEventFilter &&
-    monthEventFilter.year === urlYear &&
-    monthEventFilter.month === urlMonth
-      ? monthEventFilter.eventId
-      : undefined;
+  const visibleMonths = useMemo(() => {
+    if (selectedDayStr) {
+      return activeMonths.slice(windowStartIndex, windowStartIndex + 3);
+    }
+    return activeMonths;
+  }, [activeMonths, windowStartIndex, selectedDayStr]);
+
+  const dayPanelFilter = monthFilterToDayFilter(monthFilter, urlYear, urlMonth);
 
   const handleSelectDay = (year: number, month: number, day: number) => {
-    if (monthEventFilter && (monthEventFilter.year !== year || monthEventFilter.month !== month)) {
-      setMonthEventFilter(null);
+    if (monthFilter && (monthFilter.year !== year || monthFilter.month !== month)) {
+      setMonthFilter(null);
     }
     navigate(`/calendar/${year}/${month}/${day}`);
   };
 
-  const handleSelectEvent = (year: number, month: number, eventId: number | undefined) => {
-    if (eventId === undefined) {
-      if (monthEventFilter?.year === year && monthEventFilter?.month === month) {
-        setMonthEventFilter(null);
-      }
-      return;
-    }
-    setMonthEventFilter({ year, month, eventId });
+  const handleSelectFilter = (year: number, month: number, filter: CalendarMonthFilter | null) => {
+    setMonthFilter(filter);
+  };
+
+  const handleClearDay = () => {
+    navigate(`/calendar/${urlYear}/${urlMonth}`);
   };
 
   const handlePrev = () => {
-    const next = Math.max(0, windowStartIndex - 3);
-    setWindowStartIndex(next);
-    setMonthEventFilter(null);
-    const m = activeMonths[next];
-    if (m) navigate(`/calendar/${m.year}/${m.month}`);
+    if (!selectedDayStr) return;
+    setWindowStartIndex((prev) => Math.max(0, prev - 3));
+    setMonthFilter(null);
   };
 
   const handleNext = () => {
-    const next = Math.min(activeMonths.length - 1, windowStartIndex + 3);
-    if (next === windowStartIndex) return;
-    setWindowStartIndex(next);
-    setMonthEventFilter(null);
-    const m = activeMonths[next];
-    if (m) navigate(`/calendar/${m.year}/${m.month}`);
+    if (!selectedDayStr) return;
+    setWindowStartIndex((prev) => {
+      const next = Math.min(activeMonths.length - 1, prev + 3);
+      return next === prev ? prev : next;
+    });
+    setMonthFilter(null);
   };
 
   return (
@@ -134,7 +126,7 @@ export default function CalendarPage() {
           value={location}
           onChange={(e) => {
             setLocation(e.target.value);
-            setMonthEventFilter(null);
+            setMonthFilter(null);
           }}
         >
           <option value="archive">Archive only</option>
@@ -153,15 +145,22 @@ export default function CalendarPage() {
             totalMonths={activeMonths.length}
             location={location}
             selectedDay={selectedDay}
-            monthEventFilter={monthEventFilter}
+            monthFilter={monthFilter}
+            mode={selectedDayStr ? "focus" : "browse"}
+            showWindowNav={!!selectedDayStr}
             onPrev={handlePrev}
             onNext={handleNext}
             onSelectDay={handleSelectDay}
-            onSelectEvent={handleSelectEvent}
+            onSelectFilter={handleSelectFilter}
           />
         )}
         {selectedDayStr && (
-          <CalendarDayPanel date={selectedDayStr} location={location} eventId={dayPanelEventId} />
+          <CalendarDayPanel
+            date={selectedDayStr}
+            location={location}
+            filter={dayPanelFilter}
+            onClose={handleClearDay}
+          />
         )}
       </div>
     </div>

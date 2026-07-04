@@ -1,6 +1,8 @@
 # Image Organizer
 
-Local web app for organizing photos: inbox landing folder, calendar browse, event labels, deduplication, and safe apply.
+**Version:** 2026.07.04 — see [CHANGELOG.md](CHANGELOG.md)
+
+Local web app for organizing photos and videos: inbox landing folder, calendar browse, event labels, people and tags, browse by person/tag, deduplication, and safe apply.
 
 ## Prerequisites
 

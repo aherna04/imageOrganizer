@@ -1,0 +1,3 @@
+[submodule "tools/cursor-book"]
+	path = tools/cursor-book
+	url = https://github.com/aherna04/cursor-book.git

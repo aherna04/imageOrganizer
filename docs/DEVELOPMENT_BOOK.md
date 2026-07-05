@@ -75,6 +75,10 @@ This book collects the Cursor agent implementation plans written while building 
 43. [Save plans gitignore](#chapter-43-save-plans-gitignore)
 44. [Plans development book](#chapter-44-plans-development-book)
 
+### Appendix — Unlisted Plans
+
+45. [Cursor book tool repo](#chapter-45-cursor-book-tool-repo)
+
 ### Skipped Duplicates
 
 - `calendar_tag_wrapping_a49a3fe3` — Superseded by `calendar_tag_wrapping_efb8630a`.
@@ -5720,5 +5724,212 @@ No change to the architecture cursor rule scope (book is design history, not liv
 | `[scripts/build_development_book.py](scripts/build_development_book.py)` | New generator                     |
 | `[docs/DEVELOPMENT_BOOK.md](docs/DEVELOPMENT_BOOK.md)`                   | Generated book (committed)        |
 | `[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)`                           | One-line link to Development Book |
+
+---
+
+<a id="chapter-45-cursor-book-tool-repo"></a>
+
+## Chapter 45: Cursor book tool repo
+
+> **Overview:** Extract the development book builder into a standalone repo with a config-driven script and a reusable Cursor skill; migrate imageOrganizer to a thin `book.yaml` + wrapper script.
+
+# Cursor book tool (standalone repo + skill)
+
+## Goal
+
+Move [`imageOrganizer/scripts/build_development_book.py`](imageOrganizer/scripts/build_development_book.py) into its own repo as a **generic, config-driven script** any project can use. Include a **portable Cursor skill** that documents the workflow for any repo.
+
+Distribution: **script-only** — clone/submodule/copy the script; run:
+
+```bash
+python path/to/cursor-book/build_development_book.py --config book.yaml
+```
+
+```mermaid
+flowchart LR
+  plans["~/.cursor/plans/*.plan.md"] --> script["build_development_book.py"]
+  config["book.yaml in consumer repo"] --> script
+  script --> output["docs/DEVELOPMENT_BOOK.md"]
+  skill["development-book SKILL.md"] --> agent[Cursor agent]
+  agent --> config
+  agent --> script
+```
+
+## New repo: `cursor-book`
+
+Suggested path: `/Users/alex/Documents/github/cursor-book`
+
+### Layout
+
+```
+cursor-book/
+  README.md
+  build_development_book.py    # generic builder (stdlib only)
+  book.schema.example.yaml     # documented example config
+  skills/
+    development-book/
+      SKILL.md                 # generic skill (copy into consumer .cursor/skills/)
+```
+
+No PyPI package — one self-contained Python file (~250 lines) plus config schema docs.
+
+### Config file (`book.yaml` in consumer repo)
+
+Replace hardcoded `PARTS`, `SKIP_PLANS`, `VERSION`, title, intro in the script with YAML loaded via `--config`:
+
+```yaml
+title: "Image Organizer — Development Book"
+version: "2026.07.05"
+output: docs/DEVELOPMENT_BOOK.md
+plans_dir: ~/.cursor/plans          # optional; default ~/.cursor/plans
+
+related_links:                      # optional footer links under title
+  - "[ARCHITECTURE.md](ARCHITECTURE.md) · [CHANGELOG.md](../CHANGELOG.md)"
+
+introduction: |                     # optional; sensible default if omitted
+  This book collects Cursor implementation plans...
+
+parts:
+  - title: "Part I — Foundation"
+    plans:
+      - image_organizer_web_app_bc41c7ac
+      - architecture_design_doc_776a0f34
+  - title: "Part II — Calendar"
+    plans: [...]
+
+skip_plans:                         # optional set
+  calendar_tag_wrapping_a49a3fe3:
+    note: "Superseded by calendar_tag_wrapping_efb8630a."
+```
+
+**Parser:** use `yaml` from stdlib if available (Python 3.12+ has none — use minimal hand-rolled YAML subset or document `pip install pyyaml` as optional). Prefer **stdlib-only**: ship a tiny `_load_yaml.py` helper or use JSON config (`book.json`) to avoid dependencies. Recommendation: **`book.json`** for zero deps, with `book.yaml` supported when PyYAML is installed (try/import fallback).
+
+CLI flags (keep existing + add config):
+
+| Flag | Purpose |
+|------|---------|
+| `--config book.json` | Load all repo-specific settings |
+| `--plans-dir` | Override config |
+| `--output` | Override config |
+| `--repo-root` | Resolve relative output paths (default cwd) |
+
+Core logic unchanged from current script: frontmatter parse, slugify, TOC, appendix for unlisted plans, skip section.
+
+### Generic skill (`skills/development-book/SKILL.md`)
+
+Port [`imageOrganizer/.cursor/skills/development-book/SKILL.md`](imageOrganizer/.cursor/skills/development-book/SKILL.md) with project-specific references replaced by placeholders:
+
+- Config file: `book.json` (or `book.yaml`) at repo root
+- Script path: document clone/submodule options
+- Workflow checklist:
+  1. Find plan stem in `~/.cursor/plans/`
+  2. Add stem to correct `parts` entry in config
+  3. Optional: sync to `.cursor/plans/` (gitignored mirror)
+  4. Run builder script
+  5. Verify TOC chapter
+- **Do not** hardcode Image Organizer parts table — say "organize parts to match your project"
+
+Consumer installs skill:
+
+```bash
+cp -r cursor-book/skills/development-book .cursor/skills/
+```
+
+Or symlink if preferred locally.
+
+### README for `cursor-book`
+
+- Quick start (init config from example, run script)
+- Config reference (all fields)
+- How to add a chapter
+- How to install the skill
+- Example: imageOrganizer as reference consumer
+
+## Migrate imageOrganizer
+
+| File | Change |
+|------|--------|
+| [`book.json`](imageOrganizer/book.json) | **New** — move current `PARTS`, `SKIP_PLANS`, title, version, intro from script |
+| [`scripts/build_development_book.py`](imageOrganizer/scripts/build_development_book.py) | **Replace** with thin wrapper (~5 lines) calling generic script, OR document submodule path |
+| [`.cursor/skills/development-book/SKILL.md`](imageOrganizer/.cursor/skills/development-book/SKILL.md) | **Replace** with repo-specific skill that points to `book.json` + submodule/script path |
+
+**Submodule approach (recommended):**
+
+```bash
+cd imageOrganizer
+git submodule add https://github.com/aherna04/cursor-book.git tools/cursor-book
+```
+
+Wrapper [`scripts/build_development_book.py`](imageOrganizer/scripts/build_development_book.py):
+
+```python
+#!/usr/bin/env python3
+import runpy
+from pathlib import Path
+runpy.run_path(
+    Path(__file__).resolve().parent.parent / "tools/cursor-book/build_development_book.py",
+    run_name="__main__",
+)
+# Or subprocess with --config book.json
+```
+
+Simpler alternative: **copy script once** and keep in sync manually — submodule is cleaner for multi-repo use.
+
+Update skill in imageOrganizer to reference `book.json` and `tools/cursor-book/build_development_book.py`.
+
+Regenerate [`docs/DEVELOPMENT_BOOK.md`](imageOrganizer/docs/DEVELOPMENT_BOOK.md) to verify identical output.
+
+## Create repo and publish (public GitHub)
+
+Target: **https://github.com/aherna04/cursor-book** — public repo under [aherna04](https://github.com/aherna04).
+
+### Steps
+
+1. Create local repo at `/Users/alex/Documents/github/cursor-book`, add files, initial commit
+2. Create **public** remote via GitHub CLI:
+
+```bash
+cd /Users/alex/Documents/github/cursor-book
+gh repo create aherna04/cursor-book --public --source=. --remote=origin --push --description "Build a development book from Cursor plan files"
+```
+
+If repo already exists on GitHub, skip create and use:
+
+```bash
+git remote add origin https://github.com/aherna04/cursor-book.git
+git push -u origin main
+```
+
+3. README should link to `https://github.com/aherna04/cursor-book` and document clone:
+
+```bash
+git clone https://github.com/aherna04/cursor-book.git
+```
+
+4. Submodule in imageOrganizer (public HTTPS URL):
+
+```bash
+cd imageOrganizer
+git submodule add https://github.com/aherna04/cursor-book.git tools/cursor-book
+```
+
+5. Commit imageOrganizer migration; push to `aherna04/imageOrganizer`
+
+Optional: tag `v1.0.0` on `cursor-book` after migration verified.
+
+## Out of scope
+
+- PyPI packaging
+- Cursor marketplace / global skill publishing
+- Auto-discovery of plans without config (appendix-only mode could be a future `--auto` flag)
+- Editing `~/.cursor/plans/` source files
+
+## Verification
+
+1. `cursor-book` repo runs standalone with example config against copied plan files
+2. `python scripts/build_development_book.py` in imageOrganizer produces same chapter count (44) and TOC
+3. Generic skill reads correctly when copied to a fresh repo
+4. Public repo live at https://github.com/aherna04/cursor-book with README, script, and skill
+5. imageOrganizer submodule points at public URL; book regenerates with 44 chapters
 
 ---

@@ -1,11 +1,15 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { MediaFile, api } from "../api/client";
-import { personLabel } from "../utils/personLabel";
+import BulkEventAssignBar from "../components/BulkEventAssignBar";
+import BulkLabelEditors from "../components/BulkLabelEditors";
 import PhotoGridWithAlerts from "../components/PhotoGridWithAlerts";
 import PhotoDetail from "../components/PhotoDetail";
+import SingleFileLabelEditors from "../components/SingleFileLabelEditors";
 import { invalidateAfterDateChange } from "../utils/invalidateAfterDateChange";
+import { personLabel } from "../utils/personLabel";
+import { togglePhotoSelection } from "../utils/photoSelection";
 
 export default function BrowsePage() {
   const { kind, slug } = useParams();
@@ -13,6 +17,9 @@ export default function BrowsePage() {
   const qc = useQueryClient();
   const [search, setSearch] = useState("");
   const [detailFile, setDetailFile] = useState<MediaFile | null>(null);
+  const [labelMode, setLabelMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const selectionAnchorRef = useRef<number | null>(null);
 
   const { data: people = [] } = useQuery({
     queryKey: ["people"],
@@ -35,7 +42,7 @@ export default function BrowsePage() {
 
   const browseFilesKey = ["browse-files", kind, selectedPerson?.id, selectedTag?.id, selectedCameraName] as const;
 
-  const { data: photos } = useQuery({
+  const { data: photos, refetch: refetchPhotos } = useQuery({
     queryKey: browseFilesKey,
     queryFn: () => {
       if (selectedPerson) {
@@ -51,6 +58,11 @@ export default function BrowsePage() {
     },
     enabled: !!(selectedPerson || selectedTag || selectedCameraName),
   });
+
+  useEffect(() => {
+    setSelectedIds([]);
+    selectionAnchorRef.current = null;
+  }, [kind, slug]);
 
   const filteredPeople = useMemo(() => {
     const q = search.toLowerCase();
@@ -72,6 +84,41 @@ export default function BrowsePage() {
   const invalidateBrowseFiles = () => {
     qc.invalidateQueries({ queryKey: browseFilesKey });
   };
+
+  const toggleSelect = (id: number, event: React.MouseEvent) => {
+    const files = photos?.items ?? [];
+    const result = togglePhotoSelection(
+      files,
+      selectedIds,
+      id,
+      event.shiftKey,
+      selectionAnchorRef.current,
+    );
+    selectionAnchorRef.current = result.anchorIndex;
+    setSelectedIds(result.selectedIds);
+  };
+
+  const handleLabelsChange = (keepFileId?: number) => {
+    const openId = keepFileId ?? detailFile?.id;
+    invalidateBrowseFiles();
+    qc.invalidateQueries({ queryKey: ["events"] });
+    qc.invalidateQueries({ queryKey: ["people"] });
+    qc.invalidateQueries({ queryKey: ["tags"] });
+    if (openId) {
+      refetchPhotos().then(({ data: browseData }) => {
+        const still = browseData?.items.find((f) => f.id === openId);
+        setDetailFile(still ?? null);
+      });
+    }
+  };
+
+  const exitLabelMode = () => {
+    setLabelMode(false);
+    setSelectedIds([]);
+    selectionAnchorRef.current = null;
+  };
+
+  const selectedFiles = photos?.items.filter((f) => selectedIds.includes(f.id)) ?? [];
 
   return (
     <div>
@@ -158,22 +205,72 @@ export default function BrowsePage() {
         <div className="browse-results">
           {selectionLabel ? (
             <>
-              <div className="browse-results-header">
+              <div className={`browse-results-header${labelMode ? " browse-results-header-label-mode" : ""}`}>
                 <h3>{selectionLabel}</h3>
-                <span className="badge" style={{ background: "#6366f1", color: "#fff" }}>
-                  {photos?.total ?? 0} photos
-                </span>
+                <div className="browse-results-header-actions">
+                  <span className="badge" style={{ background: "#6366f1", color: "#fff" }}>
+                    {photos?.total ?? 0} photos
+                  </span>
+                  {labelMode ? (
+                    <button type="button" className="btn btn-secondary" onClick={exitLabelMode}>
+                      Done labeling
+                    </button>
+                  ) : (
+                    <button type="button" className="btn btn-secondary" onClick={() => setLabelMode(true)}>
+                      Label photos
+                    </button>
+                  )}
+                </div>
               </div>
+
+              {labelMode && (
+                <>
+                  <BulkEventAssignBar
+                    selectedIds={selectedIds}
+                    totalCount={photos?.total}
+                    onSelectAll={() => setSelectedIds(photos?.items.map((f) => f.id) ?? [])}
+                    onClear={() => {
+                      setSelectedIds([]);
+                      selectionAnchorRef.current = null;
+                    }}
+                  />
+
+                  {selectedIds.length === 1 && selectedFiles[0] && (
+                    <SingleFileLabelEditors
+                      file={selectedFiles[0]}
+                      onChange={handleLabelsChange}
+                      showTagSearch
+                    />
+                  )}
+                  {selectedIds.length >= 2 && (
+                    <BulkLabelEditors
+                      selectedFiles={selectedFiles}
+                      onChange={handleLabelsChange}
+                      showTagSearch
+                    />
+                  )}
+                </>
+              )}
+
               <PhotoGridWithAlerts
                 files={photos?.items ?? []}
                 activeDetailId={detailFile?.id}
-                onSelect={setDetailFile}
                 editableLabels
                 onLabelsChange={invalidateBrowseFiles}
                 onAlertsChange={() => {
                   invalidateAfterDateChange(qc);
                   invalidateBrowseFiles();
                 }}
+                {...(labelMode
+                  ? {
+                      selectedIds,
+                      onToggleSelect: toggleSelect,
+                      onOpenDetail: setDetailFile,
+                      multiSelectMode: true,
+                    }
+                  : {
+                      onSelect: setDetailFile,
+                    })}
               />
             </>
           ) : (

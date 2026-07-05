@@ -10,7 +10,7 @@ interface Props {
   selectedIds?: number[];
   activeDetailId?: number;
   onSelect?: (file: MediaFile) => void;
-  onToggleSelect?: (id: number) => void;
+  onToggleSelect?: (id: number, event: React.MouseEvent) => void;
   onOpenDetail?: (file: MediaFile) => void;
   onDoubleClick?: (file: MediaFile) => void;
   multiSelectMode?: boolean;
@@ -85,8 +85,8 @@ export default function PhotoGrid({
             onClick={
               splitSelectDetail
                 ? undefined
-                : () => {
-                    if (onToggleSelect) onToggleSelect(file.id);
+                : (e) => {
+                    if (onToggleSelect) onToggleSelect(file.id, e);
                     else onSelect?.(file);
                   }
             }
@@ -102,7 +102,7 @@ export default function PhotoGrid({
                   splitSelectDetail
                     ? (e) => {
                         e.stopPropagation();
-                        onToggleSelect!(file.id);
+                        onToggleSelect!(file.id, e);
                       }
                     : undefined
                 }

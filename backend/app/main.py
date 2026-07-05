@@ -82,7 +82,7 @@ from app.models import (
 from app.organizer import apply_operations, fix_dates_from_filename, preview_organize
 from app.scanner import scan_state, start_scan_background
 
-app = FastAPI(title="Image Organizer", version="2026.07.05")
+app = FastAPI(title="Image Organizer", version="2026.07.05a")
 
 app.add_middleware(
     CORSMiddleware,

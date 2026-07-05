@@ -1,6 +1,6 @@
 # Image Organizer — Development Book
 
-*Release 2026.07.05 · collected Cursor implementation plans*
+*Release 2026.07.05a · collected Cursor implementation plans*
 
 Related: [ARCHITECTURE.md](ARCHITECTURE.md) · [CHANGELOG.md](../CHANGELOG.md)
 
@@ -54,30 +54,34 @@ This book collects the Cursor agent implementation plans written while building 
 31. [Detail multi-tag select](#chapter-31-detail-multi-tag-select)
 32. [Split select vs detail](#chapter-32-split-select-vs-detail)
 33. [Fix thumbnail orientation](#chapter-33-fix-thumbnail-orientation)
+34. [Shift-click range select](#chapter-34-shift-click-range-select)
+35. [ESC close detail viewer](#chapter-35-esc-close-detail-viewer)
+36. [Recently used tags](#chapter-36-recently-used-tags)
+37. [Browse label mode](#chapter-37-browse-label-mode)
 
 ### Part V — Dates and Alerts
 
-34. [Filename date mismatch](#chapter-34-filename-date-mismatch)
-35. [Browser date correction](#chapter-35-browser-date-correction)
-36. [Photo grid alerts](#chapter-36-photo-grid-alerts)
-37. [Photo keyboard navigation](#chapter-37-photo-keyboard-navigation)
+38. [Filename date mismatch](#chapter-38-filename-date-mismatch)
+39. [Browser date correction](#chapter-39-browser-date-correction)
+40. [Photo grid alerts](#chapter-40-photo-grid-alerts)
+41. [Photo keyboard navigation](#chapter-41-photo-keyboard-navigation)
 
 ### Part VI — Dedupe and Integrity
 
-38. [Duplicate keeper defaults](#chapter-38-duplicate-keeper-defaults)
-39. [Fix tag counts after dedupe](#chapter-39-fix-tag-counts-after-dedupe)
-40. [Fix orphan tag counts](#chapter-40-fix-orphan-tag-counts)
+42. [Duplicate keeper defaults](#chapter-42-duplicate-keeper-defaults)
+43. [Fix tag counts after dedupe](#chapter-43-fix-tag-counts-after-dedupe)
+44. [Fix orphan tag counts](#chapter-44-fix-orphan-tag-counts)
 
 ### Part VII — Release and Meta
 
-41. [Version and changelog](#chapter-41-version-and-changelog)
-42. [Sidebar version badge](#chapter-42-sidebar-version-badge)
-43. [Save plans gitignore](#chapter-43-save-plans-gitignore)
-44. [Plans development book](#chapter-44-plans-development-book)
+45. [Version and changelog](#chapter-45-version-and-changelog)
+46. [Sidebar version badge](#chapter-46-sidebar-version-badge)
+47. [Save plans gitignore](#chapter-47-save-plans-gitignore)
+48. [Plans development book](#chapter-48-plans-development-book)
 
 ### Appendix — Unlisted Plans
 
-45. [Cursor book tool repo](#chapter-45-cursor-book-tool-repo)
+49. [Cursor book tool repo](#chapter-49-cursor-book-tool-repo)
 
 ### Skipped Duplicates
 
@@ -4514,11 +4518,403 @@ Thumbs regenerate on first grid load per file (lazy). No rescan needed. User can
 
 ---
 
+<a id="chapter-34-shift-click-range-select"></a>
+
+## Chapter 34: Shift-click range select
+
+> **Overview:** Add Shift+click range selection to the photo grid so selecting one photo then Shift+clicking another selects all visible photos between them (Inbox and Calendar day panel).
+
+## Context
+
+Inbox triage uses [`PhotoGrid`](frontend/src/components/PhotoGrid.tsx) with checkboxes (`splitSelectDetail` mode): checkbox toggles selection, thumbnail opens detail. Selection today is single-toggle only in [`Inbox.tsx`](frontend/src/pages/Inbox.tsx):
+
+```tsx
+const toggleSelect = (id: number) => {
+  setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+};
+```
+
+Same pattern in [`CalendarDayPanel.tsx`](frontend/src/components/CalendarDayPanel.tsx). Range is based on **current grid order** (`files` array), matching visible layout left-to-right.
+
+```mermaid
+flowchart LR
+  clickA[Click photo A] --> anchor[Store anchor index]
+  shiftClickB[Shift+click photo B] --> range[Select indices min..max]
+  range --> union[Union with existing selectedIds]
+```
+
+## Behavior
+
+| Action | Result |
+|--------|--------|
+| Click checkbox (no Shift) | Toggle that photo; set anchor to its index |
+| Shift+click checkbox | Select all photos from anchor through clicked index (inclusive); **union** with existing selection |
+| Shift+click with no anchor yet | Same as normal click (toggle + set anchor) |
+| Clear selection / filter change | Reset anchor (already clears `selectedIds`) |
+
+Thumbnail clicks remain detail-only (no selection change).
+
+## Implementation
+
+### 1. Shared helper
+
+New [`frontend/src/utils/photoSelection.ts`](frontend/src/utils/photoSelection.ts):
+
+```ts
+export function togglePhotoSelection(
+  files: MediaFile[],
+  selectedIds: number[],
+  clickedId: number,
+  shiftKey: boolean,
+  anchorIndex: number | null,
+): { selectedIds: number[]; anchorIndex: number }
+```
+
+- Find `clickedIndex` in `files`
+- If `shiftKey && anchorIndex !== null`: compute `[min, max]`, collect ids in slice, return `selectedIds` = unique union of prev + range ids; set `anchorIndex` to `clickedIndex`
+- Else: toggle clicked id; set `anchorIndex` to `clickedIndex`
+
+### 2. PhotoGrid
+
+In [`frontend/src/components/PhotoGrid.tsx`](frontend/src/components/PhotoGrid.tsx):
+
+- Change prop: `onToggleSelect?: (id: number, event: React.MouseEvent) => void`
+- Checkbox `onClick`: `onToggleSelect!(file.id, e)` (keep `stopPropagation`)
+- Card-level click path (non-split mode): pass event if present
+
+### 3. Consumers
+
+**[`Inbox.tsx`](frontend/src/pages/Inbox.tsx):**
+
+- `const selectionAnchorRef = useRef<number | null>(null)`
+- Replace `toggleSelect` to use `togglePhotoSelection(data?.items ?? [], ...)`
+- In `clearSelection`: also `selectionAnchorRef.current = null`
+
+**[`CalendarDayPanel.tsx`](frontend/src/components/CalendarDayPanel.tsx):** same pattern with its `files` list.
+
+### 4. CSS (optional)
+
+No change required — selected cards already show `.photo-card.selected` border.
+
+## Out of scope
+
+- Cmd/Ctrl+click additive selection
+- Shift+click on thumbnail (detail area)
+- Browse / Duplicates pages (no multi-select grid)
+
+## Verification
+
+1. Inbox: click checkbox on first photo in a row, Shift+click last photo in row → all intermediate photos selected
+2. Shift+click backward (right to left) → same range selected
+3. Normal click still toggles single item
+4. Thumbnail click still opens detail without changing selection
+5. Change inbox filter → selection cleared; next Shift+click starts fresh anchor
+6. Calendar day panel behaves the same
+
+---
+
+<a id="chapter-35-esc-close-detail-viewer"></a>
+
+## Chapter 35: ESC close detail viewer
+
+> **Overview:** Make Escape close the PhotoDetail drawer when the full-size lightbox is not open; lightbox still closes first if open.
+
+# ESC to close detail viewer
+
+## Problem
+
+[`PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx) already listens for Escape but only closes the **lightbox**:
+
+```tsx
+if (e.key === "Escape") {
+  if (lightboxOpen) {
+    e.stopPropagation();
+    setLightboxOpen(false);
+  }
+  return;  // drawer stays open
+}
+```
+
+Clicking the overlay or **Close** button calls `onClose()`; Escape does not.
+
+## Change
+
+**Single file:** [`frontend/src/components/PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx)
+
+Update the Escape branch:
+
+1. **Lightbox open** → close lightbox (unchanged)
+2. **Lightbox closed** → `e.preventDefault()`, call `onClose()` unless `isEditableTarget(e.target)` (same guard as arrow keys — don't yank the drawer while focus is in caption/rating inputs)
+
+Add `onClose` to the `useEffect` dependency array.
+
+```tsx
+if (e.key === "Escape") {
+  e.stopPropagation();
+  if (lightboxOpen) {
+    setLightboxOpen(false);
+  } else if (!isEditableTarget(e.target)) {
+    e.preventDefault();
+    onClose();
+  }
+  return;
+}
+```
+
+No CSS or parent changes — Inbox, Calendar, Browse all pass `onClose={() => setDetailFile(null)}` already.
+
+## Behavior summary
+
+| State | Escape |
+|-------|--------|
+| Full-size lightbox open | Close lightbox, keep drawer |
+| Drawer open, focus on grid/chrome | Close drawer |
+| Drawer open, focus in caption/input | No-op (avoid accidental close while typing) |
+
+## Verification
+
+1. Inbox → open photo detail → **Esc** closes drawer, grid visible
+2. Open detail → click image for lightbox → **Esc** closes lightbox only; **Esc** again closes drawer
+3. Focus caption field → **Esc** does not close drawer
+4. Arrow keys and **D** (mark delete) still work after change
+
+---
+
+<a id="chapter-36-recently-used-tags"></a>
+
+## Chapter 36: Recently used tags
+
+> **Overview:** Add a client-side "Recently used" tag row above the full tag list in bulk and single-file tag pickers, persisted in localStorage and updated whenever the user applies a tag.
+
+# Recently Used Tag List
+
+## Problem
+
+When bulk-tagging in Inbox (screenshot), the full tag cloud is long. Users repeatedly apply the same tags (e.g. "Bi-Plane", "Ft Lauderdale Air and Sea Show") and must scan or search every time.
+
+## Approach
+
+Persist a **most-recently-used (MRU) list of tag IDs** in `localStorage` (browser-only, no backend). Show a compact **Recently used** chip row in tag pickers when the search box is empty. Record a tag only when it is **applied** (assign/add/create-and-assign), not when removed.
+
+```mermaid
+flowchart LR
+  userClick[User applies tag] --> record[recordRecentTag id]
+  record --> storage[localStorage MRU list]
+  storage --> hook[useRecentTags hook]
+  hook --> ui[Recent chips row]
+  ui --> toggle[Same toggle as full list]
+```
+
+## New utility
+
+Add [`frontend/src/utils/recentTags.ts`](frontend/src/utils/recentTags.ts):
+
+- Storage key: `imageOrganizer.recentTagIds`
+- Cap: **12** IDs (MRU order, dedupe on insert)
+- Exports:
+  - `getRecentTagIds(): number[]` — read from localStorage (safe parse, default `[]`)
+  - `recordRecentTag(tagId: number): number[]` — prepend, dedupe, trim, persist, return new list
+  - `useRecentTags()` — React hook with `recentIds` state + `recordRecentTag` that updates state after persist (so UI re-renders immediately)
+
+No hooks folder exists today; a small hook colocated in this util file matches existing patterns in [`frontend/src/utils/`](frontend/src/utils/).
+
+## UI integration
+
+### 1. [`frontend/src/components/BulkLabelEditors.tsx`](frontend/src/components/BulkLabelEditors.tsx) (primary — Inbox bulk select)
+
+In the Tags section, between `LabelSearchInput` and the full chip grid:
+
+```
+Tags
+[Search tags...]
+Recently used          ← new label (only when row non-empty + search empty)
+[Bi-Plane] [Airshow] … ← same chipClass / coverage styling as main list
+[full tag cloud…]
+[+ Add tag]
+```
+
+Logic:
+
+- `const { recentIds, recordRecentTag } = useRecentTags()`
+- Resolve `recentTags` from `tags` by ID order in `recentIds`, dropping deleted tags
+- Show recent row when `!tagSearchQuery.trim() && recentTags.length > 0`
+- **Dedupe main list:** when search is empty, filter `visibleTags` to exclude IDs already shown in the recent row
+- **Record on apply:**
+  - `toggleTag`: call `recordRecentTag(tagId)` when `cov !== "all"` (assign path)
+  - `createTag.onSuccess`: record the new tag ID after assign
+
+### 2. [`frontend/src/components/FileTagPicker.tsx`](frontend/src/components/FileTagPicker.tsx) (single-file: Inbox 1-select, PhotoDetail, Calendar)
+
+Same layout and dedupe rules as bulk editor.
+
+- **Record on apply:**
+  - `toggle`: record when adding (`!selected.has(tagId)`)
+  - `create.onSuccess`: record new tag ID
+
+[`SingleFileLabelEditors.tsx`](frontend/src/components/SingleFileLabelEditors.tsx) and [`PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx) need no changes — they already render `FileTagPicker`.
+
+[`CalendarDayPanel.tsx`](frontend/src/components/CalendarDayPanel.tsx) does not pass `showTagSearch` today; recent tags still help there because the full cloud is unfiltered — no prop changes required.
+
+### Out of scope (minimal diff)
+
+- [`PhotoCardLabels.tsx`](frontend/src/components/PhotoCardLabels.tsx) — remove-only; no recording
+- [`BulkTagAssignBar.tsx`](frontend/src/components/BulkTagAssignBar.tsx) — appears unused; skip unless wired later
+- Backend / API changes — not needed
+
+## Styling
+
+Add light styles in [`frontend/src/index.css`](frontend/src/index.css), mirroring [`InboxUsedTagsBar`](frontend/src/components/InboxUsedTagsBar.tsx):
+
+- `.recent-tags` — section wrapper with small top margin after search
+- `.recent-tags-label` — muted label (`Recently used`, ~0.8rem, `#8891a0`)
+- `.recent-tags-chips` — flex wrap, same gap as existing tag chips (`0.35rem`)
+
+Reuse existing `.badge.tag-badge`, `.active`, and `.badge-partial` classes — no new chip variants.
+
+## Behavior details
+
+| Case | Behavior |
+|------|----------|
+| Search query non-empty | Hide recent row; show filtered full list only |
+| Tag deleted from library | Silently omitted from recent row (ID not in `allTags`) |
+| Remove tag from selection | Do not update MRU |
+| Same tag applied again | Moves to front of MRU |
+| Fresh browser / empty MRU | Recent row hidden; UI unchanged from today |
+
+## Verification
+
+Manual smoke test in Inbox:
+
+1. Select multiple photos → apply 2–3 tags → confirm **Recently used** row appears above the cloud with those tags first
+2. Deselect, select another batch → recent tags one-click apply without searching
+3. Type in search → recent row hides; clearing search restores it
+4. Reload page → recent tags persist
+5. Single-photo select and PhotoDetail drawer → same recent row behavior
+
+No frontend test suite exists; manual verification only unless you want Vitest added later.
+
+---
+
+<a id="chapter-37-browse-label-mode"></a>
+
+## Chapter 37: Browse label mode
+
+> **Overview:** Add an explicit "Label photos" mode to Browse that enables Inbox-style multi-select and bulk event/tag/people editing via existing BulkLabelEditors components, without changing backend APIs.
+
+# Browse Multi-Tagging (Label Mode)
+
+## Problem
+
+Browse ([`frontend/src/pages/Browse.tsx`](frontend/src/pages/Browse.tsx)) only supports single-photo editing via `PhotoDetail` and per-card tag removal via `PhotoCardLabels`. There is no way to select multiple photos and apply tags or events in bulk — unlike Inbox and Calendar day panel.
+
+## Approach
+
+Add an explicit **Label photos** mode toggle on Browse results. When off, behavior stays unchanged (click thumbnail → detail). When on, reuse the same selection + bulk labeling stack already proven in [`Inbox.tsx`](frontend/src/pages/Inbox.tsx) and [`CalendarDayPanel.tsx`](frontend/src/components/CalendarDayPanel.tsx).
+
+```mermaid
+flowchart TD
+  browseNormal[Browse normal] -->|Label photos| labelMode[Label mode on]
+  labelMode --> checkboxes[Checkboxes + shift-range select]
+  labelMode --> bulkBar[BulkEventAssignBar]
+  labelMode --> editors[SingleFileLabelEditors or BulkLabelEditors]
+  labelMode -->|Done| browseNormal
+  editors --> apis[Existing assign/unassign APIs]
+```
+
+No backend changes — [`BulkLabelEditors`](frontend/src/components/BulkLabelEditors.tsx) already calls `assignTagIds`, `assignEventIds`, etc.
+
+## Changes — [`frontend/src/pages/Browse.tsx`](frontend/src/pages/Browse.tsx)
+
+### 1. New state and refs
+
+- `labelMode: boolean` — whether labeling UI is active
+- `selectedIds: number[]` — grid selection (only meaningful when `labelMode`)
+- `selectionAnchorRef` — for shift-click range select ([`photoSelection.ts`](frontend/src/utils/photoSelection.ts))
+- Keep existing `detailFile` for lightbox/detail while labeling
+
+### 2. Mode toggle in results header
+
+In `.browse-results-header` (next to the photo count badge), add:
+
+- **Label photos** button when `labelMode === false`
+- **Done labeling** button when `labelMode === true` (exits mode, clears selection)
+
+Only show when a browse filter is active (`selectionLabel` is set).
+
+### 3. Label-mode UI (mirror Inbox/Calendar)
+
+When `labelMode && selectionLabel`:
+
+```tsx
+<BulkEventAssignBar
+  selectedIds={selectedIds}
+  totalCount={photos?.total}
+  onSelectAll={() => setSelectedIds(photos?.items.map(f => f.id) ?? [])}
+  onClear={() => { setSelectedIds([]); selectionAnchorRef.current = null; }}
+/>
+
+{selectedIds.length === 1 && selectedFiles[0] && (
+  <SingleFileLabelEditors file={selectedFiles[0]} onChange={handleLabelsChange} showTagSearch />
+)}
+{selectedIds.length >= 2 && (
+  <BulkLabelEditors selectedFiles={selectedFiles} onChange={handleLabelsChange} showTagSearch />
+)}
+```
+
+- `selectedFiles` — filter `photos?.items` by `selectedIds`
+- `toggleSelect` — same as Calendar/Inbox using `togglePhotoSelection`
+- `handleLabelsChange` — `invalidateBrowseFiles()` + invalidate `events`, `people`, `tags` (and sync `detailFile` from refetched list if open, same pattern as Calendar's `handleDateChange`)
+
+### 4. PhotoGrid props — conditional on mode
+
+| Mode | Grid props |
+|------|------------|
+| Normal | `onSelect={setDetailFile}`, `editableLabels`, existing alerts callbacks |
+| Label | `selectedIds`, `onToggleSelect`, `onOpenDetail={setDetailFile}`, `multiSelectMode`, `editableLabels`, same invalidation callbacks |
+
+Split select/detail behavior (checkbox vs thumbnail) comes from passing both `onToggleSelect` and `fromOpenDetail already in [`PhotoGrid.tsx`](frontend/src/components/PhotoGrid.tsx).
+
+### 5. Reset rules
+
+- **Exit label mode** → clear `selectedIds`, reset anchor, keep `detailFile` as-is
+- **Browse route change** (`kind` / `slug` via `useEffect`) → clear `selectedIds` and anchor; optionally keep `labelMode` on so user can label the next album without re-clicking
+- **Close PhotoDetail** → unchanged
+
+## Styling
+
+Minimal addition in [`frontend/src/index.css`](frontend/src/index.css):
+
+- `.browse-results-header-actions` — flex row for count badge + mode toggle button
+- Active label mode: optional subtle highlight on results header (e.g. indigo border) so the mode is visually obvious — reuse existing `.bulk-event-bar` border color `#6366f1`
+
+No new components required.
+
+## Out of scope
+
+- **Events page** ([`Events.tsx`](frontend/src/pages/Events.tsx)) — same gap, but user asked for Browse only
+- **Always-on checkboxes** — avoided; explicit mode keeps the default browse view clean for large sets (681+ photos)
+- Backend / new API endpoints
+
+## Verification
+
+Manual smoke test on `/browse/tag/ft-lauderdale-air-and-sea-show` (or any tag with many photos):
+
+1. Click **Label photos** → checkboxes appear on cards
+2. Select 2+ photos → `BulkLabelEditors` appears with Events, People, Tags (+ recently used tags row)
+3. Apply a tag → all selected photos update; cards refresh
+4. Shift-click range select works
+5. **Select all N** / **Clear** in bulk bar work
+6. Click **Done labeling** → checkboxes hide; single-click browse restored
+7. Single photo selected in label mode → `SingleFileLabelEditors` with tag search
+8. Thumbnail still opens `PhotoDetail` while in label mode
+
+---
+
 # Part V — Dates and Alerts
 
-<a id="chapter-34-filename-date-mismatch"></a>
+<a id="chapter-38-filename-date-mismatch"></a>
 
-## Chapter 34: Filename date mismatch
+## Chapter 38: Filename date mismatch
 
 > **Overview:** Detect when organize preview uses a different date than embedded in the filename (e.g. prefix 2016-11-18 vs IMG_20150717), flag mismatches on the Review preview table, and let the user apply filename-based dates to fix target paths and DB capture_date.
 
@@ -4652,9 +5048,9 @@ After fix, row should show corrected path and clear mismatch flag.
 
 ---
 
-<a id="chapter-35-browser-date-correction"></a>
+<a id="chapter-39-browser-date-correction"></a>
 
-## Chapter 35: Browser date correction
+## Chapter 39: Browser date correction
 
 > **Overview:** Add manual and filename-based capture date correction in the calendar day panel (and matching single/bulk editor surfaces), backed by general file APIs and extended filename parsing for patterns like Screenshot_2014-11-27.
 
@@ -4801,9 +5197,9 @@ Reuse `.preview-date-warning` color or add `.capture-date-hint` for filename-sug
 
 ---
 
-<a id="chapter-36-photo-grid-alerts"></a>
+<a id="chapter-40-photo-grid-alerts"></a>
 
-## Chapter 36: Photo grid alerts
+## Chapter 40: Photo grid alerts
 
 > **Overview:** Add a reusable alerts bar and per-card badges on all photo grids, surfacing filename date mismatches and duplicate-group membership with an optional "Alerts only" filter.
 
@@ -4934,9 +5330,9 @@ Reuse `.capture-date-hint` yellow for date badge consistency.
 
 ---
 
-<a id="chapter-37-photo-keyboard-navigation"></a>
+<a id="chapter-41-photo-keyboard-navigation"></a>
 
-## Chapter 37: Photo keyboard navigation
+## Chapter 41: Photo keyboard navigation
 
 > **Overview:** Add linear arrow-key navigation (prev/next) through the current photo set in PhotoDetail and the lightbox, wired from Calendar day panel and other grid pages that open detail.
 
@@ -5045,9 +5441,9 @@ CSS in [`index.css`](frontend/src/index.css):
 
 # Part VI — Dedupe and Integrity
 
-<a id="chapter-38-duplicate-keeper-defaults"></a>
+<a id="chapter-42-duplicate-keeper-defaults"></a>
 
-## Chapter 38: Duplicate keeper defaults
+## Chapter 42: Duplicate keeper defaults
 
 > **Overview:** Prefer non-copy filenames (no `(1)` / `_(1)` suffix) as default duplicate keeper when groups are built, and merge events/people/tags onto the keeper when a non-keeper duplicate is deleted from the Duplicates page.
 
@@ -5162,9 +5558,9 @@ Mirror backend regex for optional UI badge `(copy)` on cards; not required for c
 
 ---
 
-<a id="chapter-39-fix-tag-counts-after-dedupe"></a>
+<a id="chapter-43-fix-tag-counts-after-dedupe"></a>
 
-## Chapter 39: Fix tag counts after dedupe
+## Chapter 43: Fix tag counts after dedupe
 
 > **Overview:** Tag sidebar counts stay at 12 after duplicate cleanup because dismissed copies still retain label associations until Review apply deletes them, and the UI does not refresh tag/people counts after apply. Fix both the backend dismiss flow and frontend cache invalidation.
 
@@ -5267,9 +5663,9 @@ No schema migration required.
 
 ---
 
-<a id="chapter-40-fix-orphan-tag-counts"></a>
+<a id="chapter-44-fix-orphan-tag-counts"></a>
 
-## Chapter 40: Fix orphan tag counts
+## Chapter 44: Fix orphan tag counts
 
 > **Overview:** The original dedupe/cache fixes are already in place, but sidebar tag counts still include orphaned `file_tags` rows for deleted files because count queries do not join `files` and SQLite foreign keys are disabled. Fix count SQL, enable FK enforcement, and clean up existing orphan rows.
 
@@ -5378,9 +5774,9 @@ Once `GET /api/tags` returns 6, the Browse sidebar (`tags.photo_count`) will mat
 
 # Part VII — Release and Meta
 
-<a id="chapter-41-version-and-changelog"></a>
+<a id="chapter-45-version-and-changelog"></a>
 
-## Chapter 41: Version and changelog
+## Chapter 45: Version and changelog
 
 > **Overview:** Introduce date-based versioning (2026.07.04), add CHANGELOG.md documenting the initial release, sync version strings in backend and frontend, then commit, tag, and push to GitHub.
 
@@ -5468,9 +5864,9 @@ Optional (if `gh` is available): `gh release create 2026.07.04 --notes-file CHAN
 
 ---
 
-<a id="chapter-42-sidebar-version-badge"></a>
+<a id="chapter-46-sidebar-version-badge"></a>
 
-## Chapter 42: Sidebar version badge
+## Chapter 46: Sidebar version badge
 
 > **Overview:** Display the app version (`2026.07.04`) in the sidebar directly below the "Image Organizer" heading, sourced from `frontend/package.json` so it stays in sync with releases.
 
@@ -5535,9 +5931,9 @@ No new API endpoint or duplicate constant file.
 
 ---
 
-<a id="chapter-43-save-plans-gitignore"></a>
+<a id="chapter-47-save-plans-gitignore"></a>
 
-## Chapter 43: Save plans gitignore
+## Chapter 47: Save plans gitignore
 
 > **Overview:** Copy all Cursor plan files into `imageOrganizer/.cursor/plans/` and add that directory to `.gitignore` so plans stay local and are never pushed to GitHub.
 
@@ -5603,9 +5999,9 @@ git -C imageOrganizer check-ignore -v .cursor/plans/foo.plan.md  # confirms igno
 
 ---
 
-<a id="chapter-44-plans-development-book"></a>
+<a id="chapter-48-plans-development-book"></a>
 
-## Chapter 44: Plans development book
+## Chapter 48: Plans development book
 
 > **Overview:** Consolidate all 37 Image Organizer Cursor plan files into a single committed markdown book at docs/DEVELOPMENT_BOOK.md, organized by topic with a table of contents and readable chapter structure.
 
@@ -5727,9 +6123,9 @@ No change to the architecture cursor rule scope (book is design history, not liv
 
 ---
 
-<a id="chapter-45-cursor-book-tool-repo"></a>
+<a id="chapter-49-cursor-book-tool-repo"></a>
 
-## Chapter 45: Cursor book tool repo
+## Chapter 49: Cursor book tool repo
 
 > **Overview:** Extract the development book builder into a standalone repo with a config-driven script and a reusable Cursor skill; migrate imageOrganizer to a thin `book.yaml` + wrapper script.
 

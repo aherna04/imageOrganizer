@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Tag, api } from "../api/client";
 import LabelSearchInput from "./LabelSearchInput";
 import { filterTagsByQuery } from "../utils/filterLabelsByQuery";
+import { useRecentTags } from "../utils/recentTags";
 
 interface Props {
   fileId: number;
@@ -20,6 +21,7 @@ export default function FileTagPicker({ fileId, fileTags, onChange, showTagSearc
   const [newName, setNewName] = useState("");
   const [showNew, setShowNew] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const { recentIds, recordRecentTag } = useRecentTags();
   const [selectedIds, setSelectedIds] = useState(() => tagIds(fileTags));
   const propIdsKey = [...tagIds(fileTags)].sort((a, b) => a - b).join(",");
 
@@ -34,19 +36,30 @@ export default function FileTagPicker({ fileId, fileTags, onChange, showTagSearc
 
   const selected = new Set(selectedIds);
   const alwaysInclude = useMemo(() => new Set(selectedIds), [selectedIds]);
-  const visibleTags = useMemo(
-    () => (showTagSearch ? filterTagsByQuery(allTags, searchQuery, alwaysInclude) : allTags),
-    [allTags, searchQuery, alwaysInclude, showTagSearch],
-  );
+  const searchActive = searchQuery.trim().length > 0;
+
+  const recentTags = useMemo(() => {
+    const byId = new Map(allTags.map((t) => [t.id, t]));
+    return recentIds.map((id) => byId.get(id)).filter((t): t is Tag => t != null);
+  }, [allTags, recentIds]);
+
+  const visibleTags = useMemo(() => {
+    let list = showTagSearch ? filterTagsByQuery(allTags, searchQuery, alwaysInclude) : allTags;
+    if (!searchActive && recentTags.length > 0) {
+      const recentSet = new Set(recentTags.map((t) => t.id));
+      list = list.filter((t) => !recentSet.has(t.id));
+    }
+    return list;
+  }, [allTags, searchQuery, alwaysInclude, showTagSearch, searchActive, recentTags]);
 
   const toggle = async (tagId: number) => {
     const prev = selectedIds;
-    const next = selected.has(tagId)
-      ? selectedIds.filter((id) => id !== tagId)
-      : [...selectedIds, tagId];
+    const adding = !selected.has(tagId);
+    const next = adding ? [...selectedIds, tagId] : selectedIds.filter((id) => id !== tagId);
     setSelectedIds(next);
     try {
       await api.updateFileTags(fileId, next);
+      if (adding) recordRecentTag(tagId);
       onChange();
     } catch {
       setSelectedIds(prev);
@@ -64,6 +77,7 @@ export default function FileTagPicker({ fileId, fileTags, onChange, showTagSearc
       });
       try {
         await api.updateFileTags(fileId, next);
+        recordRecentTag(tag.id);
         setNewName("");
         setShowNew(false);
         onChange();
@@ -78,6 +92,23 @@ export default function FileTagPicker({ fileId, fileTags, onChange, showTagSearc
       <label style={{ fontSize: "0.875rem", color: "#aab0bc" }}>Tags</label>
       {showTagSearch && (
         <LabelSearchInput value={searchQuery} onChange={setSearchQuery} />
+      )}
+      {!searchActive && recentTags.length > 0 && (
+        <div className="recent-tags">
+          <span className="recent-tags-label">Recently used</span>
+          <div className="recent-tags-chips">
+            {recentTags.map((tag) => (
+              <button
+                key={tag.id}
+                type="button"
+                className={`badge tag-badge ${selected.has(tag.id) ? "active" : ""}`}
+                onClick={() => toggle(tag.id)}
+              >
+                {tag.name}
+              </button>
+            ))}
+          </div>
+        </div>
       )}
       {showTagSearch && visibleTags.length === 0 ? (
         <p className="label-search-empty">No tags match — try another term</p>

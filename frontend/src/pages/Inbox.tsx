@@ -10,6 +10,7 @@ import PhotoDetail from "../components/PhotoDetail";
 import SingleFileLabelEditors from "../components/SingleFileLabelEditors";
 import BulkLabelEditors from "../components/BulkLabelEditors";
 import { invalidateAfterDateChange } from "../utils/invalidateAfterDateChange";
+import { togglePhotoSelection } from "../utils/photoSelection";
 
 type InboxFilter = "all" | "unlabeled" | "delete_queue";
 
@@ -60,6 +61,7 @@ export default function Inbox() {
   });
 
   const wasScanning = useRef(false);
+  const selectionAnchorRef = useRef<number | null>(null);
   useEffect(() => {
     if (wasScanning.current && status && !status.running) {
       refetch();
@@ -81,6 +83,7 @@ export default function Inbox() {
   const clearSelection = () => {
     setSelectedIds([]);
     setDetailFile(null);
+    selectionAnchorRef.current = null;
   };
 
   const clearFilters = () => {
@@ -125,8 +128,17 @@ export default function Inbox() {
     clearSelection();
   };
 
-  const toggleSelect = (id: number) => {
-    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+  const toggleSelect = (id: number, event: React.MouseEvent) => {
+    const files = data?.items ?? [];
+    const result = togglePhotoSelection(
+      files,
+      selectedIds,
+      id,
+      event.shiftKey,
+      selectionAnchorRef.current,
+    );
+    selectionAnchorRef.current = result.anchorIndex;
+    setSelectedIds(result.selectedIds);
   };
 
   const handleLabelsChange = () => {
@@ -261,7 +273,10 @@ export default function Inbox() {
         selectedIds={selectedIds}
         totalCount={data?.total}
         onSelectAll={() => setSelectedIds(data?.items.map((f) => f.id) ?? [])}
-        onClear={() => setSelectedIds([])}
+        onClear={() => {
+          setSelectedIds([]);
+          selectionAnchorRef.current = null;
+        }}
       />
 
       {inboxFilter === "delete_queue" && selectedIds.length > 0 && (

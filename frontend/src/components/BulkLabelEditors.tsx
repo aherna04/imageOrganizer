@@ -5,6 +5,7 @@ import CaptureDateEditor from "./CaptureDateEditor";
 import LabelSearchInput from "./LabelSearchInput";
 import { hasDuplicateName, personLabel } from "../utils/personLabel";
 import { filterTagsByQuery } from "../utils/filterLabelsByQuery";
+import { useRecentTags } from "../utils/recentTags";
 
 type Coverage = "all" | "some" | "none";
 
@@ -41,6 +42,7 @@ export default function BulkLabelEditors({ selectedFiles, onChange, showTagSearc
   const [showNewTag, setShowNewTag] = useState(false);
   const [newTagName, setNewTagName] = useState("");
   const [tagSearchQuery, setTagSearchQuery] = useState("");
+  const { recentIds, recordRecentTag } = useRecentTags();
 
   const { data: events = [] } = useQuery({ queryKey: ["events"], queryFn: api.listEvents });
   const { data: people = [] } = useQuery({ queryKey: ["people"], queryFn: api.listPeople });
@@ -60,13 +62,23 @@ export default function BulkLabelEditors({ selectedFiles, onChange, showTagSearc
     return ids;
   }, [tags, selectedFiles]);
 
-  const visibleTags = useMemo(
-    () =>
-      showTagSearch
-        ? filterTagsByQuery(tags, tagSearchQuery, alwaysIncludeTagIds)
-        : tags,
-    [tags, tagSearchQuery, alwaysIncludeTagIds, showTagSearch],
-  );
+  const tagSearchActive = tagSearchQuery.trim().length > 0;
+
+  const recentTags = useMemo(() => {
+    const byId = new Map(tags.map((t) => [t.id, t]));
+    return recentIds.map((id) => byId.get(id)).filter((t): t is (typeof tags)[number] => t != null);
+  }, [tags, recentIds]);
+
+  const visibleTags = useMemo(() => {
+    let list = showTagSearch
+      ? filterTagsByQuery(tags, tagSearchQuery, alwaysIncludeTagIds)
+      : tags;
+    if (!tagSearchActive && recentTags.length > 0) {
+      const recentSet = new Set(recentTags.map((t) => t.id));
+      list = list.filter((t) => !recentSet.has(t.id));
+    }
+    return list;
+  }, [tags, tagSearchQuery, alwaysIncludeTagIds, showTagSearch, tagSearchActive, recentTags]);
 
   const toggleEvent = async (eventId: number, cov: Coverage) => {
     if (cov === "all") {
@@ -96,6 +108,7 @@ export default function BulkLabelEditors({ selectedFiles, onChange, showTagSearc
       await api.unassignTagIds([tagId], fileIds);
     } else {
       await api.assignTagIds([tagId], fileIds);
+      recordRecentTag(tagId);
     }
     onChange();
   };
@@ -130,8 +143,10 @@ export default function BulkLabelEditors({ selectedFiles, onChange, showTagSearc
     mutationFn: async () => {
       const tag = await api.createTag(newTagName.trim());
       await api.assignTagIds([tag.id], fileIds);
+      return tag;
     },
-    onSuccess: () => {
+    onSuccess: (tag) => {
+      recordRecentTag(tag.id);
       qc.invalidateQueries({ queryKey: ["tags"] });
       setNewTagName("");
       setShowNewTag(false);
@@ -281,6 +296,26 @@ export default function BulkLabelEditors({ selectedFiles, onChange, showTagSearc
         <label style={{ fontSize: "0.875rem", color: "#aab0bc" }}>Tags</label>
         {showTagSearch && (
           <LabelSearchInput value={tagSearchQuery} onChange={setTagSearchQuery} />
+        )}
+        {!tagSearchActive && recentTags.length > 0 && (
+          <div className="recent-tags">
+            <span className="recent-tags-label">Recently used</span>
+            <div className="recent-tags-chips">
+              {recentTags.map((tag) => {
+                const cov = tagCoverage(tag.id);
+                return (
+                  <button
+                    key={tag.id}
+                    type="button"
+                    className={chipClass("badge tag-badge", cov)}
+                    onClick={() => toggleTag(tag.id, cov)}
+                  >
+                    {tag.name}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         )}
         {showTagSearch && visibleTags.length === 0 ? (
           <p className="label-search-empty">No tags match — try another term</p>

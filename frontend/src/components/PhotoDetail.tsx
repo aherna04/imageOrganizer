@@ -103,9 +103,12 @@ export default function PhotoDetail({
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
+        e.stopPropagation();
         if (lightboxOpen) {
-          e.stopPropagation();
           setLightboxOpen(false);
+        } else if (!isEditableTarget(e.target)) {
+          e.preventDefault();
+          onClose();
         }
         return;
       }
@@ -131,7 +134,7 @@ export default function PhotoDetail({
 
     window.addEventListener("keydown", onKey, true);
     return () => window.removeEventListener("keydown", onKey, true);
-  }, [canNavigate, files, file.id, onChangeFile, lightboxOpen, acting, deleteQueueMode, handleMarkDelete]);
+  }, [canNavigate, files, file.id, onChangeFile, lightboxOpen, acting, deleteQueueMode, handleMarkDelete, onClose]);
 
   const saveMeta = useMutation({
     mutationFn: () =>

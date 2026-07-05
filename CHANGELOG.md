@@ -2,6 +2,18 @@
 
 Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
+## [2026.07.05a] - 2026-07-05
+
+### Added
+
+- **Recently used** tag row in bulk and single-file tag pickers (localStorage MRU, up to 12 tags)
+- Browse **Label photos** mode: multi-select with bulk event/tag/people editors (same as Inbox)
+
+### Changed
+
+- Inbox and Calendar: **Shift-click** range selection in photo grid
+- Photo detail: **Esc** closes drawer when lightbox is closed (skipped when focus is in caption/rating inputs)
+
 ## [2026.07.05] - 2026-07-05
 
 ### Added

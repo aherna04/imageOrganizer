@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MediaFile, CalendarDayFilter, CalendarMediaType, api } from "../api/client";
 import BulkEventAssignBar from "./BulkEventAssignBar";
 import PhotoGridWithAlerts from "./PhotoGridWithAlerts";
@@ -7,6 +7,7 @@ import PhotoDetail from "./PhotoDetail";
 import SingleFileLabelEditors from "./SingleFileLabelEditors";
 import BulkLabelEditors from "./BulkLabelEditors";
 import { invalidateAfterDateChange } from "../utils/invalidateAfterDateChange";
+import { togglePhotoSelection } from "../utils/photoSelection";
 
 interface Props {
   date: string;
@@ -20,6 +21,7 @@ export default function CalendarDayPanel({ date, location, mediaType, filter, on
   const qc = useQueryClient();
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [detailFile, setDetailFile] = useState<MediaFile | null>(null);
+  const selectionAnchorRef = useRef<number | null>(null);
 
   const { data, refetch } = useQuery({
     queryKey: ["calendar-day", date, location, filter, mediaType],
@@ -29,10 +31,20 @@ export default function CalendarDayPanel({ date, location, mediaType, filter, on
   useEffect(() => {
     setSelectedIds([]);
     setDetailFile(null);
+    selectionAnchorRef.current = null;
   }, [date, location, filter, mediaType]);
 
-  const toggleSelect = (id: number) => {
-    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+  const toggleSelect = (id: number, event: React.MouseEvent) => {
+    const files = data?.items ?? [];
+    const result = togglePhotoSelection(
+      files,
+      selectedIds,
+      id,
+      event.shiftKey,
+      selectionAnchorRef.current,
+    );
+    selectionAnchorRef.current = result.anchorIndex;
+    setSelectedIds(result.selectedIds);
   };
 
   const handleLabelsChange = () => {
@@ -70,7 +82,10 @@ export default function CalendarDayPanel({ date, location, mediaType, filter, on
         selectedIds={selectedIds}
         totalCount={data?.total}
         onSelectAll={() => setSelectedIds(data?.items.map((f) => f.id) ?? [])}
-        onClear={() => setSelectedIds([])}
+        onClear={() => {
+          setSelectedIds([]);
+          selectionAnchorRef.current = null;
+        }}
       />
 
       {selectedIds.length === 1 && selectedFiles[0] && (

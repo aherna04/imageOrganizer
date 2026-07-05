@@ -915,6 +915,127 @@ button {
   gap: 1rem;
 }
 
+.review-queue-panel {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #0f1117;
+  border: 1px solid #6366f1;
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.review-queue-panel-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.review-queue-panel-title {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.review-queue-empty {
+  margin: 0;
+  color: #8891a0;
+  font-size: 0.875rem;
+}
+
+.review-queue-list {
+  max-height: 40vh;
+  overflow-y: auto;
+}
+
+.apply-panel {
+  margin-top: 1rem;
+}
+
+.apply-panel-compact {
+  margin-top: 0;
+}
+
+.apply-panel-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.apply-panel-errors {
+  color: #f87171;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+.collapsible-section {
+  margin-bottom: 1rem;
+  border: 1px solid #2a2f3a;
+  border-radius: 10px;
+  background: #161922;
+}
+
+.collapsible-section-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid transparent;
+}
+
+.collapsible-section:has(.collapsible-section-body) .collapsible-section-header {
+  border-bottom-color: #2a2f3a;
+}
+
+.collapsible-section-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: none;
+  border: none;
+  color: #e8eaed;
+  cursor: pointer;
+  padding: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.collapsible-section-toggle:hover {
+  color: #a5b4fc;
+}
+
+.collapsible-section-chevron {
+  color: #8891a0;
+  font-size: 0.85rem;
+  width: 1rem;
+  text-align: center;
+}
+
+.collapsible-section-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.collapsible-section-body {
+  padding: 0.85rem;
+}
+
+.collapsible-section-body-scroll {
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.preview-table-wrap {
+  overflow-x: auto;
+}
+
 .settings-grid {
   max-width: 600px;
 }

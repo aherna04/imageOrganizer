@@ -1,6 +1,6 @@
 # Image Organizer — Development Book
 
-*Release 2026.07.05a · collected Cursor implementation plans*
+*Release 2026.07.05b · collected Cursor implementation plans*
 
 Related: [ARCHITECTURE.md](ARCHITECTURE.md) · [CHANGELOG.md](../CHANGELOG.md)
 
@@ -43,45 +43,47 @@ This book collects the Cursor agent implementation plans written while building 
 23. [Inbox camera filters](#chapter-23-inbox-camera-filters)
 24. [Cameras nav page](#chapter-24-cameras-nav-page)
 25. [Fix stale review preview](#chapter-25-fix-stale-review-preview)
+26. [Review page layout](#chapter-26-review-page-layout)
 
 ### Part IV — Labels and Photo UX
 
-26. [Photo tags feature](#chapter-26-photo-tags-feature)
-27. [Removable grid labels](#chapter-27-removable-grid-labels)
-28. [Bulk chip label editors](#chapter-28-bulk-chip-label-editors)
-29. [People bulk and CRUD](#chapter-29-people-bulk-and-crud)
-30. [People name browse links](#chapter-30-people-name-browse-links)
-31. [Detail multi-tag select](#chapter-31-detail-multi-tag-select)
-32. [Split select vs detail](#chapter-32-split-select-vs-detail)
-33. [Fix thumbnail orientation](#chapter-33-fix-thumbnail-orientation)
-34. [Shift-click range select](#chapter-34-shift-click-range-select)
-35. [ESC close detail viewer](#chapter-35-esc-close-detail-viewer)
-36. [Recently used tags](#chapter-36-recently-used-tags)
-37. [Browse label mode](#chapter-37-browse-label-mode)
+27. [Photo tags feature](#chapter-27-photo-tags-feature)
+28. [Removable grid labels](#chapter-28-removable-grid-labels)
+29. [Bulk chip label editors](#chapter-29-bulk-chip-label-editors)
+30. [People bulk and CRUD](#chapter-30-people-bulk-and-crud)
+31. [People name browse links](#chapter-31-people-name-browse-links)
+32. [Detail multi-tag select](#chapter-32-detail-multi-tag-select)
+33. [Split select vs detail](#chapter-33-split-select-vs-detail)
+34. [Fix thumbnail orientation](#chapter-34-fix-thumbnail-orientation)
+35. [Shift-click range select](#chapter-35-shift-click-range-select)
+36. [ESC close detail viewer](#chapter-36-esc-close-detail-viewer)
+37. [Recently used tags](#chapter-37-recently-used-tags)
+38. [Browse label mode](#chapter-38-browse-label-mode)
+39. [Tags page search](#chapter-39-tags-page-search)
 
 ### Part V — Dates and Alerts
 
-38. [Filename date mismatch](#chapter-38-filename-date-mismatch)
-39. [Browser date correction](#chapter-39-browser-date-correction)
-40. [Photo grid alerts](#chapter-40-photo-grid-alerts)
-41. [Photo keyboard navigation](#chapter-41-photo-keyboard-navigation)
+40. [Filename date mismatch](#chapter-40-filename-date-mismatch)
+41. [Browser date correction](#chapter-41-browser-date-correction)
+42. [Photo grid alerts](#chapter-42-photo-grid-alerts)
+43. [Photo keyboard navigation](#chapter-43-photo-keyboard-navigation)
 
 ### Part VI — Dedupe and Integrity
 
-42. [Duplicate keeper defaults](#chapter-42-duplicate-keeper-defaults)
-43. [Fix tag counts after dedupe](#chapter-43-fix-tag-counts-after-dedupe)
-44. [Fix orphan tag counts](#chapter-44-fix-orphan-tag-counts)
+44. [Duplicate keeper defaults](#chapter-44-duplicate-keeper-defaults)
+45. [Fix tag counts after dedupe](#chapter-45-fix-tag-counts-after-dedupe)
+46. [Fix orphan tag counts](#chapter-46-fix-orphan-tag-counts)
 
 ### Part VII — Release and Meta
 
-45. [Version and changelog](#chapter-45-version-and-changelog)
-46. [Sidebar version badge](#chapter-46-sidebar-version-badge)
-47. [Save plans gitignore](#chapter-47-save-plans-gitignore)
-48. [Plans development book](#chapter-48-plans-development-book)
+47. [Version and changelog](#chapter-47-version-and-changelog)
+48. [Sidebar version badge](#chapter-48-sidebar-version-badge)
+49. [Save plans gitignore](#chapter-49-save-plans-gitignore)
+50. [Plans development book](#chapter-50-plans-development-book)
 
 ### Appendix — Unlisted Plans
 
-49. [Cursor book tool repo](#chapter-49-cursor-book-tool-repo)
+51. [Cursor book tool repo](#chapter-51-cursor-book-tool-repo)
 
 ### Skipped Duplicates
 
@@ -3632,11 +3634,146 @@ No backend changes required — `POST /api/organize/preview` already filters `lo
 
 ---
 
+<a id="chapter-26-review-page-layout"></a>
+
+## Chapter 26: Review page layout
+
+> **Overview:** Reorder the Review page so the review queue and Apply changes action sit at the top in a sticky panel, and make the long organize preview and operations log collapsible with scrollable bodies for large queues.
+
+# Review Page — Queue First + Collapsible Sections
+
+## Problem
+
+On [`Review.tsx`](frontend/src/pages/Review.tsx), the page renders in this order today:
+
+1. Organize preview table (can be hundreds of rows)
+2. Review queue list
+3. **Apply changes** button
+4. Operations log
+
+With a large inbox preview, users must scroll past the entire table to apply queued decisions. The inbox **apply** workflow lives entirely on this Review page (there is no separate Apply button on Inbox).
+
+## Target layout
+
+```mermaid
+flowchart TD
+  header[Page header: Review and Apply]
+  queuePanel[Sticky review queue panel]
+  applyBtn[Apply changes + status]
+  queueList[Scrollable queue items max 40vh]
+  previewSection[Collapsible: Organize preview]
+  logSection[Collapsible: Operations log]
+  header --> queuePanel
+  queuePanel --> applyBtn
+  queuePanel --> queueList
+  queuePanel --> previewSection
+  previewSection --> logSection
+```
+
+### Section 1 — Review queue (always at top, primary)
+
+- **Sticky panel** (`.review-queue-panel`) pinned below the page header while scrolling
+- **Header row:** `Review queue (N)` · **Apply changes** · inline applied status/errors (from [`ApplyPanel`](frontend/src/components/ApplyPanel.tsx))
+- **Scrollable body:** queue items in a container with `max-height: ~40vh; overflow-y: auto` so even a long queue does not push actions off-screen
+- Empty state when `queue.total === 0`
+
+### Section 2 — Organize preview (collapsible)
+
+- Move **Preview inbox organize** button into this section header (with item count)
+- Collapsible via new shared component
+- **Default open** when preview has items and queue is empty (fresh preview)
+- **Default collapsed** when `queue.total > 0` (user is ready to apply; preview is reference only)
+- Body: existing preview table + date-mismatch actions, wrapped in scrollable container (`max-height: ~50vh`) so expanded preview does not dominate the page
+
+### Section 3 — Operations log (collapsible)
+
+- **Default collapsed**
+- Header shows count; body shows existing log rows (keep `slice(0, 20)`)
+- Scrollable body when expanded
+
+## New component — [`frontend/src/components/CollapsibleSection.tsx`](frontend/src/components/CollapsibleSection.tsx)
+
+Small reusable wrapper (~40 lines):
+
+```tsx
+interface Props {
+  title: string;
+  count?: number;
+  defaultOpen?: boolean;
+  actions?: React.ReactNode;  // e.g. Preview inbox organize button
+  children: React.ReactNode;
+}
+```
+
+- Clickable header with chevron (▸/▾)
+- `useState(defaultOpen)` for toggle
+- No `<details>` — consistent styling and room for action buttons in the header
+
+## Changes to existing files
+
+### [`frontend/src/pages/Review.tsx`](frontend/src/pages/Review.tsx)
+
+Reorder and compose:
+
+1. Page header: title only (`Review & Apply`)
+2. Review queue panel (queue list + `ApplyPanel` in header)
+3. `CollapsibleSection` — Organize preview (move preview table + fix-dates logic here)
+4. `CollapsibleSection` — Operations log
+
+Compute default collapse:
+
+```tsx
+const queueCount = queue?.total ?? 0;
+const previewCount = preview?.items.length ?? 0;
+const previewDefaultOpen = previewCount > 0 && queueCount === 0;
+const logDefaultOpen = false;
+```
+
+### [`frontend/src/components/ApplyPanel.tsx`](frontend/src/components/ApplyPanel.tsx)
+
+- Add optional `disabled?: boolean` (disable when `queueCount === 0`)
+- Add optional `compact?: boolean` — removes top margin; fits inline in queue header row
+- Keep existing applied status + error display
+
+### [`frontend/src/index.css`](frontend/src/index.css)
+
+New classes:
+
+| Class | Purpose |
+|-------|---------|
+| `.review-queue-panel` | Sticky top panel, border, background |
+| `.review-queue-panel-header` | Flex row: title, Apply, status |
+| `.review-queue-list` | Scrollable queue items |
+| `.collapsible-section` | Section wrapper |
+| `.collapsible-section-header` | Click target + chevron + optional actions |
+| `.collapsible-section-body` | Content; scrollable when `.collapsible-section-body-scroll` |
+| `.preview-table-wrap` | Scroll wrapper for preview table |
+
+Sticky offset: `top: 0` within main content (sidebar layout unchanged).
+
+## Out of scope
+
+- Inbox page changes (no Apply UI there today)
+- Backend / API changes
+- Pagination of preview or queue on the server (client-side scroll caps are sufficient)
+- Persisting collapse state to localStorage (can add later if desired)
+
+## Verification
+
+1. Open Review with a large organize preview (100+ rows) — **Apply changes** visible immediately at top without scrolling
+2. Queue with many items — header + Apply stay visible; queue list scrolls inside panel
+3. Organize preview collapsed by default when queue has items; expandable to inspect paths
+4. Operations log collapsed by default; expands to show recent ops
+5. Apply with empty queue — button disabled
+6. After Apply — queue clears, status shows inline; preview/ops sections refresh via existing `invalidateAfterApply`
+
+---
+
 # Part IV — Labels and Photo UX
 
-<a id="chapter-26-photo-tags-feature"></a>
+<a id="chapter-27-photo-tags-feature"></a>
 
-## Chapter 26: Photo tags feature
+## Chapter 27: Photo tags feature
 
 > **Overview:** Add direct photo-level tags (Cars, Typewriter, house project) via a new `file_tags` table and APIs mirroring People, plus bulk tagging on Inbox/Calendar, a Tags management page, and Browse/filter/display updates.
 
@@ -3783,9 +3920,9 @@ Add nav link and route in [`App.tsx`](/Users/alex/Documents/github/imageOrganize
 
 ---
 
-<a id="chapter-27-removable-grid-labels"></a>
+<a id="chapter-28-removable-grid-labels"></a>
 
-## Chapter 27: Removable grid labels
+## Chapter 28: Removable grid labels
 
 > **Overview:** Add removable event/people/tag chips (X) on every PhotoGrid card, plus inline pickers when one photo is selected on Inbox/Calendar for easier adding without bulk dropdowns.
 
@@ -3897,9 +4034,9 @@ Event badge × uses contrasting hover; person/tag badges use existing colors.
 
 ---
 
-<a id="chapter-28-bulk-chip-label-editors"></a>
+<a id="chapter-29-bulk-chip-label-editors"></a>
 
-## Chapter 28: Bulk chip label editors
+## Chapter 29: Bulk chip label editors
 
 > **Overview:** Add chip-based bulk label editors (events, people, tags) when 2+ photos are selected, matching the single-select UX. Replace redundant dropdown bulk bars with a unified selection panel.
 
@@ -3998,9 +4135,9 @@ Apply to event/person/tag chips in partial state.
 
 ---
 
-<a id="chapter-29-people-bulk-and-crud"></a>
+<a id="chapter-30-people-bulk-and-crud"></a>
 
-## Chapter 29: People bulk and CRUD
+## Chapter 30: People bulk and CRUD
 
 > **Overview:** Add bulk untag for selected photos, a dedicated People page (like Events) for create/edit/delete/merge, and disambiguate duplicate names in dropdowns and badges.
 
@@ -4154,9 +4291,9 @@ Or **Delete** the unused Alex if it has 0 photos.
 
 ---
 
-<a id="chapter-30-people-name-browse-links"></a>
+<a id="chapter-31-people-name-browse-links"></a>
 
-## Chapter 30: People name browse links
+## Chapter 31: People name browse links
 
 > **Overview:** Make person names clickable links to browse (matching Tags), and remove the redundant Browse button from both People and Tags list rows.
 
@@ -4201,9 +4338,9 @@ No changes — [`.people-list-name-link`](frontend/src/index.css) already provid
 
 ---
 
-<a id="chapter-31-detail-multi-tag-select"></a>
+<a id="chapter-32-detail-multi-tag-select"></a>
 
-## Chapter 31: Detail multi-tag select
+## Chapter 32: Detail multi-tag select
 
 > **Overview:** Fix PhotoDetail so clicking multiple tag chips adds each tag without overwriting previous selections. Root cause: stale `detailFile` state and pickers that rebuild the full tag list from outdated props on every click.
 
@@ -4308,9 +4445,9 @@ Apply the local-state pattern to [`PersonPicker.tsx`](frontend/src/components/Pe
 
 ---
 
-<a id="chapter-32-split-select-vs-detail"></a>
+<a id="chapter-33-split-select-vs-detail"></a>
 
-## Chapter 32: Split select vs detail
+## Chapter 33: Split select vs detail
 
 > **Overview:** Decouple multi-select from the detail drawer: checkbox toggles selection only; clicking the thumbnail opens PhotoDetail. Applies to Inbox and Calendar day panel.
 
@@ -4414,9 +4551,9 @@ Same `detailFile` state + `onOpenDetail`; clear `detailFile` in existing `useEff
 
 ---
 
-<a id="chapter-33-fix-thumbnail-orientation"></a>
+<a id="chapter-34-fix-thumbnail-orientation"></a>
 
-## Chapter 33: Fix thumbnail orientation
+## Chapter 34: Fix thumbnail orientation
 
 > **Overview:** Apply EXIF orientation when generating image thumbnails so grid and detail previews match the correctly oriented full-size view. Bump thumbnail cache version so existing wrong thumbs are regenerated.
 
@@ -4518,9 +4655,9 @@ Thumbs regenerate on first grid load per file (lazy). No rescan needed. User can
 
 ---
 
-<a id="chapter-34-shift-click-range-select"></a>
+<a id="chapter-35-shift-click-range-select"></a>
 
-## Chapter 34: Shift-click range select
+## Chapter 35: Shift-click range select
 
 > **Overview:** Add Shift+click range selection to the photo grid so selecting one photo then Shift+clicking another selects all visible photos between them (Inbox and Calendar day panel).
 
@@ -4613,9 +4750,9 @@ No change required — selected cards already show `.photo-card.selected` border
 
 ---
 
-<a id="chapter-35-esc-close-detail-viewer"></a>
+<a id="chapter-36-esc-close-detail-viewer"></a>
 
-## Chapter 35: ESC close detail viewer
+## Chapter 36: ESC close detail viewer
 
 > **Overview:** Make Escape close the PhotoDetail drawer when the full-size lightbox is not open; lightbox still closes first if open.
 
@@ -4680,9 +4817,9 @@ No CSS or parent changes — Inbox, Calendar, Browse all pass `onClose={() => se
 
 ---
 
-<a id="chapter-36-recently-used-tags"></a>
+<a id="chapter-37-recently-used-tags"></a>
 
-## Chapter 36: Recently used tags
+## Chapter 37: Recently used tags
 
 > **Overview:** Add a client-side "Recently used" tag row above the full tag list in bulk and single-file tag pickers, persisted in localStorage and updated whenever the user applies a tag.
 
@@ -4795,9 +4932,9 @@ No frontend test suite exists; manual verification only unless you want Vitest a
 
 ---
 
-<a id="chapter-37-browse-label-mode"></a>
+<a id="chapter-38-browse-label-mode"></a>
 
-## Chapter 37: Browse label mode
+## Chapter 38: Browse label mode
 
 > **Overview:** Add an explicit "Label photos" mode to Browse that enables Inbox-style multi-select and bulk event/tag/people editing via existing BulkLabelEditors components, without changing backend APIs.
 
@@ -4910,11 +5047,101 @@ Manual smoke test on `/browse/tag/ft-lauderdale-air-and-sea-show` (or any tag wi
 
 ---
 
+<a id="chapter-39-tags-page-search"></a>
+
+## Chapter 39: Tags page search
+
+> **Overview:** Add a client-side search filter to the Tags management page, reusing the existing LabelSearchInput and filterByNameQuery utilities already used on Cameras and Inbox tag bars.
+
+# Tags Page — Filter Search
+
+## Problem
+
+[`Tags.tsx`](frontend/src/pages/Tags.tsx) renders the full tag list with no way to narrow it down. With dozens or hundreds of tags (as in your screenshot), finding a specific tag to edit, merge, or delete requires scrolling.
+
+## Approach
+
+Client-side name filter only — no backend changes. Match the pattern already used on [`Cameras.tsx`](frontend/src/pages/Cameras.tsx) and [`InboxUsedTagsBar.tsx`](frontend/src/components/InboxUsedTagsBar.tsx).
+
+```mermaid
+flowchart LR
+  input[LabelSearchInput] --> query[search state]
+  query --> filter[filterByNameQuery]
+  allTags[api.listTags] --> filter
+  filter --> list[people-list rows]
+```
+
+## Changes — [`frontend/src/pages/Tags.tsx`](frontend/src/pages/Tags.tsx)
+
+1. Add imports: `useMemo`, `LabelSearchInput`, `filterByNameQuery`
+
+2. Add state: `const [search, setSearch] = useState("")`
+
+3. Compute filtered list:
+
+```tsx
+const alwaysInclude = useMemo(() => {
+  const names = new Set<string>();
+  const editing = editingId != null ? tags.find((t) => t.id === editingId) : null;
+  const merging = mergingId != null ? tags.find((t) => t.id === mergingId) : null;
+  if (editing) names.add(editing.name);
+  if (merging) names.add(merging.name);
+  return names.size > 0 ? names : undefined;
+}, [tags, editingId, mergingId]);
+
+const filteredTags = useMemo(
+  () => filterByNameQuery(tags, search, alwaysInclude),
+  [tags, search, alwaysInclude],
+);
+```
+
+`alwaysInclude` keeps a tag visible while its Edit or Merge row is open, even if the search term no longer matches.
+
+4. Insert search input below the description paragraph:
+
+```tsx
+<LabelSearchInput value={search} onChange={setSearch} placeholder="Search tags…" />
+```
+
+Reuse existing `.label-search-input` styling (same as tag pickers).
+
+5. Render `filteredTags` instead of `tags` in the list loop.
+
+6. Three empty/mismatch states (same logic as Cameras):
+
+| Condition | Message |
+|-----------|---------|
+| `tags.length === 0` | Existing empty-state (no tags yet) |
+| `tags.length > 0 && filteredTags.length === 0` | `No tags match — try another term` (`.label-search-empty`) |
+| otherwise | Filtered list |
+
+Merge target `<select>` continues to use the full `tags` array (all other tags as targets) — unchanged.
+
+## Styling
+
+No new CSS required. Optional: wrap search input with `style={{ marginBottom: "1rem", maxWidth: "24rem" }}` to match Cameras page spacing, or add a one-line margin class on the input wrapper.
+
+## Out of scope
+
+- People page search (same gap, not requested)
+- Server-side tag search API
+- Sort order changes
+
+## Verification
+
+1. Open Tags page with many tags — search box appears below description
+2. Type `air` — list narrows to matching names (e.g. Airshow, Bi-Plane)
+3. Clear search — full list returns
+4. Search with no matches — shows empty hint, not "No tags yet"
+5. Start Edit on a tag, then type a query that would hide it — row stays visible until Cancel/Save
+
+---
+
 # Part V — Dates and Alerts
 
-<a id="chapter-38-filename-date-mismatch"></a>
+<a id="chapter-40-filename-date-mismatch"></a>
 
-## Chapter 38: Filename date mismatch
+## Chapter 40: Filename date mismatch
 
 > **Overview:** Detect when organize preview uses a different date than embedded in the filename (e.g. prefix 2016-11-18 vs IMG_20150717), flag mismatches on the Review preview table, and let the user apply filename-based dates to fix target paths and DB capture_date.
 
@@ -5048,9 +5275,9 @@ After fix, row should show corrected path and clear mismatch flag.
 
 ---
 
-<a id="chapter-39-browser-date-correction"></a>
+<a id="chapter-41-browser-date-correction"></a>
 
-## Chapter 39: Browser date correction
+## Chapter 41: Browser date correction
 
 > **Overview:** Add manual and filename-based capture date correction in the calendar day panel (and matching single/bulk editor surfaces), backed by general file APIs and extended filename parsing for patterns like Screenshot_2014-11-27.
 
@@ -5197,9 +5424,9 @@ Reuse `.preview-date-warning` color or add `.capture-date-hint` for filename-sug
 
 ---
 
-<a id="chapter-40-photo-grid-alerts"></a>
+<a id="chapter-42-photo-grid-alerts"></a>
 
-## Chapter 40: Photo grid alerts
+## Chapter 42: Photo grid alerts
 
 > **Overview:** Add a reusable alerts bar and per-card badges on all photo grids, surfacing filename date mismatches and duplicate-group membership with an optional "Alerts only" filter.
 
@@ -5330,9 +5557,9 @@ Reuse `.capture-date-hint` yellow for date badge consistency.
 
 ---
 
-<a id="chapter-41-photo-keyboard-navigation"></a>
+<a id="chapter-43-photo-keyboard-navigation"></a>
 
-## Chapter 41: Photo keyboard navigation
+## Chapter 43: Photo keyboard navigation
 
 > **Overview:** Add linear arrow-key navigation (prev/next) through the current photo set in PhotoDetail and the lightbox, wired from Calendar day panel and other grid pages that open detail.
 
@@ -5441,9 +5668,9 @@ CSS in [`index.css`](frontend/src/index.css):
 
 # Part VI — Dedupe and Integrity
 
-<a id="chapter-42-duplicate-keeper-defaults"></a>
+<a id="chapter-44-duplicate-keeper-defaults"></a>
 
-## Chapter 42: Duplicate keeper defaults
+## Chapter 44: Duplicate keeper defaults
 
 > **Overview:** Prefer non-copy filenames (no `(1)` / `_(1)` suffix) as default duplicate keeper when groups are built, and merge events/people/tags onto the keeper when a non-keeper duplicate is deleted from the Duplicates page.
 
@@ -5558,9 +5785,9 @@ Mirror backend regex for optional UI badge `(copy)` on cards; not required for c
 
 ---
 
-<a id="chapter-43-fix-tag-counts-after-dedupe"></a>
+<a id="chapter-45-fix-tag-counts-after-dedupe"></a>
 
-## Chapter 43: Fix tag counts after dedupe
+## Chapter 45: Fix tag counts after dedupe
 
 > **Overview:** Tag sidebar counts stay at 12 after duplicate cleanup because dismissed copies still retain label associations until Review apply deletes them, and the UI does not refresh tag/people counts after apply. Fix both the backend dismiss flow and frontend cache invalidation.
 
@@ -5663,9 +5890,9 @@ No schema migration required.
 
 ---
 
-<a id="chapter-44-fix-orphan-tag-counts"></a>
+<a id="chapter-46-fix-orphan-tag-counts"></a>
 
-## Chapter 44: Fix orphan tag counts
+## Chapter 46: Fix orphan tag counts
 
 > **Overview:** The original dedupe/cache fixes are already in place, but sidebar tag counts still include orphaned `file_tags` rows for deleted files because count queries do not join `files` and SQLite foreign keys are disabled. Fix count SQL, enable FK enforcement, and clean up existing orphan rows.
 
@@ -5774,9 +6001,9 @@ Once `GET /api/tags` returns 6, the Browse sidebar (`tags.photo_count`) will mat
 
 # Part VII — Release and Meta
 
-<a id="chapter-45-version-and-changelog"></a>
+<a id="chapter-47-version-and-changelog"></a>
 
-## Chapter 45: Version and changelog
+## Chapter 47: Version and changelog
 
 > **Overview:** Introduce date-based versioning (2026.07.04), add CHANGELOG.md documenting the initial release, sync version strings in backend and frontend, then commit, tag, and push to GitHub.
 
@@ -5864,9 +6091,9 @@ Optional (if `gh` is available): `gh release create 2026.07.04 --notes-file CHAN
 
 ---
 
-<a id="chapter-46-sidebar-version-badge"></a>
+<a id="chapter-48-sidebar-version-badge"></a>
 
-## Chapter 46: Sidebar version badge
+## Chapter 48: Sidebar version badge
 
 > **Overview:** Display the app version (`2026.07.04`) in the sidebar directly below the "Image Organizer" heading, sourced from `frontend/package.json` so it stays in sync with releases.
 
@@ -5931,9 +6158,9 @@ No new API endpoint or duplicate constant file.
 
 ---
 
-<a id="chapter-47-save-plans-gitignore"></a>
+<a id="chapter-49-save-plans-gitignore"></a>
 
-## Chapter 47: Save plans gitignore
+## Chapter 49: Save plans gitignore
 
 > **Overview:** Copy all Cursor plan files into `imageOrganizer/.cursor/plans/` and add that directory to `.gitignore` so plans stay local and are never pushed to GitHub.
 
@@ -5999,9 +6226,9 @@ git -C imageOrganizer check-ignore -v .cursor/plans/foo.plan.md  # confirms igno
 
 ---
 
-<a id="chapter-48-plans-development-book"></a>
+<a id="chapter-50-plans-development-book"></a>
 
-## Chapter 48: Plans development book
+## Chapter 50: Plans development book
 
 > **Overview:** Consolidate all 37 Image Organizer Cursor plan files into a single committed markdown book at docs/DEVELOPMENT_BOOK.md, organized by topic with a table of contents and readable chapter structure.
 
@@ -6123,9 +6350,9 @@ No change to the architecture cursor rule scope (book is design history, not liv
 
 ---
 
-<a id="chapter-49-cursor-book-tool-repo"></a>
+<a id="chapter-51-cursor-book-tool-repo"></a>
 
-## Chapter 49: Cursor book tool repo
+## Chapter 51: Cursor book tool repo
 
 > **Overview:** Extract the development book builder into a standalone repo with a config-driven script and a reusable Cursor skill; migrate imageOrganizer to a thin `book.yaml` + wrapper script.
 

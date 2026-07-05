@@ -1,7 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Tag, api } from "../api/client";
+import LabelSearchInput from "../components/LabelSearchInput";
+import { filterByNameQuery } from "../utils/filterLabelsByQuery";
 
 export default function TagsPage() {
   const qc = useQueryClient();
@@ -11,6 +13,7 @@ export default function TagsPage() {
   const [editName, setEditName] = useState("");
   const [mergingId, setMergingId] = useState<number | null>(null);
   const [mergeTargetId, setMergeTargetId] = useState("");
+  const [search, setSearch] = useState("");
 
   const { data: tags = [], refetch } = useQuery({
     queryKey: ["tags"],
@@ -86,6 +89,20 @@ export default function TagsPage() {
     }
   };
 
+  const alwaysInclude = useMemo(() => {
+    const names = new Set<string>();
+    const editing = editingId != null ? tags.find((t) => t.id === editingId) : null;
+    const merging = mergingId != null ? tags.find((t) => t.id === mergingId) : null;
+    if (editing) names.add(editing.name);
+    if (merging) names.add(merging.name);
+    return names.size > 0 ? names : undefined;
+  }, [tags, editingId, mergingId]);
+
+  const filteredTags = useMemo(
+    () => filterByNameQuery(tags, search, alwaysInclude),
+    [tags, search, alwaysInclude],
+  );
+
   return (
     <div>
       <div className="page-header">
@@ -116,8 +133,21 @@ export default function TagsPage() {
         </div>
       )}
 
+      {tags.length > 0 && (
+        <div style={{ marginBottom: "1rem", maxWidth: "24rem" }}>
+          <LabelSearchInput value={search} onChange={setSearch} placeholder="Search tags…" />
+        </div>
+      )}
+
+      {tags.length === 0 ? (
+        <div className="empty-state">
+          No tags yet. Create one or tag photos from Inbox or Calendar.
+        </div>
+      ) : filteredTags.length === 0 ? (
+        <p className="label-search-empty">No tags match — try another term</p>
+      ) : (
       <div className="people-list">
-        {tags.map((tag) => (
+        {filteredTags.map((tag) => (
           <div key={tag.id} className="people-list-row">
             {editingId === tag.id ? (
               <div className="people-edit-inline">
@@ -193,12 +223,8 @@ export default function TagsPage() {
             )}
           </div>
         ))}
-        {tags.length === 0 && (
-          <div className="empty-state">
-            No tags yet. Create one or tag photos from Inbox or Calendar.
-          </div>
-        )}
       </div>
+      )}
     </div>
   );
 }

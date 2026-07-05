@@ -4,9 +4,11 @@ import { api } from "../api/client";
 
 interface Props {
   onApplied: () => void;
+  disabled?: boolean;
+  compact?: boolean;
 }
 
-export default function ApplyPanel({ onApplied }: Props) {
+export default function ApplyPanel({ onApplied, disabled = false, compact = false }: Props) {
   const [lastResult, setLastResult] = useState<{ applied: number; errors: string[] } | null>(null);
 
   const apply = useMutation({
@@ -19,9 +21,13 @@ export default function ApplyPanel({ onApplied }: Props) {
   });
 
   return (
-    <div style={{ marginTop: "1rem" }}>
-      <div style={{ display: "flex", gap: "0.75rem", alignItems: "center", flexWrap: "wrap" }}>
-        <button className="btn" onClick={() => apply.mutate()} disabled={apply.isPending}>
+    <div className={compact ? "apply-panel apply-panel-compact" : "apply-panel"}>
+      <div className="apply-panel-row">
+        <button
+          className="btn"
+          onClick={() => apply.mutate()}
+          disabled={disabled || apply.isPending}
+        >
           {apply.isPending ? "Applying..." : "Apply changes"}
         </button>
         {lastResult && (
@@ -31,7 +37,7 @@ export default function ApplyPanel({ onApplied }: Props) {
         )}
       </div>
       {lastResult && lastResult.errors.length > 0 && (
-        <div style={{ color: "#f87171", fontSize: "0.875rem", marginTop: "0.5rem" }}>
+        <div className="apply-panel-errors">
           Errors: {lastResult.errors.join(", ")}
         </div>
       )}

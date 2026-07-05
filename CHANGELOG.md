@@ -2,6 +2,18 @@
 
 Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
+## [2026.07.05b] - 2026-07-05
+
+### Added
+
+- Review page: **Review queue** and **Apply changes** pinned at top in a sticky panel
+- Review page: collapsible **Organize preview** and **Operations log** sections with scrollable bodies
+- Tags page: **Search tags** filter to narrow the tag list
+
+### Changed
+
+- Review **Apply changes** disabled when queue is empty; organize preview collapsed by default when queue has items
+
 ## [2026.07.05a] - 2026-07-05
 
 ### Added

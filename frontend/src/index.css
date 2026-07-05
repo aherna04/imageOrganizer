@@ -311,6 +311,25 @@ button {
   margin-top: 0;
 }
 
+.photo-detail-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.photo-detail-title-row h3 {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  word-break: break-all;
+}
+
+.photo-detail-title-row .btn-danger {
+  flex-shrink: 0;
+}
+
 .drawer img {
   width: 100%;
   border-radius: 8px;
@@ -1054,6 +1073,26 @@ button {
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem;
+}
+
+.label-search-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #2a2f3a;
+  background: #0f1117;
+  color: #e8eaed;
+  margin-top: 0.35rem;
+}
+
+.inbox-used-tags .label-search-input {
+  margin-bottom: 0.5rem;
+}
+
+.label-search-empty {
+  margin: 0.35rem 0 0;
+  font-size: 0.8rem;
+  color: #8891a0;
 }
 
 .bulk-event-bar {

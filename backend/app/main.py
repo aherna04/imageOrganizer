@@ -11,7 +11,11 @@ from app import tags as tags_svc
 from app.config import ensure_media_dirs, media_type_for_suffix, mime_type_for_path
 from app.db import get_config, get_conn, get_file_events, init_db, row_to_dict, update_config
 from app.dedupe import dismiss_duplicate_member, get_duplicate_groups
-from app.inbox_filters import PENDING_DELETE_EXCLUSION_F, append_inbox_visible_filter
+from app.inbox_filters import (
+    PENDING_DELETE_EXCLUSION_F,
+    append_inbox_pending_delete_filter,
+    append_inbox_visible_filter,
+)
 from app.media_filter import append_media_type_filter, filename_media_type_condition_literal
 from app.metadata import thumb_cache_path
 from app.storage_stats import get_storage_stats
@@ -25,6 +29,8 @@ from app.models import (
     CalendarMonthSummary,
     CalendarMonthsOut,
     CalendarSummaryOut,
+    CameraOut,
+    CamerasOut,
     ConfigOut,
     ConfigUpdate,
     CaptureDatesUpdate,
@@ -44,6 +50,8 @@ from app.models import (
     FixDatesFromFilenameIn,
     FixDatesFromFilenameOut,
     InboxPeopleOut,
+    InboxCameraOut,
+    InboxCamerasOut,
     InboxTagsOut,
     MetadataOut,
     MetadataUpdate,
@@ -59,6 +67,8 @@ from app.models import (
     PersonUpdate,
     ReviewDecisionCreate,
     ReviewDecisionOut,
+    ReviewDecisionsCancel,
+    ReviewDecisionsCancelOut,
     ReviewQueueOut,
     ScanStatusOut,
     StorageStatsOut,
@@ -72,7 +82,7 @@ from app.models import (
 from app.organizer import apply_operations, fix_dates_from_filename, preview_organize
 from app.scanner import scan_state, start_scan_background
 
-app = FastAPI(title="Image Organizer", version="2026.07.04b")
+app = FastAPI(title="Image Organizer", version="2026.07.05")
 
 app.add_middleware(
     CORSMiddleware,
@@ -236,6 +246,58 @@ def api_inbox_people():
     )
 
 
+@app.get("/api/cameras", response_model=CamerasOut)
+def api_list_cameras():
+    with get_conn() as conn:
+        rows = conn.execute(
+            f"""
+            SELECT f.camera AS name,
+                   COUNT(*) AS photo_count,
+                   SUM(CASE WHEN f.location = 'inbox' THEN 1 ELSE 0 END) AS inbox_count,
+                   SUM(CASE WHEN f.location = 'archive' THEN 1 ELSE 0 END) AS archive_count
+            FROM files f
+            WHERE f.camera IS NOT NULL AND f.camera != ''
+              AND (f.location = 'archive'
+                   OR (f.location = 'inbox' AND {PENDING_DELETE_EXCLUSION_F.strip()}))
+            GROUP BY f.camera
+            ORDER BY f.camera
+            """
+        ).fetchall()
+    return CamerasOut(
+        cameras=[
+            CameraOut(
+                name=r["name"],
+                photo_count=r["photo_count"],
+                inbox_count=r["inbox_count"],
+                archive_count=r["archive_count"],
+            )
+            for r in rows
+        ]
+    )
+
+
+@app.get("/api/inbox/cameras", response_model=InboxCamerasOut)
+def api_inbox_cameras():
+    with get_conn() as conn:
+        rows = conn.execute(
+            f"""
+            SELECT f.camera AS name, COUNT(*) AS photo_count
+            FROM files f
+            WHERE f.location = 'inbox'
+              AND f.camera IS NOT NULL AND f.camera != ''
+              AND {PENDING_DELETE_EXCLUSION_F.strip()}
+            GROUP BY f.camera
+            ORDER BY f.camera
+            """
+        ).fetchall()
+    return InboxCamerasOut(
+        cameras=[
+            InboxCameraOut(name=r["name"], photo_count=r["photo_count"])
+            for r in rows
+        ]
+    )
+
+
 @app.get("/api/files", response_model=FileListOut)
 def api_list_files(
     location: str | None = None,
@@ -244,16 +306,23 @@ def api_list_files(
     person_id: int | None = None,
     tag_id: int | None = None,
     unlabeled: bool = False,
+    pending_delete: bool = False,
+    camera: str | None = None,
     media_type: Literal["image", "video"] | None = None,
     page: int = Query(1, ge=1),
     page_size: int = Query(50, ge=1, le=200),
 ):
+    if pending_delete and location != "inbox":
+        raise HTTPException(status_code=400, detail="pending_delete requires location=inbox")
     clauses: list[str] = []
     params: list = []
     if location:
         clauses.append("f.location = ?")
         params.append(location)
-        append_inbox_visible_filter(clauses, location)
+        if pending_delete:
+            append_inbox_pending_delete_filter(clauses)
+        else:
+            append_inbox_visible_filter(clauses, location)
     if capture_day:
         clauses.append("f.capture_day = ?")
         params.append(capture_day)
@@ -266,6 +335,9 @@ def api_list_files(
     if tag_id:
         clauses.append("f.id IN (SELECT file_id FROM file_tags WHERE tag_id = ?)")
         params.append(tag_id)
+    if camera:
+        clauses.append("f.camera = ?")
+        params.append(camera)
     if unlabeled:
         clauses.append(
             """
@@ -950,6 +1022,26 @@ def api_create_decision(body: ReviewDecisionCreate):
         rid = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
         row = conn.execute("SELECT * FROM review_decisions WHERE id = ?", (rid,)).fetchone()
     return ReviewDecisionOut(id=row["id"], file_id=row["file_id"], action=row["action"], target_path=row["target_path"])
+
+
+@app.post("/api/review/decisions/cancel", response_model=ReviewDecisionsCancelOut)
+def api_cancel_decisions(body: ReviewDecisionsCancel):
+    if not body.file_ids:
+        return ReviewDecisionsCancelOut(removed=0)
+    placeholders = ",".join("?" * len(body.file_ids))
+    with get_conn() as conn:
+        cur = conn.execute(
+            f"""
+            DELETE FROM review_decisions
+            WHERE file_id IN ({placeholders})
+              AND applied = 0
+              AND action = ?
+            """,
+            (*body.file_ids, body.action),
+        )
+        conn.commit()
+        removed = cur.rowcount
+    return ReviewDecisionsCancelOut(removed=removed)
 
 
 @app.get("/api/review/queue", response_model=ReviewQueueOut)

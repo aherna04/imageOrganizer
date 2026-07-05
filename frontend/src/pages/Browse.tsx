@@ -24,11 +24,19 @@ export default function BrowsePage() {
     queryFn: api.listTags,
   });
 
+  const { data: cameras = [] } = useQuery({
+    queryKey: ["cameras"],
+    queryFn: async () => (await api.listCameras()).cameras,
+  });
+
   const selectedPerson = kind === "person" && slug ? people.find((p) => p.slug === slug) : null;
   const selectedTag = kind === "tag" && slug ? tags.find((t) => t.slug === slug) : null;
+  const selectedCameraName = kind === "camera" && slug ? decodeURIComponent(slug) : null;
+
+  const browseFilesKey = ["browse-files", kind, selectedPerson?.id, selectedTag?.id, selectedCameraName] as const;
 
   const { data: photos } = useQuery({
-    queryKey: ["browse-files", kind, selectedPerson?.id, selectedTag?.id],
+    queryKey: browseFilesKey,
     queryFn: () => {
       if (selectedPerson) {
         return api.listFiles({ person_id: selectedPerson.id, page_size: 200 });
@@ -36,9 +44,12 @@ export default function BrowsePage() {
       if (selectedTag) {
         return api.listFiles({ tag_id: selectedTag.id, page_size: 200 });
       }
+      if (selectedCameraName) {
+        return api.listFiles({ camera: selectedCameraName, page_size: 200 });
+      }
       return Promise.resolve({ items: [], total: 0, page: 1, page_size: 200 });
     },
-    enabled: !!(selectedPerson || selectedTag),
+    enabled: !!(selectedPerson || selectedTag || selectedCameraName),
   });
 
   const filteredPeople = useMemo(() => {
@@ -51,7 +62,16 @@ export default function BrowsePage() {
     return tags.filter((t) => !q || t.name.toLowerCase().includes(q));
   }, [tags, search]);
 
-  const selectionLabel = selectedPerson?.name ?? selectedTag?.name;
+  const filteredCameras = useMemo(() => {
+    const q = search.toLowerCase();
+    return cameras.filter((c) => !q || c.name.toLowerCase().includes(q));
+  }, [cameras, search]);
+
+  const selectionLabel = selectedPerson?.name ?? selectedTag?.name ?? selectedCameraName;
+
+  const invalidateBrowseFiles = () => {
+    qc.invalidateQueries({ queryKey: browseFilesKey });
+  };
 
   return (
     <div>
@@ -59,7 +79,7 @@ export default function BrowsePage() {
         <h2>Browse</h2>
       </div>
       <p style={{ color: "#8891a0", marginBottom: "1rem" }}>
-        Search photos by person or tag on photos.
+        Search photos by person, tag, or camera.
       </p>
 
       <div className="browse-layout">
@@ -111,6 +131,28 @@ export default function BrowsePage() {
               )}
             </ul>
           </section>
+
+          <section className="browse-section">
+            <h3 className="browse-section-title">Cameras</h3>
+            <ul className="browse-list">
+              {filteredCameras.map((c) => (
+                <li key={c.name}>
+                  <Link
+                    to={`/browse/camera/${encodeURIComponent(c.name)}`}
+                    className={`browse-list-item ${selectedCameraName === c.name ? "active" : ""}`}
+                  >
+                    <span>{c.name}</span>
+                    <span className="browse-count">{c.photo_count}</span>
+                  </Link>
+                </li>
+              ))}
+              {filteredCameras.length === 0 && (
+                <li className="browse-empty">
+                  No cameras yet. Scan archive or inbox to read camera info from EXIF.
+                </li>
+              )}
+            </ul>
+          </section>
         </aside>
 
         <div className="browse-results">
@@ -127,21 +169,15 @@ export default function BrowsePage() {
                 activeDetailId={detailFile?.id}
                 onSelect={setDetailFile}
                 editableLabels
-                onLabelsChange={() =>
-                  qc.invalidateQueries({
-                    queryKey: ["browse-files", kind, selectedPerson?.id, selectedTag?.id],
-                  })
-                }
+                onLabelsChange={invalidateBrowseFiles}
                 onAlertsChange={() => {
                   invalidateAfterDateChange(qc);
-                  qc.invalidateQueries({
-                    queryKey: ["browse-files", kind, selectedPerson?.id, selectedTag?.id],
-                  });
+                  invalidateBrowseFiles();
                 }}
               />
             </>
           ) : (
-            <div className="empty-state">Select a person or tag to browse photos.</div>
+            <div className="empty-state">Select a person, tag, or camera to browse photos.</div>
           )}
         </div>
       </div>
@@ -153,9 +189,7 @@ export default function BrowsePage() {
           onChangeFile={setDetailFile}
           onDateChange={() => {
             invalidateAfterDateChange(qc);
-            qc.invalidateQueries({
-              queryKey: ["browse-files", kind, selectedPerson?.id, selectedTag?.id],
-            });
+            invalidateBrowseFiles();
           }}
           onClose={() => {
             setDetailFile(null);

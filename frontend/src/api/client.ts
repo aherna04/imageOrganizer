@@ -130,6 +130,18 @@ export interface CalendarMonthTag {
 export type InboxUsedTag = CalendarMonthTag;
 export type InboxUsedPerson = CalendarMonthPerson;
 
+export interface InboxUsedCamera {
+  name: string;
+  photo_count: number;
+}
+
+export interface Camera {
+  name: string;
+  photo_count: number;
+  inbox_count: number;
+  archive_count: number;
+}
+
 export interface CalendarMonthLabels {
   year: number;
   month: number;
@@ -217,6 +229,10 @@ export const api = {
   inboxTags: () => request<{ tags: InboxUsedTag[] }>("/api/inbox/tags"),
 
   inboxPeople: () => request<{ people: InboxUsedPerson[] }>("/api/inbox/people"),
+
+  inboxCameras: () => request<{ cameras: InboxUsedCamera[] }>("/api/inbox/cameras"),
+
+  listCameras: () => request<{ cameras: Camera[] }>("/api/cameras"),
 
   listFiles: (params: Record<string, string | number | undefined>) => {
     const q = new URLSearchParams();
@@ -401,6 +417,12 @@ export const api = {
 
   createDecision: (data: { file_id: number; action: string; target_path?: string }) =>
     request<ReviewDecision>("/api/review/decisions", { method: "POST", body: JSON.stringify(data) }),
+
+  cancelReviewDecisions: (fileIds: number[], action: "delete" = "delete") =>
+    request<{ removed: number }>("/api/review/decisions/cancel", {
+      method: "POST",
+      body: JSON.stringify({ file_ids: fileIds, action }),
+    }),
 
   apply: () => request<{ applied: number; errors: string[] }>("/api/apply", { method: "POST" }),
 

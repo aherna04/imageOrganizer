@@ -44,8 +44,8 @@ export default function CalendarDayPanel({ date, location, mediaType, filter, on
     qc.invalidateQueries({ queryKey: ["calendar-summary"] });
   };
 
-  const handleDateChange = () => {
-    const openId = detailFile?.id;
+  const handleDateChange = (keepFileId?: number) => {
+    const openId = keepFileId ?? detailFile?.id;
     invalidateAfterDateChange(qc);
     refetch().then(({ data: dayData }) => {
       if (!openId) return;

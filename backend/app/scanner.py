@@ -132,9 +132,8 @@ def run_scan(scope: str) -> None:
                 scan_state.tick()
             _prune_missing(conn, scope, seen)
             conn.commit()
-            if scope == "archive":
-                rebuild_duplicate_groups(conn)
-                conn.commit()
+            rebuild_duplicate_groups(conn)
+            conn.commit()
         scan_state.finish(f"Scan complete: {len(files)} files")
     except Exception as exc:
         scan_state.finish(f"Scan failed: {exc}")

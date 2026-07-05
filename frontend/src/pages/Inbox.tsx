@@ -1,7 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { MediaFile, api } from "../api/client";
 import BulkEventAssignBar from "../components/BulkEventAssignBar";
+import InboxUsedCamerasBar from "../components/InboxUsedCamerasBar";
 import InboxUsedPeopleBar from "../components/InboxUsedPeopleBar";
 import InboxUsedTagsBar from "../components/InboxUsedTagsBar";
 import PhotoGridWithAlerts from "../components/PhotoGridWithAlerts";
@@ -10,7 +11,7 @@ import SingleFileLabelEditors from "../components/SingleFileLabelEditors";
 import BulkLabelEditors from "../components/BulkLabelEditors";
 import { invalidateAfterDateChange } from "../utils/invalidateAfterDateChange";
 
-type InboxFilter = "all" | "unlabeled";
+type InboxFilter = "all" | "unlabeled" | "delete_queue";
 
 export default function Inbox() {
   const qc = useQueryClient();
@@ -19,6 +20,7 @@ export default function Inbox() {
   const [inboxFilter, setInboxFilter] = useState<InboxFilter>("all");
   const [tagFilterId, setTagFilterId] = useState<number | null>(null);
   const [personFilterId, setPersonFilterId] = useState<number | null>(null);
+  const [cameraFilter, setCameraFilter] = useState<string | null>(null);
 
   const { data: status } = useQuery({
     queryKey: ["scan-status"],
@@ -36,17 +38,37 @@ export default function Inbox() {
     queryFn: api.inboxPeople,
   });
 
+  const { data: deleteQueueCountData } = useQuery({
+    queryKey: ["files", "inbox", "delete_queue_count"],
+    queryFn: () => api.listFiles({ location: "inbox", pending_delete: true, page_size: 1 }),
+  });
+
+  const deleteQueueCount = deleteQueueCountData?.total ?? 0;
+
   const { data, refetch } = useQuery({
-    queryKey: ["files", "inbox", inboxFilter, tagFilterId, personFilterId],
+    queryKey: ["files", "inbox", inboxFilter, tagFilterId, personFilterId, cameraFilter],
     queryFn: () =>
       api.listFiles({
         location: "inbox",
         page_size: 200,
         ...(inboxFilter === "unlabeled" ? { unlabeled: true } : {}),
+        ...(inboxFilter === "delete_queue" ? { pending_delete: true } : {}),
         ...(tagFilterId ? { tag_id: tagFilterId } : {}),
         ...(personFilterId ? { person_id: personFilterId } : {}),
+        ...(cameraFilter ? { camera: cameraFilter } : {}),
       }),
   });
+
+  const wasScanning = useRef(false);
+  useEffect(() => {
+    if (wasScanning.current && status && !status.running) {
+      refetch();
+      qc.invalidateQueries({ queryKey: ["duplicates"] });
+      qc.invalidateQueries({ queryKey: ["inbox-cameras"] });
+      qc.invalidateQueries({ queryKey: ["cameras"] });
+    }
+    wasScanning.current = status?.running ?? false;
+  }, [status?.running, refetch, qc]);
 
   const scan = useMutation({
     mutationFn: api.scanInbox,
@@ -61,14 +83,15 @@ export default function Inbox() {
     setDetailFile(null);
   };
 
-  const clearLabelFilters = () => {
+  const clearFilters = () => {
     setTagFilterId(null);
     setPersonFilterId(null);
+    setCameraFilter(null);
   };
 
   const changeInboxFilter = (filter: InboxFilter) => {
     setInboxFilter(filter);
-    clearLabelFilters();
+    clearFilters();
     clearSelection();
   };
 
@@ -77,6 +100,7 @@ export default function Inbox() {
     if (tagId !== null) {
       setInboxFilter("all");
       setPersonFilterId(null);
+      setCameraFilter(null);
     }
     clearSelection();
   };
@@ -86,6 +110,17 @@ export default function Inbox() {
     if (personId !== null) {
       setInboxFilter("all");
       setTagFilterId(null);
+      setCameraFilter(null);
+    }
+    clearSelection();
+  };
+
+  const changeCameraFilter = (camera: string | null) => {
+    setCameraFilter(camera);
+    if (camera !== null) {
+      setInboxFilter("all");
+      setTagFilterId(null);
+      setPersonFilterId(null);
     }
     clearSelection();
   };
@@ -101,10 +136,27 @@ export default function Inbox() {
     qc.invalidateQueries({ queryKey: ["tags"] });
     qc.invalidateQueries({ queryKey: ["inbox-tags"] });
     qc.invalidateQueries({ queryKey: ["inbox-people"] });
+    qc.invalidateQueries({ queryKey: ["inbox-cameras"] });
+    qc.invalidateQueries({ queryKey: ["files", "inbox", "delete_queue_count"] });
+    qc.invalidateQueries({ queryKey: ["review-queue"] });
   };
 
-  const handleDateChange = () => {
-    const openId = detailFile?.id;
+  const restoreMutation = useMutation({
+    mutationFn: (fileIds: number[]) => api.cancelReviewDecisions(fileIds),
+    onSuccess: () => {
+      handleLabelsChange();
+    },
+  });
+
+  const handleBulkRestore = () => {
+    if (selectedIds.length === 0) return;
+    restoreMutation.mutate(selectedIds, {
+      onSuccess: () => setSelectedIds([]),
+    });
+  };
+
+  const handleDateChange = (keepFileId?: number) => {
+    const openId = keepFileId ?? detailFile?.id;
     invalidateAfterDateChange(qc);
     refetch().then(({ data: listData }) => {
       if (!openId) return;
@@ -127,14 +179,16 @@ export default function Inbox() {
     return usedPeopleData?.people.find((p) => p.id === personFilterId)?.name ?? null;
   }, [personFilterId, usedPeopleData]);
 
-  const hasLabelFilter = tagFilterId !== null || personFilterId !== null;
+  const hasLabelFilter = tagFilterId !== null || personFilterId !== null || cameraFilter !== null;
 
   const headerBadge = useMemo(() => {
+    if (inboxFilter === "delete_queue") return `${total} queued for delete`;
     if (tagFilterId && activeTagName) return `${total} · ${activeTagName}`;
     if (personFilterId && activePersonName) return `${total} · ${activePersonName}`;
+    if (cameraFilter) return `${total} · ${cameraFilter}`;
     if (inboxFilter === "unlabeled") return `${total} untagged`;
     return `${total} pending`;
-  }, [total, tagFilterId, activeTagName, personFilterId, activePersonName, inboxFilter]);
+  }, [total, tagFilterId, activeTagName, personFilterId, activePersonName, cameraFilter, inboxFilter]);
 
   return (
     <div>
@@ -177,15 +231,29 @@ export default function Inbox() {
           >
             Untagged
           </button>
+          <button
+            type="button"
+            className={`btn btn-secondary${inboxFilter === "delete_queue" ? " active" : ""}`}
+            onClick={() => changeInboxFilter("delete_queue")}
+          >
+            Delete queue
+            {deleteQueueCount > 0 && ` (${deleteQueueCount})`}
+          </button>
         </div>
         {inboxFilter === "unlabeled" && total > 0 && (
           <span className="photo-alerts-chip date">{total} untagged</span>
+        )}
+        {inboxFilter === "delete_queue" && total > 0 && (
+          <span className="photo-alerts-chip duplicate">{total} queued</span>
         )}
         {tagFilterId && activeTagName && (
           <span className="photo-alerts-chip duplicate">{activeTagName}</span>
         )}
         {personFilterId && activePersonName && (
           <span className="photo-alerts-chip duplicate">{activePersonName}</span>
+        )}
+        {cameraFilter && (
+          <span className="photo-alerts-chip duplicate">{cameraFilter}</span>
         )}
       </div>
 
@@ -196,18 +264,31 @@ export default function Inbox() {
         onClear={() => setSelectedIds([])}
       />
 
-      {selectedIds.length === 0 && (
+      {inboxFilter === "delete_queue" && selectedIds.length > 0 && (
+        <div style={{ display: "flex", gap: "0.75rem", alignItems: "center", marginBottom: "1rem" }}>
+          <button
+            className="btn btn-secondary"
+            disabled={restoreMutation.isPending}
+            onClick={handleBulkRestore}
+          >
+            Restore {selectedIds.length}
+          </button>
+        </div>
+      )}
+
+      {selectedIds.length === 0 && inboxFilter !== "delete_queue" && (
         <>
           <InboxUsedPeopleBar activePersonId={personFilterId} onSelectPerson={changePersonFilter} />
           <InboxUsedTagsBar activeTagId={tagFilterId} onSelectTag={changeTagFilter} />
+          <InboxUsedCamerasBar activeCamera={cameraFilter} onSelectCamera={changeCameraFilter} />
         </>
       )}
 
-      {selectedIds.length === 1 && selectedFiles[0] && (
-        <SingleFileLabelEditors file={selectedFiles[0]} onChange={handleDateChange} />
+      {inboxFilter !== "delete_queue" && selectedIds.length === 1 && selectedFiles[0] && (
+        <SingleFileLabelEditors file={selectedFiles[0]} onChange={handleDateChange} showTagSearch />
       )}
-      {selectedIds.length >= 2 && (
-        <BulkLabelEditors selectedFiles={selectedFiles} onChange={handleDateChange} />
+      {inboxFilter !== "delete_queue" && selectedIds.length >= 2 && (
+        <BulkLabelEditors selectedFiles={selectedFiles} onChange={handleDateChange} showTagSearch />
       )}
 
       <PhotoGridWithAlerts
@@ -228,6 +309,7 @@ export default function Inbox() {
           onChangeFile={setDetailFile}
           onDateChange={handleDateChange}
           onClose={() => setDetailFile(null)}
+          deleteQueueMode={inboxFilter === "delete_queue"}
         />
       )}
     </div>

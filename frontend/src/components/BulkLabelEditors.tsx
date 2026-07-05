@@ -1,14 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { MediaFile, api } from "../api/client";
 import CaptureDateEditor from "./CaptureDateEditor";
+import LabelSearchInput from "./LabelSearchInput";
 import { hasDuplicateName, personLabel } from "../utils/personLabel";
+import { filterTagsByQuery } from "../utils/filterLabelsByQuery";
 
 type Coverage = "all" | "some" | "none";
 
 interface Props {
   selectedFiles: MediaFile[];
   onChange: () => void;
+  showTagSearch?: boolean;
 }
 
 function coverage(selectedFiles: MediaFile[], hasLabel: (file: MediaFile) => boolean): Coverage {
@@ -24,7 +27,7 @@ function chipClass(base: string, cov: Coverage): string {
   return base;
 }
 
-export default function BulkLabelEditors({ selectedFiles, onChange }: Props) {
+export default function BulkLabelEditors({ selectedFiles, onChange, showTagSearch = false }: Props) {
   const qc = useQueryClient();
   const fileIds = selectedFiles.map((f) => f.id);
 
@@ -37,12 +40,33 @@ export default function BulkLabelEditors({ selectedFiles, onChange }: Props) {
 
   const [showNewTag, setShowNewTag] = useState(false);
   const [newTagName, setNewTagName] = useState("");
+  const [tagSearchQuery, setTagSearchQuery] = useState("");
 
   const { data: events = [] } = useQuery({ queryKey: ["events"], queryFn: api.listEvents });
   const { data: people = [] } = useQuery({ queryKey: ["people"], queryFn: api.listPeople });
   const { data: tags = [] } = useQuery({ queryKey: ["tags"], queryFn: api.listTags });
 
   const nameExists = newPersonName.trim() ? hasDuplicateName(newPersonName, people) : false;
+
+  const tagCoverage = (tagId: number) =>
+    coverage(selectedFiles, (f) => (f.tags ?? []).some((t) => t.id === tagId));
+
+  const alwaysIncludeTagIds = useMemo(() => {
+    const ids = new Set<number>();
+    for (const tag of tags) {
+      const cov = tagCoverage(tag.id);
+      if (cov === "all" || cov === "some") ids.add(tag.id);
+    }
+    return ids;
+  }, [tags, selectedFiles]);
+
+  const visibleTags = useMemo(
+    () =>
+      showTagSearch
+        ? filterTagsByQuery(tags, tagSearchQuery, alwaysIncludeTagIds)
+        : tags,
+    [tags, tagSearchQuery, alwaysIncludeTagIds, showTagSearch],
+  );
 
   const toggleEvent = async (eventId: number, cov: Coverage) => {
     if (cov === "all") {
@@ -255,9 +279,15 @@ export default function BulkLabelEditors({ selectedFiles, onChange }: Props) {
 
       <div style={{ marginTop: "0.75rem" }}>
         <label style={{ fontSize: "0.875rem", color: "#aab0bc" }}>Tags</label>
+        {showTagSearch && (
+          <LabelSearchInput value={tagSearchQuery} onChange={setTagSearchQuery} />
+        )}
+        {showTagSearch && visibleTags.length === 0 ? (
+          <p className="label-search-empty">No tags match — try another term</p>
+        ) : (
         <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem", marginTop: "0.35rem" }}>
-          {tags.map((tag) => {
-            const cov = coverage(selectedFiles, (f) => (f.tags ?? []).some((t) => t.id === tag.id));
+          {visibleTags.map((tag) => {
+            const cov = tagCoverage(tag.id);
             return (
               <button
                 key={tag.id}
@@ -303,6 +333,7 @@ export default function BulkLabelEditors({ selectedFiles, onChange }: Props) {
             </div>
           )}
         </div>
+        )}
       </div>
     </div>
   );

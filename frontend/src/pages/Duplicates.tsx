@@ -81,13 +81,16 @@ export default function Duplicates() {
     <div className="duplicates-page">
       <div className="page-header">
         <h2>Duplicates</h2>
+        <button className="btn btn-secondary" onClick={() => api.scanInbox().then(() => refetch())}>
+          Re-scan inbox
+        </button>
         <button className="btn btn-secondary" onClick={() => api.scanArchive().then(() => refetch())}>
           Re-scan archive
         </button>
       </div>
 
       {groups.length === 0 && (
-        <div className="empty-state">No duplicate groups found. Scan the archive to detect duplicates.</div>
+        <div className="empty-state">No duplicate groups found. Scan inbox or archive to detect duplicates.</div>
       )}
 
       <div className="duplicates-list">

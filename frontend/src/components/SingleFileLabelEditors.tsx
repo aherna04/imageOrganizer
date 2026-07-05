@@ -7,9 +7,10 @@ import PersonPicker from "./PersonPicker";
 interface Props {
   file: MediaFile;
   onChange: () => void;
+  showTagSearch?: boolean;
 }
 
-export default function SingleFileLabelEditors({ file, onChange }: Props) {
+export default function SingleFileLabelEditors({ file, onChange, showTagSearch = false }: Props) {
   return (
     <div className="single-file-label-editors">
       <CaptureDateEditor files={[file]} onChange={onChange} />
@@ -18,7 +19,12 @@ export default function SingleFileLabelEditors({ file, onChange }: Props) {
         <PersonPicker fileId={file.id} filePeople={file.people ?? []} onChange={onChange} />
       </div>
       <div style={{ marginTop: "0.75rem" }}>
-        <FileTagPicker fileId={file.id} fileTags={file.tags ?? []} onChange={onChange} />
+        <FileTagPicker
+          fileId={file.id}
+          fileTags={file.tags ?? []}
+          onChange={onChange}
+          showTagSearch={showTagSearch}
+        />
       </div>
     </div>
   );

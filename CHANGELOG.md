@@ -2,6 +2,29 @@
 
 Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
+## [2026.07.05] - 2026-07-05
+
+### Added
+
+- Inbox **Delete queue** filter: view photos marked for delete, bulk **Restore**, restore from detail
+- `POST /api/review/decisions/cancel`, `GET /api/files?pending_delete=true` for delete queue
+- Inbox **Used cameras** filter bar with search; `GET /api/inbox/cameras`
+- **Cameras** page in sidebar: all cameras from inbox + archive, search, **Scan archive** to backfill EXIF
+- `GET /api/cameras`; browse photos by camera in **Browse** (`/browse/camera/...`)
+- Inbox tag search in Used tags bar, tag pickers, and bulk label editors
+- Development book at `docs/DEVELOPMENT_BOOK.md` and `scripts/build_development_book.py`
+
+### Changed
+
+- Review **Apply**: inline status instead of blocking alert popup
+- Photo detail: **Mark delete** next to filename; **D** marks delete (including full-size lightbox); advances to next photo
+- Duplicate detection runs after inbox scan as well as archive scan
+- Duplicates page: **Re-scan inbox** button
+
+### Fixed
+
+- Thumbnails respect EXIF orientation (`exif_transpose`); cache version bump regenerates thumbs
+
 ## [2026.07.04c] - 2026-07-04
 
 ### Added

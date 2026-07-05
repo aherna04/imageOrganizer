@@ -7,7 +7,7 @@ from pathlib import Path
 
 import imagehash
 import piexif
-from PIL import Image
+from PIL import Image, ImageOps
 
 try:
     from pillow_heif import register_heif_opener
@@ -17,6 +17,8 @@ except ImportError:
     pass
 
 from app.config import SUPPORTED_EXTENSIONS, THUMB_SIZE, THUMBS_DIR, is_video_path
+
+THUMB_CACHE_VERSION = "exif1"
 
 
 def slugify(name: str) -> str:
@@ -184,13 +186,14 @@ def compute_phash(path: Path) -> str | None:
         return None
     try:
         with Image.open(path) as img:
+            img = ImageOps.exif_transpose(img)
             return str(imagehash.phash(img))
     except Exception:
         return None
 
 
 def thumb_cache_path(file_id: int, mtime: float) -> Path:
-    return THUMBS_DIR / f"{file_id}_{int(mtime)}.jpg"
+    return THUMBS_DIR / f"{file_id}_{int(mtime)}_{THUMB_CACHE_VERSION}.jpg"
 
 
 def generate_video_thumbnail(path: Path, file_id: int, mtime: float) -> Path:
@@ -228,6 +231,7 @@ def generate_image_thumbnail(path: Path, file_id: int, mtime: float) -> Path:
     if out.exists():
         return out
     with Image.open(path) as img:
+        img = ImageOps.exif_transpose(img)
         img = img.convert("RGB")
         img.thumbnail((THUMB_SIZE, THUMB_SIZE))
         img.save(out, "JPEG", quality=85)

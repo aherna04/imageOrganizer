@@ -5,6 +5,7 @@ import CalendarPage from "./pages/Calendar";
 import EventsPage from "./pages/Events";
 import PeoplePage from "./pages/People";
 import TagsPage from "./pages/Tags";
+import CamerasPage from "./pages/Cameras";
 import BrowsePage from "./pages/Browse";
 import Duplicates from "./pages/Duplicates";
 import Review from "./pages/Review";
@@ -33,6 +34,9 @@ export default function App() {
         <NavLink to="/tags" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}>
           Tags
         </NavLink>
+        <NavLink to="/cameras" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}>
+          Cameras
+        </NavLink>
         <NavLink to="/browse" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}>
           Browse
         </NavLink>
@@ -57,6 +61,7 @@ export default function App() {
           <Route path="/events/:slug" element={<EventsPage />} />
           <Route path="/people" element={<PeoplePage />} />
           <Route path="/tags" element={<TagsPage />} />
+          <Route path="/cameras" element={<CamerasPage />} />
           <Route path="/browse" element={<BrowsePage />} />
           <Route path="/browse/:kind/:slug" element={<BrowsePage />} />
           <Route path="/duplicates" element={<Duplicates />} />

@@ -1,21 +1,25 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Tag, api } from "../api/client";
+import LabelSearchInput from "./LabelSearchInput";
+import { filterTagsByQuery } from "../utils/filterLabelsByQuery";
 
 interface Props {
   fileId: number;
   fileTags: Tag[];
   onChange: () => void;
+  showTagSearch?: boolean;
 }
 
 function tagIds(tags: Tag[]) {
   return tags.map((t) => t.id);
 }
 
-export default function FileTagPicker({ fileId, fileTags, onChange }: Props) {
+export default function FileTagPicker({ fileId, fileTags, onChange, showTagSearch = false }: Props) {
   const qc = useQueryClient();
   const [newName, setNewName] = useState("");
   const [showNew, setShowNew] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedIds, setSelectedIds] = useState(() => tagIds(fileTags));
   const propIdsKey = [...tagIds(fileTags)].sort((a, b) => a - b).join(",");
 
@@ -29,6 +33,11 @@ export default function FileTagPicker({ fileId, fileTags, onChange }: Props) {
   });
 
   const selected = new Set(selectedIds);
+  const alwaysInclude = useMemo(() => new Set(selectedIds), [selectedIds]);
+  const visibleTags = useMemo(
+    () => (showTagSearch ? filterTagsByQuery(allTags, searchQuery, alwaysInclude) : allTags),
+    [allTags, searchQuery, alwaysInclude, showTagSearch],
+  );
 
   const toggle = async (tagId: number) => {
     const prev = selectedIds;
@@ -67,51 +76,58 @@ export default function FileTagPicker({ fileId, fileTags, onChange }: Props) {
   return (
     <div>
       <label style={{ fontSize: "0.875rem", color: "#aab0bc" }}>Tags</label>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem", marginTop: "0.35rem" }}>
-        {allTags.map((tag) => (
-          <button
-            key={tag.id}
-            type="button"
-            className={`badge tag-badge ${selected.has(tag.id) ? "active" : ""}`}
-            onClick={() => toggle(tag.id)}
-          >
-            {tag.name}
-          </button>
-        ))}
-        {!showNew ? (
-          <button type="button" className="badge tag-badge tag-badge-add" onClick={() => setShowNew(true)}>
-            + Add tag
-          </button>
-        ) : (
-          <div className="tag-picker-new">
-            <input
-              type="text"
-              placeholder="Tag name"
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              className="tag-picker-input"
-            />
+      {showTagSearch && (
+        <LabelSearchInput value={searchQuery} onChange={setSearchQuery} />
+      )}
+      {showTagSearch && visibleTags.length === 0 ? (
+        <p className="label-search-empty">No tags match — try another term</p>
+      ) : (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem", marginTop: "0.35rem" }}>
+          {visibleTags.map((tag) => (
             <button
+              key={tag.id}
               type="button"
-              className="btn btn-secondary"
-              disabled={!newName.trim() || create.isPending}
-              onClick={() => create.mutate()}
+              className={`badge tag-badge ${selected.has(tag.id) ? "active" : ""}`}
+              onClick={() => toggle(tag.id)}
             >
-              Add
+              {tag.name}
             </button>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={() => {
-                setShowNew(false);
-                setNewName("");
-              }}
-            >
-              Cancel
+          ))}
+          {!showNew ? (
+            <button type="button" className="badge tag-badge tag-badge-add" onClick={() => setShowNew(true)}>
+              + Add tag
             </button>
-          </div>
-        )}
-      </div>
+          ) : (
+            <div className="tag-picker-new">
+              <input
+                type="text"
+                placeholder="Tag name"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                className="tag-picker-input"
+              />
+              <button
+                type="button"
+                className="btn btn-secondary"
+                disabled={!newName.trim() || create.isPending}
+                onClick={() => create.mutate()}
+              >
+                Add
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => {
+                  setShowNew(false);
+                  setNewName("");
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

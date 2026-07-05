@@ -12,6 +12,10 @@ export function adjacentFile(
   return files[next];
 }
 
+export function nextFileAfterCurrent(files: MediaFile[], currentId: number): MediaFile | null {
+  return adjacentFile(files, currentId, 1) ?? adjacentFile(files, currentId, -1);
+}
+
 function isEditableTarget(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false;
   const tag = target.tagName;

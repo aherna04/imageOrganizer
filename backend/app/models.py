@@ -141,6 +141,26 @@ class InboxPeopleOut(BaseModel):
     people: list[CalendarMonthPersonOut]
 
 
+class InboxCameraOut(BaseModel):
+    name: str
+    photo_count: int
+
+
+class InboxCamerasOut(BaseModel):
+    cameras: list[InboxCameraOut]
+
+
+class CameraOut(BaseModel):
+    name: str
+    photo_count: int
+    inbox_count: int
+    archive_count: int
+
+
+class CamerasOut(BaseModel):
+    cameras: list[CameraOut]
+
+
 class CalendarMonthLabelsOut(BaseModel):
     year: int
     month: int
@@ -336,6 +356,15 @@ class ReviewDecisionOut(BaseModel):
 class ReviewQueueOut(BaseModel):
     items: list[ReviewDecisionOut]
     total: int
+
+
+class ReviewDecisionsCancel(BaseModel):
+    file_ids: list[int]
+    action: Literal["delete"] = "delete"
+
+
+class ReviewDecisionsCancelOut(BaseModel):
+    removed: int
 
 
 class ApplyResultOut(BaseModel):

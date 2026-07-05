@@ -2,6 +2,8 @@
 
 Local-first web app for organizing photos and videos: inbox landing folder, calendar browse, events, people, tags, deduplication, and safe apply.
 
+**Related docs:** [DEVELOPMENT_BOOK.md](DEVELOPMENT_BOOK.md) — collected implementation plans and design history.
+
 ## Design principles
 
 - **Preview before write** — filesystem changes happen only when the user clicks Apply on the Review page.

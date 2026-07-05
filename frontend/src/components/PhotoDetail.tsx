@@ -1,7 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { MediaFile, api } from "../api/client";
-import { adjacentFile, isEditableTarget, photoNavDelta } from "../utils/photoNavigation";
+import {
+  adjacentFile,
+  isEditableTarget,
+  nextFileAfterCurrent,
+  photoNavDelta,
+} from "../utils/photoNavigation";
 import CaptureDateEditor from "./CaptureDateEditor";
 import EventPicker from "./EventPicker";
 import PersonPicker from "./PersonPicker";
@@ -12,10 +17,18 @@ interface Props {
   onClose: () => void;
   files?: MediaFile[];
   onChangeFile?: (file: MediaFile) => void;
-  onDateChange?: () => void;
+  onDateChange?: (keepFileId?: number) => void;
+  deleteQueueMode?: boolean;
 }
 
-export default function PhotoDetail({ file, onClose, files, onChangeFile, onDateChange }: Props) {
+export default function PhotoDetail({
+  file,
+  onClose,
+  files,
+  onChangeFile,
+  onDateChange,
+  deleteQueueMode = false,
+}: Props) {
   const qc = useQueryClient();
   const currentFile = files?.find((f) => f.id === file.id) ?? file;
   const { data: meta, refetch } = useQuery({
@@ -26,6 +39,7 @@ export default function PhotoDetail({ file, onClose, files, onChangeFile, onDate
   const [caption, setCaption] = useState("");
   const [rating, setRating] = useState<number | "">("");
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [acting, setActing] = useState(false);
 
   useEffect(() => {
     setCaption("");
@@ -35,6 +49,57 @@ export default function PhotoDetail({ file, onClose, files, onChangeFile, onDate
   const canNavigate = files != null && files.length > 1 && onChangeFile != null;
   const fileIndex = canNavigate ? files.findIndex((f) => f.id === file.id) : -1;
 
+  const handleLabelsChange = useCallback(
+    (keepFileId?: number) => {
+      qc.invalidateQueries({ queryKey: ["files"] });
+      qc.invalidateQueries({ queryKey: ["tags"] });
+      qc.invalidateQueries({ queryKey: ["people"] });
+      qc.invalidateQueries({ queryKey: ["events"] });
+      qc.invalidateQueries({ queryKey: ["inbox-tags"] });
+      qc.invalidateQueries({ queryKey: ["inbox-people"] });
+      qc.invalidateQueries({ queryKey: ["files", "inbox", "delete_queue_count"] });
+      qc.invalidateQueries({ queryKey: ["review-queue"] });
+      onDateChange?.(keepFileId);
+    },
+    [qc, onDateChange],
+  );
+
+  const handleMarkDelete = useCallback(async () => {
+    if (acting) return;
+    setActing(true);
+    try {
+      const next = files && onChangeFile ? nextFileAfterCurrent(files, file.id) : null;
+      await api.createDecision({ file_id: file.id, action: "delete" });
+      if (next && onChangeFile) {
+        onChangeFile(next);
+        handleLabelsChange(next.id);
+      } else {
+        handleLabelsChange();
+        onClose();
+      }
+    } finally {
+      setActing(false);
+    }
+  }, [acting, files, onChangeFile, file.id, handleLabelsChange, onClose]);
+
+  const handleRestore = useCallback(async () => {
+    if (acting) return;
+    setActing(true);
+    try {
+      const next = files && onChangeFile ? nextFileAfterCurrent(files, file.id) : null;
+      await api.cancelReviewDecisions([file.id]);
+      if (next && onChangeFile) {
+        onChangeFile(next);
+        handleLabelsChange(next.id);
+      } else {
+        handleLabelsChange();
+        onClose();
+      }
+    } finally {
+      setActing(false);
+    }
+  }, [acting, files, onChangeFile, file.id, handleLabelsChange, onClose]);
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -42,6 +107,13 @@ export default function PhotoDetail({ file, onClose, files, onChangeFile, onDate
           e.stopPropagation();
           setLightboxOpen(false);
         }
+        return;
+      }
+
+      if (e.key === "d" || e.key === "D") {
+        if (deleteQueueMode || isEditableTarget(e.target) || acting) return;
+        e.preventDefault();
+        void handleMarkDelete();
         return;
       }
 
@@ -59,7 +131,7 @@ export default function PhotoDetail({ file, onClose, files, onChangeFile, onDate
 
     window.addEventListener("keydown", onKey, true);
     return () => window.removeEventListener("keydown", onKey, true);
-  }, [canNavigate, files, file.id, onChangeFile, lightboxOpen]);
+  }, [canNavigate, files, file.id, onChangeFile, lightboxOpen, acting, deleteQueueMode, handleMarkDelete]);
 
   const saveMeta = useMutation({
     mutationFn: () =>
@@ -79,16 +151,6 @@ export default function PhotoDetail({ file, onClose, files, onChangeFile, onDate
     qc.invalidateQueries({ queryKey: ["files"] });
     qc.invalidateQueries({ queryKey: ["metadata", file.id] });
     refetch();
-    onDateChange?.();
-  };
-
-  const handleLabelsChange = () => {
-    qc.invalidateQueries({ queryKey: ["files"] });
-    qc.invalidateQueries({ queryKey: ["tags"] });
-    qc.invalidateQueries({ queryKey: ["people"] });
-    qc.invalidateQueries({ queryKey: ["events"] });
-    qc.invalidateQueries({ queryKey: ["inbox-tags"] });
-    qc.invalidateQueries({ queryKey: ["inbox-people"] });
     onDateChange?.();
   };
 
@@ -122,7 +184,28 @@ export default function PhotoDetail({ file, onClose, files, onChangeFile, onDate
             onClick={() => setLightboxOpen(true)}
           />
         )}
-        <h3>{file.filename}</h3>
+        <div className="photo-detail-title-row">
+          <h3>{file.filename}</h3>
+          {deleteQueueMode ? (
+            <button
+              className="btn btn-secondary"
+              title="Restore to inbox"
+              disabled={acting}
+              onClick={() => void handleRestore()}
+            >
+              Restore
+            </button>
+          ) : (
+            <button
+              className="btn btn-danger"
+              title="Mark delete (D)"
+              disabled={acting}
+              onClick={() => void handleMarkDelete()}
+            >
+              Mark delete
+            </button>
+          )}
+        </div>
         <CaptureDateEditor files={[file]} onChange={handleDateChange} />
         {meta && (
           <>
@@ -160,34 +243,24 @@ export default function PhotoDetail({ file, onClose, files, onChangeFile, onDate
           <EventPicker
             fileId={currentFile.id}
             fileEvents={currentFile.events ?? []}
-            onChange={handleLabelsChange}
+            onChange={() => handleLabelsChange()}
           />
         </div>
         <div style={{ marginTop: "1rem" }}>
           <PersonPicker
             fileId={currentFile.id}
             filePeople={currentFile.people ?? []}
-            onChange={handleLabelsChange}
+            onChange={() => handleLabelsChange()}
           />
         </div>
         <div style={{ marginTop: "1rem" }}>
           <FileTagPicker
             fileId={currentFile.id}
             fileTags={currentFile.tags ?? []}
-            onChange={handleLabelsChange}
+            onChange={() => handleLabelsChange()}
           />
         </div>
-        <div style={{ marginTop: "1rem", display: "flex", gap: "0.5rem" }}>
-          <button
-            className="btn btn-danger"
-            onClick={async () => {
-              await api.createDecision({ file_id: file.id, action: "delete" });
-              handleLabelsChange();
-              onClose();
-            }}
-          >
-            Mark delete
-          </button>
+        <div style={{ marginTop: "1rem" }}>
           <button
             className="btn btn-secondary"
             onClick={async () => {

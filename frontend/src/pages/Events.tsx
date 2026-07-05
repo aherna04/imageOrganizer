@@ -2,10 +2,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { MediaFile, api } from "../api/client";
-import PhotoGrid from "../components/PhotoGrid";
+import PhotoGridWithAlerts from "../components/PhotoGridWithAlerts";
 import PhotoDetail from "../components/PhotoDetail";
 import TagPicker from "../components/TagPicker";
 import { calendarDayPath } from "../utils/calendarPath";
+import { invalidateAfterDateChange } from "../utils/invalidateAfterDateChange";
 
 export default function EventsPage() {
   const { slug } = useParams();
@@ -151,13 +152,29 @@ export default function EventsPage() {
             ))}
           </div>
         )}
-        <PhotoGrid
+        <PhotoGridWithAlerts
           files={eventFiles?.items ?? []}
+          activeDetailId={selected?.id}
           onSelect={setSelected}
           editableLabels
           onLabelsChange={() => qc.invalidateQueries({ queryKey: ["event-files", activeEvent.id] })}
+          onAlertsChange={() => {
+            invalidateAfterDateChange(qc);
+            qc.invalidateQueries({ queryKey: ["event-files", activeEvent!.id] });
+          }}
         />
-        {selected && <PhotoDetail file={selected} onClose={() => setSelected(null)} />}
+        {selected && (
+          <PhotoDetail
+            file={selected}
+            files={eventFiles?.items ?? []}
+            onChangeFile={setSelected}
+            onDateChange={() => {
+              invalidateAfterDateChange(qc);
+              qc.invalidateQueries({ queryKey: ["event-files", activeEvent!.id] });
+            }}
+            onClose={() => setSelected(null)}
+          />
+        )}
       </div>
     );
   }

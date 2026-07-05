@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Literal
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,8 +10,11 @@ from app import people as people_svc
 from app import tags as tags_svc
 from app.config import ensure_media_dirs, media_type_for_suffix, mime_type_for_path
 from app.db import get_config, get_conn, get_file_events, init_db, row_to_dict, update_config
-from app.dedupe import get_duplicate_groups
+from app.dedupe import dismiss_duplicate_member, get_duplicate_groups
+from app.inbox_filters import PENDING_DELETE_EXCLUSION_F, append_inbox_visible_filter
+from app.media_filter import append_media_type_filter, filename_media_type_condition_literal
 from app.metadata import thumb_cache_path
+from app.storage_stats import get_storage_stats
 from app.models import (
     ApplyResultOut,
     CalendarMonthEventOut,
@@ -23,6 +27,8 @@ from app.models import (
     CalendarSummaryOut,
     ConfigOut,
     ConfigUpdate,
+    CaptureDatesUpdate,
+    CaptureDatesUpdateOut,
     DuplicateGroupOut,
     DuplicateKeeperUpdate,
     EventAssignByIds,
@@ -35,9 +41,15 @@ from app.models import (
     FileOut,
     FilePeopleUpdate,
     FileTagsUpdate,
+    FixDatesFromFilenameIn,
+    FixDatesFromFilenameOut,
+    InboxPeopleOut,
+    InboxTagsOut,
     MetadataOut,
     MetadataUpdate,
     OperationLogOut,
+    OrganizeFixDatesIn,
+    OrganizeFixDatesOut,
     OrganizePreviewOut,
     PeopleAssignByIds,
     PeopleMerge,
@@ -49,6 +61,7 @@ from app.models import (
     ReviewDecisionOut,
     ReviewQueueOut,
     ScanStatusOut,
+    StorageStatsOut,
     TagCreate,
     TagOut,
     TagUpdate,
@@ -56,7 +69,7 @@ from app.models import (
     TagsMerge,
     TagsUnassignByIds,
 )
-from app.organizer import apply_operations, preview_organize
+from app.organizer import apply_operations, fix_dates_from_filename, preview_organize
 from app.scanner import scan_state, start_scan_background
 
 app = FastAPI(title="Image Organizer", version="2026.07.04b")
@@ -142,6 +155,12 @@ def api_update_config(body: ConfigUpdate):
     return ConfigOut(**cfg)
 
 
+@app.get("/api/storage/stats", response_model=StorageStatsOut)
+def api_storage_stats():
+    with get_conn() as conn:
+        return StorageStatsOut(**get_storage_stats(conn))
+
+
 @app.post("/api/scan/inbox")
 def api_scan_inbox():
     if not start_scan_background("inbox"):
@@ -161,6 +180,62 @@ def api_scan_status():
     return ScanStatusOut(**scan_state.snapshot())
 
 
+@app.get("/api/inbox/tags", response_model=InboxTagsOut)
+def api_inbox_tags():
+    with get_conn() as conn:
+        rows = conn.execute(
+            f"""
+            SELECT t.id, t.name, t.slug, COUNT(DISTINCT f.id) AS photo_count
+            FROM tags t
+            JOIN file_tags ft ON ft.tag_id = t.id
+            JOIN files f ON f.id = ft.file_id
+            WHERE f.location = 'inbox'
+              AND {PENDING_DELETE_EXCLUSION_F.strip()}
+            GROUP BY t.id
+            ORDER BY t.name
+            """
+        ).fetchall()
+    return InboxTagsOut(
+        tags=[
+            CalendarMonthTagOut(
+                id=r["id"],
+                name=r["name"],
+                slug=r["slug"],
+                photo_count=r["photo_count"],
+            )
+            for r in rows
+        ]
+    )
+
+
+@app.get("/api/inbox/people", response_model=InboxPeopleOut)
+def api_inbox_people():
+    with get_conn() as conn:
+        rows = conn.execute(
+            f"""
+            SELECT p.id, p.name, p.slug, COUNT(DISTINCT f.id) AS photo_count
+            FROM people p
+            JOIN file_people fp ON fp.person_id = p.id
+            JOIN files f ON f.id = fp.file_id
+            WHERE f.location = 'inbox'
+              AND {PENDING_DELETE_EXCLUSION_F.strip()}
+            GROUP BY p.id
+            ORDER BY p.name
+            """
+        ).fetchall()
+    return InboxPeopleOut(
+        people=[
+            CalendarMonthPersonOut(
+                id=r["id"],
+                name=r["name"],
+                slug=r["slug"],
+                photo_count=r["photo_count"],
+            )
+            for r in rows
+        ]
+    )
+
+
 @app.get("/api/files", response_model=FileListOut)
 def api_list_files(
     location: str | None = None,
@@ -168,6 +243,8 @@ def api_list_files(
     event_id: int | None = None,
     person_id: int | None = None,
     tag_id: int | None = None,
+    unlabeled: bool = False,
+    media_type: Literal["image", "video"] | None = None,
     page: int = Query(1, ge=1),
     page_size: int = Query(50, ge=1, le=200),
 ):
@@ -176,6 +253,7 @@ def api_list_files(
     if location:
         clauses.append("f.location = ?")
         params.append(location)
+        append_inbox_visible_filter(clauses, location)
     if capture_day:
         clauses.append("f.capture_day = ?")
         params.append(capture_day)
@@ -188,6 +266,15 @@ def api_list_files(
     if tag_id:
         clauses.append("f.id IN (SELECT file_id FROM file_tags WHERE tag_id = ?)")
         params.append(tag_id)
+    if unlabeled:
+        clauses.append(
+            """
+            f.id NOT IN (SELECT file_id FROM file_tags)
+            AND f.id NOT IN (SELECT file_id FROM file_people)
+            AND f.id NOT IN (SELECT file_id FROM file_events)
+            """
+        )
+    append_media_type_filter(clauses, params, "f.filename", media_type)
     where = ("WHERE " + " AND ".join(clauses)) if clauses else ""
     with get_conn() as conn:
         total = conn.execute(f"SELECT COUNT(*) FROM files f {where}", params).fetchone()[0]
@@ -279,8 +366,39 @@ def api_update_metadata(file_id: int, body: MetadataUpdate):
         )
 
 
+@app.patch("/api/files/capture-dates", response_model=CaptureDatesUpdateOut)
+def api_set_capture_dates(body: CaptureDatesUpdate):
+    from datetime import date as date_type
+
+    from app.file_dates import set_capture_dates_bulk
+
+    try:
+        parsed = date_type.fromisoformat(body.capture_date)
+    except ValueError as exc:
+        raise HTTPException(400, "Invalid capture_date; use YYYY-MM-DD") from exc
+    if not body.file_ids:
+        return CaptureDatesUpdateOut(updated=0)
+    with get_conn() as conn:
+        updated = set_capture_dates_bulk(conn, body.file_ids, parsed)
+    return CaptureDatesUpdateOut(updated=updated)
+
+
+@app.post("/api/files/fix-dates-from-filename", response_model=FixDatesFromFilenameOut)
+def api_fix_dates_from_filename(body: FixDatesFromFilenameIn):
+    from app.file_dates import fix_dates_from_filename
+
+    if not body.file_ids:
+        return FixDatesFromFilenameOut(fixed=0, skipped=0)
+    with get_conn() as conn:
+        fixed, skipped, _ = fix_dates_from_filename(conn, body.file_ids)
+    return FixDatesFromFilenameOut(fixed=fixed, skipped=skipped)
+
+
 @app.get("/api/calendar/months", response_model=CalendarMonthsOut)
-def api_calendar_months(location: str = Query("archive")):
+def api_calendar_months(
+    location: str = Query("archive"),
+    media_type: Literal["image", "video"] | None = None,
+):
     with get_conn() as conn:
         clauses = ["capture_day IS NOT NULL"]
         params: list = []
@@ -288,6 +406,7 @@ def api_calendar_months(location: str = Query("archive")):
             clauses.append("location = 'archive'")
         elif location == "inbox":
             clauses.append("location = 'inbox'")
+        append_media_type_filter(clauses, params, "filename", media_type)
         where = " AND ".join(clauses)
         rows = conn.execute(
             f"""
@@ -352,13 +471,18 @@ def api_calendar_events(
     )
 
 
-def _month_location_clauses(month_str: str, location: str) -> tuple[list[str], list]:
+def _month_location_clauses(
+    month_str: str,
+    location: str,
+    media_type: Literal["image", "video"] | None = None,
+) -> tuple[list[str], list]:
     clauses = ["f.capture_day LIKE ?"]
     params: list = [f"{month_str}%"]
     if location == "archive":
         clauses.append("f.location = 'archive'")
     elif location == "inbox":
         clauses.append("f.location = 'inbox'")
+    append_media_type_filter(clauses, params, "f.filename", media_type)
     return clauses, params
 
 
@@ -367,10 +491,11 @@ def api_calendar_labels(
     year: int,
     month: int = Query(..., ge=1, le=12),
     location: str = Query("archive"),
+    media_type: Literal["image", "video"] | None = None,
 ):
     month_str = f"{year:04d}-{month:02d}"
     with get_conn() as conn:
-        clauses, params = _month_location_clauses(month_str, location)
+        clauses, params = _month_location_clauses(month_str, location, media_type)
         where = " AND ".join(clauses)
         event_rows = conn.execute(
             f"""
@@ -450,6 +575,7 @@ def api_calendar_summary(
     event_id: int | None = None,
     person_id: int | None = None,
     tag_id: int | None = None,
+    media_type: Literal["image", "video"] | None = None,
 ):
     month_str = f"{year:04d}-{month:02d}"
     with get_conn() as conn:
@@ -468,6 +594,12 @@ def api_calendar_summary(
         if tag_id:
             clauses.append("id IN (SELECT file_id FROM file_tags WHERE tag_id = ?)")
             params.append(tag_id)
+        append_media_type_filter(clauses, params, "filename", media_type)
+        cover_media = (
+            f" AND {filename_media_type_condition_literal('f2.filename', media_type)}"
+            if media_type
+            else ""
+        )
         where = " AND ".join(clauses)
         rows = conn.execute(
             f"""
@@ -477,6 +609,7 @@ def api_calendar_summary(
                     WHERE f2.capture_day = files.capture_day
                     {"AND f2.location = 'archive'" if location == "archive" else ""}
                     {"AND f2.location = 'inbox'" if location == "inbox" else ""}
+                    {cover_media}
                     ORDER BY f2.capture_date LIMIT 1) AS cover_file_id
             FROM files
             WHERE {where}
@@ -501,6 +634,7 @@ def api_calendar_day(
     event_id: int | None = None,
     person_id: int | None = None,
     tag_id: int | None = None,
+    media_type: Literal["image", "video"] | None = None,
     page: int = Query(1, ge=1),
     page_size: int = Query(100, ge=1, le=500),
 ):
@@ -511,6 +645,7 @@ def api_calendar_day(
         event_id=event_id,
         person_id=person_id,
         tag_id=tag_id,
+        media_type=media_type,
         page=page,
         page_size=page_size,
     )
@@ -740,21 +875,18 @@ def api_set_file_events(file_id: int, body: FileEventsUpdate):
 def api_duplicates():
     with get_conn() as conn:
         groups = get_duplicate_groups(conn)
-    result = []
-    for g in groups:
-        files = [
-            FileOut(**{k: f[k] for k in FileOut.model_fields if k != "events"}, events=[])
-            for f in g["files"]
-        ]
-        result.append(
-            DuplicateGroupOut(
-                id=g["id"],
-                group_type=g["group_type"],
-                keeper_id=g["keeper_id"],
-                files=files,
+        result = []
+        for g in groups:
+            files = [_file_out(conn, f) for f in g["files"]]
+            result.append(
+                DuplicateGroupOut(
+                    id=g["id"],
+                    group_type=g["group_type"],
+                    keeper_id=g["keeper_id"],
+                    files=files,
+                )
             )
-        )
-    return result
+        return result
 
 
 @app.patch("/api/duplicates/{group_id}/keeper")
@@ -768,6 +900,19 @@ def api_set_keeper(group_id: int, body: DuplicateKeeperUpdate):
     return {"ok": True}
 
 
+@app.post("/api/duplicates/{group_id}/dismiss/{file_id}")
+def api_dismiss_duplicate(group_id: int, file_id: int):
+    with get_conn() as conn:
+        try:
+            dismiss_duplicate_member(conn, group_id, file_id)
+        except ValueError as exc:
+            msg = str(exc)
+            if msg == "Group not found":
+                raise HTTPException(404, msg) from exc
+            raise HTTPException(400, msg) from exc
+    return {"ok": True, "merged": True}
+
+
 @app.post("/api/organize/preview", response_model=OrganizePreviewOut)
 def api_organize_preview(file_ids: list[int] | None = None):
     with get_conn() as conn:
@@ -775,6 +920,20 @@ def api_organize_preview(file_ids: list[int] | None = None):
     from app.models import OrganizePreviewItem
 
     return OrganizePreviewOut(
+        items=[OrganizePreviewItem(**i) for i in items],
+        total=len(items),
+    )
+
+
+@app.post("/api/organize/fix-dates", response_model=OrganizeFixDatesOut)
+def api_organize_fix_dates(body: OrganizeFixDatesIn):
+    with get_conn() as conn:
+        file_ids = body.file_ids or None
+        fixed, items = fix_dates_from_filename(conn, file_ids)
+    from app.models import OrganizePreviewItem
+
+    return OrganizeFixDatesOut(
+        fixed=fixed,
         items=[OrganizePreviewItem(**i) for i in items],
         total=len(items),
     )

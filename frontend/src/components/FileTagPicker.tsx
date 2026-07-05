@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Tag, api } from "../api/client";
 
 interface Props {
@@ -8,34 +8,59 @@ interface Props {
   onChange: () => void;
 }
 
+function tagIds(tags: Tag[]) {
+  return tags.map((t) => t.id);
+}
+
 export default function FileTagPicker({ fileId, fileTags, onChange }: Props) {
   const qc = useQueryClient();
   const [newName, setNewName] = useState("");
   const [showNew, setShowNew] = useState(false);
+  const [selectedIds, setSelectedIds] = useState(() => tagIds(fileTags));
+  const propIdsKey = [...tagIds(fileTags)].sort((a, b) => a - b).join(",");
+
+  useEffect(() => {
+    setSelectedIds(tagIds(fileTags));
+  }, [fileId, propIdsKey]);
 
   const { data: allTags = [] } = useQuery({
     queryKey: ["tags"],
     queryFn: api.listTags,
   });
 
-  const selected = new Set(fileTags.map((t) => t.id));
+  const selected = new Set(selectedIds);
 
   const toggle = async (tagId: number) => {
+    const prev = selectedIds;
     const next = selected.has(tagId)
-      ? [...selected].filter((id) => id !== tagId)
-      : [...selected, tagId];
-    await api.updateFileTags(fileId, next);
-    onChange();
+      ? selectedIds.filter((id) => id !== tagId)
+      : [...selectedIds, tagId];
+    setSelectedIds(next);
+    try {
+      await api.updateFileTags(fileId, next);
+      onChange();
+    } catch {
+      setSelectedIds(prev);
+    }
   };
 
   const create = useMutation({
     mutationFn: () => api.createTag(newName.trim()),
     onSuccess: async (tag) => {
       qc.invalidateQueries({ queryKey: ["tags"] });
-      await api.updateFileTags(fileId, [...selected, tag.id]);
-      setNewName("");
-      setShowNew(false);
-      onChange();
+      let next: number[] = [];
+      setSelectedIds((prev) => {
+        next = [...prev, tag.id];
+        return next;
+      });
+      try {
+        await api.updateFileTags(fileId, next);
+        setNewName("");
+        setShowNew(false);
+        onChange();
+      } catch {
+        setSelectedIds((prev) => prev.filter((id) => id !== tag.id));
+      }
     },
   });
 

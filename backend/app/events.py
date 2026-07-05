@@ -8,7 +8,7 @@ def list_events(conn: sqlite3.Connection) -> list[dict]:
     rows = conn.execute(
         """
         SELECT e.*,
-            COUNT(fe.file_id) AS photo_count,
+            COUNT(f.id) AS photo_count,
             MIN(f.capture_day) AS date_span_start,
             MAX(f.capture_day) AS date_span_end
         FROM events e
@@ -25,7 +25,7 @@ def get_event(conn: sqlite3.Connection, event_id: int) -> dict | None:
     row = conn.execute(
         """
         SELECT e.*,
-            COUNT(fe.file_id) AS photo_count,
+            COUNT(f.id) AS photo_count,
             MIN(f.capture_day) AS date_span_start,
             MAX(f.capture_day) AS date_span_end
         FROM events e

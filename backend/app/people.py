@@ -16,9 +16,10 @@ def list_people(conn: sqlite3.Connection) -> list[dict]:
     rows = conn.execute(
         """
         SELECT p.*,
-            COUNT(fp.file_id) AS photo_count
+            COUNT(DISTINCT f.id) AS photo_count
         FROM people p
         LEFT JOIN file_people fp ON fp.person_id = p.id
+        LEFT JOIN files f ON f.id = fp.file_id
         GROUP BY p.id
         ORDER BY p.name
         """
@@ -30,9 +31,10 @@ def get_person(conn: sqlite3.Connection, person_id: int) -> dict | None:
     row = conn.execute(
         """
         SELECT p.*,
-            COUNT(fp.file_id) AS photo_count
+            COUNT(DISTINCT f.id) AS photo_count
         FROM people p
         LEFT JOIN file_people fp ON fp.person_id = p.id
+        LEFT JOIN files f ON f.id = fp.file_id
         WHERE p.id = ?
         GROUP BY p.id
         """,

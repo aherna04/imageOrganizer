@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Person, api } from "../api/client";
 import { hasDuplicateName, personLabel } from "../utils/personLabel";
 
@@ -9,35 +9,60 @@ interface Props {
   onChange: () => void;
 }
 
+function personIds(people: Person[]) {
+  return people.map((p) => p.id);
+}
+
 export default function PersonPicker({ fileId, filePeople, onChange }: Props) {
   const qc = useQueryClient();
   const [newName, setNewName] = useState("");
   const [showNew, setShowNew] = useState(false);
+  const [selectedIds, setSelectedIds] = useState(() => personIds(filePeople));
+  const propIdsKey = [...personIds(filePeople)].sort((a, b) => a - b).join(",");
+
+  useEffect(() => {
+    setSelectedIds(personIds(filePeople));
+  }, [fileId, propIdsKey]);
 
   const { data: allPeople = [] } = useQuery({
     queryKey: ["people"],
     queryFn: api.listPeople,
   });
 
-  const selected = new Set(filePeople.map((p) => p.id));
+  const selected = new Set(selectedIds);
   const nameExists = newName.trim() ? hasDuplicateName(newName, allPeople) : false;
 
   const toggle = async (personId: number) => {
+    const prev = selectedIds;
     const next = selected.has(personId)
-      ? [...selected].filter((id) => id !== personId)
-      : [...selected, personId];
-    await api.updateFilePeople(fileId, next);
-    onChange();
+      ? selectedIds.filter((id) => id !== personId)
+      : [...selectedIds, personId];
+    setSelectedIds(next);
+    try {
+      await api.updateFilePeople(fileId, next);
+      onChange();
+    } catch {
+      setSelectedIds(prev);
+    }
   };
 
   const create = useMutation({
     mutationFn: () => api.createPerson(newName.trim()),
     onSuccess: async (person) => {
       qc.invalidateQueries({ queryKey: ["people"] });
-      await api.updateFilePeople(fileId, [...selected, person.id]);
-      setNewName("");
-      setShowNew(false);
-      onChange();
+      let next: number[] = [];
+      setSelectedIds((prev) => {
+        next = [...prev, person.id];
+        return next;
+      });
+      try {
+        await api.updateFilePeople(fileId, next);
+        setNewName("");
+        setShowNew(false);
+        onChange();
+      } catch {
+        setSelectedIds((prev) => prev.filter((id) => id !== person.id));
+      }
     },
   });
 

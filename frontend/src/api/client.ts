@@ -63,6 +63,16 @@ export interface Config {
   rename_pattern: string;
 }
 
+export interface StorageStats {
+  catalog_bytes: number;
+  catalog_count: number;
+  images_bytes: number;
+  image_count: number;
+  videos_bytes: number;
+  video_count: number;
+  database_bytes: number;
+}
+
 export interface Metadata {
   capture_date: string | null;
   camera: string | null;
@@ -117,6 +127,9 @@ export interface CalendarMonthTag {
   photo_count: number;
 }
 
+export type InboxUsedTag = CalendarMonthTag;
+export type InboxUsedPerson = CalendarMonthPerson;
+
 export interface CalendarMonthLabels {
   year: number;
   month: number;
@@ -130,6 +143,8 @@ export type CalendarMonthFilter =
   | { year: number; month: number; kind: "person"; id: number }
   | { year: number; month: number; kind: "tag"; id: number };
 
+export type CalendarMediaType = "all" | "image" | "video";
+
 export interface CalendarDayFilter {
   eventId?: number;
   personId?: number;
@@ -140,6 +155,10 @@ function appendCalendarFilter(q: URLSearchParams, filter?: CalendarDayFilter) {
   if (filter?.eventId) q.set("event_id", String(filter.eventId));
   if (filter?.personId) q.set("person_id", String(filter.personId));
   if (filter?.tagId) q.set("tag_id", String(filter.tagId));
+}
+
+function appendMediaType(q: URLSearchParams, mediaType?: CalendarMediaType) {
+  if (mediaType && mediaType !== "all") q.set("media_type", mediaType);
 }
 
 export interface DuplicateGroup {
@@ -154,6 +173,11 @@ export interface OrganizePreviewItem {
   source_path: string;
   target_path: string;
   filename: string;
+  organize_date: string | null;
+  filename_date: string | null;
+  date_mismatch: boolean;
+  suggested_target_path: string | null;
+  suggested_filename: string | null;
 }
 
 export interface ReviewDecision {
@@ -182,12 +206,17 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 
 export const api = {
   getConfig: () => request<Config>("/api/config"),
+  getStorageStats: () => request<StorageStats>("/api/storage/stats"),
   updateConfig: (data: Partial<Config>) =>
     request<Config>("/api/config", { method: "PATCH", body: JSON.stringify(data) }),
 
   scanInbox: () => request<{ ok: boolean }>("/api/scan/inbox", { method: "POST" }),
   scanArchive: () => request<{ ok: boolean }>("/api/scan/archive", { method: "POST" }),
   scanStatus: () => request<ScanStatus>("/api/scan/status"),
+
+  inboxTags: () => request<{ tags: InboxUsedTag[] }>("/api/inbox/tags"),
+
+  inboxPeople: () => request<{ people: InboxUsedPerson[] }>("/api/inbox/people"),
 
   listFiles: (params: Record<string, string | number | undefined>) => {
     const q = new URLSearchParams();
@@ -204,26 +233,47 @@ export const api = {
   updateMetadata: (id: number, data: Partial<Metadata>) =>
     request<Metadata>(`/api/files/${id}/metadata`, { method: "PATCH", body: JSON.stringify(data) }),
 
+  setCaptureDates: (fileIds: number[], captureDate: string) =>
+    request<{ updated: number }>("/api/files/capture-dates", {
+      method: "PATCH",
+      body: JSON.stringify({ file_ids: fileIds, capture_date: captureDate }),
+    }),
+
+  fixDatesFromFilename: (fileIds: number[]) =>
+    request<{ fixed: number; skipped: number }>("/api/files/fix-dates-from-filename", {
+      method: "POST",
+      body: JSON.stringify({ file_ids: fileIds }),
+    }),
+
   calendarSummary: (
     year: number,
     month: number,
     location = "archive",
-    filter?: CalendarDayFilter
+    filter?: CalendarDayFilter,
+    mediaType: CalendarMediaType = "all"
   ) => {
     const q = new URLSearchParams({ year: String(year), month: String(month), location });
     appendCalendarFilter(q, filter);
+    appendMediaType(q, mediaType);
     return request<{ year: number; month: number; days: CalendarDaySummary[] }>(
       `/api/calendar/summary?${q}`
     );
   },
 
-  calendarMonths: (location = "archive") => {
+  calendarMonths: (location = "archive", mediaType: CalendarMediaType = "all") => {
     const q = new URLSearchParams({ location });
+    appendMediaType(q, mediaType);
     return request<{ months: CalendarMonthSummary[] }>(`/api/calendar/months?${q}`);
   },
 
-  calendarLabels: (year: number, month: number, location = "archive") => {
+  calendarLabels: (
+    year: number,
+    month: number,
+    location = "archive",
+    mediaType: CalendarMediaType = "all"
+  ) => {
     const q = new URLSearchParams({ year: String(year), month: String(month), location });
+    appendMediaType(q, mediaType);
     return request<CalendarMonthLabels>(`/api/calendar/labels?${q}`);
   },
 
@@ -234,9 +284,15 @@ export const api = {
     );
   },
 
-  calendarDay: (date: string, location = "archive", filter?: CalendarDayFilter) => {
+  calendarDay: (
+    date: string,
+    location = "archive",
+    filter?: CalendarDayFilter,
+    mediaType: CalendarMediaType = "all"
+  ) => {
     const q = new URLSearchParams({ date, location });
     appendCalendarFilter(q, filter);
+    appendMediaType(q, mediaType);
     return request<FileList>(`/api/calendar/day?${q}`);
   },
 
@@ -324,8 +380,19 @@ export const api = {
       body: JSON.stringify({ keeper_id: keeperId }),
     }),
 
+  dismissDuplicate: (groupId: number, fileId: number) =>
+    request<{ ok: boolean; merged: boolean }>(`/api/duplicates/${groupId}/dismiss/${fileId}`, {
+      method: "POST",
+    }),
+
   organizePreview: () =>
     request<{ items: OrganizePreviewItem[]; total: number }>("/api/organize/preview", { method: "POST" }),
+
+  fixOrganizeDates: (fileIds: number[] = []) =>
+    request<{ fixed: number; items: OrganizePreviewItem[]; total: number }>("/api/organize/fix-dates", {
+      method: "POST",
+      body: JSON.stringify({ file_ids: fileIds }),
+    }),
 
   previewInbox: () =>
     request<{ items: OrganizePreviewItem[]; total: number }>("/api/review/preview-inbox", { method: "POST" }),

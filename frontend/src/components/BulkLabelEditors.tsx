@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { MediaFile, api } from "../api/client";
+import CaptureDateEditor from "./CaptureDateEditor";
 import { hasDuplicateName, personLabel } from "../utils/personLabel";
 
 type Coverage = "all" | "some" | "none";
@@ -116,6 +117,7 @@ export default function BulkLabelEditors({ selectedFiles, onChange }: Props) {
 
   return (
     <div className="single-file-label-editors">
+      <CaptureDateEditor files={selectedFiles} onChange={onChange} />
       <div>
         <label style={{ fontSize: "0.875rem", color: "#aab0bc" }}>
           Events ({selectedFiles.length} photos)

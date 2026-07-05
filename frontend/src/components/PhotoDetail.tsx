@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MediaFile, api } from "../api/client";
+import { adjacentFile, isEditableTarget, photoNavDelta } from "../utils/photoNavigation";
+import CaptureDateEditor from "./CaptureDateEditor";
 import EventPicker from "./EventPicker";
 import PersonPicker from "./PersonPicker";
 import FileTagPicker from "./FileTagPicker";
@@ -8,10 +10,14 @@ import FileTagPicker from "./FileTagPicker";
 interface Props {
   file: MediaFile;
   onClose: () => void;
+  files?: MediaFile[];
+  onChangeFile?: (file: MediaFile) => void;
+  onDateChange?: () => void;
 }
 
-export default function PhotoDetail({ file, onClose }: Props) {
+export default function PhotoDetail({ file, onClose, files, onChangeFile, onDateChange }: Props) {
   const qc = useQueryClient();
+  const currentFile = files?.find((f) => f.id === file.id) ?? file;
   const { data: meta, refetch } = useQuery({
     queryKey: ["metadata", file.id],
     queryFn: () => api.getMetadata(file.id),
@@ -19,6 +25,41 @@ export default function PhotoDetail({ file, onClose }: Props) {
 
   const [caption, setCaption] = useState("");
   const [rating, setRating] = useState<number | "">("");
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+
+  useEffect(() => {
+    setCaption("");
+    setRating("");
+  }, [file.id]);
+
+  const canNavigate = files != null && files.length > 1 && onChangeFile != null;
+  const fileIndex = canNavigate ? files.findIndex((f) => f.id === file.id) : -1;
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        if (lightboxOpen) {
+          e.stopPropagation();
+          setLightboxOpen(false);
+        }
+        return;
+      }
+
+      if (!canNavigate || isEditableTarget(e.target)) return;
+
+      const delta = photoNavDelta(e.key);
+      if (delta == null) return;
+
+      const next = adjacentFile(files!, file.id, delta);
+      if (!next) return;
+
+      e.preventDefault();
+      onChangeFile!(next);
+    };
+
+    window.addEventListener("keydown", onKey, true);
+    return () => window.removeEventListener("keydown", onKey, true);
+  }, [canNavigate, files, file.id, onChangeFile, lightboxOpen]);
 
   const saveMeta = useMutation({
     mutationFn: () =>
@@ -29,35 +70,73 @@ export default function PhotoDetail({ file, onClose }: Props) {
     onSuccess: () => refetch(),
   });
 
+  const closeLightbox = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setLightboxOpen(false);
+  };
+
+  const handleDateChange = () => {
+    qc.invalidateQueries({ queryKey: ["files"] });
+    qc.invalidateQueries({ queryKey: ["metadata", file.id] });
+    refetch();
+    onDateChange?.();
+  };
+
+  const handleLabelsChange = () => {
+    qc.invalidateQueries({ queryKey: ["files"] });
+    qc.invalidateQueries({ queryKey: ["tags"] });
+    qc.invalidateQueries({ queryKey: ["people"] });
+    qc.invalidateQueries({ queryKey: ["events"] });
+    qc.invalidateQueries({ queryKey: ["inbox-tags"] });
+    qc.invalidateQueries({ queryKey: ["inbox-people"] });
+    onDateChange?.();
+  };
+
   return (
-    <div className="drawer-overlay" onClick={onClose}>
-      <div className="drawer" onClick={(e) => e.stopPropagation()}>
-        <button className="btn btn-secondary" onClick={onClose} style={{ marginBottom: "1rem" }}>
-          Close
-        </button>
+    <>
+      <div className="drawer-overlay" onClick={lightboxOpen ? undefined : onClose}>
+        <div className="drawer" onClick={(e) => e.stopPropagation()}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+          <button className="btn btn-secondary" onClick={onClose}>
+            Close
+          </button>
+          {canNavigate && fileIndex >= 0 && (
+            <span style={{ color: "#8891a0", fontSize: "0.875rem" }}>
+              {fileIndex + 1} / {files!.length}
+            </span>
+          )}
+        </div>
         {file.media_type === "video" ? (
           <video
             src={api.originalUrl(file.id)}
             controls
             poster={api.thumbUrl(file.id)}
-            style={{ width: "100%", borderRadius: "8px", marginBottom: "0.75rem" }}
+            className="photo-detail-preview"
+            onClick={() => setLightboxOpen(true)}
           />
         ) : (
-          <img src={api.thumbUrl(file.id)} alt={file.filename} />
+          <img
+            src={api.thumbUrl(file.id)}
+            alt={file.filename}
+            className="photo-detail-preview"
+            onClick={() => setLightboxOpen(true)}
+          />
         )}
         <h3>{file.filename}</h3>
+        <CaptureDateEditor files={[file]} onChange={handleDateChange} />
         {meta && (
           <>
             <div className="meta-row"><span>Date</span><span>{meta.capture_date ?? "—"}</span></div>
             <div className="meta-row"><span>Camera</span><span>{meta.camera ?? "—"}</span></div>
             <div className="meta-row"><span>Lens</span><span>{meta.lens ?? "—"}</span></div>
             <div className="meta-row"><span>Size</span><span>{meta.width}×{meta.height}</span></div>
-            <div className="meta-row"><span>Location</span><span>{file.location}</span></div>
+            <div className="meta-row"><span>Location</span><span>{currentFile.location}</span></div>
           </>
         )}
         <div className="form-group" style={{ marginTop: "1rem" }}>
           <label>Caption</label>
           <textarea
+            key={file.id}
             rows={2}
             defaultValue={meta?.caption ?? ""}
             onChange={(e) => setCaption(e.target.value)}
@@ -66,6 +145,7 @@ export default function PhotoDetail({ file, onClose }: Props) {
         <div className="form-group">
           <label>Rating (0-5)</label>
           <input
+            key={file.id}
             type="number"
             min={0}
             max={5}
@@ -78,29 +158,23 @@ export default function PhotoDetail({ file, onClose }: Props) {
         </button>
         <div style={{ marginTop: "1rem" }}>
           <EventPicker
-            fileId={file.id}
-            fileEvents={file.events ?? []}
-            onChange={() => qc.invalidateQueries({ queryKey: ["files"] })}
+            fileId={currentFile.id}
+            fileEvents={currentFile.events ?? []}
+            onChange={handleLabelsChange}
           />
         </div>
         <div style={{ marginTop: "1rem" }}>
           <PersonPicker
-            fileId={file.id}
-            filePeople={file.people ?? []}
-            onChange={() => {
-              qc.invalidateQueries({ queryKey: ["files"] });
-              qc.invalidateQueries({ queryKey: ["people"] });
-            }}
+            fileId={currentFile.id}
+            filePeople={currentFile.people ?? []}
+            onChange={handleLabelsChange}
           />
         </div>
         <div style={{ marginTop: "1rem" }}>
           <FileTagPicker
-            fileId={file.id}
-            fileTags={file.tags ?? []}
-            onChange={() => {
-              qc.invalidateQueries({ queryKey: ["files"] });
-              qc.invalidateQueries({ queryKey: ["tags"] });
-            }}
+            fileId={currentFile.id}
+            fileTags={currentFile.tags ?? []}
+            onChange={handleLabelsChange}
           />
         </div>
         <div style={{ marginTop: "1rem", display: "flex", gap: "0.5rem" }}>
@@ -108,6 +182,7 @@ export default function PhotoDetail({ file, onClose }: Props) {
             className="btn btn-danger"
             onClick={async () => {
               await api.createDecision({ file_id: file.id, action: "delete" });
+              handleLabelsChange();
               onClose();
             }}
           >
@@ -123,7 +198,34 @@ export default function PhotoDetail({ file, onClose }: Props) {
             Skip
           </button>
         </div>
+        </div>
       </div>
-    </div>
+      {lightboxOpen && (
+        <div
+          className="photo-lightbox"
+          onClick={closeLightbox}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Full size preview"
+        >
+          {file.media_type === "video" ? (
+            <video
+              src={api.originalUrl(file.id)}
+              controls
+              autoPlay
+              className="photo-lightbox-media"
+              onClick={closeLightbox}
+            />
+          ) : (
+            <img
+              src={api.originalUrl(file.id)}
+              alt={file.filename}
+              className="photo-lightbox-media"
+              onClick={closeLightbox}
+            />
+          )}
+        </div>
+      )}
+    </>
   );
 }

@@ -2,6 +2,32 @@
 
 Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
+## [2026.07.04c] - 2026-07-04
+
+### Added
+
+- Inbox **Used tags** and **Used people** filter bars (no selection): click to filter grid, then select all for bulk labeling
+- Inbox **All / Untagged** filter; mark-for-delete hides photos from inbox until Review apply
+- Photo date warnings bar: alert count, alerts-only view, bulk fix dates from filename
+- Capture date editor on single/bulk selection and in photo detail; keyboard prev/next in detail drawer
+- Calendar media filter: all / images / videos on month grid and day panel
+- Settings storage stats (catalog, images, videos, database sizes)
+- Duplicates: mark-then-confirm delete, file size on cards, default keeper = largest file
+- `GET /api/inbox/tags`, `GET /api/inbox/people`, `GET /api/storage/stats`
+
+### Changed
+
+- Photo detail: multi-tag/people/event selection with optimistic picker state; full-size lightbox preview
+- Duplicates layout widened; two-column groups on wide screens
+- Tags and People pages: names link to browse (Browse buttons removed)
+- Tag/person/event counts count only existing files; orphan junction cleanup after dedupe apply
+- Review apply refreshes tags, people, browse, and calendar queries
+
+### Fixed
+
+- Tag counts wrong after duplicate merge (source tags cleared; orphan rows cleaned up)
+- Thumbnail 500 when `thumb_cache_path` import was missing from `main.py`
+
 ## [2026.07.04b] - 2026-07-04
 
 ### Added

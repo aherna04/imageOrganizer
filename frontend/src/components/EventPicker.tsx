@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { Event, api } from "../api/client";
 
 interface Props {
@@ -7,20 +8,37 @@ interface Props {
   onChange: () => void;
 }
 
+function eventIds(events: Event[]) {
+  return events.map((e) => e.id);
+}
+
 export default function EventPicker({ fileId, fileEvents, onChange }: Props) {
+  const [selectedIds, setSelectedIds] = useState(() => eventIds(fileEvents));
+  const propIdsKey = [...eventIds(fileEvents)].sort((a, b) => a - b).join(",");
+
+  useEffect(() => {
+    setSelectedIds(eventIds(fileEvents));
+  }, [fileId, propIdsKey]);
+
   const { data: allEvents = [] } = useQuery({
     queryKey: ["events"],
     queryFn: api.listEvents,
   });
 
-  const selected = new Set(fileEvents.map((e) => e.id));
+  const selected = new Set(selectedIds);
 
   const toggle = async (eventId: number) => {
+    const prev = selectedIds;
     const next = selected.has(eventId)
-      ? [...selected].filter((id) => id !== eventId)
-      : [...selected, eventId];
-    await api.setFileEvents(fileId, next);
-    onChange();
+      ? selectedIds.filter((id) => id !== eventId)
+      : [...selectedIds, eventId];
+    setSelectedIds(next);
+    try {
+      await api.setFileEvents(fileId, next);
+      onChange();
+    } catch {
+      setSelectedIds(prev);
+    }
   };
 
   return (

@@ -168,13 +168,12 @@ export default function TagsPage() {
             ) : (
               <>
                 <div className="people-list-info">
-                  <strong>{tag.name}</strong>
+                  <Link to={`/browse/tag/${tag.slug}`} className="people-list-name-link">
+                    <strong>{tag.name}</strong>
+                  </Link>
                   <span className="people-list-count">{tag.photo_count} photos</span>
                 </div>
                 <div className="people-list-actions">
-                  <Link to={`/browse/tag/${tag.slug}`} className="btn btn-secondary">
-                    Browse
-                  </Link>
                   <button type="button" className="btn btn-secondary" onClick={() => startEdit(tag)}>
                     Edit
                   </button>

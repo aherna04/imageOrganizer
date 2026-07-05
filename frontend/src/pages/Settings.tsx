@@ -1,12 +1,22 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { api } from "../api/client";
+import { formatFileSize } from "../utils/formatFileSize";
+
+function formatCount(count: number, label: string): string {
+  return `${count.toLocaleString()} ${label}${count === 1 ? "" : "s"}`;
+}
 
 export default function Settings() {
   const qc = useQueryClient();
   const { data: config } = useQuery({
     queryKey: ["config"],
     queryFn: api.getConfig,
+  });
+
+  const { data: storage } = useQuery({
+    queryKey: ["storage-stats"],
+    queryFn: api.getStorageStats,
   });
 
   const [form, setForm] = useState<Record<string, string>>({});
@@ -26,6 +36,51 @@ export default function Settings() {
         <h2>Settings</h2>
       </div>
 
+      <section className="settings-section">
+        <h3 className="settings-section-title">Storage</h3>
+        <p className="settings-section-desc">
+          Indexed archive catalog sizes from the database. Scan the archive to refresh totals.
+        </p>
+        <div className="storage-stats-grid">
+          <div className="storage-stat-card">
+            <span className="storage-stat-label">Catalog</span>
+            <span className="storage-stat-value">
+              {storage ? formatFileSize(storage.catalog_bytes) : "—"}
+            </span>
+            <span className="storage-stat-meta">
+              {storage ? formatCount(storage.catalog_count, "file") : ""}
+            </span>
+          </div>
+          <div className="storage-stat-card">
+            <span className="storage-stat-label">Images</span>
+            <span className="storage-stat-value">
+              {storage ? formatFileSize(storage.images_bytes) : "—"}
+            </span>
+            <span className="storage-stat-meta">
+              {storage ? formatCount(storage.image_count, "image") : ""}
+            </span>
+          </div>
+          <div className="storage-stat-card">
+            <span className="storage-stat-label">Videos</span>
+            <span className="storage-stat-value">
+              {storage ? formatFileSize(storage.videos_bytes) : "—"}
+            </span>
+            <span className="storage-stat-meta">
+              {storage ? formatCount(storage.video_count, "video") : ""}
+            </span>
+          </div>
+          <div className="storage-stat-card">
+            <span className="storage-stat-label">Database</span>
+            <span className="storage-stat-value">
+              {storage ? formatFileSize(storage.database_bytes) : "—"}
+            </span>
+            <span className="storage-stat-meta">index + WAL</span>
+          </div>
+        </div>
+      </section>
+
+      <section className="settings-section">
+        <h3 className="settings-section-title">Paths & patterns</h3>
       <div className="settings-grid">
         <div className="form-group">
           <label>Inbox path</label>
@@ -70,6 +125,7 @@ export default function Settings() {
           Save settings
         </button>
       </div>
+      </section>
     </div>
   );
 }

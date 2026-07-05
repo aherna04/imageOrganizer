@@ -3,8 +3,9 @@ import { useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { MediaFile, api } from "../api/client";
 import { personLabel } from "../utils/personLabel";
-import PhotoGrid from "../components/PhotoGrid";
+import PhotoGridWithAlerts from "../components/PhotoGridWithAlerts";
 import PhotoDetail from "../components/PhotoDetail";
+import { invalidateAfterDateChange } from "../utils/invalidateAfterDateChange";
 
 export default function BrowsePage() {
   const { kind, slug } = useParams();
@@ -121,8 +122,9 @@ export default function BrowsePage() {
                   {photos?.total ?? 0} photos
                 </span>
               </div>
-              <PhotoGrid
+              <PhotoGridWithAlerts
                 files={photos?.items ?? []}
+                activeDetailId={detailFile?.id}
                 onSelect={setDetailFile}
                 editableLabels
                 onLabelsChange={() =>
@@ -130,6 +132,12 @@ export default function BrowsePage() {
                     queryKey: ["browse-files", kind, selectedPerson?.id, selectedTag?.id],
                   })
                 }
+                onAlertsChange={() => {
+                  invalidateAfterDateChange(qc);
+                  qc.invalidateQueries({
+                    queryKey: ["browse-files", kind, selectedPerson?.id, selectedTag?.id],
+                  });
+                }}
               />
             </>
           ) : (
@@ -141,6 +149,14 @@ export default function BrowsePage() {
       {detailFile && (
         <PhotoDetail
           file={detailFile}
+          files={photos?.items ?? []}
+          onChangeFile={setDetailFile}
+          onDateChange={() => {
+            invalidateAfterDateChange(qc);
+            qc.invalidateQueries({
+              queryKey: ["browse-files", kind, selectedPerson?.id, selectedTag?.id],
+            });
+          }}
           onClose={() => {
             setDetailFile(null);
             navigate(`/browse/${kind}/${slug}`, { replace: true });

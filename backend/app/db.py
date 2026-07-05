@@ -154,7 +154,17 @@ def init_db() -> None:
                 "INSERT OR IGNORE INTO config (key, value) VALUES (?, ?)",
                 (key, value),
             )
+        cleanup_orphan_junction_rows(conn)
         conn.commit()
+
+
+def cleanup_orphan_junction_rows(conn: sqlite3.Connection) -> None:
+    conn.execute("DELETE FROM file_tags WHERE file_id NOT IN (SELECT id FROM files)")
+    conn.execute("DELETE FROM file_people WHERE file_id NOT IN (SELECT id FROM files)")
+    conn.execute("DELETE FROM file_events WHERE file_id NOT IN (SELECT id FROM files)")
+    conn.execute(
+        "DELETE FROM duplicate_members WHERE file_id NOT IN (SELECT id FROM files)"
+    )
 
 
 @contextmanager
@@ -162,6 +172,7 @@ def get_conn() -> Iterator[sqlite3.Connection]:
     APP_DATA_DIR.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA foreign_keys = ON")
     try:
         yield conn
     finally:

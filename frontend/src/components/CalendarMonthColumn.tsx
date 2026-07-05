@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { api, CalendarMonthFilter, CalendarMonthSummary } from "../api/client";
+import { api, CalendarMonthFilter, CalendarMediaType, CalendarMonthSummary } from "../api/client";
 import { monthFilterToDayFilter } from "../utils/calendarFilter";
 import CalendarMonth from "./CalendarMonth";
 import CalendarMonthLabels from "./CalendarMonthLabels";
@@ -13,6 +13,7 @@ interface Props {
   year: number;
   month: number;
   location: string;
+  mediaType: CalendarMediaType;
   selectedDay?: { year: number; month: number; day: number } | null;
   monthFilter: CalendarMonthFilter | null;
   onSelectDay: (year: number, month: number, day: number) => void;
@@ -23,6 +24,7 @@ export default function CalendarMonthColumn({
   year,
   month,
   location,
+  mediaType,
   selectedDay,
   monthFilter,
   onSelectDay,
@@ -31,13 +33,13 @@ export default function CalendarMonthColumn({
   const dayFilter = monthFilterToDayFilter(monthFilter, year, month);
 
   const { data: summary } = useQuery({
-    queryKey: ["calendar-summary", year, month, location, dayFilter],
-    queryFn: () => api.calendarSummary(year, month, location, dayFilter),
+    queryKey: ["calendar-summary", year, month, location, dayFilter, mediaType],
+    queryFn: () => api.calendarSummary(year, month, location, dayFilter, mediaType),
   });
 
   const { data: labelsData } = useQuery({
-    queryKey: ["calendar-labels", year, month, location],
-    queryFn: () => api.calendarLabels(year, month, location),
+    queryKey: ["calendar-labels", year, month, location, mediaType],
+    queryFn: () => api.calendarLabels(year, month, location, mediaType),
   });
 
   const selectedDate =

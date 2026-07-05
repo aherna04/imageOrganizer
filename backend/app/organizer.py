@@ -5,7 +5,7 @@ from datetime import datetime
 from pathlib import Path
 
 from app.config import INBOX_PATH
-from app.db import get_config
+from app.db import cleanup_orphan_junction_rows, get_config
 
 
 def _parse_capture(file_row: sqlite3.Row) -> datetime:
@@ -38,6 +38,52 @@ def _apply_pattern(pattern: str, dt: datetime, original: str, camera: str | None
     return result
 
 
+def _build_preview_item(
+    row: sqlite3.Row,
+    idx: int,
+    archive: Path,
+    date_pattern: str,
+    rename_pattern: str,
+) -> dict:
+    from app.filename_dates import dates_mismatch
+
+    dt = _parse_capture(row)
+    organize_date = dt.date()
+    subdir = _apply_pattern(date_pattern, dt, row["filename"], row["camera"], idx).strip("/")
+    new_name = _apply_pattern(rename_pattern, dt, row["filename"], row["camera"], idx)
+    if not new_name.endswith(Path(row["filename"]).suffix):
+        new_name += Path(row["filename"]).suffix
+    target = archive / subdir / new_name
+
+    mismatch, filename_date = dates_mismatch(organize_date, row["filename"])
+    suggested_target_path = None
+    suggested_filename = None
+
+    if mismatch and filename_date:
+        corrected_dt = datetime.combine(filename_date, dt.time())
+        corrected_subdir = _apply_pattern(
+            date_pattern, corrected_dt, row["filename"], row["camera"], idx
+        ).strip("/")
+        suggested_filename = _apply_pattern(
+            rename_pattern, corrected_dt, row["filename"], row["camera"], idx
+        )
+        if not suggested_filename.endswith(Path(row["filename"]).suffix):
+            suggested_filename += Path(row["filename"]).suffix
+        suggested_target_path = str(archive / corrected_subdir / suggested_filename)
+
+    return {
+        "file_id": row["id"],
+        "source_path": row["path"],
+        "target_path": str(target),
+        "filename": new_name,
+        "organize_date": organize_date.isoformat(),
+        "filename_date": filename_date.isoformat() if filename_date else None,
+        "date_mismatch": mismatch,
+        "suggested_target_path": suggested_target_path,
+        "suggested_filename": suggested_filename,
+    }
+
+
 def preview_organize(conn: sqlite3.Connection, file_ids: list[int] | None = None) -> list[dict]:
     cfg = get_config(conn)
     archive = Path(cfg["archive_path"])
@@ -53,23 +99,26 @@ def preview_organize(conn: sqlite3.Connection, file_ids: list[int] | None = None
     else:
         rows = conn.execute("SELECT * FROM files WHERE location = 'inbox'").fetchall()
 
-    items = []
-    for idx, row in enumerate(rows, start=1):
-        dt = _parse_capture(row)
-        subdir = _apply_pattern(date_pattern, dt, row["filename"], row["camera"], idx).strip("/")
-        new_name = _apply_pattern(rename_pattern, dt, row["filename"], row["camera"], idx)
-        if not new_name.endswith(Path(row["filename"]).suffix):
-            new_name += Path(row["filename"]).suffix
-        target = archive / subdir / new_name
-        items.append(
-            {
-                "file_id": row["id"],
-                "source_path": row["path"],
-                "target_path": str(target),
-                "filename": new_name,
-            }
-        )
-    return items
+    return [
+        _build_preview_item(row, idx, archive, date_pattern, rename_pattern)
+        for idx, row in enumerate(rows, start=1)
+    ]
+
+
+def fix_dates_from_filename(
+    conn: sqlite3.Connection, file_ids: list[int] | None = None
+) -> tuple[int, list[dict]]:
+    from app.file_dates import fix_dates_from_filename as fix_file_dates
+
+    if file_ids:
+        ids_to_fix = list(file_ids)
+    else:
+        preview = preview_organize(conn)
+        ids_to_fix = [p["file_id"] for p in preview if p["date_mismatch"]]
+
+    fixed, _skipped, updated_ids = fix_file_dates(conn, ids_to_fix)
+    items = preview_organize(conn, updated_ids if updated_ids else None)
+    return fixed, items
 
 
 def _unique_path(target: Path) -> Path:
@@ -147,5 +196,6 @@ def apply_operations(conn: sqlite3.Connection) -> tuple[int, list[str]]:
         except Exception as exc:
             errors.append(f"{src.name}: {exc}")
 
+    cleanup_orphan_junction_rows(conn)
     conn.commit()
     return applied, errors

@@ -169,13 +169,12 @@ export default function PeoplePage() {
             ) : (
               <>
                 <div className="people-list-info">
-                  <strong>{personLabel(person, people)}</strong>
+                  <Link to={`/browse/person/${person.slug}`} className="people-list-name-link">
+                    <strong>{personLabel(person, people)}</strong>
+                  </Link>
                   <span className="people-list-count">{person.photo_count} photos</span>
                 </div>
                 <div className="people-list-actions">
-                  <Link to={`/browse/person/${person.slug}`} className="btn btn-secondary">
-                    Browse
-                  </Link>
                   <button type="button" className="btn btn-secondary" onClick={() => startEdit(person)}>
                     Edit
                   </button>

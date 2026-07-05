@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { api, CalendarMonthFilter, CalendarMonthSummary } from "../api/client";
+import { api, CalendarMonthFilter, CalendarMediaType, CalendarMonthSummary } from "../api/client";
 import CalendarDayPanel from "../components/CalendarDayPanel";
 import CalendarThreeMonthView from "../components/CalendarThreeMonthView";
 import { monthFilterToDayFilter } from "../utils/calendarFilter";
@@ -40,12 +40,13 @@ export default function CalendarPage() {
   const dayParam = params.day;
 
   const [location, setLocation] = useState("archive");
+  const [mediaType, setMediaType] = useState<CalendarMediaType>("all");
   const [windowStartIndex, setWindowStartIndex] = useState(0);
   const [monthFilter, setMonthFilter] = useState<CalendarMonthFilter | null>(null);
 
   const { data: monthsData } = useQuery({
-    queryKey: ["calendar-months", location],
-    queryFn: () => api.calendarMonths(location),
+    queryKey: ["calendar-months", location, mediaType],
+    queryFn: () => api.calendarMonths(location, mediaType),
   });
 
   const activeMonths = monthsData?.months ?? [];
@@ -133,6 +134,17 @@ export default function CalendarPage() {
           <option value="all">Include inbox</option>
           <option value="inbox">Inbox only</option>
         </select>
+        <select
+          value={mediaType}
+          onChange={(e) => {
+            setMediaType(e.target.value as CalendarMediaType);
+            setMonthFilter(null);
+          }}
+        >
+          <option value="all">All media</option>
+          <option value="image">Images</option>
+          <option value="video">Videos</option>
+        </select>
       </div>
 
       <div className={`calendar-page-layout ${selectedDayStr ? "has-day" : ""}`}>
@@ -144,6 +156,7 @@ export default function CalendarPage() {
             windowStartIndex={windowStartIndex}
             totalMonths={activeMonths.length}
             location={location}
+            mediaType={mediaType}
             selectedDay={selectedDay}
             monthFilter={monthFilter}
             mode={selectedDayStr ? "focus" : "browse"}
@@ -158,6 +171,7 @@ export default function CalendarPage() {
           <CalendarDayPanel
             date={selectedDayStr}
             location={location}
+            mediaType={mediaType}
             filter={dayPanelFilter}
             onClose={handleClearDay}
           />

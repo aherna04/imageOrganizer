@@ -15,9 +15,10 @@ def _unique_slug(conn: sqlite3.Connection, table: str, base_slug: str) -> str:
 def _photo_count_sql() -> str:
     return """
         SELECT t.*,
-            COUNT(DISTINCT ft.file_id) AS photo_count
+            COUNT(DISTINCT f.id) AS photo_count
         FROM tags t
         LEFT JOIN file_tags ft ON ft.tag_id = t.id
+        LEFT JOIN files f ON f.id = ft.file_id
     """
 
 

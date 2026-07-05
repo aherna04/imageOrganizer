@@ -20,6 +20,16 @@ class ConfigUpdate(BaseModel):
     rename_pattern: str | None = None
 
 
+class StorageStatsOut(BaseModel):
+    catalog_bytes: int
+    catalog_count: int
+    images_bytes: int
+    image_count: int
+    videos_bytes: int
+    video_count: int
+    database_bytes: int
+
+
 class FileOut(BaseModel):
     id: int
     path: str
@@ -123,6 +133,14 @@ class CalendarMonthTagOut(BaseModel):
     photo_count: int
 
 
+class InboxTagsOut(BaseModel):
+    tags: list[CalendarMonthTagOut]
+
+
+class InboxPeopleOut(BaseModel):
+    people: list[CalendarMonthPersonOut]
+
+
 class CalendarMonthLabelsOut(BaseModel):
     year: int
     month: int
@@ -175,6 +193,24 @@ class TagsMerge(BaseModel):
 
 class FileTagsUpdate(BaseModel):
     tag_ids: list[int]
+
+
+class CaptureDatesUpdate(BaseModel):
+    file_ids: list[int]
+    capture_date: str
+
+
+class CaptureDatesUpdateOut(BaseModel):
+    updated: int
+
+
+class FixDatesFromFilenameIn(BaseModel):
+    file_ids: list[int]
+
+
+class FixDatesFromFilenameOut(BaseModel):
+    fixed: int
+    skipped: int
 
 
 class TagsAssignByIds(BaseModel):
@@ -261,6 +297,21 @@ class OrganizePreviewItem(BaseModel):
     source_path: str
     target_path: str
     filename: str
+    organize_date: str | None = None
+    filename_date: str | None = None
+    date_mismatch: bool = False
+    suggested_target_path: str | None = None
+    suggested_filename: str | None = None
+
+
+class OrganizeFixDatesIn(BaseModel):
+    file_ids: list[int] = []
+
+
+class OrganizeFixDatesOut(BaseModel):
+    fixed: int
+    items: list[OrganizePreviewItem]
+    total: int
 
 
 class OrganizePreviewOut(BaseModel):

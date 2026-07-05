@@ -1,4 +1,4 @@
-import { CalendarMonthFilter, CalendarMonthSummary } from "../api/client";
+import { CalendarMonthFilter, CalendarMediaType, CalendarMonthSummary } from "../api/client";
 import CalendarMonthColumn from "./CalendarMonthColumn";
 
 const MONTH_NAMES = [
@@ -11,6 +11,7 @@ interface Props {
   windowStartIndex: number;
   totalMonths: number;
   location: string;
+  mediaType: CalendarMediaType;
   selectedDay?: { year: number; month: number; day: number } | null;
   monthFilter: CalendarMonthFilter | null;
   mode: "browse" | "focus";
@@ -30,6 +31,7 @@ export default function CalendarThreeMonthView({
   windowStartIndex,
   totalMonths,
   location,
+  mediaType,
   selectedDay,
   monthFilter,
   mode,
@@ -66,6 +68,7 @@ export default function CalendarThreeMonthView({
             year={m.year}
             month={m.month}
             location={location}
+            mediaType={mediaType}
             selectedDay={selectedDay}
             monthFilter={monthFilter}
             onSelectDay={onSelectDay}

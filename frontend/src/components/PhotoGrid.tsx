@@ -20,6 +20,7 @@ interface Props {
   duplicateIndex?: Map<number, DuplicateAlert>;
   dateAlerts?: Map<number, DateAlert>;
   alertFilter?: AlertFilter;
+  subtitleByFileId?: Record<number, string>;
 }
 
 export default function PhotoGrid({
@@ -37,6 +38,7 @@ export default function PhotoGrid({
   duplicateIndex,
   dateAlerts,
   alertFilter = "all",
+  subtitleByFileId,
 }: Props) {
   const cardRefs = useRef<Map<number, HTMLDivElement>>(new Map());
 
@@ -150,6 +152,11 @@ export default function PhotoGrid({
             </div>
             <div className="meta">
               <div>{file.filename}</div>
+              {subtitleByFileId?.[file.id] && (
+                <div className="photo-card-subtitle" title={subtitleByFileId[file.id]}>
+                  {subtitleByFileId[file.id]}
+                </div>
+              )}
               {file.capture_day && <div>{file.capture_day}</div>}
               {hasDateWarning && (
                 <div className="capture-date-hint" style={{ marginTop: "0.2rem" }}>

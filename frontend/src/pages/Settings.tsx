@@ -23,7 +23,11 @@ export default function Settings() {
 
   const save = useMutation({
     mutationFn: () => api.updateConfig({ ...config, ...form }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["config"] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["config"] });
+      qc.invalidateQueries({ queryKey: ["files"] });
+      qc.invalidateQueries({ queryKey: ["calendar-day"] });
+    },
   });
 
   if (!config) return <div>Loading...</div>;
@@ -75,6 +79,22 @@ export default function Settings() {
               {storage ? formatFileSize(storage.database_bytes) : "—"}
             </span>
             <span className="storage-stat-meta">index + WAL</span>
+          </div>
+        </div>
+      </section>
+
+      <section className="settings-section">
+        <h3 className="settings-section-title">Display</h3>
+        <div className="settings-grid">
+          <div className="form-group">
+            <label>Photo sort order</label>
+            <select
+              value={val("photo_sort_order")}
+              onChange={(e) => setForm({ ...form, photo_sort_order: e.target.value })}
+            >
+              <option value="desc">Newest first</option>
+              <option value="asc">Oldest first</option>
+            </select>
           </div>
         </div>
       </section>

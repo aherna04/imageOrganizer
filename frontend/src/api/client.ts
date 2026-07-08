@@ -1,3 +1,5 @@
+export const INBOX_BATCH_LIMIT = 250;
+
 export interface Tag {
   id: number;
   name: string;
@@ -61,6 +63,7 @@ export interface Config {
   trash_path: string;
   date_pattern: string;
   rename_pattern: string;
+  photo_sort_order: "asc" | "desc";
 }
 
 export interface StorageStats {
@@ -402,7 +405,10 @@ export const api = {
     }),
 
   organizePreview: () =>
-    request<{ items: OrganizePreviewItem[]; total: number }>("/api/organize/preview", { method: "POST" }),
+    request<{ items: OrganizePreviewItem[]; total: number; inbox_total?: number }>(
+      "/api/organize/preview",
+      { method: "POST" },
+    ),
 
   fixOrganizeDates: (fileIds: number[] = []) =>
     request<{ fixed: number; items: OrganizePreviewItem[]; total: number }>("/api/organize/fix-dates", {
@@ -410,10 +416,19 @@ export const api = {
       body: JSON.stringify({ file_ids: fileIds }),
     }),
 
-  previewInbox: () =>
-    request<{ items: OrganizePreviewItem[]; total: number }>("/api/review/preview-inbox", { method: "POST" }),
+  previewInbox: (body?: { file_ids?: number[]; append?: boolean }) =>
+    request<{ items: OrganizePreviewItem[]; total: number; inbox_total?: number }>(
+      "/api/review/preview-inbox",
+      { method: "POST", body: JSON.stringify(body ?? { append: true }) },
+    ),
 
   reviewQueue: () => request<{ items: ReviewDecision[]; total: number }>("/api/review/queue"),
+
+  releaseReviewQueue: (fileIds?: number[]) =>
+    request<{ removed: number }>("/api/review/queue/release", {
+      method: "POST",
+      body: JSON.stringify({ file_ids: fileIds ?? [] }),
+    }),
 
   createDecision: (data: { file_id: number; action: string; target_path?: string }) =>
     request<ReviewDecision>("/api/review/decisions", { method: "POST", body: JSON.stringify(data) }),

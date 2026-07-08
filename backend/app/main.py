@@ -9,10 +9,10 @@ from app import events as events_svc
 from app import people as people_svc
 from app import tags as tags_svc
 from app.config import ensure_media_dirs, media_type_for_suffix, mime_type_for_path
-from app.db import get_config, get_conn, get_file_events, init_db, row_to_dict, update_config
+from app.db import get_config, get_conn, get_file_events, init_db, row_to_dict, update_config, file_list_order_clause
 from app.dedupe import dismiss_duplicate_member, get_duplicate_groups
 from app.inbox_filters import (
-    PENDING_DELETE_EXCLUSION_F,
+    NOT_QUEUED_F,
     append_inbox_pending_delete_filter,
     append_inbox_visible_filter,
 )
@@ -59,6 +59,7 @@ from app.models import (
     OrganizeFixDatesIn,
     OrganizeFixDatesOut,
     OrganizePreviewOut,
+    PreviewInboxIn,
     PeopleAssignByIds,
     PeopleMerge,
     PeopleUnassignByIds,
@@ -70,6 +71,7 @@ from app.models import (
     ReviewDecisionsCancel,
     ReviewDecisionsCancelOut,
     ReviewQueueOut,
+    ReviewQueueReleaseIn,
     ScanStatusOut,
     StorageStatsOut,
     TagCreate,
@@ -79,10 +81,10 @@ from app.models import (
     TagsMerge,
     TagsUnassignByIds,
 )
-from app.organizer import apply_operations, fix_dates_from_filename, preview_organize
+from app.organizer import apply_operations, fix_dates_from_filename, inbox_available_count, preview_organize, queue_inbox_batch
 from app.scanner import scan_state, start_scan_background
 
-app = FastAPI(title="Image Organizer", version="2026.07.05b")
+app = FastAPI(title="Image Organizer", version="2026.07.07")
 
 app.add_middleware(
     CORSMiddleware,
@@ -200,7 +202,7 @@ def api_inbox_tags():
             JOIN file_tags ft ON ft.tag_id = t.id
             JOIN files f ON f.id = ft.file_id
             WHERE f.location = 'inbox'
-              AND {PENDING_DELETE_EXCLUSION_F.strip()}
+              AND {NOT_QUEUED_F.strip()}
             GROUP BY t.id
             ORDER BY t.name
             """
@@ -228,7 +230,7 @@ def api_inbox_people():
             JOIN file_people fp ON fp.person_id = p.id
             JOIN files f ON f.id = fp.file_id
             WHERE f.location = 'inbox'
-              AND {PENDING_DELETE_EXCLUSION_F.strip()}
+              AND {NOT_QUEUED_F.strip()}
             GROUP BY p.id
             ORDER BY p.name
             """
@@ -258,7 +260,7 @@ def api_list_cameras():
             FROM files f
             WHERE f.camera IS NOT NULL AND f.camera != ''
               AND (f.location = 'archive'
-                   OR (f.location = 'inbox' AND {PENDING_DELETE_EXCLUSION_F.strip()}))
+                   OR (f.location = 'inbox' AND {NOT_QUEUED_F.strip()}))
             GROUP BY f.camera
             ORDER BY f.camera
             """
@@ -285,7 +287,7 @@ def api_inbox_cameras():
             FROM files f
             WHERE f.location = 'inbox'
               AND f.camera IS NOT NULL AND f.camera != ''
-              AND {PENDING_DELETE_EXCLUSION_F.strip()}
+              AND {NOT_QUEUED_F.strip()}
             GROUP BY f.camera
             ORDER BY f.camera
             """
@@ -349,10 +351,12 @@ def api_list_files(
     append_media_type_filter(clauses, params, "f.filename", media_type)
     where = ("WHERE " + " AND ".join(clauses)) if clauses else ""
     with get_conn() as conn:
+        cfg = get_config(conn)
         total = conn.execute(f"SELECT COUNT(*) FROM files f {where}", params).fetchone()[0]
         offset = (page - 1) * page_size
+        order = file_list_order_clause(cfg)
         rows = conn.execute(
-            f"SELECT f.* FROM files f {where} ORDER BY f.capture_date DESC LIMIT ? OFFSET ?",
+            f"SELECT f.* FROM files f {where} {order} LIMIT ? OFFSET ?",
             [*params, page_size, offset],
         ).fetchall()
         items = [_file_out(conn, r) for r in rows]
@@ -988,12 +992,14 @@ def api_dismiss_duplicate(group_id: int, file_id: int):
 @app.post("/api/organize/preview", response_model=OrganizePreviewOut)
 def api_organize_preview(file_ids: list[int] | None = None):
     with get_conn() as conn:
-        items = preview_organize(conn, file_ids)
+        inbox_total = inbox_available_count(conn) if not file_ids else None
+        items = preview_organize(conn, file_ids, unqueued_only=not file_ids)
     from app.models import OrganizePreviewItem
 
     return OrganizePreviewOut(
         items=[OrganizePreviewItem(**i) for i in items],
         total=len(items),
+        inbox_total=inbox_total,
     )
 
 
@@ -1044,6 +1050,25 @@ def api_cancel_decisions(body: ReviewDecisionsCancel):
     return ReviewDecisionsCancelOut(removed=removed)
 
 
+@app.post("/api/review/queue/release", response_model=ReviewDecisionsCancelOut)
+def api_release_review_queue(body: ReviewQueueReleaseIn):
+    with get_conn() as conn:
+        if body.file_ids:
+            placeholders = ",".join("?" * len(body.file_ids))
+            cur = conn.execute(
+                f"""
+                DELETE FROM review_decisions
+                WHERE applied = 0 AND file_id IN ({placeholders})
+                """,
+                body.file_ids,
+            )
+        else:
+            cur = conn.execute("DELETE FROM review_decisions WHERE applied = 0")
+        conn.commit()
+        removed = cur.rowcount
+    return ReviewDecisionsCancelOut(removed=removed)
+
+
 @app.get("/api/review/queue", response_model=ReviewQueueOut)
 def api_review_queue():
     with get_conn() as conn:
@@ -1071,21 +1096,16 @@ def api_review_queue():
 
 
 @app.post("/api/review/preview-inbox", response_model=OrganizePreviewOut)
-def api_preview_inbox_for_review():
+def api_preview_inbox_for_review(body: PreviewInboxIn = PreviewInboxIn()):
     with get_conn() as conn:
-        conn.execute("DELETE FROM review_decisions WHERE applied = 0")
-        items = preview_organize(conn)
-        for item in items:
-            conn.execute(
-                "INSERT INTO review_decisions (file_id, action, target_path) VALUES (?, 'keep', ?)",
-                (item["file_id"], item["target_path"]),
-            )
-        conn.commit()
+        file_ids = body.file_ids or None
+        items, available = queue_inbox_batch(conn, file_ids, append=body.append)
     from app.models import OrganizePreviewItem
 
     return OrganizePreviewOut(
         items=[OrganizePreviewItem(**i) for i in items],
         total=len(items),
+        inbox_total=available,
     )
 
 

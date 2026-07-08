@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { MediaFile, api } from "../api/client";
 import {
   adjacentFile,
@@ -40,6 +40,12 @@ export default function PhotoDetail({
   const [rating, setRating] = useState<number | "">("");
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [acting, setActing] = useState(false);
+  const drawerVideoRef = useRef<HTMLVideoElement>(null);
+
+  const openLightbox = () => {
+    drawerVideoRef.current?.pause();
+    setLightboxOpen(true);
+  };
 
   useEffect(() => {
     setCaption("");
@@ -172,19 +178,28 @@ export default function PhotoDetail({
           )}
         </div>
         {file.media_type === "video" ? (
-          <video
-            src={api.originalUrl(file.id)}
-            controls
-            poster={api.thumbUrl(file.id)}
-            className="photo-detail-preview"
-            onClick={() => setLightboxOpen(true)}
-          />
+          lightboxOpen ? (
+            <img
+              src={api.thumbUrl(file.id)}
+              alt={file.filename}
+              className="photo-detail-preview"
+            />
+          ) : (
+            <video
+              ref={drawerVideoRef}
+              src={api.originalUrl(file.id)}
+              controls
+              poster={api.thumbUrl(file.id)}
+              className="photo-detail-preview"
+              onClick={openLightbox}
+            />
+          )
         ) : (
           <img
             src={api.thumbUrl(file.id)}
             alt={file.filename}
             className="photo-detail-preview"
-            onClick={() => setLightboxOpen(true)}
+            onClick={openLightbox}
           />
         )}
         <div className="photo-detail-title-row">

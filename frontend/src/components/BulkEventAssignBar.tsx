@@ -2,13 +2,22 @@ interface Props {
   selectedIds: number[];
   onClear: () => void;
   totalCount?: number;
+  visibleCount?: number;
   onSelectAll?: () => void;
+}
+
+function selectAllLabel(totalCount: number, visibleCount?: number): string {
+  if (visibleCount != null && visibleCount < totalCount) {
+    return `Select all visible (${visibleCount})`;
+  }
+  return `Select all ${totalCount}`;
 }
 
 export default function BulkEventAssignBar({
   selectedIds,
   onClear,
   totalCount,
+  visibleCount,
   onSelectAll,
 }: Props) {
   const total = totalCount ?? 0;
@@ -20,7 +29,7 @@ export default function BulkEventAssignBar({
     return (
       <div className="bulk-event-bar">
         <button type="button" className="link-btn" onClick={onSelectAll}>
-          Select all {total}
+          {selectAllLabel(total, visibleCount)}
         </button>
       </div>
     );
@@ -32,7 +41,7 @@ export default function BulkEventAssignBar({
 
       {onSelectAll && totalCount !== undefined && totalCount > selectedIds.length && (
         <button type="button" className="link-btn" onClick={onSelectAll}>
-          Select all {totalCount}
+          {selectAllLabel(totalCount, visibleCount)}
         </button>
       )}
 

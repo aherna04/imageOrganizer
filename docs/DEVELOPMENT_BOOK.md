@@ -1,6 +1,6 @@
 # Image Organizer — Development Book
 
-*Release 2026.07.05b · collected Cursor implementation plans*
+*Release 2026.07.07 · collected Cursor implementation plans*
 
 Related: [ARCHITECTURE.md](ARCHITECTURE.md) · [CHANGELOG.md](../CHANGELOG.md)
 
@@ -44,50 +44,61 @@ This book collects the Cursor agent implementation plans written while building 
 24. [Cameras nav page](#chapter-24-cameras-nav-page)
 25. [Fix stale review preview](#chapter-25-fix-stale-review-preview)
 26. [Review page layout](#chapter-26-review-page-layout)
+27. [Inbox batch review](#chapter-27-inbox-batch-review)
+28. [Inbox bulk delete shortcut](#chapter-28-inbox-bulk-delete-shortcut)
+29. [Review queue preview release](#chapter-29-review-queue-preview-release)
+30. [Global photo sort setting](#chapter-30-global-photo-sort-setting)
 
 ### Part IV — Labels and Photo UX
 
-27. [Photo tags feature](#chapter-27-photo-tags-feature)
-28. [Removable grid labels](#chapter-28-removable-grid-labels)
-29. [Bulk chip label editors](#chapter-29-bulk-chip-label-editors)
-30. [People bulk and CRUD](#chapter-30-people-bulk-and-crud)
-31. [People name browse links](#chapter-31-people-name-browse-links)
-32. [Detail multi-tag select](#chapter-32-detail-multi-tag-select)
-33. [Split select vs detail](#chapter-33-split-select-vs-detail)
-34. [Fix thumbnail orientation](#chapter-34-fix-thumbnail-orientation)
-35. [Shift-click range select](#chapter-35-shift-click-range-select)
-36. [ESC close detail viewer](#chapter-36-esc-close-detail-viewer)
-37. [Recently used tags](#chapter-37-recently-used-tags)
-38. [Browse label mode](#chapter-38-browse-label-mode)
-39. [Tags page search](#chapter-39-tags-page-search)
+31. [Photo tags feature](#chapter-31-photo-tags-feature)
+32. [Removable grid labels](#chapter-32-removable-grid-labels)
+33. [Bulk chip label editors](#chapter-33-bulk-chip-label-editors)
+34. [People bulk and CRUD](#chapter-34-people-bulk-and-crud)
+35. [People name browse links](#chapter-35-people-name-browse-links)
+36. [Detail multi-tag select](#chapter-36-detail-multi-tag-select)
+37. [Split select vs detail](#chapter-37-split-select-vs-detail)
+38. [Fix thumbnail orientation](#chapter-38-fix-thumbnail-orientation)
+39. [Shift-click range select](#chapter-39-shift-click-range-select)
+40. [ESC close detail viewer](#chapter-40-esc-close-detail-viewer)
+41. [Recently used tags](#chapter-41-recently-used-tags)
+42. [Browse label mode](#chapter-42-browse-label-mode)
+43. [Tags page search](#chapter-43-tags-page-search)
+44. [Single video playback](#chapter-44-single-video-playback)
+45. [Fix zoom view scroll and nav](#chapter-45-fix-zoom-view-scroll-and-nav)
+46. [Fix zoom scale-to-fit](#chapter-46-fix-zoom-scale-to-fit)
 
 ### Part V — Dates and Alerts
 
-40. [Filename date mismatch](#chapter-40-filename-date-mismatch)
-41. [Browser date correction](#chapter-41-browser-date-correction)
-42. [Photo grid alerts](#chapter-42-photo-grid-alerts)
-43. [Photo keyboard navigation](#chapter-43-photo-keyboard-navigation)
+47. [Filename date mismatch](#chapter-47-filename-date-mismatch)
+48. [Browser date correction](#chapter-48-browser-date-correction)
+49. [Photo grid alerts](#chapter-49-photo-grid-alerts)
+50. [Photo keyboard navigation](#chapter-50-photo-keyboard-navigation)
 
 ### Part VI — Dedupe and Integrity
 
-44. [Duplicate keeper defaults](#chapter-44-duplicate-keeper-defaults)
-45. [Fix tag counts after dedupe](#chapter-45-fix-tag-counts-after-dedupe)
-46. [Fix orphan tag counts](#chapter-46-fix-orphan-tag-counts)
+51. [Duplicate keeper defaults](#chapter-51-duplicate-keeper-defaults)
+52. [Fix tag counts after dedupe](#chapter-52-fix-tag-counts-after-dedupe)
+53. [Fix orphan tag counts](#chapter-53-fix-orphan-tag-counts)
 
 ### Part VII — Release and Meta
 
-47. [Version and changelog](#chapter-47-version-and-changelog)
-48. [Sidebar version badge](#chapter-48-sidebar-version-badge)
-49. [Save plans gitignore](#chapter-49-save-plans-gitignore)
-50. [Plans development book](#chapter-50-plans-development-book)
+54. [Version and changelog](#chapter-54-version-and-changelog)
+55. [Sidebar version badge](#chapter-55-sidebar-version-badge)
+56. [Save plans gitignore](#chapter-56-save-plans-gitignore)
+57. [Plans development book](#chapter-57-plans-development-book)
 
 ### Appendix — Unlisted Plans
 
-51. [Cursor book tool repo](#chapter-51-cursor-book-tool-repo)
+58. [Book update and release](#chapter-58-book-update-and-release)
+59. [Cursor book tool repo](#chapter-59-cursor-book-tool-repo)
 
 ### Skipped Duplicates
 
 - `calendar_tag_wrapping_a49a3fe3` — Superseded by `calendar_tag_wrapping_efb8630a`.
+- `fix_inbox_fullsize_scroll_a4badb8c` — Superseded — wrong split-view lightbox approach.
+- `restore_full-screen_lightbox_pan_dc4aeae3` — Superseded by `fix_lightbox_pan_and_delete` and `fix_zoom_scale-to-fit`.
+- `scale_zoom_to_viewport_9b4c2911` — Superseded by `fix_zoom_scale-to-fit_35b9a5d7`.
 
 ---
 
@@ -3769,11 +3780,447 @@ Sticky offset: `top: 0` within main content (sidebar layout unchanged).
 
 ---
 
+<a id="chapter-27-inbox-batch-review"></a>
+
+## Chapter 27: Inbox batch review
+
+> **Overview:** Let users submit manageable batches (up to 250) from Inbox to the Review queue, hide already-queued files from the default Inbox view, and fix append-safe queueing so delete marks are not wiped.
+
+# Inbox Batch Submit to Review
+
+## Problem
+
+With 1855+ inbox photos, the grid is overwhelming. The only path to Review is the Review page's **Preview inbox organize** button. There is no batch action on Inbox, and files stay visible after being queued. Also, preview-inbox currently **deletes all unapplied review decisions** before queueing — wiping delete marks.
+
+Existing backend cap: [`INBOX_BATCH_LIMIT = 250`](backend/app/organizer.py) (added recently, not yet committed or on main depending on state).
+
+## Approach
+
+```mermaid
+flowchart LR
+  inbox[Inbox grid] -->|Submit next 250| api[POST preview-inbox append]
+  inbox -->|Submit selected| api
+  api --> queue[review_decisions keep]
+  queue --> hide[Hidden from default Inbox]
+  hide --> review[Review page Apply]
+  review --> archive[Archive / trash]
+```
+
+1. **Submit batches from Inbox** — primary action, no need to visit Review first
+2. **Hide queued files** from default Inbox view — list shrinks as batches are submitted
+3. **Append-safe queueing** — add keep decisions without clearing existing delete/skip entries
+
+---
+
+## Backend
+
+### 1. Inbox visibility — [`backend/app/inbox_filters.py`](backend/app/inbox_filters.py)
+
+Change default inbox filter to exclude **all** files with unapplied review decisions (not just `action = 'delete'`):
+
+```sql
+f.id NOT IN (SELECT file_id FROM review_decisions WHERE applied = 0)
+```
+
+[`append_inbox_pending_delete_filter`](backend/app/inbox_filters.py) unchanged — Delete queue tab still shows only delete-marked files.
+
+Result: after submitting 250 to review, they disappear from All/Untagged inbox until Apply completes or decisions are cancelled.
+
+### 2. Batch candidate query — [`backend/app/organizer.py`](backend/app/organizer.py)
+
+Add helper used by `preview_organize` when `file_ids` is None:
+
+```python
+NOT_QUEUED = "id NOT IN (SELECT file_id FROM review_decisions WHERE applied = 0)"
+
+# Next batch: oldest unqueued inbox files, LIMIT 250
+SELECT * FROM files WHERE location = 'inbox' AND {NOT_QUEUED}
+ORDER BY COALESCE(capture_date, mtime) ASC, id ASC LIMIT ?
+```
+
+Add `inbox_available_count(conn)` — inbox files not yet in unapplied queue.
+
+When `file_ids` provided: validate inbox location, not already queued, cap at 250.
+
+### 3. Append-safe preview-inbox — [`backend/app/main.py`](backend/app/main.py)
+
+New request model in [`models.py`](backend/app/models.py):
+
+```python
+class PreviewInboxIn(BaseModel):
+    file_ids: list[int] = []
+    append: bool = True
+```
+
+Refactor `POST /api/review/preview-inbox`:
+
+| Mode | Behavior |
+|------|----------|
+| `append=True` (default) | Do **not** DELETE existing decisions; INSERT keep for batch files not already queued |
+| `append=False` | Current replace behavior (DELETE all unapplied, then queue batch) — keep for Review page full reset if needed |
+| `file_ids=[]` | Next 250 unqueued inbox files (oldest first) |
+| `file_ids=[...]` | Selected files only (max 250, must be inbox + unqueued) |
+
+Response [`OrganizePreviewOut`](backend/app/models.py): keep `items`, `total`, add `inbox_total` = **available** (unqueued) count after operation.
+
+Skip files already in queue silently; return only newly queued items.
+
+---
+
+## Frontend
+
+### 4. API — [`frontend/src/api/client.ts`](frontend/src/api/client.ts)
+
+```typescript
+previewInbox: (body?: { file_ids?: number[]; append?: boolean }) =>
+  request<...>("/api/review/preview-inbox", { method: "POST", body: JSON.stringify(body ?? {}) })
+```
+
+Export `INBOX_BATCH_LIMIT = 250` constant (match backend).
+
+### 5. Inbox batch bar — new [`frontend/src/components/InboxReviewBatchBar.tsx`](frontend/src/components/InboxReviewBatchBar.tsx)
+
+Render below page header when `inboxFilter !== "delete_queue"`:
+
+- **Submit next 250 to review** — `previewInbox({ append: true })`
+- **Submit N to review** — when `selectedIds.length > 0`, pass `file_ids` (cap at 250, toast/warning if over)
+- **Review queue (N)** — link to `/review`, count from `reviewQueue` query
+- Hint: `{available} ready in inbox · batches up to 250`
+- On success: invalidate `files`, `review-queue`, `organize-preview`; clear selection; optional navigate to Review
+
+Wire in [`Inbox.tsx`](frontend/src/pages/Inbox.tsx) with `useMutation` + `useQuery` for queue count.
+
+### 6. Fix misleading Select all — [`BulkEventAssignBar.tsx`](frontend/src/components/BulkEventAssignBar.tsx)
+
+When `totalCount > visibleCount` (new prop), label **Select all visible (200)** instead of **Select all 1855**. Inbox passes `visibleCount={data?.items.length}`.
+
+### 7. Review page — [`Review.tsx`](frontend/src/pages/Review.tsx)
+
+Update **Preview inbox organize** to use `previewInbox({ append: true })` so it adds the next batch without wiping delete marks. Update batch hint copy to reference Inbox submit as well.
+
+Update Inbox description text to mention batch submit.
+
+---
+
+## Out of scope
+
+- Full pagination / infinite scroll for inbox grid (hiding queued files is the primary list shrink)
+- Changing Apply logic
+- Server-side select-all across 1855 IDs
+
+---
+
+## Verification
+
+1. Inbox with 1855 photos → batch bar shows **Submit next 250 to review**
+2. Submit batch → 250 disappear from Inbox All view; Review queue shows 250
+3. Mark 10 delete, submit next batch → delete marks remain; 250 keep added
+4. Select 50 photos → **Submit 50 to review** works
+5. Apply on Review → files move to archive; next inbox batch available
+6. Select all label says **Select all visible (200)** not 1855
+7. Delete queue tab still shows delete-marked files only
+
+---
+
+<a id="chapter-28-inbox-bulk-delete-shortcut"></a>
+
+## Chapter 28: Inbox bulk delete shortcut
+
+> **Overview:** Add a keyboard handler on the Inbox page so pressing D marks all checkbox-selected photos for delete, without opening detail view.
+
+# Inbox Bulk Delete with D
+
+## Problem
+
+Multi-select via checkboxes works on Inbox, but **D only deletes in `PhotoDetail`** (detail drawer or zoom view) for the single open file. With 6 photos selected in the grid, pressing D does nothing.
+
+[`PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx) owns the only D handler today (lines 122–127). [`Inbox.tsx`](frontend/src/pages/Inbox.tsx) has `selectedIds` state but no keyboard shortcut.
+
+## Behavior
+
+| State | D key |
+|-------|-------|
+| `selectedIds.length >= 1`, not delete queue | Mark **all selected** for delete |
+| `selectedIds.length === 0` | No-op (detail/zoom D unchanged if drawer open) |
+| Delete queue filter | No-op (restore is via button, not D) |
+| Focus in input/textarea | No-op (`isEditableTarget`) |
+
+When multiple photos are selected and detail is open, bulk delete wins (stop propagation so `PhotoDetail` does not also fire).
+
+After delete: refetch inbox, clear `selectedIds`, close `detailFile` if set.
+
+## Implementation — [`frontend/src/pages/Inbox.tsx`](frontend/src/pages/Inbox.tsx)
+
+Add a `useEffect` keyboard listener (capture phase, same as PhotoDetail):
+
+```tsx
+import { isEditableTarget } from "../utils/photoNavigation";
+
+const bulkDeleteMutation = useMutation({
+  mutationFn: (fileIds: number[]) =>
+    Promise.all(fileIds.map((file_id) => api.createDecision({ file_id, action: "delete" }))),
+  onSuccess: () => {
+    handleLabelsChange();
+    setSelectedIds([]);
+    selectionAnchorRef.current = null;
+    setDetailFile(null);
+  },
+});
+
+useEffect(() => {
+  const onKey = (e: KeyboardEvent) => {
+    if (e.key !== "d" && e.key !== "D") return;
+    if (inboxFilter === "delete_queue" || selectedIds.length === 0) return;
+    if (isEditableTarget(e.target)) return;
+    e.preventDefault();
+    e.stopPropagation();
+    bulkDeleteMutation.mutate(selectedIds);
+  };
+  window.addEventListener("keydown", onKey, true);
+  return () => window.removeEventListener("keydown", onKey, true);
+}, [inboxFilter, selectedIds, bulkDeleteMutation]);
+```
+
+Notes:
+- Reuses existing `POST /api/review/decisions` per file (same as single delete); no backend change
+- `stopPropagation` prevents double-delete when detail drawer is open with multi-select
+- Single selected + detail open: Inbox handler runs first and deletes that one file — acceptable; detail closes via `setDetailFile(null)`
+
+Optional: show deleting state / disable repeat presses via `bulkDeleteMutation.isPending` guard inside handler.
+
+## No other files
+
+- Browse, Calendar: out of scope (per your choice)
+- No new API endpoint needed
+
+## Verification
+
+1. Inbox → checkbox-select 6 photos (shift-click range or individual) → press **D** → all marked delete, selection cleared, photos leave default inbox view
+2. Select 1 photo, no detail open → **D** marks delete
+3. Detail/zoom open, 0 grid selection → **D** still deletes current photo in detail (PhotoDetail handler)
+4. Delete queue filter → **D** does nothing
+5. Typing in tag search → **D** does not trigger delete
+
+---
+
+<a id="chapter-29-review-queue-preview-release"></a>
+
+## Chapter 29: Review queue preview release
+
+> **Overview:** Add a list/grid toggle with thumbnail preview in the Review queue panel, PhotoDetail on click, and a "Return to inbox" action that releases queued decisions so files reappear in Inbox.
+
+# Review Queue Preview + Return to Inbox
+
+## Problem
+
+The Review queue panel ([`Review.tsx`](frontend/src/pages/Review.tsx)) only shows a **text list** of filenames and target paths. There is no visual preview before Apply.
+
+**Return to inbox** is not possible for queued `keep` decisions: [`cancelReviewDecisions`](frontend/src/api/client.ts) only removes `action: "delete"` decisions (delete-queue restore). Queued organize batches use `action: "keep"` and hide files from Inbox via [`NOT_QUEUED`](backend/app/inbox_filters.py).
+
+```mermaid
+flowchart LR
+  inboxSubmit[Inbox submit batch] --> decisions["review_decisions keep"]
+  decisions --> hidden[Hidden from inbox grid]
+  decisions --> reviewList[Review text list only]
+  release[Return to inbox] --> deleteDecisions[Delete unapplied decisions]
+  deleteDecisions --> visible[Files visible in inbox again]
+```
+
+## Solution
+
+### 1. Backend — release queue endpoint
+
+[`backend/app/main.py`](backend/app/main.py) + [`backend/app/models.py`](backend/app/models.py):
+
+```python
+class ReviewQueueReleaseIn(BaseModel):
+    file_ids: list[int] = Field(default_factory=list)  # empty = release all
+
+@app.post("/api/review/queue/release", response_model=ReviewDecisionsCancelOut)
+def api_release_review_queue(body: ReviewQueueReleaseIn):
+    # DELETE FROM review_decisions WHERE applied = 0
+    # AND (file_ids empty OR file_id IN (...))
+```
+
+Reuses `ReviewDecisionsCancelOut` (`removed` count). Clears **all** unapplied actions (`keep`, `delete`, etc.) for the given files or entire queue.
+
+### 2. Frontend API
+
+[`frontend/src/api/client.ts`](frontend/src/api/client.ts):
+
+```ts
+releaseReviewQueue: (fileIds?: number[]) =>
+  request<{ removed: number }>("/api/review/queue/release", {
+    method: "POST",
+    body: JSON.stringify({ file_ids: fileIds ?? [] }),
+  }),
+```
+
+### 3. Review page — list/grid toggle + preview
+
+[`frontend/src/pages/Review.tsx`](frontend/src/pages/Review.tsx):
+
+**State:**
+- `queueView: "list" | "grid"` (default `"list"`)
+- `detailFile: MediaFile | null` for PhotoDetail
+
+**Header actions** (beside Apply):
+- **List / Grid** toggle buttons
+- **Return to inbox** — `releaseReviewQueue()` when `queueCount > 0`; confirm if queue > 10 (simple `window.confirm`)
+
+**Grid view:**
+- Build `queueFiles` from `queue.items.map(i => i.file).filter(Boolean)`
+- Render existing [`PhotoGrid`](frontend/src/components/PhotoGrid.tsx) with `onOpenDetail={setDetailFile}`
+- Optional caption under thumb: truncated `target_path` via small overlay or meta line (CSS in [`index.css`](frontend/src/index.css))
+
+**PhotoDetail:**
+- When `detailFile` set, render `PhotoDetail` with `files={queueFiles}`, `onChangeFile`, `onClose` — same pattern as Inbox/Calendar (arrow nav within queue set)
+
+**On release success**, invalidate:
+```ts
+["review-queue"], ["organize-preview"], ["files"], ["inbox-tags"], ...
+```
+(same as apply — reuse [`invalidateAfterApply`](frontend/src/utils/invalidateAfterApply.ts) or extend it)
+
+### 4. CSS
+
+[`frontend/src/index.css`](frontend/src/index.css):
+- `.review-queue-view-toggle` — button group for list/grid
+- `.review-queue-actions` — flex row: view toggle + return button + Apply
+- Grid inside sticky panel: `max-height` + scroll (reuse `.review-queue-list` scroll pattern)
+
+## Out of scope
+
+- Fixing Organize preview table for queued IDs (user chose grid toggle only)
+- Per-item remove from queue (bulk return-all is enough for v1)
+- Changing Apply behavior
+
+## Verification
+
+1. Queue 61 photos from Inbox → Review shows text list
+2. Switch to **Grid** → thumbnails visible; click opens PhotoDetail; arrows navigate within queue
+3. **Return to inbox** → queue clears; photos reappear in Inbox default view
+4. Delete-queue restore (`cancelReviewDecisions`) unchanged
+5. Apply still works after previewing grid
+
+---
+
+<a id="chapter-30-global-photo-sort-setting"></a>
+
+## Chapter 30: Global photo sort setting
+
+> **Overview:** Add a photo_sort_order config setting (newest/oldest first) in Settings, applied globally to all photo grids and inbox batch ordering. Default remains newest first.
+
+# Global Photo Sort Order Setting
+
+## Goal
+
+User wants photo order configurable globally via **Settings**, not hardcoded per page. Default: **newest first** (current behavior). Option to switch to **oldest first** (including Inbox).
+
+Applies everywhere photos are listed:
+- Inbox, Browse, Events, Calendar day panel (all use [`api_list_files`](backend/app/main.py))
+- Inbox batch submit order in [`organizer.py`](backend/app/main.py) (currently hardcoded ASC — should follow setting)
+
+## Config
+
+New key in SQLite `config` table: `photo_sort_order`
+
+| Value | Meaning |
+|-------|---------|
+| `desc` | Newest first (default) |
+| `asc` | Oldest first |
+
+## Backend
+
+### 1. Models and defaults
+
+[`backend/app/models.py`](backend/app/models.py):
+- Add `photo_sort_order: Literal["asc", "desc"]` to `ConfigOut`
+- Add optional field to `ConfigUpdate`
+
+[`backend/app/db.py`](backend/app/db.py) `default_config()`:
+```python
+"photo_sort_order": "desc",
+```
+
+`INSERT OR IGNORE` on init seeds default for existing DBs.
+
+### 2. Shared sort helper
+
+Add small helper (e.g. in [`backend/app/db.py`](backend/app/db.py) or new `sorting.py`):
+
+```python
+def file_list_order_clause(cfg: dict[str, str], alias: str = "f") -> str:
+    asc = cfg.get("photo_sort_order", "desc") == "asc"
+    direction = "ASC" if asc else "DESC"
+    return f"ORDER BY COALESCE({alias}.capture_date, {alias}.mtime) {direction}, {alias}.id {direction}"
+```
+
+Uses `COALESCE(capture_date, mtime)` for files missing EXIF date.
+
+### 3. Wire into queries
+
+[`backend/app/main.py`](backend/app/main.py) `api_list_files`:
+```python
+with get_conn() as conn:
+    cfg = get_config(conn)
+    order = file_list_order_clause(cfg)
+    rows = conn.execute(
+        f"SELECT f.* FROM files f {where} {order} LIMIT ? OFFSET ?",
+        ...
+    )
+```
+
+[`backend/app/organizer.py`](backend/app/organizer.py) — replace hardcoded `ORDER BY ... ASC` with same helper so grid and "Submit next 250" order match.
+
+## Frontend
+
+### 1. Types
+
+[`frontend/src/api/client.ts`](frontend/src/api/client.ts) `Config`:
+```ts
+photo_sort_order: "asc" | "desc";
+```
+
+### 2. Settings UI
+
+[`frontend/src/pages/Settings.tsx`](frontend/src/pages/Settings.tsx) — new **Display** section:
+
+```tsx
+<div className="form-group">
+  <label>Photo sort order</label>
+  <select
+    value={val("photo_sort_order")}
+    onChange={(e) => setForm({ ...form, photo_sort_order: e.target.value })}
+  >
+    <option value="desc">Newest first</option>
+    <option value="asc">Oldest first</option>
+  </select>
+</div>
+```
+
+On save success, invalidate file list queries so grids refresh:
+```ts
+qc.invalidateQueries({ queryKey: ["files"] });
+qc.invalidateQueries({ queryKey: ["calendar-day"] });
+```
+
+No per-page changes — all grids already call `api.listFiles` / `api.calendarDay`.
+
+## Verification
+
+1. Default (no change): Inbox/Browse/Calendar newest-first
+2. Settings → Oldest first → Save → all grids reverse; arrow nav and shift-select follow new order
+3. Inbox "Submit next 250" uses same order as grid
+4. Switch back to Newest first → grids restore
+
+---
+
 # Part IV — Labels and Photo UX
 
-<a id="chapter-27-photo-tags-feature"></a>
+<a id="chapter-31-photo-tags-feature"></a>
 
-## Chapter 27: Photo tags feature
+## Chapter 31: Photo tags feature
 
 > **Overview:** Add direct photo-level tags (Cars, Typewriter, house project) via a new `file_tags` table and APIs mirroring People, plus bulk tagging on Inbox/Calendar, a Tags management page, and Browse/filter/display updates.
 
@@ -3920,9 +4367,9 @@ Add nav link and route in [`App.tsx`](/Users/alex/Documents/github/imageOrganize
 
 ---
 
-<a id="chapter-28-removable-grid-labels"></a>
+<a id="chapter-32-removable-grid-labels"></a>
 
-## Chapter 28: Removable grid labels
+## Chapter 32: Removable grid labels
 
 > **Overview:** Add removable event/people/tag chips (X) on every PhotoGrid card, plus inline pickers when one photo is selected on Inbox/Calendar for easier adding without bulk dropdowns.
 
@@ -4034,9 +4481,9 @@ Event badge × uses contrasting hover; person/tag badges use existing colors.
 
 ---
 
-<a id="chapter-29-bulk-chip-label-editors"></a>
+<a id="chapter-33-bulk-chip-label-editors"></a>
 
-## Chapter 29: Bulk chip label editors
+## Chapter 33: Bulk chip label editors
 
 > **Overview:** Add chip-based bulk label editors (events, people, tags) when 2+ photos are selected, matching the single-select UX. Replace redundant dropdown bulk bars with a unified selection panel.
 
@@ -4135,9 +4582,9 @@ Apply to event/person/tag chips in partial state.
 
 ---
 
-<a id="chapter-30-people-bulk-and-crud"></a>
+<a id="chapter-34-people-bulk-and-crud"></a>
 
-## Chapter 30: People bulk and CRUD
+## Chapter 34: People bulk and CRUD
 
 > **Overview:** Add bulk untag for selected photos, a dedicated People page (like Events) for create/edit/delete/merge, and disambiguate duplicate names in dropdowns and badges.
 
@@ -4291,9 +4738,9 @@ Or **Delete** the unused Alex if it has 0 photos.
 
 ---
 
-<a id="chapter-31-people-name-browse-links"></a>
+<a id="chapter-35-people-name-browse-links"></a>
 
-## Chapter 31: People name browse links
+## Chapter 35: People name browse links
 
 > **Overview:** Make person names clickable links to browse (matching Tags), and remove the redundant Browse button from both People and Tags list rows.
 
@@ -4338,9 +4785,9 @@ No changes — [`.people-list-name-link`](frontend/src/index.css) already provid
 
 ---
 
-<a id="chapter-32-detail-multi-tag-select"></a>
+<a id="chapter-36-detail-multi-tag-select"></a>
 
-## Chapter 32: Detail multi-tag select
+## Chapter 36: Detail multi-tag select
 
 > **Overview:** Fix PhotoDetail so clicking multiple tag chips adds each tag without overwriting previous selections. Root cause: stale `detailFile` state and pickers that rebuild the full tag list from outdated props on every click.
 
@@ -4445,9 +4892,9 @@ Apply the local-state pattern to [`PersonPicker.tsx`](frontend/src/components/Pe
 
 ---
 
-<a id="chapter-33-split-select-vs-detail"></a>
+<a id="chapter-37-split-select-vs-detail"></a>
 
-## Chapter 33: Split select vs detail
+## Chapter 37: Split select vs detail
 
 > **Overview:** Decouple multi-select from the detail drawer: checkbox toggles selection only; clicking the thumbnail opens PhotoDetail. Applies to Inbox and Calendar day panel.
 
@@ -4551,9 +4998,9 @@ Same `detailFile` state + `onOpenDetail`; clear `detailFile` in existing `useEff
 
 ---
 
-<a id="chapter-34-fix-thumbnail-orientation"></a>
+<a id="chapter-38-fix-thumbnail-orientation"></a>
 
-## Chapter 34: Fix thumbnail orientation
+## Chapter 38: Fix thumbnail orientation
 
 > **Overview:** Apply EXIF orientation when generating image thumbnails so grid and detail previews match the correctly oriented full-size view. Bump thumbnail cache version so existing wrong thumbs are regenerated.
 
@@ -4655,9 +5102,9 @@ Thumbs regenerate on first grid load per file (lazy). No rescan needed. User can
 
 ---
 
-<a id="chapter-35-shift-click-range-select"></a>
+<a id="chapter-39-shift-click-range-select"></a>
 
-## Chapter 35: Shift-click range select
+## Chapter 39: Shift-click range select
 
 > **Overview:** Add Shift+click range selection to the photo grid so selecting one photo then Shift+clicking another selects all visible photos between them (Inbox and Calendar day panel).
 
@@ -4750,9 +5197,9 @@ No change required — selected cards already show `.photo-card.selected` border
 
 ---
 
-<a id="chapter-36-esc-close-detail-viewer"></a>
+<a id="chapter-40-esc-close-detail-viewer"></a>
 
-## Chapter 36: ESC close detail viewer
+## Chapter 40: ESC close detail viewer
 
 > **Overview:** Make Escape close the PhotoDetail drawer when the full-size lightbox is not open; lightbox still closes first if open.
 
@@ -4817,9 +5264,9 @@ No CSS or parent changes — Inbox, Calendar, Browse all pass `onClose={() => se
 
 ---
 
-<a id="chapter-37-recently-used-tags"></a>
+<a id="chapter-41-recently-used-tags"></a>
 
-## Chapter 37: Recently used tags
+## Chapter 41: Recently used tags
 
 > **Overview:** Add a client-side "Recently used" tag row above the full tag list in bulk and single-file tag pickers, persisted in localStorage and updated whenever the user applies a tag.
 
@@ -4932,9 +5379,9 @@ No frontend test suite exists; manual verification only unless you want Vitest a
 
 ---
 
-<a id="chapter-38-browse-label-mode"></a>
+<a id="chapter-42-browse-label-mode"></a>
 
-## Chapter 38: Browse label mode
+## Chapter 42: Browse label mode
 
 > **Overview:** Add an explicit "Label photos" mode to Browse that enables Inbox-style multi-select and bulk event/tag/people editing via existing BulkLabelEditors components, without changing backend APIs.
 
@@ -5047,9 +5494,9 @@ Manual smoke test on `/browse/tag/ft-lauderdale-air-and-sea-show` (or any tag wi
 
 ---
 
-<a id="chapter-39-tags-page-search"></a>
+<a id="chapter-43-tags-page-search"></a>
 
-## Chapter 39: Tags page search
+## Chapter 43: Tags page search
 
 > **Overview:** Add a client-side search filter to the Tags management page, reusing the existing LabelSearchInput and filterByNameQuery utilities already used on Cameras and Inbox tag bars.
 
@@ -5137,11 +5584,332 @@ No new CSS required. Optional: wrap search input with `style={{ marginBottom: "1
 
 ---
 
+<a id="chapter-44-single-video-playback"></a>
+
+## Chapter 44: Single video playback
+
+> **Overview:** Fix double audio in PhotoDetail by ensuring only one video element plays at a time: pause/unmount the drawer video when the lightbox (zoom) opens, and only play in the lightbox.
+
+## Problem
+
+[`PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx) renders **two** `<video>` elements for the same file:
+
+1. **Drawer preview** (lines 174–181) — `controls`, no `autoPlay`
+2. **Lightbox / zoom** (lines 287–294) — `controls`, `autoPlay`
+
+When the user plays in the drawer then opens zoom (click preview), both elements stay mounted. The drawer video keeps playing while the lightbox video starts with `autoPlay` — two audio tracks.
+
+```mermaid
+flowchart LR
+  drawerVideo[Drawer video playing]
+  clickZoom[Click to zoom]
+  lightboxVideo[Lightbox video autoPlay]
+  drawerVideo --> clickZoom --> lightboxVideo
+  drawerVideo -->|still playing| dualAudio[Double audio]
+  lightboxVideo --> dualAudio
+```
+
+## Fix — [`frontend/src/components/PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx)
+
+**Principle:** Only one `<video>` in the DOM at a time for a given file.
+
+### 1. Ref + pause on zoom open
+
+```tsx
+const drawerVideoRef = useRef<HTMLVideoElement>(null);
+
+const openLightbox = () => {
+  drawerVideoRef.current?.pause();
+  setLightboxOpen(true);
+};
+```
+
+Replace all `setLightboxOpen(true)` calls with `openLightbox()`.
+
+### 2. Unmount drawer video while lightbox is open
+
+When `lightboxOpen && file.media_type === "video"`, show the **poster thumbnail** in the drawer instead of a `<video>`:
+
+```tsx
+{file.media_type === "video" ? (
+  lightboxOpen ? (
+    <img
+      src={api.thumbUrl(file.id)}
+      alt={file.filename}
+      className="photo-detail-preview"
+    />
+  ) : (
+    <video
+      ref={drawerVideoRef}
+      src={api.originalUrl(file.id)}
+      controls
+      poster={api.thumbUrl(file.id)}
+      className="photo-detail-preview"
+      onClick={openLightbox}
+    />
+  )
+) : ( /* image unchanged */ )}
+```
+
+This guarantees no hidden drawer video continues playing behind the lightbox.
+
+### 3. Reset lightbox on file change
+
+Add effect so navigating prev/next while zoomed does not carry lightbox state to the next file:
+
+```tsx
+useEffect(() => {
+  setLightboxOpen(false);
+}, [file.id]);
+```
+
+### 4. Close lightbox behavior (unchanged)
+
+Esc closes lightbox first; drawer shows video again (paused at start since element remounts). User can press play in drawer if desired — no auto-resume.
+
+## Out of scope
+
+- Preventing zoom open when clicking native video controls (separate UX tweak; unmount fix solves audio regardless)
+- Grid thumbnail inline video playback (grid uses static thumbs + play badge only)
+- Backend changes
+
+## Verification
+
+1. Open a video in Calendar day panel detail drawer → play audio in drawer
+2. Click preview to zoom → drawer audio stops; only lightbox audio plays
+3. Close lightbox (Esc or click backdrop) → drawer shows video again, silent until user presses play
+4. Navigate to next video with arrow keys → lightbox closes, new file loads cleanly
+5. Images unchanged — lightbox still works for photos
+
+---
+
+<a id="chapter-45-fix-zoom-view-scroll-and-nav"></a>
+
+## Chapter 45: Fix zoom view scroll and nav
+
+> **Overview:** Restore the zoom overlay (click detail image): pan/scroll large photos again, and keep Left/Right/D working without exiting back to the detail drawer. Drawer scroll is fine — not in scope.
+
+# Fix Zoom View Scroll + Arrow Navigation
+
+## What you reported
+
+- **Detail drawer scroll works** — not broken, leave it alone
+- **Zoom view** (click the image in detail → fullscreen overlay) **used to scroll** large photos — now it does not
+- **Left/Right used to navigate** between photos while staying in zoom — now they **exit back to detail view**
+- You did **not** ask for split-view layout changes or drawer-side-by-side — keep the existing fullscreen overlay
+
+## Why it's broken
+
+Two bugs, both in existing zoom/lightbox code — no new features needed:
+
+```mermaid
+flowchart TD
+  subgraph scrollBug [Zoom scroll broken]
+    maxWidth["max-width: 100% clamps image"]
+    flexShrink["flex-shrink shrinks image to viewport"]
+    noScroll["overflow: auto has nothing to scroll"]
+    maxWidth --> flexShrink --> noScroll
+  end
+  subgraph navBug [Arrows exit zoom]
+    pressArrow["Press Left/Right in zoom"]
+    changeFile["onChangeFile next photo"]
+    effectRuns["useEffect on file.id"]
+    closesZoom["setLightboxOpen false"]
+    pressArrow --> changeFile --> effectRuns --> closesZoom
+  end
+```
+
+### Bug 1 — Zoom overlay can't scroll/pan
+
+[`frontend/src/index.css`](frontend/src/index.css) clamps the image to viewport size via `max-width: 100%` and default flex-shrink. The stage never grows beyond the screen, so `overflow: auto` on `.photo-lightbox` has nothing to scroll.
+
+### Bug 2 — Arrow keys (and D) exit zoom instead of staying
+
+[`frontend/src/components/PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx) lines 50–54:
+
+```tsx
+useEffect(() => {
+  setCaption("");
+  setRating("");
+  setLightboxOpen(false);  // <-- closes zoom on every file change
+}, [file.id]);
+```
+
+Arrow nav and D-delete both advance `file.id` → effect fires → zoom closes → you land back in detail drawer. The keyboard handlers themselves are correct; this effect is the regression (likely introduced with the video single-playback change).
+
+## Fix
+
+### 1. CSS — restore scroll/pan in zoom overlay
+
+In [`frontend/src/index.css`](frontend/src/index.css):
+
+```css
+.photo-lightbox {
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.photo-lightbox-stage {
+  min-height: 100%;
+  min-width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  box-sizing: border-box;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+.photo-lightbox-media {
+  flex-shrink: 0;
+  max-width: none;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  cursor: zoom-out;
+}
+```
+
+Keep `inset: 0` fullscreen overlay — no layout changes.
+
+### 2. JS — stay in zoom when navigating
+
+In [`frontend/src/components/PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx), remove `setLightboxOpen(false)` from the `file.id` effect:
+
+```tsx
+useEffect(() => {
+  setCaption("");
+  setRating("");
+}, [file.id]);
+```
+
+Zoom closes only when user intends it: **Esc**, click backdrop/image, or drawer closes (unmount).
+
+## Out of scope
+
+- Detail drawer scroll (already works)
+- Split-view / side-by-side layout
+- Review batch UI changes
+- New keyboard hint UI
+
+## Verification
+
+1. Inbox → click thumbnail → detail drawer opens
+2. Click preview image → fullscreen zoom overlay
+3. Large photo (6000×4000) → trackpad/wheel scrolls/pans in zoom
+4. **Left/Right** → next/prev photo, **stays in zoom**
+5. **D** → mark delete, advance, **stays in zoom**
+6. **Esc** → back to detail drawer (zoom closes, drawer stays)
+7. Detail drawer tags still scroll normally after closing zoom
+
+---
+
+<a id="chapter-46-fix-zoom-scale-to-fit"></a>
+
+## Chapter 46: Fix zoom scale-to-fit
+
+> **Overview:** Image cropping in zoom happens because the stage wrapper breaks max-height percentage resolution. Revert to the original flex-on-lightbox layout so images scale to fit the viewport without cropping.
+
+## Root cause
+
+Legacy working CSS applied flex + `max-width/max-height: 100%` **directly on `.photo-lightbox`**:
+
+```css
+.photo-lightbox {
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+.photo-lightbox-media {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+```
+
+Current code adds a `.photo-lightbox-stage` wrapper with `min-height: 100%` (not `height: 100%`). The image's `max-height: 100%` resolves against that stage, which has no definite height — percentages fail and the image renders at intrinsic size, getting **clipped/cropped** by the overlay.
+
+```mermaid
+flowchart LR
+  subgraph broken [Current cropped]
+    lightbox["photo-lightbox overflow auto"]
+    stage["stage min-height 100%"]
+    imgBroken["img max-height 100% of undefined parent"]
+    lightbox --> stage --> imgBroken
+  end
+  subgraph fixed [Scale to fit]
+    lightboxFlex["photo-lightbox flex center padding"]
+    imgFit["img max 100% of viewport box"]
+    lightboxFlex --> imgFit
+  end
+```
+
+## Fix
+
+### 1. Revert lightbox CSS — [`frontend/src/index.css`](frontend/src/index.css)
+
+Replace current lightbox rules with legacy layout + explicit viewport caps for reliability:
+
+```css
+.photo-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  box-sizing: border-box;
+  cursor: zoom-out;
+}
+
+.photo-lightbox-media {
+  max-width: calc(100vw - 4rem);
+  max-height: calc(100vh - 4rem);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 4px;
+  cursor: zoom-out;
+}
+```
+
+- Remove `.photo-lightbox-stage` CSS entirely
+- Remove `overflow: auto` (not needed when image always fits viewport)
+- `calc(100vw/100vh - 4rem)` matches the 2rem padding and guarantees scale-to-fit without cropping
+
+### 2. Remove stage wrapper — [`frontend/src/components/PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx)
+
+Render media directly inside `.photo-lightbox` (as before):
+
+```tsx
+<div className="photo-lightbox" onClick={closeLightbox} ...>
+  <img|video className="photo-lightbox-media" onClick={closeLightbox} ... />
+</div>
+```
+
+### 3. No JS changes
+
+Keep the existing fix: `file.id` effect does **not** call `setLightboxOpen(false)` — arrow nav and D-delete stay in zoom.
+
+## Verification
+
+1. Open zoom on landscape and portrait photos — full image visible, scaled to fit window, no cropping
+2. **Left/Right** navigates in zoom without exiting
+3. **D** delete works in zoom
+4. **Esc** closes zoom only
+
+---
+
 # Part V — Dates and Alerts
 
-<a id="chapter-40-filename-date-mismatch"></a>
+<a id="chapter-47-filename-date-mismatch"></a>
 
-## Chapter 40: Filename date mismatch
+## Chapter 47: Filename date mismatch
 
 > **Overview:** Detect when organize preview uses a different date than embedded in the filename (e.g. prefix 2016-11-18 vs IMG_20150717), flag mismatches on the Review preview table, and let the user apply filename-based dates to fix target paths and DB capture_date.
 
@@ -5275,9 +6043,9 @@ After fix, row should show corrected path and clear mismatch flag.
 
 ---
 
-<a id="chapter-41-browser-date-correction"></a>
+<a id="chapter-48-browser-date-correction"></a>
 
-## Chapter 41: Browser date correction
+## Chapter 48: Browser date correction
 
 > **Overview:** Add manual and filename-based capture date correction in the calendar day panel (and matching single/bulk editor surfaces), backed by general file APIs and extended filename parsing for patterns like Screenshot_2014-11-27.
 
@@ -5424,9 +6192,9 @@ Reuse `.preview-date-warning` color or add `.capture-date-hint` for filename-sug
 
 ---
 
-<a id="chapter-42-photo-grid-alerts"></a>
+<a id="chapter-49-photo-grid-alerts"></a>
 
-## Chapter 42: Photo grid alerts
+## Chapter 49: Photo grid alerts
 
 > **Overview:** Add a reusable alerts bar and per-card badges on all photo grids, surfacing filename date mismatches and duplicate-group membership with an optional "Alerts only" filter.
 
@@ -5557,9 +6325,9 @@ Reuse `.capture-date-hint` yellow for date badge consistency.
 
 ---
 
-<a id="chapter-43-photo-keyboard-navigation"></a>
+<a id="chapter-50-photo-keyboard-navigation"></a>
 
-## Chapter 43: Photo keyboard navigation
+## Chapter 50: Photo keyboard navigation
 
 > **Overview:** Add linear arrow-key navigation (prev/next) through the current photo set in PhotoDetail and the lightbox, wired from Calendar day panel and other grid pages that open detail.
 
@@ -5668,9 +6436,9 @@ CSS in [`index.css`](frontend/src/index.css):
 
 # Part VI — Dedupe and Integrity
 
-<a id="chapter-44-duplicate-keeper-defaults"></a>
+<a id="chapter-51-duplicate-keeper-defaults"></a>
 
-## Chapter 44: Duplicate keeper defaults
+## Chapter 51: Duplicate keeper defaults
 
 > **Overview:** Prefer non-copy filenames (no `(1)` / `_(1)` suffix) as default duplicate keeper when groups are built, and merge events/people/tags onto the keeper when a non-keeper duplicate is deleted from the Duplicates page.
 
@@ -5785,9 +6553,9 @@ Mirror backend regex for optional UI badge `(copy)` on cards; not required for c
 
 ---
 
-<a id="chapter-45-fix-tag-counts-after-dedupe"></a>
+<a id="chapter-52-fix-tag-counts-after-dedupe"></a>
 
-## Chapter 45: Fix tag counts after dedupe
+## Chapter 52: Fix tag counts after dedupe
 
 > **Overview:** Tag sidebar counts stay at 12 after duplicate cleanup because dismissed copies still retain label associations until Review apply deletes them, and the UI does not refresh tag/people counts after apply. Fix both the backend dismiss flow and frontend cache invalidation.
 
@@ -5890,9 +6658,9 @@ No schema migration required.
 
 ---
 
-<a id="chapter-46-fix-orphan-tag-counts"></a>
+<a id="chapter-53-fix-orphan-tag-counts"></a>
 
-## Chapter 46: Fix orphan tag counts
+## Chapter 53: Fix orphan tag counts
 
 > **Overview:** The original dedupe/cache fixes are already in place, but sidebar tag counts still include orphaned `file_tags` rows for deleted files because count queries do not join `files` and SQLite foreign keys are disabled. Fix count SQL, enable FK enforcement, and clean up existing orphan rows.
 
@@ -6001,9 +6769,9 @@ Once `GET /api/tags` returns 6, the Browse sidebar (`tags.photo_count`) will mat
 
 # Part VII — Release and Meta
 
-<a id="chapter-47-version-and-changelog"></a>
+<a id="chapter-54-version-and-changelog"></a>
 
-## Chapter 47: Version and changelog
+## Chapter 54: Version and changelog
 
 > **Overview:** Introduce date-based versioning (2026.07.04), add CHANGELOG.md documenting the initial release, sync version strings in backend and frontend, then commit, tag, and push to GitHub.
 
@@ -6091,9 +6859,9 @@ Optional (if `gh` is available): `gh release create 2026.07.04 --notes-file CHAN
 
 ---
 
-<a id="chapter-48-sidebar-version-badge"></a>
+<a id="chapter-55-sidebar-version-badge"></a>
 
-## Chapter 48: Sidebar version badge
+## Chapter 55: Sidebar version badge
 
 > **Overview:** Display the app version (`2026.07.04`) in the sidebar directly below the "Image Organizer" heading, sourced from `frontend/package.json` so it stays in sync with releases.
 
@@ -6158,9 +6926,9 @@ No new API endpoint or duplicate constant file.
 
 ---
 
-<a id="chapter-49-save-plans-gitignore"></a>
+<a id="chapter-56-save-plans-gitignore"></a>
 
-## Chapter 49: Save plans gitignore
+## Chapter 56: Save plans gitignore
 
 > **Overview:** Copy all Cursor plan files into `imageOrganizer/.cursor/plans/` and add that directory to `.gitignore` so plans stay local and are never pushed to GitHub.
 
@@ -6226,9 +6994,9 @@ git -C imageOrganizer check-ignore -v .cursor/plans/foo.plan.md  # confirms igno
 
 ---
 
-<a id="chapter-50-plans-development-book"></a>
+<a id="chapter-57-plans-development-book"></a>
 
-## Chapter 50: Plans development book
+## Chapter 57: Plans development book
 
 > **Overview:** Consolidate all 37 Image Organizer Cursor plan files into a single committed markdown book at docs/DEVELOPMENT_BOOK.md, organized by topic with a table of contents and readable chapter structure.
 
@@ -6350,9 +7118,109 @@ No change to the architecture cursor rule scope (book is design history, not liv
 
 ---
 
-<a id="chapter-51-cursor-book-tool-repo"></a>
+<a id="chapter-58-book-update-and-release"></a>
 
-## Chapter 51: Cursor book tool repo
+## Chapter 58: Book update and release
+
+> **Overview:** Add post-2026.07.05b feature plans to book.json, rebuild DEVELOPMENT_BOOK.md, write CHANGELOG 2026.07.07 for all uncommitted work, bump versions, commit, tag, and push to origin.
+
+# Update Development Book + Release 2026.07.07
+
+## Scope
+
+Ship all uncommitted work since `2026.07.05b` (14 modified files + new [`InboxReviewBatchBar.tsx`](frontend/src/components/InboxReviewBatchBar.tsx)). Release date: **2026.07.07**.
+
+## 1. Add new plans to [`book.json`](book.json)
+
+Bump `"version"` to `2026.07.07`.
+
+**Part III — Inbox and Review** (append):
+- `inbox_batch_review_17a70fa1` — batch submit (250 cap), hide queued files, append-safe queue
+- `inbox_bulk_delete_shortcut_2aa4374f` — **D** bulk-delete selected in Inbox grid
+- `review_queue_preview_release_b246103e` — grid preview + return to inbox
+
+**Part IV — Labels and Photo UX** (append):
+- `single_video_playback_3b73c5e1` — one video player in detail/zoom
+- `fix_lightbox_pan_and_delete_718fe59d` — zoom pan + arrow nav stay in zoom
+- `fix_zoom_scale-to-fit_35b9a5d7` — scale-to-fit (no crop / full-res)
+
+**Part III or new settings entry** — add to Part III end or a small Part VIII:
+- `inbox_oldest-first_order_470e953a` — global **Photo sort order** setting (newest/oldest first)
+
+**`skip_plans`** (superseded zoom iterations):
+| Plan | Note |
+|------|------|
+| `fix_inbox_fullsize_scroll_a4badb8c` | Superseded — wrong split-view approach |
+| `restore_full-screen_lightbox_pan_dc4aeae3` | Superseded by pan + scale fixes |
+| `scale_zoom_to_viewport_9b4c2911` | Superseded by `fix_zoom_scale-to-fit` |
+| `fix_lightbox_pan_and_delete_718fe59d` | Keep in book; others skip |
+
+## 2. Rebuild book
+
+```bash
+python3 scripts/build_development_book.py
+```
+
+Output: [`docs/DEVELOPMENT_BOOK.md`](docs/DEVELOPMENT_BOOK.md) (~6k lines, auto-generated).
+
+## 3. CHANGELOG — [`CHANGELOG.md`](CHANGELOG.md)
+
+New section **`## [2026.07.07] - 2026-07-07`**:
+
+### Added
+- Inbox **Submit to review** bar: next 250 / selected batch, link to Review queue; queued files hidden from default Inbox view
+- Inbox **D** bulk-delete for checkbox-selected photos
+- Review queue **List/Grid** toggle with thumbnail preview; **Return to inbox** releases queue (`POST /api/review/queue/release`)
+- Settings **Photo sort order** (newest / oldest first); applies to all file grids and inbox batch order
+- `photo_sort_order` config; `file_list_order_clause()` shared sort helper
+
+### Changed
+- Inbox batch limit 250; append-safe `preview-inbox` (no longer wipes delete marks)
+- Photo detail zoom: arrow keys and **D** stay in zoom; image scales to fit viewport
+
+### Fixed
+- Single video playback in detail + zoom (no double audio)
+- Zoom overlay scroll/pan and scale-to-fit regressions
+
+## 4. Version bump (all `2026.07.05b` → `2026.07.07`)
+
+| File | Field |
+|------|-------|
+| [`frontend/package.json`](frontend/package.json) | `version` |
+| [`backend/app/main.py`](backend/app/main.py) | FastAPI `version=` |
+| [`README.md`](README.md) | Version line |
+| [`book.json`](book.json) | `version` |
+
+Sidebar reads `package.json` automatically via [`App.tsx`](frontend/src/App.tsx).
+
+## 5. Git release
+
+```bash
+git add -A
+git commit -m "$(cat <<'EOF'
+Release 2026.07.07
+
+Inbox batch review, bulk D delete, review queue preview/return, global photo sort, and lightbox/video fixes.
+EOF
+)"
+git tag 2026.07.07
+git push origin main
+git push origin 2026.07.07
+```
+
+Requires network + git_write permissions for push.
+
+## Verification
+
+- `docs/DEVELOPMENT_BOOK.md` includes new chapters and subtitle shows `2026.07.07`
+- `git tag -l` shows `2026.07.07`
+- Remote `main` and tag pushed
+
+---
+
+<a id="chapter-59-cursor-book-tool-repo"></a>
+
+## Chapter 59: Cursor book tool repo
 
 > **Overview:** Extract the development book builder into a standalone repo with a config-driven script and a reusable Cursor skill; migrate imageOrganizer to a thin `book.yaml` + wrapper script.
 

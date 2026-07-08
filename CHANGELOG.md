@@ -2,6 +2,26 @@
 
 Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
+## [2026.07.07] - 2026-07-07
+
+### Added
+
+- Inbox **Submit to review** bar: next 250 / selected batch, link to Review queue; queued files hidden from default Inbox view
+- Inbox **D** bulk-delete for checkbox-selected photos
+- Review queue **List/Grid** toggle with thumbnail preview; **Return to inbox** releases queue (`POST /api/review/queue/release`)
+- Settings **Photo sort order** (newest / oldest first); applies to all file grids and inbox batch order
+- `photo_sort_order` config; `file_list_order_clause()` shared sort helper
+
+### Changed
+
+- Inbox batch limit 250; append-safe `preview-inbox` (no longer wipes delete marks)
+- Photo detail zoom: arrow keys and **D** stay in zoom; image scales to fit viewport
+
+### Fixed
+
+- Single video playback in detail + zoom (no double audio)
+- Zoom overlay scroll/pan and scale-to-fit regressions
+
 ## [2026.07.05b] - 2026-07-05
 
 ### Added

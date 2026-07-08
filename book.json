@@ -1,6 +1,6 @@
 {
   "title": "Image Organizer — Development Book",
-  "version": "2026.07.05b",
+  "version": "2026.07.07",
   "output": "docs/DEVELOPMENT_BOOK.md",
   "plans_dir": "~/.cursor/plans",
   "related_links": "[ARCHITECTURE.md](ARCHITECTURE.md) · [CHANGELOG.md](../CHANGELOG.md)",
@@ -44,7 +44,11 @@
         "inbox_camera_filters_0b922a66",
         "cameras_nav_page_fc237a2c",
         "fix_stale_review_preview_65e13868",
-        "review_page_layout_feb539f8"
+        "review_page_layout_feb539f8",
+        "inbox_batch_review_17a70fa1",
+        "inbox_bulk_delete_shortcut_2aa4374f",
+        "review_queue_preview_release_b246103e",
+        "inbox_oldest-first_order_470e953a"
       ]
     },
     {
@@ -62,7 +66,10 @@
         "esc_close_detail_viewer_3988299f",
         "recently_used_tags_7ebe21dc",
         "browse_label_mode_b7287fcb",
-        "tags_page_search_f082aca9"
+        "tags_page_search_f082aca9",
+        "single_video_playback_3b73c5e1",
+        "fix_lightbox_pan_and_delete_718fe59d",
+        "fix_zoom_scale-to-fit_35b9a5d7"
       ]
     },
     {
@@ -98,6 +105,15 @@
     },
     "sidebar_version_badge_1af78eec": {
       "note": "Duplicate of `sidebar_version_badge_5858cb14`."
+    },
+    "fix_inbox_fullsize_scroll_a4badb8c": {
+      "note": "Superseded — wrong split-view lightbox approach."
+    },
+    "restore_full-screen_lightbox_pan_dc4aeae3": {
+      "note": "Superseded by `fix_lightbox_pan_and_delete` and `fix_zoom_scale-to-fit`."
+    },
+    "scale_zoom_to_viewport_9b4c2911": {
+      "note": "Superseded by `fix_zoom_scale-to-fit_35b9a5d7`."
     }
   }
 }

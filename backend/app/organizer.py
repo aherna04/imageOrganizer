@@ -5,7 +5,9 @@ from datetime import datetime
 from pathlib import Path
 
 from app.config import INBOX_PATH
-from app.db import cleanup_orphan_junction_rows, get_config
+from app.db import cleanup_orphan_junction_rows, get_config, file_list_order_clause
+
+INBOX_BATCH_LIMIT = 250
 
 
 def _parse_capture(file_row: sqlite3.Row) -> datetime:
@@ -84,25 +86,87 @@ def _build_preview_item(
     }
 
 
-def preview_organize(conn: sqlite3.Connection, file_ids: list[int] | None = None) -> list[dict]:
+def inbox_file_count(conn: sqlite3.Connection) -> int:
+    row = conn.execute("SELECT COUNT(*) AS n FROM files WHERE location = 'inbox'").fetchone()
+    return int(row["n"])
+
+
+def inbox_available_count(conn: sqlite3.Connection) -> int:
+    row = conn.execute(
+        f"SELECT COUNT(*) AS n FROM files WHERE location = 'inbox' AND {NOT_QUEUED.strip()}",
+    ).fetchone()
+    return int(row["n"])
+
+
+NOT_QUEUED = """
+id NOT IN (
+    SELECT file_id FROM review_decisions
+    WHERE applied = 0
+)
+"""
+
+
+def preview_organize(
+    conn: sqlite3.Connection,
+    file_ids: list[int] | None = None,
+    *,
+    unqueued_only: bool = False,
+) -> list[dict]:
     cfg = get_config(conn)
     archive = Path(cfg["archive_path"])
     date_pattern = cfg["date_pattern"]
     rename_pattern = cfg["rename_pattern"]
+    unqueued_clause = f" AND {NOT_QUEUED.strip()}" if unqueued_only else ""
+    order = file_list_order_clause(cfg, alias=None)
 
     if file_ids:
-        placeholders = ",".join("?" * len(file_ids))
+        ids = file_ids[:INBOX_BATCH_LIMIT]
+        placeholders = ",".join("?" * len(ids))
         rows = conn.execute(
-            f"SELECT * FROM files WHERE id IN ({placeholders}) AND location = 'inbox'",
-            file_ids,
+            f"SELECT * FROM files WHERE id IN ({placeholders}) AND location = 'inbox'{unqueued_clause} {order}",
+            ids,
         ).fetchall()
     else:
-        rows = conn.execute("SELECT * FROM files WHERE location = 'inbox'").fetchall()
+        rows = conn.execute(
+            f"SELECT * FROM files WHERE location = 'inbox'{unqueued_clause} {order} LIMIT ?",
+            (INBOX_BATCH_LIMIT,),
+        ).fetchall()
 
     return [
         _build_preview_item(row, idx, archive, date_pattern, rename_pattern)
         for idx, row in enumerate(rows, start=1)
     ]
+
+
+def queue_inbox_batch(
+    conn: sqlite3.Connection,
+    file_ids: list[int] | None = None,
+    *,
+    append: bool = True,
+) -> tuple[list[dict], int]:
+    if not append:
+        conn.execute("DELETE FROM review_decisions WHERE applied = 0")
+
+    if file_ids:
+        ids = file_ids[:INBOX_BATCH_LIMIT]
+        placeholders = ",".join("?" * len(ids))
+        rows = conn.execute(
+            f"SELECT id FROM files WHERE id IN ({placeholders}) AND location = 'inbox' AND {NOT_QUEUED.strip()}",
+            ids,
+        ).fetchall()
+        batch_ids = [row["id"] for row in rows]
+        items = preview_organize(conn, batch_ids, unqueued_only=True) if batch_ids else []
+    else:
+        items = preview_organize(conn, unqueued_only=True)
+
+    for item in items:
+        conn.execute(
+            "INSERT INTO review_decisions (file_id, action, target_path) VALUES (?, 'keep', ?)",
+            (item["file_id"], item["target_path"]),
+        )
+
+    conn.commit()
+    return items, inbox_available_count(conn)
 
 
 def fix_dates_from_filename(
@@ -146,7 +210,11 @@ def apply_operations(conn: sqlite3.Connection) -> tuple[int, list[str]]:
         "SELECT rd.*, f.path, f.filename, f.location FROM review_decisions rd JOIN files f ON f.id = rd.file_id WHERE rd.applied = 0"
     ).fetchall()
 
-    preview_map = {p["file_id"]: p for p in preview_organize(conn)}
+    keep_ids = [d["file_id"] for d in decisions if d["action"] == "keep"]
+    preview_map = {
+        p["file_id"]: p
+        for p in preview_organize(conn, keep_ids if keep_ids else None)
+    }
 
     for d in decisions:
         src = Path(d["path"])

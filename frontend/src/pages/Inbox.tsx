@@ -1,7 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { MediaFile, api } from "../api/client";
+import { INBOX_BATCH_LIMIT, MediaFile, api } from "../api/client";
 import BulkEventAssignBar from "../components/BulkEventAssignBar";
+import InboxReviewBatchBar from "../components/InboxReviewBatchBar";
 import InboxUsedCamerasBar from "../components/InboxUsedCamerasBar";
 import InboxUsedPeopleBar from "../components/InboxUsedPeopleBar";
 import InboxUsedTagsBar from "../components/InboxUsedTagsBar";
@@ -10,6 +11,7 @@ import PhotoDetail from "../components/PhotoDetail";
 import SingleFileLabelEditors from "../components/SingleFileLabelEditors";
 import BulkLabelEditors from "../components/BulkLabelEditors";
 import { invalidateAfterDateChange } from "../utils/invalidateAfterDateChange";
+import { isEditableTarget } from "../utils/photoNavigation";
 import { togglePhotoSelection } from "../utils/photoSelection";
 
 type InboxFilter = "all" | "unlabeled" | "delete_queue";
@@ -42,6 +44,11 @@ export default function Inbox() {
   const { data: deleteQueueCountData } = useQuery({
     queryKey: ["files", "inbox", "delete_queue_count"],
     queryFn: () => api.listFiles({ location: "inbox", pending_delete: true, page_size: 1 }),
+  });
+
+  const { data: reviewQueue } = useQuery({
+    queryKey: ["review-queue"],
+    queryFn: api.reviewQueue,
   });
 
   const deleteQueueCount = deleteQueueCountData?.total ?? 0;
@@ -77,6 +84,21 @@ export default function Inbox() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["scan-status"] });
       setTimeout(() => refetch(), 2000);
+    },
+  });
+
+  const submitBatch = useMutation({
+    mutationFn: (fileIds?: number[]) =>
+      api.previewInbox({
+        append: true,
+        ...(fileIds && fileIds.length > 0 ? { file_ids: fileIds.slice(0, INBOX_BATCH_LIMIT) } : {}),
+      }),
+    onSuccess: () => {
+      refetch();
+      qc.invalidateQueries({ queryKey: ["review-queue"] });
+      qc.invalidateQueries({ queryKey: ["organize-preview"] });
+      setSelectedIds([]);
+      selectionAnchorRef.current = null;
     },
   });
 
@@ -167,6 +189,31 @@ export default function Inbox() {
     });
   };
 
+  const bulkDeleteMutation = useMutation({
+    mutationFn: (fileIds: number[]) =>
+      Promise.all(fileIds.map((file_id) => api.createDecision({ file_id, action: "delete" }))),
+    onSuccess: () => {
+      handleLabelsChange();
+      setSelectedIds([]);
+      selectionAnchorRef.current = null;
+      setDetailFile(null);
+    },
+  });
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "d" && e.key !== "D") return;
+      if (inboxFilter === "delete_queue" || selectedIds.length === 0) return;
+      if (isEditableTarget(e.target)) return;
+      if (bulkDeleteMutation.isPending) return;
+      e.preventDefault();
+      e.stopPropagation();
+      bulkDeleteMutation.mutate(selectedIds);
+    };
+    window.addEventListener("keydown", onKey, true);
+    return () => window.removeEventListener("keydown", onKey, true);
+  }, [inboxFilter, selectedIds, bulkDeleteMutation]);
+
   const handleDateChange = (keepFileId?: number) => {
     const openId = keepFileId ?? detailFile?.id;
     invalidateAfterDateChange(qc);
@@ -180,6 +227,8 @@ export default function Inbox() {
 
   const selectedFiles = data?.items.filter((f) => selectedIds.includes(f.id)) ?? [];
   const total = data?.total ?? 0;
+  const visibleCount = data?.items.length ?? 0;
+  const queueCount = reviewQueue?.total ?? 0;
 
   const activeTagName = useMemo(() => {
     if (!tagFilterId) return null;
@@ -223,9 +272,20 @@ export default function Inbox() {
         </div>
       </div>
       <p style={{ color: "#8891a0", marginBottom: "1rem" }}>
-        Drop new photos into your inbox folder, scan, then review and apply from the Review page.
-        Use checkboxes to select photos for bulk labeling; click a thumbnail to view metadata.
+        Drop new photos into your inbox folder, scan, then submit batches (up to {INBOX_BATCH_LIMIT}) to
+        Review when ready. Use checkboxes for bulk labeling; click a thumbnail to view metadata.
       </p>
+
+      {inboxFilter !== "delete_queue" && (
+        <InboxReviewBatchBar
+          availableCount={total}
+          queueCount={queueCount}
+          selectedCount={selectedIds.length}
+          submitting={submitBatch.isPending}
+          onSubmitNext={() => submitBatch.mutate(undefined)}
+          onSubmitSelected={() => submitBatch.mutate(selectedIds)}
+        />
+      )}
 
       <div className="inbox-filter-bar">
         <div className="photo-alerts-filter">
@@ -272,6 +332,7 @@ export default function Inbox() {
       <BulkEventAssignBar
         selectedIds={selectedIds}
         totalCount={data?.total}
+        visibleCount={visibleCount}
         onSelectAll={() => setSelectedIds(data?.items.map((f) => f.id) ?? [])}
         onClear={() => {
           setSelectedIds([]);

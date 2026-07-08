@@ -142,7 +142,15 @@ def default_config() -> dict[str, str]:
         "trash_path": str(TRASH_PATH),
         "date_pattern": DEFAULT_DATE_PATTERN,
         "rename_pattern": DEFAULT_RENAME_PATTERN,
+        "photo_sort_order": "desc",
     }
+
+
+def file_list_order_clause(cfg: dict[str, str], alias: str | None = "f") -> str:
+    asc = cfg.get("photo_sort_order", "desc") == "asc"
+    direction = "ASC" if asc else "DESC"
+    prefix = f"{alias}." if alias else ""
+    return f"ORDER BY COALESCE({prefix}capture_date, {prefix}mtime) {direction}, {prefix}id {direction}"
 
 
 def init_db() -> None:

@@ -1,11 +1,18 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { api } from "../api/client";
+import { useMemo, useState } from "react";
+import { MediaFile, api } from "../api/client";
 import ApplyPanel from "../components/ApplyPanel";
 import CollapsibleSection from "../components/CollapsibleSection";
-import { invalidateAfterApply } from "../utils/invalidateAfterApply";
+import PhotoDetail from "../components/PhotoDetail";
+import PhotoGrid from "../components/PhotoGrid";
+import { invalidateAfterApply, invalidateAfterQueueRelease } from "../utils/invalidateAfterApply";
+
+type QueueView = "list" | "grid";
 
 export default function Review() {
   const qc = useQueryClient();
+  const [queueView, setQueueView] = useState<QueueView>("list");
+  const [detailFile, setDetailFile] = useState<MediaFile | null>(null);
 
   const { data: queue, refetch: refetchQueue } = useQuery({
     queryKey: ["review-queue"],
@@ -18,8 +25,18 @@ export default function Review() {
   });
 
   const previewInbox = useMutation({
-    mutationFn: api.previewInbox,
+    mutationFn: () => api.previewInbox({ append: true }),
     onSuccess: () => {
+      refetchQueue();
+      refetchPreview();
+    },
+  });
+
+  const releaseQueue = useMutation({
+    mutationFn: () => api.releaseReviewQueue(),
+    onSuccess: () => {
+      invalidateAfterQueueRelease(qc);
+      setDetailFile(null);
       refetchQueue();
       refetchPreview();
     },
@@ -38,17 +55,48 @@ export default function Review() {
     queryFn: api.operations,
   });
 
+  const queueFiles = useMemo(
+    () =>
+      (queue?.items ?? [])
+        .map((item) => item.file)
+        .filter((file): file is MediaFile => file != null),
+    [queue?.items],
+  );
+
+  const targetPathByFileId = useMemo(() => {
+    const map: Record<number, string> = {};
+    for (const item of queue?.items ?? []) {
+      if (item.target_path) {
+        map[item.file_id] = item.target_path;
+      }
+    }
+    return map;
+  }, [queue?.items]);
+
   const mismatchedIds =
     preview?.items.filter((item) => item.date_mismatch).map((item) => item.file_id) ?? [];
 
   const queueCount = queue?.total ?? 0;
   const previewCount = preview?.items.length ?? 0;
   const previewDefaultOpen = previewCount > 0 && queueCount === 0;
+  const previewBatchLimited =
+    preview?.inbox_total != null && preview.inbox_total > preview.total;
 
   const handleApplied = () => {
     invalidateAfterApply(qc);
+    setDetailFile(null);
     refetchPreview();
     refetchQueue();
+  };
+
+  const handleReturnToInbox = () => {
+    if (queueCount === 0 || releaseQueue.isPending) return;
+    const message =
+      queueCount > 10
+        ? `Return all ${queueCount} queued photos to Inbox? They will be available for review there again.`
+        : `Return ${queueCount} queued photo${queueCount === 1 ? "" : "s"} to Inbox?`;
+    if (!window.confirm(message)) return;
+    releaseQueue.mutate();
   };
 
   return (
@@ -60,24 +108,75 @@ export default function Review() {
       <div className="review-queue-panel">
         <div className="review-queue-panel-header">
           <h3 className="review-queue-panel-title">Review queue ({queueCount})</h3>
-          <ApplyPanel onApplied={handleApplied} disabled={queueCount === 0} compact />
+          <div className="review-queue-actions">
+            {queueCount > 0 && (
+              <>
+                <div className="review-queue-view-toggle">
+                  <button
+                    type="button"
+                    className={`btn btn-secondary${queueView === "list" ? " active" : ""}`}
+                    onClick={() => setQueueView("list")}
+                  >
+                    List
+                  </button>
+                  <button
+                    type="button"
+                    className={`btn btn-secondary${queueView === "grid" ? " active" : ""}`}
+                    onClick={() => setQueueView("grid")}
+                  >
+                    Grid
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  disabled={releaseQueue.isPending}
+                  onClick={handleReturnToInbox}
+                >
+                  {releaseQueue.isPending ? "Returning..." : "Return to inbox"}
+                </button>
+              </>
+            )}
+            <ApplyPanel onApplied={handleApplied} disabled={queueCount === 0} compact />
+          </div>
         </div>
         {queueCount === 0 ? (
-          <p className="review-queue-empty">No queued decisions. Preview inbox organize below to queue files.</p>
+          <p className="review-queue-empty">
+            No queued decisions. Submit a batch from Inbox or preview inbox organize below.
+          </p>
         ) : (
-          <div className="review-queue-list">
-            {queue?.items.map((item) => (
-              <div key={item.id} className="review-item">
-                <div>
-                  <strong>{item.file?.filename ?? `File #${item.file_id}`}</strong>
-                  <div style={{ color: "#8891a0", fontSize: "0.875rem" }}>
-                    {item.action}
-                    {item.target_path && ` → ${item.target_path}`}
+          <>
+            {previewBatchLimited && (
+              <p className="review-batch-hint">
+                Batch limit: {preview!.total} of {preview!.inbox_total} inbox photos queued (oldest first).
+                Apply this batch, then submit the next from Inbox or preview again.
+              </p>
+            )}
+            {queueView === "list" ? (
+              <div className="review-queue-list">
+                {queue?.items.map((item) => (
+                  <div key={item.id} className="review-item">
+                    <div>
+                      <strong>{item.file?.filename ?? `File #${item.file_id}`}</strong>
+                      <div style={{ color: "#8891a0", fontSize: "0.875rem" }}>
+                        {item.action}
+                        {item.target_path && ` → ${item.target_path}`}
+                      </div>
+                    </div>
                   </div>
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
+            ) : (
+              <div className="review-queue-grid">
+                <PhotoGrid
+                  files={queueFiles}
+                  activeDetailId={detailFile?.id}
+                  onSelect={setDetailFile}
+                  subtitleByFileId={targetPathByFileId}
+                />
+              </div>
+            )}
+          </>
         )}
       </div>
 
@@ -98,6 +197,12 @@ export default function Review() {
       >
         {preview && preview.items.length > 0 ? (
           <>
+            {previewBatchLimited && (
+              <p className="review-batch-hint">
+                Batch limit: {preview.total} of {preview.inbox_total} inbox photos (oldest first).
+                Apply this batch, then submit the next from Inbox or preview again.
+              </p>
+            )}
             {mismatchedIds.length > 0 && (
               <div style={{ marginBottom: "0.75rem" }}>
                 <button
@@ -182,6 +287,15 @@ export default function Review() {
           ))
         )}
       </CollapsibleSection>
+
+      {detailFile && (
+        <PhotoDetail
+          file={detailFile}
+          files={queueFiles}
+          onChangeFile={setDetailFile}
+          onClose={() => setDetailFile(null)}
+        />
+      )}
     </div>
   );
 }

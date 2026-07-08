@@ -10,6 +10,7 @@ class ConfigOut(BaseModel):
     trash_path: str
     date_pattern: str
     rename_pattern: str
+    photo_sort_order: Literal["asc", "desc"] = "desc"
 
 
 class ConfigUpdate(BaseModel):
@@ -18,6 +19,7 @@ class ConfigUpdate(BaseModel):
     trash_path: str | None = None
     date_pattern: str | None = None
     rename_pattern: str | None = None
+    photo_sort_order: Literal["asc", "desc"] | None = None
 
 
 class StorageStatsOut(BaseModel):
@@ -337,6 +339,12 @@ class OrganizeFixDatesOut(BaseModel):
 class OrganizePreviewOut(BaseModel):
     items: list[OrganizePreviewItem]
     total: int
+    inbox_total: int | None = None
+
+
+class PreviewInboxIn(BaseModel):
+    file_ids: list[int] = []
+    append: bool = True
 
 
 class ReviewDecisionCreate(BaseModel):
@@ -365,6 +373,10 @@ class ReviewDecisionsCancel(BaseModel):
 
 class ReviewDecisionsCancelOut(BaseModel):
     removed: int
+
+
+class ReviewQueueReleaseIn(BaseModel):
+    file_ids: list[int] = Field(default_factory=list)
 
 
 class ApplyResultOut(BaseModel):

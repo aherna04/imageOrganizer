@@ -1,16 +1,16 @@
 """SQL helpers for inbox file visibility."""
 
-PENDING_DELETE_EXCLUSION = """
+NOT_QUEUED = """
 id NOT IN (
     SELECT file_id FROM review_decisions
-    WHERE applied = 0 AND action = 'delete'
+    WHERE applied = 0
 )
 """
 
-PENDING_DELETE_EXCLUSION_F = """
+NOT_QUEUED_F = """
 f.id NOT IN (
     SELECT file_id FROM review_decisions
-    WHERE applied = 0 AND action = 'delete'
+    WHERE applied = 0
 )
 """
 
@@ -32,7 +32,7 @@ f.id IN (
 def append_inbox_visible_filter(clauses: list[str], location: str | None, *, alias: str = "f") -> None:
     if location != "inbox":
         return
-    sql = PENDING_DELETE_EXCLUSION_F if alias == "f" else PENDING_DELETE_EXCLUSION
+    sql = NOT_QUEUED_F if alias == "f" else NOT_QUEUED
     clauses.append(sql.strip())
 
 

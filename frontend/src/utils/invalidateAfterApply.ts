@@ -14,4 +14,9 @@ export function invalidateAfterApply(qc: QueryClient) {
   qc.invalidateQueries({ queryKey: ["calendar-summary"] });
   qc.invalidateQueries({ queryKey: ["calendar-day"] });
   qc.invalidateQueries({ queryKey: ["calendar-months"] });
+  qc.invalidateQueries({ queryKey: ["inbox-tags"] });
+  qc.invalidateQueries({ queryKey: ["inbox-people"] });
+  qc.invalidateQueries({ queryKey: ["files", "inbox", "delete_queue_count"] });
 }
+
+export const invalidateAfterQueueRelease = invalidateAfterApply;

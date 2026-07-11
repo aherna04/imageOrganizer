@@ -11,13 +11,14 @@ import CaptureDateEditor from "./CaptureDateEditor";
 import EventPicker from "./EventPicker";
 import PersonPicker from "./PersonPicker";
 import FileTagPicker from "./FileTagPicker";
+import { invalidateAfterReviewChange } from "../utils/invalidateAfterReviewChange";
 
 interface Props {
   file: MediaFile;
   onClose: () => void;
   files?: MediaFile[];
   onChangeFile?: (file: MediaFile) => void;
-  onDateChange?: (keepFileId?: number) => void;
+  onDateChange?: (keepFileId?: number, options?: { skipInvalidation?: boolean }) => void;
   deleteQueueMode?: boolean;
 }
 
@@ -40,7 +41,9 @@ export default function PhotoDetail({
   const [rating, setRating] = useState<number | "">("");
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [acting, setActing] = useState(false);
+  const [actingSlow, setActingSlow] = useState(false);
   const drawerVideoRef = useRef<HTMLVideoElement>(null);
+  const actingRef = useRef(false);
 
   const openLightbox = () => {
     drawerVideoRef.current?.pause();
@@ -71,40 +74,50 @@ export default function PhotoDetail({
   );
 
   const handleMarkDelete = useCallback(async () => {
-    if (acting) return;
+    if (actingRef.current) return;
+    actingRef.current = true;
     setActing(true);
+    const slowTimer = window.setTimeout(() => setActingSlow(true), 500);
     try {
       const next = files && onChangeFile ? nextFileAfterCurrent(files, file.id) : null;
       await api.createDecision({ file_id: file.id, action: "delete" });
+      invalidateAfterReviewChange(qc);
       if (next && onChangeFile) {
         onChangeFile(next);
-        handleLabelsChange(next.id);
+        onDateChange?.(next.id, { skipInvalidation: true });
       } else {
-        handleLabelsChange();
         onClose();
       }
     } finally {
+      window.clearTimeout(slowTimer);
+      actingRef.current = false;
       setActing(false);
+      setActingSlow(false);
     }
-  }, [acting, files, onChangeFile, file.id, handleLabelsChange, onClose]);
+  }, [files, onChangeFile, file.id, qc, onDateChange, onClose]);
 
   const handleRestore = useCallback(async () => {
-    if (acting) return;
+    if (actingRef.current) return;
+    actingRef.current = true;
     setActing(true);
+    const slowTimer = window.setTimeout(() => setActingSlow(true), 500);
     try {
       const next = files && onChangeFile ? nextFileAfterCurrent(files, file.id) : null;
       await api.cancelReviewDecisions([file.id]);
+      invalidateAfterReviewChange(qc);
       if (next && onChangeFile) {
         onChangeFile(next);
-        handleLabelsChange(next.id);
+        onDateChange?.(next.id, { skipInvalidation: true });
       } else {
-        handleLabelsChange();
         onClose();
       }
     } finally {
+      window.clearTimeout(slowTimer);
+      actingRef.current = false;
       setActing(false);
+      setActingSlow(false);
     }
-  }, [acting, files, onChangeFile, file.id, handleLabelsChange, onClose]);
+  }, [files, onChangeFile, file.id, qc, onDateChange, onClose]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -122,6 +135,7 @@ export default function PhotoDetail({
       if (e.key === "d" || e.key === "D") {
         if (deleteQueueMode || isEditableTarget(e.target) || acting) return;
         e.preventDefault();
+        e.stopImmediatePropagation();
         void handleMarkDelete();
         return;
       }
@@ -204,6 +218,9 @@ export default function PhotoDetail({
         )}
         <div className="photo-detail-title-row">
           <h3>{file.filename}</h3>
+          {actingSlow && (
+            <span style={{ color: "#8891a0", fontSize: "0.875rem" }}>Saving…</span>
+          )}
           {deleteQueueMode ? (
             <button
               className="btn btn-secondary"

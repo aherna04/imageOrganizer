@@ -2,6 +2,18 @@
 
 Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
+## [2026.07.10a] - 2026-07-10
+
+### Fixed
+
+- Delete during scan: commit before thumbnail I/O and incremental dedupe commits so **D** returns quickly instead of waiting on SQLite busy timeout
+- Double cache invalidation after delete in Inbox (one refetch wave instead of two)
+- Duplicate **D** handler when detail drawer open with checkbox selection
+
+### Changed
+
+- Scan status shows **Building duplicate index...** during dedupe phase; **Saving…** hint when delete takes >500ms
+
 ## [2026.07.10] - 2026-07-10
 
 ### Fixed

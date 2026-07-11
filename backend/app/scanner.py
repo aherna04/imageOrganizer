@@ -44,6 +44,10 @@ class ScanState:
         with self.lock:
             self.processed += 1
 
+    def set_message(self, message: str) -> None:
+        with self.lock:
+            self.message = message
+
     def finish(self, message: str) -> None:
         with self.lock:
             self.running = False
@@ -57,13 +61,14 @@ def _location_for_path(path: Path, scope: str) -> str:
     return "inbox" if scope == "inbox" else "archive"
 
 
-def _upsert_file(conn, path: Path, location: str) -> int | None:
+def _upsert_file(conn, path: Path, location: str) -> tuple[Path, int, float] | None:
+    """Upsert file row. Returns (path, file_id, mtime) for thumbnail work after commit."""
     meta = extract_metadata(path)
     sha = compute_sha256(path)
     phash = compute_phash(path)
     existing = conn.execute("SELECT id, mtime FROM files WHERE path = ?", (str(path),)).fetchone()
     if existing and existing["mtime"] == meta["mtime"]:
-        return existing["id"]
+        return None
     conn.execute(
         """
         INSERT INTO files (
@@ -101,11 +106,7 @@ def _upsert_file(conn, path: Path, location: str) -> int | None:
     )
     row = conn.execute("SELECT id, mtime FROM files WHERE path = ?", (str(path),)).fetchone()
     if row:
-        try:
-            generate_thumbnail(path, row["id"], row["mtime"])
-        except Exception:
-            pass
-        return row["id"]
+        return (path, row["id"], row["mtime"])
     return None
 
 
@@ -128,12 +129,20 @@ def run_scan(scope: str) -> None:
         with get_conn() as conn:
             for path in files:
                 seen.add(str(path))
-                _upsert_file(conn, path, _location_for_path(path, scope))
+                thumb = _upsert_file(conn, path, _location_for_path(path, scope))
                 conn.commit()
+                if thumb:
+                    thumb_path, file_id, mtime = thumb
+                    try:
+                        generate_thumbnail(thumb_path, file_id, mtime)
+                    except Exception:
+                        pass
                 scan_state.tick()
         with get_conn() as conn:
             _prune_missing(conn, scope, seen)
             conn.commit()
+        scan_state.set_message("Building duplicate index...")
+        with get_conn() as conn:
             rebuild_duplicate_groups(conn)
             conn.commit()
         scan_state.finish(f"Scan complete: {len(files)} files")

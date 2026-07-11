@@ -203,6 +203,7 @@ export default function Inbox() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "d" && e.key !== "D") return;
+      if (detailFile != null) return;
       if (inboxFilter === "delete_queue" || selectedIds.length === 0) return;
       if (isEditableTarget(e.target)) return;
       if (bulkDeleteMutation.isPending) return;
@@ -212,17 +213,19 @@ export default function Inbox() {
     };
     window.addEventListener("keydown", onKey, true);
     return () => window.removeEventListener("keydown", onKey, true);
-  }, [inboxFilter, selectedIds, bulkDeleteMutation]);
+  }, [inboxFilter, selectedIds, bulkDeleteMutation, detailFile]);
 
-  const handleDateChange = (keepFileId?: number) => {
+  const handleDateChange = (keepFileId?: number, options?: { skipInvalidation?: boolean }) => {
     const openId = keepFileId ?? detailFile?.id;
-    invalidateAfterDateChange(qc);
+    if (!options?.skipInvalidation) {
+      invalidateAfterDateChange(qc);
+      handleLabelsChange();
+    }
     refetch().then(({ data: listData }) => {
       if (!openId) return;
       const still = listData?.items.find((f) => f.id === openId);
       setDetailFile(still ?? null);
     });
-    handleLabelsChange();
   };
 
   const selectedFiles = data?.items.filter((f) => selectedIds.includes(f.id)) ?? [];
@@ -259,7 +262,9 @@ export default function Inbox() {
           {status && (
             <span className="scan-status">
               {status.running
-                ? `Scanning ${status.scope}: ${status.processed}/${status.total}`
+                ? status.message?.startsWith("Building")
+                  ? status.message
+                  : `Scanning ${status.scope}: ${status.processed}/${status.total}`
                 : status.message ?? ""}
             </span>
           )}

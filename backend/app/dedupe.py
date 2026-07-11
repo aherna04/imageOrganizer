@@ -135,6 +135,7 @@ def dismiss_duplicate_member(
 def rebuild_duplicate_groups(conn: sqlite3.Connection) -> None:
     conn.execute("DELETE FROM duplicate_members")
     conn.execute("DELETE FROM duplicate_groups")
+    conn.commit()
 
     sha_rows = conn.execute(
         """
@@ -159,6 +160,7 @@ def rebuild_duplicate_groups(conn: sqlite3.Connection) -> None:
                 "INSERT INTO duplicate_members (group_id, file_id) VALUES (?, ?)",
                 (gid, fid),
             )
+        conn.commit()
 
     phash_rows = conn.execute(
         "SELECT id, phash FROM files WHERE phash IS NOT NULL"
@@ -195,8 +197,8 @@ def rebuild_duplicate_groups(conn: sqlite3.Connection) -> None:
                     (gid, fid),
                 )
                 assigned.add(fid)
+            conn.commit()
 
-    conn.commit()
     reconcile_default_keepers(conn)
 
 

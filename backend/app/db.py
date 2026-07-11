@@ -5,6 +5,7 @@ from typing import Any, Iterator
 from app.config import (
     APP_DATA_DIR,
     ARCHIVE_PATH,
+    BLUR_THRESHOLD_DEFAULT,
     DB_PATH,
     DEFAULT_DATE_PATTERN,
     DEFAULT_RENAME_PATTERN,
@@ -23,7 +24,7 @@ CREATE TABLE IF NOT EXISTS files (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     path TEXT NOT NULL UNIQUE,
     filename TEXT NOT NULL,
-    location TEXT NOT NULL CHECK(location IN ('inbox', 'archive')),
+    location TEXT NOT NULL CHECK(location IN ('inbox', 'archive', 'trash')),
     size INTEGER NOT NULL,
     mtime REAL NOT NULL,
     sha256 TEXT,
@@ -143,6 +144,7 @@ def default_config() -> dict[str, str]:
         "date_pattern": DEFAULT_DATE_PATTERN,
         "rename_pattern": DEFAULT_RENAME_PATTERN,
         "photo_sort_order": "desc",
+        "blur_threshold": str(BLUR_THRESHOLD_DEFAULT),
     }
 
 
@@ -157,6 +159,7 @@ def init_db() -> None:
     ensure_app_dirs()
     with get_conn() as conn:
         conn.executescript(SCHEMA)
+        _migrate_schema(conn)
         for key, value in default_config().items():
             conn.execute(
                 "INSERT OR IGNORE INTO config (key, value) VALUES (?, ?)",
@@ -164,6 +167,67 @@ def init_db() -> None:
             )
         cleanup_orphan_junction_rows(conn)
         conn.commit()
+
+
+def _migrate_schema(conn: sqlite3.Connection) -> None:
+    cols = {row[1] for row in conn.execute("PRAGMA table_info(files)").fetchall()}
+    if "blur_score" not in cols:
+        conn.execute("ALTER TABLE files ADD COLUMN blur_score REAL")
+    _migrate_trash_location(conn)
+
+
+def _migrate_trash_location(conn: sqlite3.Connection) -> None:
+    row = conn.execute(
+        "SELECT sql FROM sqlite_master WHERE type='table' AND name='files'"
+    ).fetchone()
+    if row and row[0] and "'trash'" in row[0]:
+        return
+    # Disable FK enforcement during table rebuild. With foreign_keys=ON, DROP TABLE
+    # files implicitly deletes all rows and CASCADE-wipes file_tags/file_people/etc.
+    conn.execute("PRAGMA foreign_keys = OFF")
+    try:
+        conn.executescript(
+            """
+            CREATE TABLE files_new (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                path TEXT NOT NULL UNIQUE,
+                filename TEXT NOT NULL,
+                location TEXT NOT NULL CHECK(location IN ('inbox', 'archive', 'trash')),
+                size INTEGER NOT NULL,
+                mtime REAL NOT NULL,
+                sha256 TEXT,
+                phash TEXT,
+                capture_date TEXT,
+                capture_day TEXT,
+                camera TEXT,
+                width INTEGER,
+                height INTEGER,
+                caption TEXT,
+                rating INTEGER,
+                blur_score REAL,
+                created_at TEXT DEFAULT (datetime('now')),
+                updated_at TEXT DEFAULT (datetime('now'))
+            );
+            INSERT INTO files_new (
+                id, path, filename, location, size, mtime, sha256, phash,
+                capture_date, capture_day, camera, width, height, caption, rating,
+                blur_score, created_at, updated_at
+            )
+            SELECT
+                id, path, filename, location, size, mtime, sha256, phash,
+                capture_date, capture_day, camera, width, height, caption, rating,
+                blur_score, created_at, updated_at
+            FROM files;
+            DROP TABLE files;
+            ALTER TABLE files_new RENAME TO files;
+            CREATE INDEX IF NOT EXISTS idx_files_location ON files(location);
+            CREATE INDEX IF NOT EXISTS idx_files_capture_day ON files(capture_day);
+            CREATE INDEX IF NOT EXISTS idx_files_sha256 ON files(sha256);
+            CREATE INDEX IF NOT EXISTS idx_files_phash ON files(phash);
+            """
+        )
+    finally:
+        conn.execute("PRAGMA foreign_keys = ON")
 
 
 def cleanup_orphan_junction_rows(conn: sqlite3.Connection) -> None:

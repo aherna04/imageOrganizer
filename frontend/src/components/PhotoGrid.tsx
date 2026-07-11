@@ -75,6 +75,7 @@ export default function PhotoGrid({
         const dupAlert = duplicateIndex?.get(file.id);
         const hasDateWarning = !!dateAlert;
         const isDuplicate = !!dupAlert;
+        const isBlurry = file.is_blurry;
 
         return (
           <div
@@ -83,7 +84,7 @@ export default function PhotoGrid({
               if (el) cardRefs.current.set(file.id, el);
               else cardRefs.current.delete(file.id);
             }}
-            className={`photo-card ${isSelected ? "selected" : ""} ${isDetailActive ? "detail-active" : ""} ${hasDateWarning ? "has-date-warning" : ""} ${isDuplicate ? "is-duplicate" : ""} ${splitSelectDetail ? "split-select-detail" : ""}`}
+            className={`photo-card ${isSelected ? "selected" : ""} ${isDetailActive ? "detail-active" : ""} ${hasDateWarning ? "has-date-warning" : ""} ${isDuplicate ? "is-duplicate" : ""} ${isBlurry ? "is-blurry" : ""} ${splitSelectDetail ? "split-select-detail" : ""}`}
             onClick={
               splitSelectDetail
                 ? undefined
@@ -124,7 +125,7 @@ export default function PhotoGrid({
               }
             >
               <img src={api.thumbUrl(file.id)} alt={file.filename} loading="lazy" />
-              {(hasDateWarning || isDuplicate) && (
+              {(hasDateWarning || isDuplicate || isBlurry) && (
                 <div className="photo-alert-badges">
                   {hasDateWarning && (
                     <span
@@ -140,6 +141,18 @@ export default function PhotoGrid({
                       title={`${dupAlert.groupType} duplicate · ${dupAlert.memberCount} files`}
                     >
                       Dup
+                    </span>
+                  )}
+                  {isBlurry && (
+                    <span
+                      className="photo-alert-badge blur"
+                      title={
+                        file.blur_score != null
+                          ? `Blur score ${file.blur_score.toFixed(1)} (lower = blurrier)`
+                          : "Blurry"
+                      }
+                    >
+                      Blur
                     </span>
                   )}
                 </div>

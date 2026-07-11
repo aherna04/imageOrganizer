@@ -4,20 +4,55 @@ interface Props {
   title: string;
   count?: number;
   defaultOpen?: boolean;
+  persistKey?: string;
   actions?: ReactNode;
   bodyScroll?: boolean;
   children: ReactNode;
+}
+
+function readPersistedOpen(persistKey: string): boolean | null {
+  try {
+    const value = localStorage.getItem(persistKey);
+    if (value === "true") return true;
+    if (value === "false") return false;
+  } catch {
+    // ignore quota / private mode
+  }
+  return null;
+}
+
+function writePersistedOpen(persistKey: string, open: boolean): void {
+  try {
+    localStorage.setItem(persistKey, String(open));
+  } catch {
+    // ignore quota / private mode
+  }
 }
 
 export default function CollapsibleSection({
   title,
   count,
   defaultOpen = false,
+  persistKey,
   actions,
   bodyScroll = false,
   children,
 }: Props) {
-  const [open, setOpen] = useState(defaultOpen);
+  const [open, setOpen] = useState(() => {
+    if (persistKey) {
+      const stored = readPersistedOpen(persistKey);
+      if (stored !== null) return stored;
+    }
+    return defaultOpen;
+  });
+
+  const toggleOpen = () => {
+    setOpen((current) => {
+      const next = !current;
+      if (persistKey) writePersistedOpen(persistKey, next);
+      return next;
+    });
+  };
 
   return (
     <section className="collapsible-section">
@@ -25,7 +60,7 @@ export default function CollapsibleSection({
         <button
           type="button"
           className="collapsible-section-toggle"
-          onClick={() => setOpen((v) => !v)}
+          onClick={toggleOpen}
           aria-expanded={open}
         >
           <span className="collapsible-section-chevron" aria-hidden>

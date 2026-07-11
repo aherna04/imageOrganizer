@@ -84,6 +84,29 @@ export default function Settings() {
       </section>
 
       <section className="settings-section">
+        <h3 className="settings-section-title">Quality</h3>
+        <p className="settings-section-desc">
+          Blur detection uses Laplacian variance on downscaled images. Higher threshold flags more photos;
+          lower threshold flags only the very blurriest.
+        </p>
+        <div className="settings-grid">
+          <div className="form-group">
+            <label>Blur detection threshold</label>
+            <input
+              type="number"
+              min={1}
+              step={1}
+              value={val("blur_threshold")}
+              onChange={(e) => setForm({ ...form, blur_threshold: e.target.value })}
+            />
+            <small style={{ color: "#8891a0" }}>
+              Default 150. Scores below this are blurry. Obvious outliers are also flagged automatically.
+            </small>
+          </div>
+        </div>
+      </section>
+
+      <section className="settings-section">
         <h3 className="settings-section-title">Display</h3>
         <div className="settings-grid">
           <div className="form-group">

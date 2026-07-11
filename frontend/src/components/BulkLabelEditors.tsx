@@ -6,6 +6,7 @@ import CollapsibleSection from "./CollapsibleSection";
 import LabelSearchInput from "./LabelSearchInput";
 import { hasDuplicateName, personLabel } from "../utils/personLabel";
 import { filterTagsByQuery } from "../utils/filterLabelsByQuery";
+import { useRecentPeople } from "../utils/recentPeople";
 import { useRecentTags } from "../utils/recentTags";
 
 type Coverage = "all" | "some" | "none";
@@ -44,6 +45,7 @@ export default function BulkLabelEditors({ selectedFiles, onChange, showTagSearc
   const [newTagName, setNewTagName] = useState("");
   const [tagSearchQuery, setTagSearchQuery] = useState("");
   const { recentIds, recordRecentTag } = useRecentTags();
+  const { recentIds: recentPeopleIds, recordRecentPerson } = useRecentPeople();
 
   const { data: events = [] } = useQuery({ queryKey: ["events"], queryFn: api.listEvents });
   const { data: people = [] } = useQuery({ queryKey: ["people"], queryFn: api.listPeople });
@@ -70,6 +72,16 @@ export default function BulkLabelEditors({ selectedFiles, onChange, showTagSearc
     const byId = new Map(tags.map((t) => [t.id, t]));
     return recentIds.map((id) => byId.get(id)).filter((t): t is (typeof tags)[number] => t != null);
   }, [tags, recentIds]);
+
+  const recentPeople = useMemo(() => {
+    const byId = new Map(people.map((p) => [p.id, p]));
+    return recentPeopleIds.map((id) => byId.get(id)).filter((p): p is (typeof people)[number] => p != null);
+  }, [people, recentPeopleIds]);
+
+  const visiblePeople = useMemo(() => {
+    const recentSet = new Set(recentPeople.map((p) => p.id));
+    return people.filter((p) => !recentSet.has(p.id));
+  }, [people, recentPeople]);
 
   const assignedTags = useMemo(
     () => tags.filter((t) => alwaysIncludeTagIds.has(t.id)),
@@ -130,6 +142,7 @@ export default function BulkLabelEditors({ selectedFiles, onChange, showTagSearc
       await api.unassignPeopleIds([personId], fileIds);
     } else {
       await api.assignPeopleIds([personId], fileIds);
+      recordRecentPerson(personId);
     }
     onChange();
   };
@@ -161,8 +174,10 @@ export default function BulkLabelEditors({ selectedFiles, onChange, showTagSearc
     mutationFn: async () => {
       const person = await api.createPerson(newPersonName.trim());
       await api.assignPeopleIds([person.id], fileIds);
+      return person;
     },
-    onSuccess: () => {
+    onSuccess: (person) => {
+      recordRecentPerson(person.id);
       qc.invalidateQueries({ queryKey: ["people"] });
       setNewPersonName("");
       setShowNewPerson(false);
@@ -259,72 +274,104 @@ export default function BulkLabelEditors({ selectedFiles, onChange, showTagSearc
   );
 
   const peopleSection = (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem" }}>
-      {people.map((person) => {
-        const cov = coverage(selectedFiles, (f) => (f.people ?? []).some((p) => p.id === person.id));
-        return (
-          <button
-            key={person.id}
-            type="button"
-            className={chipClass("badge person-badge", cov)}
-            onClick={() => togglePerson(person.id, cov)}
-          >
-            {personLabel(person, people)}
-          </button>
-        );
-      })}
-      {!showNewPerson ? (
-        <button
-          type="button"
-          className="badge person-badge person-badge-add"
-          onClick={() => setShowNewPerson(true)}
-        >
-          + Add person
-        </button>
-      ) : (
-        <div className="tag-picker-new">
-          <input
-            type="text"
-            placeholder="Person name"
-            value={newPersonName}
-            onChange={(e) => setNewPersonName(e.target.value)}
-            className="tag-picker-input"
-          />
-          {nameExists && (
-            <span className="person-duplicate-warning">
-              {newPersonName.trim()} already exists — use existing or pick a different name.
-            </span>
-          )}
-          <button
-            type="button"
-            className="btn btn-secondary"
-            disabled={!newPersonName.trim() || createPerson.isPending}
-            onClick={() => createPerson.mutate()}
-          >
-            Add
-          </button>
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={() => {
-              setShowNewPerson(false);
-              setNewPersonName("");
-            }}
-          >
-            Cancel
-          </button>
+    <>
+      {recentPeople.length > 0 && (
+        <div className="recent-tags">
+          <span className="recent-tags-label">Recently used</span>
+          <div className="recent-tags-chips">
+            {recentPeople.map((person) => {
+              const cov = coverage(selectedFiles, (f) => (f.people ?? []).some((p) => p.id === person.id));
+              return (
+                <button
+                  key={person.id}
+                  type="button"
+                  className={chipClass("badge person-badge", cov)}
+                  onClick={() => togglePerson(person.id, cov)}
+                >
+                  {personLabel(person, people)}
+                </button>
+              );
+            })}
+          </div>
         </div>
       )}
-    </div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem", marginTop: recentPeople.length > 0 ? "0.35rem" : 0 }}>
+        {visiblePeople.map((person) => {
+          const cov = coverage(selectedFiles, (f) => (f.people ?? []).some((p) => p.id === person.id));
+          return (
+            <button
+              key={person.id}
+              type="button"
+              className={chipClass("badge person-badge", cov)}
+              onClick={() => togglePerson(person.id, cov)}
+            >
+              {personLabel(person, people)}
+            </button>
+          );
+        })}
+        {!showNewPerson ? (
+          <button
+            type="button"
+            className="badge person-badge person-badge-add"
+            onClick={() => setShowNewPerson(true)}
+          >
+            + Add person
+          </button>
+        ) : (
+          <div className="tag-picker-new">
+            <input
+              type="text"
+              placeholder="Person name"
+              value={newPersonName}
+              onChange={(e) => setNewPersonName(e.target.value)}
+              className="tag-picker-input"
+            />
+            {nameExists && (
+              <span className="person-duplicate-warning">
+                {newPersonName.trim()} already exists — use existing or pick a different name.
+              </span>
+            )}
+            <button
+              type="button"
+              className="btn btn-secondary"
+              disabled={!newPersonName.trim() || createPerson.isPending}
+              onClick={() => createPerson.mutate()}
+            >
+              Add
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => {
+                setShowNewPerson(false);
+                setNewPersonName("");
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        )}
+      </div>
+    </>
   );
 
   return (
     <div className="single-file-label-editors">
       <CaptureDateEditor files={selectedFiles} onChange={onChange} compact />
-      <CollapsibleSection title="Events" count={assignedEventCount || undefined} defaultOpen={false}>
+      <CollapsibleSection
+        title="Events"
+        count={assignedEventCount || undefined}
+        defaultOpen={false}
+        persistKey="imageOrganizer.collapsible.inbox.events"
+      >
         {eventsSection}
       </CollapsibleSection>
-      <CollapsibleSection title="People" count={assignedPeopleCount || undefined} defaultOpen={false}>
+      <CollapsibleSection
+        title="People"
+        count={assignedPeopleCount || undefined}
+        defaultOpen={false}
+        persistKey="imageOrganizer.collapsible.inbox.people"
+      >
         {peopleSection}
       </CollapsibleSection>
       <div className="label-editor-tags">

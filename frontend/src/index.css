@@ -157,6 +157,10 @@ button {
   border-color: rgba(251, 146, 60, 0.55);
 }
 
+.photo-card.is-blurry {
+  border-color: rgba(124, 58, 237, 0.55);
+}
+
 .photo-card.has-date-warning.is-duplicate {
   border-color: rgba(251, 191, 36, 0.65);
 }
@@ -246,6 +250,11 @@ button {
   background: #fb923c;
 }
 
+.photo-alert-badge.blur {
+  color: #fff;
+  background: #7c3aed;
+}
+
 .copy-filename-badge {
   position: absolute;
   top: auto;
@@ -306,6 +315,7 @@ button {
   display: flex;
   justify-content: flex-end;
   overflow: hidden;
+  overscroll-behavior: contain;
 }
 
 .drawer {
@@ -356,6 +366,18 @@ button {
   cursor: zoom-in;
 }
 
+.photo-detail-applied-labels {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.photo-detail-applied-label {
+  display: block;
+  font-size: 0.875rem;
+  color: #aab0bc;
+  margin-bottom: 0.35rem;
+}
+
 .photo-lightbox {
   position: fixed;
   inset: 0;
@@ -377,6 +399,77 @@ button {
   object-fit: contain;
   border-radius: 4px;
   cursor: zoom-out;
+}
+
+.photo-lightbox:has(.photo-lightbox-tags) .photo-lightbox-media {
+  max-height: calc(50vh - 4rem);
+}
+
+.photo-lightbox-tags {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  max-height: 50vh;
+  overflow-y: auto;
+  padding: 1rem 1.25rem 1.25rem;
+  background: rgba(15, 17, 23, 0.92);
+  border-top: 1px solid #2a2f3a;
+  cursor: default;
+  box-sizing: border-box;
+}
+
+.photo-lightbox-tags-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  font-size: 0.875rem;
+  color: #e8eaed;
+}
+
+.photo-lightbox-tags-hint {
+  font-size: 0.75rem;
+  color: #8891a0;
+}
+
+.photo-lightbox-tags-hint-corner {
+  position: absolute;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 1;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.45);
+  pointer-events: none;
+  user-select: none;
+}
+
+.photo-lightbox-tags-applied {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.75rem;
+}
+
+.photo-lightbox-tags-section {
+  margin-bottom: 1rem;
+}
+
+.photo-lightbox-tags-section:last-child {
+  margin-bottom: 0;
+}
+
+.photo-lightbox-tags-section-label {
+  display: block;
+  font-size: 0.8125rem;
+  color: #aab0bc;
+  margin-bottom: 0.5rem;
+}
+
+.photo-lightbox-tags .label-search-input {
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .meta-row {
@@ -773,6 +866,22 @@ button {
 .event-edit-actions {
   display: flex;
   gap: 0.5rem;
+}
+
+.blurry-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.trash-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .duplicates-page .duplicates-list {

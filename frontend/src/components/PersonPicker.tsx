@@ -1,23 +1,26 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Person, api } from "../api/client";
 import { hasDuplicateName, personLabel } from "../utils/personLabel";
+import { useRecentPeople } from "../utils/recentPeople";
 
 interface Props {
   fileId: number;
   filePeople: Person[];
   onChange: () => void;
   hideLabel?: boolean;
+  excludeSelected?: boolean;
 }
 
 function personIds(people: Person[]) {
   return people.map((p) => p.id);
 }
 
-export default function PersonPicker({ fileId, filePeople, onChange, hideLabel = false }: Props) {
+export default function PersonPicker({ fileId, filePeople, onChange, hideLabel = false, excludeSelected = false }: Props) {
   const qc = useQueryClient();
   const [newName, setNewName] = useState("");
   const [showNew, setShowNew] = useState(false);
+  const { recentIds, recordRecentPerson } = useRecentPeople();
   const [selectedIds, setSelectedIds] = useState(() => personIds(filePeople));
   const propIdsKey = [...personIds(filePeople)].sort((a, b) => a - b).join(",");
 
@@ -33,14 +36,29 @@ export default function PersonPicker({ fileId, filePeople, onChange, hideLabel =
   const selected = new Set(selectedIds);
   const nameExists = newName.trim() ? hasDuplicateName(newName, allPeople) : false;
 
+  const recentPeople = useMemo(() => {
+    const byId = new Map(allPeople.map((p) => [p.id, p]));
+    return recentIds
+      .map((id) => byId.get(id))
+      .filter((p): p is Person => p != null)
+      .filter((p) => !excludeSelected || !selected.has(p.id));
+  }, [allPeople, recentIds, excludeSelected, selectedIds]);
+
+  const visiblePeople = useMemo(() => {
+    const recentSet = new Set(recentPeople.map((p) => p.id));
+    return allPeople
+      .filter((person) => !recentSet.has(person.id))
+      .filter((person) => !excludeSelected || !selected.has(person.id));
+  }, [allPeople, recentPeople, excludeSelected, selectedIds]);
+
   const toggle = async (personId: number) => {
     const prev = selectedIds;
-    const next = selected.has(personId)
-      ? selectedIds.filter((id) => id !== personId)
-      : [...selectedIds, personId];
+    const adding = !selected.has(personId);
+    const next = adding ? [...selectedIds, personId] : selectedIds.filter((id) => id !== personId);
     setSelectedIds(next);
     try {
       await api.updateFilePeople(fileId, next);
+      if (adding) recordRecentPerson(personId);
       onChange();
     } catch {
       setSelectedIds(prev);
@@ -58,6 +76,7 @@ export default function PersonPicker({ fileId, filePeople, onChange, hideLabel =
       });
       try {
         await api.updateFilePeople(fileId, next);
+        recordRecentPerson(person.id);
         setNewName("");
         setShowNew(false);
         onChange();
@@ -72,8 +91,25 @@ export default function PersonPicker({ fileId, filePeople, onChange, hideLabel =
       {!hideLabel && (
         <label style={{ fontSize: "0.875rem", color: "#aab0bc" }}>People</label>
       )}
+      {recentPeople.length > 0 && (
+        <div className="recent-tags">
+          <span className="recent-tags-label">Recently used</span>
+          <div className="recent-tags-chips">
+            {recentPeople.map((person) => (
+              <button
+                key={person.id}
+                type="button"
+                className={`badge person-badge ${selected.has(person.id) ? "active" : ""}`}
+                onClick={() => toggle(person.id)}
+              >
+                {personLabel(person, allPeople)}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
       <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem", marginTop: hideLabel ? 0 : "0.35rem" }}>
-        {allPeople.map((person) => (
+        {visiblePeople.map((person) => (
           <button
             key={person.id}
             type="button"

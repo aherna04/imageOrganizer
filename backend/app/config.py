@@ -29,6 +29,7 @@ THUMB_SIZE = 400
 DEFAULT_DATE_PATTERN = "/{YYYY}/{MM}/{DD}/"
 DEFAULT_RENAME_PATTERN = "{YYYY}-{MM}-{DD}_{seq:4}_{original}"
 PHASH_THRESHOLD = 5
+BLUR_THRESHOLD_DEFAULT = 150
 
 
 def media_type_for_suffix(suffix: str) -> Literal["image", "video"]:

@@ -2,7 +2,7 @@ import threading
 from pathlib import Path
 
 from app.config import ARCHIVE_PATH, INBOX_PATH
-from app.db import get_conn
+from app.db import get_config, get_conn
 from app.dedupe import rebuild_duplicate_groups
 from app.metadata import (
     compute_phash,
@@ -56,8 +56,20 @@ class ScanState:
 scan_state = ScanState()
 
 
-def _location_for_path(path: Path, scope: str) -> str:
-    return "inbox" if scope == "inbox" else "archive"
+def _location_for_scope(scope: str) -> str:
+    if scope == "inbox":
+        return "inbox"
+    if scope == "trash":
+        return "trash"
+    return "archive"
+
+
+def _scan_root(scope: str, cfg: dict[str, str]) -> Path:
+    if scope == "inbox":
+        return INBOX_PATH
+    if scope == "trash":
+        return Path(cfg["trash_path"])
+    return ARCHIVE_PATH
 
 
 def _upsert_file(conn, path: Path, location: str) -> None:
@@ -105,41 +117,47 @@ def _upsert_file(conn, path: Path, location: str) -> None:
 
 
 def _prune_missing(conn, scope: str, seen_paths: set[str]) -> None:
-    if scope == "inbox":
-        rows = conn.execute("SELECT id, path FROM files WHERE location = 'inbox'").fetchall()
-    else:
-        rows = conn.execute("SELECT id, path FROM files WHERE location = 'archive'").fetchall()
+    location = _location_for_scope(scope)
+    rows = conn.execute("SELECT id, path FROM files WHERE location = ?", (location,)).fetchall()
     for row in rows:
         if row["path"] not in seen_paths:
             conn.execute("DELETE FROM files WHERE id = ?", (row["id"],))
 
 
 def run_scan(scope: str) -> None:
-    root = INBOX_PATH if scope == "inbox" else ARCHIVE_PATH
+    with get_conn() as conn:
+        cfg = get_config(conn)
+    root = _scan_root(scope, cfg)
     files = iter_media_files(root)
     scan_state.start(scope, len(files))
     seen: set[str] = set()
+    location = _location_for_scope(scope)
     try:
         with get_conn() as conn:
             for path in files:
                 seen.add(str(path))
-                _upsert_file(conn, path, _location_for_path(path, scope))
+                _upsert_file(conn, path, location)
                 conn.commit()
                 scan_state.tick()
         with get_conn() as conn:
             _prune_missing(conn, scope, seen)
             conn.commit()
-        scan_state.set_message("Building duplicate index...")
-        with get_conn() as conn:
-            rebuild_duplicate_groups(conn)
-            conn.commit()
+        if scope != "trash":
+            scan_state.set_message("Building duplicate index...")
+            with get_conn() as conn:
+                rebuild_duplicate_groups(conn)
+                conn.commit()
         scan_state.finish(f"Scan complete: {len(files)} files")
     except Exception as exc:
         scan_state.finish(f"Scan failed: {exc}")
 
 
 def start_scan_background(scope: str) -> bool:
+    from app.blur_analysis import blur_analysis_state
+
     if scan_state.snapshot()["running"]:
+        return False
+    if blur_analysis_state.snapshot()["running"]:
         return False
     thread = threading.Thread(target=run_scan, args=(scope,), daemon=True)
     thread.start()

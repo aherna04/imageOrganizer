@@ -73,6 +73,7 @@ from app.models import (
     ReviewQueueOut,
     ReviewQueueReleaseIn,
     ScanStatusOut,
+    BlurAnalysisStatusOut,
     StorageStatsOut,
     TagCreate,
     TagOut,
@@ -80,11 +81,21 @@ from app.models import (
     TagsAssignByIds,
     TagsMerge,
     TagsUnassignByIds,
+    TrashRestoreIn,
+    TrashRestoreOut,
+)
+from app.blur_detect import (
+    blurry_sql_clause,
+    is_blurry_score,
+    location_p10_blur_score,
+    parse_blur_threshold,
 )
 from app.organizer import apply_operations, fix_dates_from_filename, inbox_available_count, preview_organize, queue_inbox_batch
 from app.scanner import scan_state, start_scan_background
+from app.blur_analysis import blur_analysis_state, start_blur_analysis_background
+from app.trash_restore import restore_from_trash
 
-app = FastAPI(title="Image Organizer", version="2026.07.11a")
+app = FastAPI(title="Image Organizer", version="2026.07.11b")
 
 app.add_middleware(
     CORSMiddleware,
@@ -137,13 +148,22 @@ def _event_out(conn, e: dict) -> EventOut:
     )
 
 
-def _file_out(conn, row) -> FileOut:
+def _file_out(conn, row, cfg: dict | None = None) -> FileOut:
     d = dict(row)
+    cfg = cfg or get_config(conn)
     evts = get_file_events(conn, d["id"])
     people = people_svc.get_file_people(conn, d["id"])
     tags = tags_svc.get_file_tags(conn, d["id"])
+    blur_score = d.get("blur_score")
+    threshold = parse_blur_threshold(cfg)
+    p10 = location_p10_blur_score(conn, d.get("location"))
+    is_blurry = is_blurry_score(blur_score, threshold, p10)
+    skip = ("events", "people", "tags", "media_type", "blur_score", "is_blurry")
+    fields = {k: d.get(k) for k in FileOut.model_fields if k not in skip}
     return FileOut(
-        **{k: d[k] for k in FileOut.model_fields if k not in ("events", "people", "tags", "media_type")},
+        **fields,
+        blur_score=blur_score,
+        is_blurry=is_blurry,
         media_type=media_type_for_suffix(Path(d["path"]).suffix),
         events=[_event_out(conn, e) for e in evts],
         people=[_person_out(p) for p in people],
@@ -175,6 +195,8 @@ def api_storage_stats():
 
 @app.post("/api/scan/inbox")
 def api_scan_inbox():
+    if blur_analysis_state.snapshot()["running"]:
+        raise HTTPException(409, "Sharpness analysis already running")
     if not start_scan_background("inbox"):
         raise HTTPException(409, "Scan already running")
     return {"ok": True}
@@ -182,7 +204,18 @@ def api_scan_inbox():
 
 @app.post("/api/scan/archive")
 def api_scan_archive():
+    if blur_analysis_state.snapshot()["running"]:
+        raise HTTPException(409, "Sharpness analysis already running")
     if not start_scan_background("archive"):
+        raise HTTPException(409, "Scan already running")
+    return {"ok": True}
+
+
+@app.post("/api/scan/trash")
+def api_scan_trash():
+    if blur_analysis_state.snapshot()["running"]:
+        raise HTTPException(409, "Sharpness analysis already running")
+    if not start_scan_background("trash"):
         raise HTTPException(409, "Scan already running")
     return {"ok": True}
 
@@ -190,6 +223,38 @@ def api_scan_archive():
 @app.get("/api/scan/status", response_model=ScanStatusOut)
 def api_scan_status():
     return ScanStatusOut(**scan_state.snapshot())
+
+
+@app.post("/api/blur-analysis/inbox")
+def api_blur_analysis_inbox():
+    if scan_state.snapshot()["running"]:
+        raise HTTPException(409, "Scan already running")
+    if not start_blur_analysis_background("inbox"):
+        raise HTTPException(409, "Sharpness analysis already running")
+    return {"ok": True}
+
+
+@app.post("/api/blur-analysis/archive")
+def api_blur_analysis_archive():
+    if scan_state.snapshot()["running"]:
+        raise HTTPException(409, "Scan already running")
+    if not start_blur_analysis_background("archive"):
+        raise HTTPException(409, "Sharpness analysis already running")
+    return {"ok": True}
+
+
+@app.post("/api/blur-analysis/all")
+def api_blur_analysis_all():
+    if scan_state.snapshot()["running"]:
+        raise HTTPException(409, "Scan already running")
+    if not start_blur_analysis_background("all"):
+        raise HTTPException(409, "Sharpness analysis already running")
+    return {"ok": True}
+
+
+@app.get("/api/blur-analysis/status", response_model=BlurAnalysisStatusOut)
+def api_blur_analysis_status():
+    return BlurAnalysisStatusOut(**blur_analysis_state.snapshot())
 
 
 @app.get("/api/inbox/tags", response_model=InboxTagsOut)
@@ -309,6 +374,7 @@ def api_list_files(
     tag_id: int | None = None,
     unlabeled: bool = False,
     pending_delete: bool = False,
+    blurry: bool = False,
     camera: str | None = None,
     media_type: Literal["image", "video"] | None = None,
     page: int = Query(1, ge=1),
@@ -341,17 +407,22 @@ def api_list_files(
         clauses.append("f.camera = ?")
         params.append(camera)
     if unlabeled:
-        clauses.append(
-            """
-            f.id NOT IN (SELECT file_id FROM file_tags)
-            AND f.id NOT IN (SELECT file_id FROM file_people)
-            AND f.id NOT IN (SELECT file_id FROM file_events)
-            """
-        )
-    append_media_type_filter(clauses, params, "f.filename", media_type)
-    where = ("WHERE " + " AND ".join(clauses)) if clauses else ""
+        clauses.append(_unlabeled_clause("f"))
     with get_conn() as conn:
         cfg = get_config(conn)
+        if blurry:
+            threshold = parse_blur_threshold(cfg)
+            p10 = location_p10_blur_score(
+                conn,
+                location if location in ("inbox", "archive") else None,
+            )
+            append_media_type_filter(clauses, params, "f.filename", "image")
+            blurry_clause, blurry_params = blurry_sql_clause(threshold, p10)
+            clauses.append(blurry_clause)
+            params.extend(blurry_params)
+        else:
+            append_media_type_filter(clauses, params, "f.filename", media_type)
+        where = ("WHERE " + " AND ".join(clauses)) if clauses else ""
         total = conn.execute(f"SELECT COUNT(*) FROM files f {where}", params).fetchone()[0]
         offset = (page - 1) * page_size
         order = file_list_order_clause(cfg)
@@ -359,7 +430,7 @@ def api_list_files(
             f"SELECT f.* FROM files f {where} {order} LIMIT ? OFFSET ?",
             [*params, page_size, offset],
         ).fetchall()
-        items = [_file_out(conn, r) for r in rows]
+        items = [_file_out(conn, r, cfg) for r in rows]
     return FileListOut(items=items, total=total, page=page, page_size=page_size)
 
 
@@ -547,6 +618,13 @@ def api_calendar_events(
     )
 
 
+def _unlabeled_clause(alias: str = "f") -> str:
+    col = f"{alias}.id" if alias else "id"
+    return f"""{col} NOT IN (SELECT file_id FROM file_tags)
+    AND {col} NOT IN (SELECT file_id FROM file_people)
+    AND {col} NOT IN (SELECT file_id FROM file_events)"""
+
+
 def _month_location_clauses(
     month_str: str,
     location: str,
@@ -609,9 +687,14 @@ def api_calendar_labels(
             """,
             params,
         ).fetchall()
+        unlabeled_count = conn.execute(
+            f"SELECT COUNT(*) FROM files f WHERE {where} AND {_unlabeled_clause('f')}",
+            params,
+        ).fetchone()[0]
     return CalendarMonthLabelsOut(
         year=year,
         month=month,
+        unlabeled_count=unlabeled_count,
         events=[
             CalendarMonthEventOut(
                 id=r["id"],
@@ -651,6 +734,7 @@ def api_calendar_summary(
     event_id: int | None = None,
     person_id: int | None = None,
     tag_id: int | None = None,
+    unlabeled: bool = False,
     media_type: Literal["image", "video"] | None = None,
 ):
     month_str = f"{year:04d}-{month:02d}"
@@ -670,6 +754,8 @@ def api_calendar_summary(
         if tag_id:
             clauses.append("id IN (SELECT file_id FROM file_tags WHERE tag_id = ?)")
             params.append(tag_id)
+        if unlabeled:
+            clauses.append(_unlabeled_clause(""))
         append_media_type_filter(clauses, params, "filename", media_type)
         cover_media = (
             f" AND {filename_media_type_condition_literal('f2.filename', media_type)}"
@@ -710,6 +796,7 @@ def api_calendar_day(
     event_id: int | None = None,
     person_id: int | None = None,
     tag_id: int | None = None,
+    unlabeled: bool = False,
     media_type: Literal["image", "video"] | None = None,
     page: int = Query(1, ge=1),
     page_size: int = Query(100, ge=1, le=500),
@@ -721,6 +808,7 @@ def api_calendar_day(
         event_id=event_id,
         person_id=person_id,
         tag_id=tag_id,
+        unlabeled=unlabeled,
         media_type=media_type,
         page=page,
         page_size=page_size,
@@ -1114,6 +1202,15 @@ def api_apply():
     with get_conn() as conn:
         applied, errors = apply_operations(conn)
     return ApplyResultOut(applied=applied, errors=errors)
+
+
+@app.post("/api/trash/restore", response_model=TrashRestoreOut)
+def api_trash_restore(body: TrashRestoreIn):
+    if not body.file_ids:
+        return TrashRestoreOut(restored=0, errors=[])
+    with get_conn() as conn:
+        restored, errors = restore_from_trash(conn, body.file_ids)
+    return TrashRestoreOut(restored=restored, errors=errors)
 
 
 @app.get("/api/operations", response_model=list[OperationLogOut])

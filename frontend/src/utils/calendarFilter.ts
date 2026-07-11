@@ -8,7 +8,8 @@ export function monthFilterToDayFilter(
   if (!filter || filter.year !== year || filter.month !== month) return undefined;
   if (filter.kind === "event") return { eventId: filter.id };
   if (filter.kind === "person") return { personId: filter.id };
-  return { tagId: filter.id };
+  if (filter.kind === "tag") return { tagId: filter.id };
+  return { unlabeled: true };
 }
 
 export function isFilterActive(
@@ -16,12 +17,23 @@ export function isFilterActive(
   year: number,
   month: number,
   kind: CalendarMonthFilter["kind"],
-  id: number
+  id?: number
+): boolean {
+  if (filter?.year !== year || filter?.month !== month || filter.kind !== kind) {
+    return false;
+  }
+  if (kind === "unlabeled") return true;
+  return filter.kind !== "unlabeled" && filter.id === id;
+}
+
+export function isUnlabeledFilterActive(
+  filter: CalendarMonthFilter | null,
+  year: number,
+  month: number
 ): boolean {
   return (
     filter?.year === year &&
     filter?.month === month &&
-    filter?.kind === kind &&
-    filter?.id === id
+    filter.kind === "unlabeled"
   );
 }

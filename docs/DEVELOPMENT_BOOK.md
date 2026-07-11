@@ -1,6 +1,6 @@
 # Image Organizer — Development Book
 
-*Release 2026.07.11a · collected Cursor implementation plans*
+*Release 2026.07.11b · collected Cursor implementation plans*
 
 Related: [ARCHITECTURE.md](ARCHITECTURE.md) · [CHANGELOG.md](../CHANGELOG.md)
 

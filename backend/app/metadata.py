@@ -7,7 +7,7 @@ from pathlib import Path
 
 import imagehash
 import piexif
-from PIL import Image, ImageOps
+from PIL import Image, ImageFilter, ImageOps
 
 try:
     from pillow_heif import register_heif_opener
@@ -19,6 +19,12 @@ except ImportError:
 from app.config import SUPPORTED_EXTENSIONS, THUMB_SIZE, THUMBS_DIR, is_video_path
 
 THUMB_CACHE_VERSION = "exif1"
+
+LAPLACIAN_KERNEL = (
+    -1, -1, -1,
+    -1, 8, -1,
+    -1, -1, -1,
+)
 
 
 def slugify(name: str) -> str:
@@ -188,6 +194,28 @@ def compute_phash(path: Path) -> str | None:
         with Image.open(path) as img:
             img = ImageOps.exif_transpose(img)
             return str(imagehash.phash(img))
+    except Exception:
+        return None
+
+
+def _laplacian_variance(img: Image.Image) -> float:
+    gray = img.convert("L")
+    gray.thumbnail((THUMB_SIZE, THUMB_SIZE))
+    edges = gray.filter(ImageFilter.Kernel((3, 3), LAPLACIAN_KERNEL, scale=1, offset=0))
+    pixels = list(edges.getdata())
+    if not pixels:
+        return 0.0
+    mean = sum(pixels) / len(pixels)
+    return sum((p - mean) ** 2 for p in pixels) / len(pixels)
+
+
+def compute_blur_score(path: Path) -> float | None:
+    if is_video_path(path):
+        return None
+    try:
+        with Image.open(path) as img:
+            img = ImageOps.exif_transpose(img)
+            return _laplacian_variance(img)
     except Exception:
         return None
 

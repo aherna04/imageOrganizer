@@ -92,10 +92,10 @@ export default function CalendarDayPanel({ date, location, mediaType, filter, on
       />
 
       {selectedIds.length === 1 && selectedFiles[0] && (
-        <SingleFileLabelEditors file={selectedFiles[0]} onChange={handleDateChange} />
+        <SingleFileLabelEditors file={selectedFiles[0]} onChange={handleDateChange} showTagSearch />
       )}
       {selectedIds.length >= 2 && (
-        <BulkLabelEditors selectedFiles={selectedFiles} onChange={handleDateChange} />
+        <BulkLabelEditors selectedFiles={selectedFiles} onChange={handleDateChange} showTagSearch />
       )}
 
       <PhotoGridWithAlerts

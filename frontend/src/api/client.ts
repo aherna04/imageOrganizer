@@ -33,7 +33,7 @@ export interface MediaFile {
   id: number;
   path: string;
   filename: string;
-  location: "inbox" | "archive";
+  location: "inbox" | "archive" | "trash";
   media_type: "image" | "video";
   size: number;
   capture_date: string | null;
@@ -45,6 +45,8 @@ export interface MediaFile {
   phash: string | null;
   caption: string | null;
   rating: number | null;
+  blur_score: number | null;
+  is_blurry: boolean;
   events: Event[];
   people: Person[];
   tags: Tag[];
@@ -64,6 +66,7 @@ export interface Config {
   date_pattern: string;
   rename_pattern: string;
   photo_sort_order: "asc" | "desc";
+  blur_threshold: string;
 }
 
 export interface StorageStats {
@@ -89,6 +92,14 @@ export interface Metadata {
 }
 
 export interface ScanStatus {
+  running: boolean;
+  scope: string | null;
+  processed: number;
+  total: number;
+  message: string | null;
+}
+
+export interface BlurAnalysisStatus {
   running: boolean;
   scope: string | null;
   processed: number;
@@ -151,12 +162,14 @@ export interface CalendarMonthLabels {
   events: CalendarMonthEvent[];
   people: CalendarMonthPerson[];
   tags: CalendarMonthTag[];
+  unlabeled_count: number;
 }
 
 export type CalendarMonthFilter =
   | { year: number; month: number; kind: "event"; id: number }
   | { year: number; month: number; kind: "person"; id: number }
-  | { year: number; month: number; kind: "tag"; id: number };
+  | { year: number; month: number; kind: "tag"; id: number }
+  | { year: number; month: number; kind: "unlabeled" };
 
 export type CalendarMediaType = "all" | "image" | "video";
 
@@ -164,12 +177,14 @@ export interface CalendarDayFilter {
   eventId?: number;
   personId?: number;
   tagId?: number;
+  unlabeled?: boolean;
 }
 
 function appendCalendarFilter(q: URLSearchParams, filter?: CalendarDayFilter) {
   if (filter?.eventId) q.set("event_id", String(filter.eventId));
   if (filter?.personId) q.set("person_id", String(filter.personId));
   if (filter?.tagId) q.set("tag_id", String(filter.tagId));
+  if (filter?.unlabeled) q.set("unlabeled", "true");
 }
 
 function appendMediaType(q: URLSearchParams, mediaType?: CalendarMediaType) {
@@ -227,7 +242,13 @@ export const api = {
 
   scanInbox: () => request<{ ok: boolean }>("/api/scan/inbox", { method: "POST" }),
   scanArchive: () => request<{ ok: boolean }>("/api/scan/archive", { method: "POST" }),
+  scanTrash: () => request<{ ok: boolean }>("/api/scan/trash", { method: "POST" }),
   scanStatus: () => request<ScanStatus>("/api/scan/status"),
+
+  analyzeBlurInbox: () => request<{ ok: boolean }>("/api/blur-analysis/inbox", { method: "POST" }),
+  analyzeBlurArchive: () => request<{ ok: boolean }>("/api/blur-analysis/archive", { method: "POST" }),
+  analyzeBlurAll: () => request<{ ok: boolean }>("/api/blur-analysis/all", { method: "POST" }),
+  blurAnalysisStatus: () => request<BlurAnalysisStatus>("/api/blur-analysis/status"),
 
   inboxTags: () => request<{ tags: InboxUsedTag[] }>("/api/inbox/tags"),
 
@@ -237,7 +258,7 @@ export const api = {
 
   listCameras: () => request<{ cameras: Camera[] }>("/api/cameras"),
 
-  listFiles: (params: Record<string, string | number | undefined>) => {
+  listFiles: (params: Record<string, string | number | boolean | undefined>) => {
     const q = new URLSearchParams();
     Object.entries(params).forEach(([k, v]) => {
       if (v !== undefined && v !== "") q.set(k, String(v));
@@ -440,6 +461,12 @@ export const api = {
     }),
 
   apply: () => request<{ applied: number; errors: string[] }>("/api/apply", { method: "POST" }),
+
+  restoreFromTrash: (fileIds: number[]) =>
+    request<{ restored: number; errors: string[] }>("/api/trash/restore", {
+      method: "POST",
+      body: JSON.stringify({ file_ids: fileIds }),
+    }),
 
   operations: () =>
     request<

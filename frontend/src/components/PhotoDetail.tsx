@@ -8,10 +8,13 @@ import {
   photoNavDelta,
 } from "../utils/photoNavigation";
 import CaptureDateEditor from "./CaptureDateEditor";
+import CollapsibleSection from "./CollapsibleSection";
 import EventPicker from "./EventPicker";
 import PersonPicker from "./PersonPicker";
 import FileTagPicker from "./FileTagPicker";
+import PhotoCardLabels from "./PhotoCardLabels";
 import { invalidateAfterReviewChange } from "../utils/invalidateAfterReviewChange";
+import { personLabel } from "../utils/personLabel";
 
 interface Props {
   file: MediaFile;
@@ -20,6 +23,7 @@ interface Props {
   onChangeFile?: (file: MediaFile) => void;
   onDateChange?: (keepFileId?: number, options?: { skipInvalidation?: boolean }) => void;
   deleteQueueMode?: boolean;
+  trashMode?: boolean;
 }
 
 export default function PhotoDetail({
@@ -29,6 +33,7 @@ export default function PhotoDetail({
   onChangeFile,
   onDateChange,
   deleteQueueMode = false,
+  trashMode = false,
 }: Props) {
   const qc = useQueryClient();
   const currentFile = files?.find((f) => f.id === file.id) ?? file;
@@ -36,10 +41,15 @@ export default function PhotoDetail({
     queryKey: ["metadata", file.id],
     queryFn: () => api.getMetadata(file.id),
   });
+  const { data: allPeople = [] } = useQuery({
+    queryKey: ["people"],
+    queryFn: api.listPeople,
+  });
 
   const [caption, setCaption] = useState("");
   const [rating, setRating] = useState<number | "">("");
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxTagsOpen, setLightboxTagsOpen] = useState(false);
   const [acting, setActing] = useState(false);
   const [actingSlow, setActingSlow] = useState(false);
   const drawerVideoRef = useRef<HTMLVideoElement>(null);
@@ -71,6 +81,24 @@ export default function PhotoDetail({
       onDateChange?.(keepFileId);
     },
     [qc, onDateChange],
+  );
+
+  const removeLightboxTag = useCallback(
+    async (tagId: number) => {
+      const next = (currentFile.tags ?? []).map((t) => t.id).filter((id) => id !== tagId);
+      await api.updateFileTags(currentFile.id, next);
+      handleLabelsChange(currentFile.id);
+    },
+    [currentFile.id, currentFile.tags, handleLabelsChange],
+  );
+
+  const removeLightboxPerson = useCallback(
+    async (personId: number) => {
+      const next = (currentFile.people ?? []).map((p) => p.id).filter((id) => id !== personId);
+      await api.updateFilePeople(currentFile.id, next);
+      handleLabelsChange(currentFile.id);
+    },
+    [currentFile.id, currentFile.people, handleLabelsChange],
   );
 
   const handleMarkDelete = useCallback(async () => {
@@ -119,12 +147,40 @@ export default function PhotoDetail({
     }
   }, [files, onChangeFile, file.id, qc, onDateChange, onClose]);
 
+  const handleTrashRestore = useCallback(async () => {
+    if (actingRef.current) return;
+    actingRef.current = true;
+    setActing(true);
+    const slowTimer = window.setTimeout(() => setActingSlow(true), 500);
+    try {
+      const next = files && onChangeFile ? nextFileAfterCurrent(files, file.id) : null;
+      await api.restoreFromTrash([file.id]);
+      invalidateAfterReviewChange(qc);
+      if (next && onChangeFile) {
+        onChangeFile(next);
+        onDateChange?.(next.id, { skipInvalidation: true });
+      } else {
+        onClose();
+      }
+    } finally {
+      window.clearTimeout(slowTimer);
+      actingRef.current = false;
+      setActing(false);
+      setActingSlow(false);
+    }
+  }, [files, onChangeFile, file.id, qc, onDateChange, onClose]);
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         e.stopPropagation();
         if (lightboxOpen) {
-          setLightboxOpen(false);
+          if (lightboxTagsOpen) {
+            setLightboxTagsOpen(false);
+          } else {
+            setLightboxOpen(false);
+            setLightboxTagsOpen(false);
+          }
         } else if (!isEditableTarget(e.target)) {
           e.preventDefault();
           onClose();
@@ -132,8 +188,14 @@ export default function PhotoDetail({
         return;
       }
 
+      if (lightboxOpen && (e.key === "t" || e.key === "T") && !isEditableTarget(e.target)) {
+        e.preventDefault();
+        setLightboxTagsOpen((v) => !v);
+        return;
+      }
+
       if (e.key === "d" || e.key === "D") {
-        if (deleteQueueMode || isEditableTarget(e.target) || acting) return;
+        if (deleteQueueMode || trashMode || isEditableTarget(e.target) || acting) return;
         e.preventDefault();
         e.stopImmediatePropagation();
         void handleMarkDelete();
@@ -154,7 +216,7 @@ export default function PhotoDetail({
 
     window.addEventListener("keydown", onKey, true);
     return () => window.removeEventListener("keydown", onKey, true);
-  }, [canNavigate, files, file.id, onChangeFile, lightboxOpen, acting, deleteQueueMode, handleMarkDelete, onClose]);
+  }, [canNavigate, files, file.id, onChangeFile, lightboxOpen, lightboxTagsOpen, acting, deleteQueueMode, trashMode, handleMarkDelete, onClose]);
 
   const saveMeta = useMutation({
     mutationFn: () =>
@@ -168,6 +230,7 @@ export default function PhotoDetail({
   const closeLightbox = (e?: React.MouseEvent) => {
     e?.stopPropagation();
     setLightboxOpen(false);
+    setLightboxTagsOpen(false);
   };
 
   const handleDateChange = () => {
@@ -221,7 +284,16 @@ export default function PhotoDetail({
           {actingSlow && (
             <span style={{ color: "#8891a0", fontSize: "0.875rem" }}>Saving…</span>
           )}
-          {deleteQueueMode ? (
+          {trashMode ? (
+            <button
+              className="btn btn-secondary"
+              title="Restore to original location"
+              disabled={acting}
+              onClick={() => void handleTrashRestore()}
+            >
+              Restore
+            </button>
+          ) : deleteQueueMode ? (
             <button
               className="btn btn-secondary"
               title="Restore to inbox"
@@ -241,6 +313,12 @@ export default function PhotoDetail({
             </button>
           )}
         </div>
+        {(currentFile.events?.length || currentFile.people?.length || currentFile.tags?.length) ? (
+          <div className="photo-detail-applied-labels">
+            <label className="photo-detail-applied-label">Applied</label>
+            <PhotoCardLabels file={currentFile} onChange={() => handleLabelsChange(currentFile.id)} />
+          </div>
+        ) : null}
         <CaptureDateEditor files={[file]} onChange={handleDateChange} />
         {meta && (
           <>
@@ -249,7 +327,62 @@ export default function PhotoDetail({
             <div className="meta-row"><span>Lens</span><span>{meta.lens ?? "—"}</span></div>
             <div className="meta-row"><span>Size</span><span>{meta.width}×{meta.height}</span></div>
             <div className="meta-row"><span>Location</span><span>{currentFile.location}</span></div>
+            {currentFile.blur_score != null && (
+              <div className="meta-row">
+                <span>Sharpness</span>
+                <span style={{ color: "#8891a0" }}>
+                  {currentFile.blur_score.toFixed(1)} (lower = blurrier)
+                  {currentFile.is_blurry ? " · blurry" : ""}
+                </span>
+              </div>
+            )}
           </>
+        )}
+        <div style={{ marginTop: "1rem" }}>
+          <FileTagPicker
+            fileId={currentFile.id}
+            fileTags={currentFile.tags ?? []}
+            onChange={() => handleLabelsChange(currentFile.id)}
+            excludeSelected
+            showTagSearch
+          />
+        </div>
+        <div style={{ marginTop: "1rem" }}>
+          <PersonPicker
+            fileId={currentFile.id}
+            filePeople={currentFile.people ?? []}
+            onChange={() => handleLabelsChange(currentFile.id)}
+            excludeSelected
+          />
+        </div>
+        <div style={{ marginTop: "1rem" }}>
+          <CollapsibleSection
+            title="Events"
+            count={(currentFile.events?.length ?? 0) || undefined}
+            defaultOpen={false}
+            persistKey="imageOrganizer.collapsible.photoDetail.events"
+          >
+            <EventPicker
+              fileId={currentFile.id}
+              fileEvents={currentFile.events ?? []}
+              onChange={() => handleLabelsChange(currentFile.id)}
+              hideLabel
+              excludeSelected
+            />
+          </CollapsibleSection>
+        </div>
+        {!trashMode && !deleteQueueMode && (
+        <div style={{ marginTop: "1rem" }}>
+          <button
+            className="btn btn-secondary"
+            onClick={async () => {
+              await api.createDecision({ file_id: file.id, action: "skip" });
+              onClose();
+            }}
+          >
+            Skip
+          </button>
+        </div>
         )}
         <div className="form-group" style={{ marginTop: "1rem" }}>
           <label>Caption</label>
@@ -274,38 +407,6 @@ export default function PhotoDetail({
         <button className="btn" onClick={() => saveMeta.mutate()} disabled={saveMeta.isPending}>
           Save metadata
         </button>
-        <div style={{ marginTop: "1rem" }}>
-          <EventPicker
-            fileId={currentFile.id}
-            fileEvents={currentFile.events ?? []}
-            onChange={() => handleLabelsChange()}
-          />
-        </div>
-        <div style={{ marginTop: "1rem" }}>
-          <PersonPicker
-            fileId={currentFile.id}
-            filePeople={currentFile.people ?? []}
-            onChange={() => handleLabelsChange()}
-          />
-        </div>
-        <div style={{ marginTop: "1rem" }}>
-          <FileTagPicker
-            fileId={currentFile.id}
-            fileTags={currentFile.tags ?? []}
-            onChange={() => handleLabelsChange()}
-          />
-        </div>
-        <div style={{ marginTop: "1rem" }}>
-          <button
-            className="btn btn-secondary"
-            onClick={async () => {
-              await api.createDecision({ file_id: file.id, action: "skip" });
-              onClose();
-            }}
-          >
-            Skip
-          </button>
-        </div>
         </div>
       </div>
       {lightboxOpen && (
@@ -331,6 +432,78 @@ export default function PhotoDetail({
               className="photo-lightbox-media"
               onClick={closeLightbox}
             />
+          )}
+          {lightboxTagsOpen && (
+            <div className="photo-lightbox-tags" onClick={(e) => e.stopPropagation()}>
+              <div className="photo-lightbox-tags-header">
+                <span>Tags &amp; people</span>
+                <span className="photo-lightbox-tags-hint">T to hide</span>
+              </div>
+              <div className="photo-lightbox-tags-section">
+                <label className="photo-lightbox-tags-section-label">Tags</label>
+                {currentFile.tags && currentFile.tags.length > 0 && (
+                  <div className="photo-lightbox-tags-applied">
+                    {currentFile.tags.map((tag) => (
+                      <span key={tag.id} className="badge badge-removable tag-badge">
+                        {tag.name}
+                        <button
+                          type="button"
+                          className="badge-remove"
+                          aria-label={`Remove tag ${tag.name}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            void removeLightboxTag(tag.id);
+                          }}
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <FileTagPicker
+                  fileId={currentFile.id}
+                  fileTags={currentFile.tags ?? []}
+                  onChange={() => handleLabelsChange(currentFile.id)}
+                  excludeSelected
+                  showTagSearch
+                  hideLabel
+                />
+              </div>
+              <div className="photo-lightbox-tags-section">
+                <label className="photo-lightbox-tags-section-label">People</label>
+                {currentFile.people && currentFile.people.length > 0 && (
+                  <div className="photo-lightbox-tags-applied">
+                    {currentFile.people.map((person) => (
+                      <span key={person.id} className="badge badge-removable person-badge">
+                        {personLabel(person, allPeople)}
+                        <button
+                          type="button"
+                          className="badge-remove"
+                          aria-label={`Remove ${personLabel(person, allPeople)}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            void removeLightboxPerson(person.id);
+                          }}
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <PersonPicker
+                  fileId={currentFile.id}
+                  filePeople={currentFile.people ?? []}
+                  onChange={() => handleLabelsChange(currentFile.id)}
+                  excludeSelected
+                  hideLabel
+                />
+              </div>
+            </div>
+          )}
+          {!lightboxTagsOpen && (
+            <span className="photo-lightbox-tags-hint-corner">T — tags &amp; people</span>
           )}
         </div>
       )}

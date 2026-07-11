@@ -8,6 +8,8 @@ import TagsPage from "./pages/Tags";
 import CamerasPage from "./pages/Cameras";
 import BrowsePage from "./pages/Browse";
 import Duplicates from "./pages/Duplicates";
+import Blurry from "./pages/Blurry";
+import Trash from "./pages/Trash";
 import Review from "./pages/Review";
 import Settings from "./pages/Settings";
 
@@ -43,8 +45,14 @@ export default function App() {
         <NavLink to="/duplicates" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}>
           Duplicates
         </NavLink>
+        <NavLink to="/blurry" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}>
+          Blurry
+        </NavLink>
         <NavLink to="/review" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}>
           Review
+        </NavLink>
+        <NavLink to="/trash" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}>
+          Trash
         </NavLink>
         <NavLink to="/settings" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}>
           Settings
@@ -65,6 +73,8 @@ export default function App() {
           <Route path="/browse" element={<BrowsePage />} />
           <Route path="/browse/:kind/:slug" element={<BrowsePage />} />
           <Route path="/duplicates" element={<Duplicates />} />
+          <Route path="/blurry" element={<Blurry />} />
+          <Route path="/trash" element={<Trash />} />
           <Route path="/review" element={<Review />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>

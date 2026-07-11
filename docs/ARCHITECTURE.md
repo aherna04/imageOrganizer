@@ -52,6 +52,8 @@ Full interactive API spec: `http://localhost:8000/docs` when the backend is runn
 | `metadata.py` | EXIF/ffprobe extraction, thumbnails |
 | `organizer.py` | Date-folder and rename preview/apply |
 | `dedupe.py` | Exact (SHA256) and perceptual (pHash) duplicate groups |
+| `blur_analysis.py` | Background sharpness analysis job + status |
+| `blur_detect.py` | Threshold parsing, p10 outlier helper, shared `is_blurry` logic |
 | `events.py` | Trip/event CRUD and file assignment |
 | `people.py` | People CRUD, file assignment, merge |
 | `tags.py` | Tag CRUD, file tags, event tags, merge |
@@ -67,6 +69,20 @@ Full interactive API spec: `http://localhost:8000/docs` when the backend is runn
 ## Data model
 
 SQLite schema is defined in `backend/app/db.py` and applied on startup via `init_db()`.
+
+### Migrations
+
+Schema changes run in `_migrate_schema()` on every backend start. When a migration must rebuild a table that other tables reference (e.g. adding `'trash'` to the `files.location` CHECK constraint), **foreign keys are disabled for the rebuild** (`PRAGMA foreign_keys = OFF`). With FK enforcement left on, `DROP TABLE files` implicitly deletes all file rows and cascades into `file_tags`, `file_people`, `file_events`, and `duplicate_members`.
+
+If Tags, People, or Events show **0 photos** after upgrading to a Trash build, junction rows were likely wiped by the pre-fix migration. Restore from a pre-upgrade backup of `~/.imageOrganizer/index.db`:
+
+```bash
+# Stop the backend first
+python backend/scripts/restore_junctions_from_backup.py /path/to/old/index.db --dry-run
+python backend/scripts/restore_junctions_from_backup.py /path/to/old/index.db
+```
+
+Photos and tag/person/event **names** are unaffected; only file↔label links need restoring.
 
 ```mermaid
 erDiagram
@@ -87,7 +103,7 @@ erDiagram
 
 | Table | Purpose |
 |-------|---------|
-| `files` | Indexed media row (`location`: `inbox` \| `archive`), paths, hashes, capture date, dimensions |
+| `files` | Indexed media row (`location`: `inbox` \| `archive` \| `trash`), paths, hashes, capture date, dimensions, optional `blur_score` from sharpness analysis |
 | `events` | Named trips/occasions with color, optional date span |
 | `people` | Names tagged on individual photos |
 | `tags` | Generic labels (e.g. Cars, house project) |
@@ -108,7 +124,7 @@ erDiagram
 | `duplicate_groups` / `duplicate_members` | Exact and perceptual duplicate clusters |
 | `review_decisions` | Queued keep/delete/move/rename/skip actions |
 | `operations_log` | Audit trail after Apply |
-| `config` | Inbox/archive/trash paths, date/rename patterns |
+| `config` | Inbox/archive/trash paths, date/rename patterns, blur detection threshold |
 
 API list responses enrich entities with counts and nested relations. `FileOut` includes nested `events`, `people`, and `tags`.
 
@@ -148,15 +164,67 @@ Supported media: common image formats (JPEG, PNG, HEIC, WebP, TIFF) and video (M
 
 1. User marks files on Review page → `POST /api/review/decisions` (delete, skip, etc.).
 2. Queue shown at `GET /api/review/queue`.
-3. `POST /api/apply` executes queued operations: move/rename into archive layout or move deletes to `.trash/`.
+3. `POST /api/apply` executes queued operations: move/rename into archive layout or move deletes to `.trash/` (files row kept with `location='trash'`).
 4. Results logged in `operations_log`.
 
-### 4. Deduplication
+### 4. Trash and restore
+
+1. After Apply, deleted files live in `{MEDIA_ROOT}/.trash/` and appear in the DB with `location='trash'`.
+2. **Trash** page (`/trash`) lists them via `GET /api/files?location=trash`.
+3. **Scan trash** (`POST /api/scan/trash`) indexes files on disk (including legacy deletes not yet in the DB).
+4. **Restore** (`POST /api/trash/restore`) moves files back to the original path from `operations_log` (inbox or archive); falls back to inbox when unknown.
+
+The Inbox **Delete queue** filter (`pending_delete=true`) is separate: it shows photos marked for delete *before* Apply.
+
+### 5. Deduplication
 
 1. `dedupe.py` groups by SHA256 (exact) and pHash distance (perceptual).
 2. UI at `/duplicates`; user picks keeper per group → `PATCH /api/duplicates/{id}/keeper`.
 
-### 5. Labeling (events, people, tags)
+### 6. Blur detection
+
+Sharpness analysis is a **separate pass** from inbox/archive scan. Scan and blur analysis cannot run at the same time.
+
+#### User flow
+
+1. User opens **Blurry** (`/blurry`) and clicks **Analyze inbox**, **Analyze archive**, or **Analyze all**.
+2. Background job reports progress via `GET /api/blur-analysis/status` (header banner on the Blurry page).
+3. Flagged photos appear in the grid with a purple **Blur** badge; filter by **All**, **Inbox**, or **Archive**.
+4. **Blur** badge also appears on Inbox and Calendar grids when a photo is classified blurry.
+5. **PhotoDetail** shows the sharpness score when analyzed (lower = blurrier).
+6. Multi-select on the Blurry page → **Mark for delete** queues photos for Review (same delete flow as Inbox).
+7. Sensitivity: **Settings → Quality → Blur detection threshold** (default 150). Higher threshold flags more photos.
+
+#### Algorithm and classification
+
+```mermaid
+flowchart TD
+  analyze["POST /api/blur-analysis/*"] --> score["compute_blur_score per image"]
+  score --> db["files.blur_score"]
+  db --> classify["is_blurry_score"]
+  threshold["config blur_threshold default 150"] --> classify
+  p10["location p10 blur score"] --> classify
+  classify --> ui["Blurry page + Blur badge"]
+```
+
+| Step | Detail |
+|------|--------|
+| Scoring | Open image → EXIF transpose → grayscale → downscale 400px → Laplacian variance (Pillow). **Lower score = blurrier.** |
+| Storage | `files.blur_score` (REAL). Videos skipped. Re-analyze only processes images without a score yet. |
+| Absolute rule | `blur_score < blur_threshold` (Settings, default **150**) |
+| Outlier rule | When 10+ scored images in location: also flag if `blur_score < p10 × 0.22` (catches obvious misses when threshold is set too low) |
+| API filter | `GET /api/files?blurry=true` uses the same rules as `is_blurry` on `FileOut` |
+
+Example from a typical inbox batch:
+
+| File | Score | Flagged |
+|------|-------|---------|
+| IMG_7483.JPG | 130 | yes (outlier) |
+| IMG_7484.JPG | 2818 | no |
+
+Implementation: [`metadata.py`](../backend/app/metadata.py) (`compute_blur_score`), [`blur_analysis.py`](../backend/app/blur_analysis.py) (background job), [`blur_detect.py`](../backend/app/blur_detect.py) (classification helpers).
+
+### 7. Labeling (events, people, tags)
 
 - **Events** — assign photos to trips (`file_events`); bulk bars on Inbox/Calendar.
 - **People** — tag who appears in a photo (`file_people`).
@@ -172,8 +240,9 @@ Grouped by domain. See `/docs` for parameters and schemas.
 |-------|-----------|
 | Health | `GET /api/health` |
 | Config | `GET/PATCH /api/config` |
-| Scan | `POST /api/scan/inbox`, `/archive`, `GET /api/scan/status` |
-| Files | `GET /api/files` (filters: location, day, event, person, tag), thumbnails, original, metadata |
+| Scan | `POST /api/scan/inbox`, `/archive`, `/trash`, `GET /api/scan/status` |
+| Blur analysis | `POST /api/blur-analysis/inbox`, `/archive`, `/all`, `GET /api/blur-analysis/status` |
+| Files | `GET /api/files` (filters: location, day, event, person, tag, blurry), thumbnails, original, metadata |
 | File relations | `PATCH /api/files/{id}/events`, `/people`, `/tags` |
 | Calendar | `GET /api/calendar/months`, `/summary`, `/events`, `/day` |
 | Events | CRUD, files list, assign-ids, assign-range |
@@ -182,6 +251,7 @@ Grouped by domain. See `/docs` for parameters and schemas.
 | Duplicates | `GET /api/duplicates`, `PATCH .../keeper` |
 | Review / organize | preview, decisions, queue, apply |
 | Operations | `GET /api/operations` |
+| Trash | `GET /api/files?location=trash`, `POST /api/trash/restore` |
 
 ## Frontend routes
 
@@ -194,8 +264,10 @@ Grouped by domain. See `/docs` for parameters and schemas.
 | `/tags` | Tags CRUD, merge, delete |
 | `/browse`, `/browse/:kind/:slug` | Filter by person or tag |
 | `/duplicates` | Duplicate review |
+| `/blurry` | Analyze sharpness; review blurry photos; mark for delete |
+| `/trash` | Browse `.trash/`; scan and restore deleted photos |
 | `/review` | Decision queue and Apply |
-| `/settings` | Paths and rename patterns |
+| `/settings` | Paths, rename patterns, blur threshold |
 
 Version is shown in the sidebar (from `frontend/package.json`).
 

@@ -1,10 +1,10 @@
 # Image Organizer
 
-**Version:** 2026.07.11a — see [CHANGELOG.md](CHANGELOG.md)
+**Version:** 2026.07.11b — see [CHANGELOG.md](CHANGELOG.md)
 
 Architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
-Local web app for organizing photos and videos: inbox landing folder, calendar browse, event labels, people and tags, browse by person/tag, deduplication, and safe apply.
+Local web app for organizing photos and videos: inbox landing folder, calendar browse, event labels, people and tags, browse by person/tag, deduplication, blur detection, and safe apply.
 
 ## Prerequisites
 
@@ -39,6 +39,21 @@ App data (SQLite, thumbnails): `~/.imageOrganizer/`
 4. **Review** → **Preview inbox organize** → **Apply changes**
 5. Browse organized photos in **Calendar** or by **Events**
 
+### Trash and restore
+
+After **Apply**, deleted files move to `.trash/` (not permanent). Open **Trash** in the sidebar to browse them, run **Scan trash** to index files already on disk, and **Restore** single or bulk selections back to their original inbox/archive path.
+
+The Inbox **Delete queue** filter is different: it shows photos *marked* for delete before Apply.
+
+### Find blurry photos (optional)
+
+1. Open **Blurry** in the sidebar
+2. Click **Analyze inbox** (or **Analyze archive** / **Analyze all**) — runs separately from scan; progress shows in the header
+3. Review flagged photos (purple **Blur** badge on thumbnails)
+4. Filter by **All**, **Inbox**, or **Archive**
+5. Select photos → **Mark for delete** to queue them on Review (same as Inbox delete flow)
+6. Tune sensitivity in **Settings → Quality → Blur detection threshold** (higher = more photos flagged; default 150). Obvious outliers are flagged automatically even when the threshold is low.
+
 ## Safety
 
 - No file changes until you click **Apply**
@@ -51,6 +66,7 @@ Configure in **Settings**:
 
 - Date folders: `/{YYYY}/{MM}/{DD}/`
 - Rename: `{YYYY}-{MM}-{DD}_{seq:4}_{original}`
+- Blur threshold: **Settings → Quality** (see [Architecture](docs/ARCHITECTURE.md) for how scoring works)
 
 ## Native dev (optional)
 

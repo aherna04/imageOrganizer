@@ -2,6 +2,35 @@
 
 Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
+## [Unreleased]
+
+## [2026.07.11b] - 2026-07-11
+
+### Added
+
+- **Trash** page (`/trash`) — browse photos in `.trash/` after Apply; scan trash to index legacy files; restore to original location (from operations log)
+- Blurry image detection — separate sharpness analysis pass (Laplacian variance); dedicated **Blurry** page with inbox/archive/all analyze actions
+- Blur score stored per image; configurable threshold in Settings; **Blur** badge on photo grid cards
+- Recently used people chips in single and bulk label editors (same behavior as tags)
+- Calendar month **Untagged** filter (no tags, people, or events); respects Images/Videos media filter
+- Calendar day panel tag search; lightbox **T** overlay for tags and people on full-size preview
+
+### Fixed
+
+- Blur detection missed obvious out-of-focus photos (e.g. motion blur at score 130) when threshold was set too low — add relative outlier rule (below 22% of cohort p10) and raise default threshold to 150
+- Settings blur threshold help text was inverted (higher threshold flags more photos, not lower)
+- Trash location migration no longer wipes photo tags, people, and event assignments when rebuilding the `files` table (migration now disables FK enforcement during `DROP TABLE files`)
+- Lightbox images scale to viewport again (regression from scroll/pan stage wrapper)
+- Blurry page photo detail navigation and drawer scroll
+
+### Changed
+
+- Document blur detection workflow in README and ARCHITECTURE
+- If you already ran the broken trash migration and Tags/People/Events show 0 photos, restore junction rows from a pre-upgrade `index.db` backup using `backend/scripts/restore_junctions_from_backup.py`
+- Photo detail: caption and rating moved below tags, people, and events
+- Inbox Untagged filter: tagging in detail advances to next photo without closing the drawer
+- Collapsible label sections remember open/closed state (localStorage)
+
 ## [2026.07.11a] - 2026-07-11
 
 ### Changed

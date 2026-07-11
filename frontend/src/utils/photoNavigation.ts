@@ -16,6 +16,25 @@ export function nextFileAfterCurrent(files: MediaFile[], currentId: number): Med
   return adjacentFile(files, currentId, 1) ?? adjacentFile(files, currentId, -1);
 }
 
+export function nextFileAfterRemoval(
+  prevItems: MediaFile[],
+  removedId: number,
+  newItems: MediaFile[],
+): MediaFile | null {
+  const newById = new Map(newItems.map((f) => [f.id, f]));
+  const idx = prevItems.findIndex((f) => f.id === removedId);
+  if (idx < 0) return newItems[0] ?? null;
+  for (let i = idx + 1; i < prevItems.length; i++) {
+    const candidate = newById.get(prevItems[i].id);
+    if (candidate) return candidate;
+  }
+  for (let i = idx - 1; i >= 0; i--) {
+    const candidate = newById.get(prevItems[i].id);
+    if (candidate) return candidate;
+  }
+  return newItems[0] ?? null;
+}
+
 function isEditableTarget(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false;
   const tag = target.tagName;

@@ -28,6 +28,7 @@ function ScanStatusBanner({ onRunningChange }: Props) {
   useEffect(() => {
     if (wasScanning.current && status && !status.running) {
       qc.invalidateQueries({ queryKey: ["files", "inbox"] });
+      qc.invalidateQueries({ queryKey: ["files", "trash"] });
       qc.invalidateQueries({ queryKey: ["duplicates"] });
       qc.invalidateQueries({ queryKey: ["inbox-cameras"] });
       qc.invalidateQueries({ queryKey: ["cameras"] });
@@ -41,6 +42,16 @@ function ScanStatusBanner({ onRunningChange }: Props) {
 
     const interval = window.setInterval(() => {
       qc.invalidateQueries({ queryKey: ["files", "inbox"] });
+    }, INBOX_REFETCH_INTERVAL_MS);
+
+    return () => window.clearInterval(interval);
+  }, [status?.running, status?.scope, qc]);
+
+  useEffect(() => {
+    if (!status?.running || status.scope !== "trash") return;
+
+    const interval = window.setInterval(() => {
+      qc.invalidateQueries({ queryKey: ["files", "trash"] });
     }, INBOX_REFETCH_INTERVAL_MS);
 
     return () => window.clearInterval(interval);

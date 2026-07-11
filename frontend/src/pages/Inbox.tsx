@@ -13,7 +13,7 @@ import ScanStatusBanner from "../components/ScanStatusBanner";
 import SingleFileLabelEditors from "../components/SingleFileLabelEditors";
 import BulkLabelEditors from "../components/BulkLabelEditors";
 import { invalidateAfterDateChange } from "../utils/invalidateAfterDateChange";
-import { isEditableTarget } from "../utils/photoNavigation";
+import { isEditableTarget, nextFileAfterRemoval } from "../utils/photoNavigation";
 import { togglePhotoSelection } from "../utils/photoSelection";
 import { usePhotoGridAlerts } from "../utils/usePhotoGridAlerts";
 
@@ -208,6 +208,7 @@ export default function Inbox() {
 
   const handleDateChange = (keepFileId?: number, options?: { skipInvalidation?: boolean }) => {
     const openId = keepFileId ?? detailFile?.id;
+    const prevItems = data?.items ?? [];
     if (!options?.skipInvalidation) {
       invalidateAfterDateChange(qc);
       handleLabelsChange();
@@ -215,7 +216,11 @@ export default function Inbox() {
     refetch().then(({ data: listData }) => {
       if (!openId) return;
       const still = listData?.items.find((f) => f.id === openId);
-      setDetailFile(still ?? null);
+      if (still) {
+        setDetailFile(still);
+        return;
+      }
+      setDetailFile(nextFileAfterRemoval(prevItems, openId, listData?.items ?? []));
     });
   };
 

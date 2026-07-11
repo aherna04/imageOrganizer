@@ -10,13 +10,22 @@ interface Props {
   fileTags: Tag[];
   onChange: () => void;
   showTagSearch?: boolean;
+  excludeSelected?: boolean;
+  hideLabel?: boolean;
 }
 
 function tagIds(tags: Tag[]) {
   return tags.map((t) => t.id);
 }
 
-export default function FileTagPicker({ fileId, fileTags, onChange, showTagSearch = false }: Props) {
+export default function FileTagPicker({
+  fileId,
+  fileTags,
+  onChange,
+  showTagSearch = false,
+  excludeSelected = false,
+  hideLabel = false,
+}: Props) {
   const qc = useQueryClient();
   const [newName, setNewName] = useState("");
   const [showNew, setShowNew] = useState(false);
@@ -41,8 +50,11 @@ export default function FileTagPicker({ fileId, fileTags, onChange, showTagSearc
 
   const recentTags = useMemo(() => {
     const byId = new Map(allTags.map((t) => [t.id, t]));
-    return recentIds.map((id) => byId.get(id)).filter((t): t is Tag => t != null);
-  }, [allTags, recentIds]);
+    return recentIds
+      .map((id) => byId.get(id))
+      .filter((t): t is Tag => t != null)
+      .filter((t) => !excludeSelected || !selected.has(t.id));
+  }, [allTags, recentIds, excludeSelected, selectedIds]);
 
   const assignedTags = useMemo(
     () => allTags.filter((t) => selected.has(t.id)),
@@ -52,15 +64,17 @@ export default function FileTagPicker({ fileId, fileTags, onChange, showTagSearc
   const visibleTags = useMemo(() => {
     if (searchFirst) {
       const recentSet = new Set(recentTags.map((t) => t.id));
-      return assignedTags.filter((t) => !recentSet.has(t.id));
+      return assignedTags
+        .filter((t) => !recentSet.has(t.id))
+        .filter((t) => !excludeSelected || !selected.has(t.id));
     }
     let list = showTagSearch ? filterTagsByQuery(allTags, searchQuery, alwaysInclude) : allTags;
     if (!searchActive && recentTags.length > 0) {
       const recentSet = new Set(recentTags.map((t) => t.id));
       list = list.filter((t) => !recentSet.has(t.id));
     }
-    return list;
-  }, [allTags, searchQuery, alwaysInclude, showTagSearch, searchActive, recentTags, searchFirst, assignedTags]);
+    return list.filter((t) => !excludeSelected || !selected.has(t.id));
+  }, [allTags, searchQuery, alwaysInclude, showTagSearch, searchActive, recentTags, searchFirst, assignedTags, excludeSelected, selectedIds]);
 
   const toggle = async (tagId: number) => {
     const prev = selectedIds;
@@ -99,7 +113,9 @@ export default function FileTagPicker({ fileId, fileTags, onChange, showTagSearc
 
   return (
     <div>
-      <label style={{ fontSize: "0.875rem", color: "#aab0bc" }}>Tags</label>
+      {!hideLabel && (
+        <label style={{ fontSize: "0.875rem", color: "#aab0bc" }}>Tags</label>
+      )}
       {showTagSearch && <LabelSearchInput value={searchQuery} onChange={setSearchQuery} />}
       {searchFirst && <p className="label-search-hint">Search to add more tags</p>}
       {!searchActive && recentTags.length > 0 && (
@@ -122,7 +138,14 @@ export default function FileTagPicker({ fileId, fileTags, onChange, showTagSearc
       {showTagSearch && searchActive && visibleTags.length === 0 ? (
         <p className="label-search-empty">No tags match — try another term</p>
       ) : (
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem", marginTop: "0.35rem" }}>
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "0.35rem",
+            marginTop: hideLabel ? 0 : "0.35rem",
+          }}
+        >
           {visibleTags.map((tag) => (
             <button
               key={tag.id}

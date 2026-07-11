@@ -18,10 +18,20 @@ export default function SingleFileLabelEditors({ file, onChange, showTagSearch =
   return (
     <div className="single-file-label-editors">
       <CaptureDateEditor files={[file]} onChange={onChange} compact />
-      <CollapsibleSection title="Events" count={eventCount || undefined} defaultOpen={false}>
+      <CollapsibleSection
+        title="Events"
+        count={eventCount || undefined}
+        defaultOpen={false}
+        persistKey="imageOrganizer.collapsible.inbox.events"
+      >
         <EventPicker fileId={file.id} fileEvents={file.events ?? []} onChange={onChange} hideLabel />
       </CollapsibleSection>
-      <CollapsibleSection title="People" count={peopleCount || undefined} defaultOpen={false}>
+      <CollapsibleSection
+        title="People"
+        count={peopleCount || undefined}
+        defaultOpen={false}
+        persistKey="imageOrganizer.collapsible.inbox.people"
+      >
         <PersonPicker fileId={file.id} filePeople={file.people ?? []} onChange={onChange} hideLabel />
       </CollapsibleSection>
       <FileTagPicker

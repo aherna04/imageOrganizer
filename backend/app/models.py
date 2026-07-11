@@ -11,6 +11,7 @@ class ConfigOut(BaseModel):
     date_pattern: str
     rename_pattern: str
     photo_sort_order: Literal["asc", "desc"] = "desc"
+    blur_threshold: str = "150"
 
 
 class ConfigUpdate(BaseModel):
@@ -20,6 +21,7 @@ class ConfigUpdate(BaseModel):
     date_pattern: str | None = None
     rename_pattern: str | None = None
     photo_sort_order: Literal["asc", "desc"] | None = None
+    blur_threshold: str | None = None
 
 
 class StorageStatsOut(BaseModel):
@@ -36,7 +38,7 @@ class FileOut(BaseModel):
     id: int
     path: str
     filename: str
-    location: Literal["inbox", "archive"]
+    location: Literal["inbox", "archive", "trash"]
     media_type: Literal["image", "video"] = "image"
     size: int
     capture_date: str | None
@@ -48,6 +50,8 @@ class FileOut(BaseModel):
     phash: str | None
     caption: str | None = None
     rating: int | None = None
+    blur_score: float | None = None
+    is_blurry: bool = False
     events: list["EventOut"] = []
     people: list["PersonOut"] = []
     tags: list["TagOut"] = []
@@ -78,6 +82,14 @@ class MetadataUpdate(BaseModel):
 
 
 class ScanStatusOut(BaseModel):
+    running: bool
+    scope: str | None
+    processed: int
+    total: int
+    message: str | None
+
+
+class BlurAnalysisStatusOut(BaseModel):
     running: bool
     scope: str | None
     processed: int
@@ -169,6 +181,7 @@ class CalendarMonthLabelsOut(BaseModel):
     events: list[CalendarMonthEventOut]
     people: list[CalendarMonthPersonOut]
     tags: list[CalendarMonthTagOut]
+    unlabeled_count: int = 0
 
 
 class EventCreate(BaseModel):
@@ -381,6 +394,15 @@ class ReviewQueueReleaseIn(BaseModel):
 
 class ApplyResultOut(BaseModel):
     applied: int
+    errors: list[str]
+
+
+class TrashRestoreIn(BaseModel):
+    file_ids: list[int] = Field(default_factory=list)
+
+
+class TrashRestoreOut(BaseModel):
+    restored: int
     errors: list[str]
 
 

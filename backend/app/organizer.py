@@ -223,7 +223,10 @@ def apply_operations(conn: sqlite3.Connection) -> tuple[int, list[str]]:
                 dest = _unique_path(trash / src.name)
                 if src.exists():
                     shutil.move(str(src), str(dest))
-                conn.execute("DELETE FROM files WHERE id = ?", (d["file_id"],))
+                conn.execute(
+                    "UPDATE files SET path=?, filename=?, location='trash', updated_at=datetime('now') WHERE id=?",
+                    (str(dest), dest.name, d["file_id"]),
+                )
                 conn.execute(
                     "INSERT INTO operations_log (file_id, operation, source_path, target_path) VALUES (?, 'delete', ?, ?)",
                     (d["file_id"], str(src), str(dest)),

@@ -1,6 +1,6 @@
 {
   "title": "Image Organizer — Development Book",
-  "version": "2026.07.07",
+  "version": "2026.07.10",
   "output": "docs/DEVELOPMENT_BOOK.md",
   "plans_dir": "~/.cursor/plans",
   "related_links": "[ARCHITECTURE.md](ARCHITECTURE.md) · [CHANGELOG.md](../CHANGELOG.md)",
@@ -86,7 +86,8 @@
       "plans": [
         "duplicate_keeper_defaults_16c17f11",
         "fix_tag_counts_after_dedupe_09aa98e2",
-        "fix_orphan_tag_counts_565594c4"
+        "fix_orphan_tag_counts_565594c4",
+        "fix_sqlite_lock_errors_2e08c386"
       ]
     },
     {

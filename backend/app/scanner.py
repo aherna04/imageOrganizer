@@ -129,7 +129,9 @@ def run_scan(scope: str) -> None:
             for path in files:
                 seen.add(str(path))
                 _upsert_file(conn, path, _location_for_path(path, scope))
+                conn.commit()
                 scan_state.tick()
+        with get_conn() as conn:
             _prune_missing(conn, scope, seen)
             conn.commit()
             rebuild_duplicate_groups(conn)

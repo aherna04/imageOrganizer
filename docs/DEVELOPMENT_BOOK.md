@@ -1,6 +1,6 @@
 # Image Organizer — Development Book
 
-*Release 2026.07.07 · collected Cursor implementation plans*
+*Release 2026.07.10 · collected Cursor implementation plans*
 
 Related: [ARCHITECTURE.md](ARCHITECTURE.md) · [CHANGELOG.md](../CHANGELOG.md)
 
@@ -80,18 +80,20 @@ This book collects the Cursor agent implementation plans written while building 
 51. [Duplicate keeper defaults](#chapter-51-duplicate-keeper-defaults)
 52. [Fix tag counts after dedupe](#chapter-52-fix-tag-counts-after-dedupe)
 53. [Fix orphan tag counts](#chapter-53-fix-orphan-tag-counts)
+54. [Fix SQLite lock errors](#chapter-54-fix-sqlite-lock-errors)
 
 ### Part VII — Release and Meta
 
-54. [Version and changelog](#chapter-54-version-and-changelog)
-55. [Sidebar version badge](#chapter-55-sidebar-version-badge)
-56. [Save plans gitignore](#chapter-56-save-plans-gitignore)
-57. [Plans development book](#chapter-57-plans-development-book)
+55. [Version and changelog](#chapter-55-version-and-changelog)
+56. [Sidebar version badge](#chapter-56-sidebar-version-badge)
+57. [Save plans gitignore](#chapter-57-save-plans-gitignore)
+58. [Plans development book](#chapter-58-plans-development-book)
 
 ### Appendix — Unlisted Plans
 
-58. [Book update and release](#chapter-58-book-update-and-release)
-59. [Cursor book tool repo](#chapter-59-cursor-book-tool-repo)
+59. [Book update and release](#chapter-59-book-update-and-release)
+60. [Cursor book tool repo](#chapter-60-cursor-book-tool-repo)
+61. [Release 2026.07.10](#chapter-61-release-20260710)
 
 ### Skipped Duplicates
 
@@ -6767,11 +6769,138 @@ Once `GET /api/tags` returns 6, the Browse sidebar (`tags.photo_count`) will mat
 
 ---
 
+<a id="chapter-54-fix-sqlite-lock-errors"></a>
+
+## Chapter 54: Fix SQLite lock errors
+
+> **Overview:** Fix the 500 on single delete (D in PhotoDetail) during inbox scan by improving SQLite concurrency (WAL + busy timeout) and shortening scanner transaction scope so review writes can interleave.
+
+# Fix SQLite "database is locked" on single delete
+
+## What happened
+
+Your terminal shows a failed **single** delete request while a scan was active:
+
+```42:108:/Users/alex/.cursor/projects/Users-alex-Documents-github/terminals/2.txt
+backend-1   | INFO:     ... "POST /api/review/decisions HTTP/1.1" 500 Internal Server Error
+...
+backend-1   |   File "/app/app/main.py", line 1023, in api_create_decision
+backend-1   |     conn.execute(
+backend-1   | sqlite3.OperationalError: database is locked
+```
+
+This matches the single-file path in [`PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx) — one `POST /api/review/decisions`, not bulk select + D:
+
+```73:78:frontend/src/components/PhotoDetail.tsx
+  const handleMarkDelete = useCallback(async () => {
+    ...
+      await api.createDecision({ file_id: file.id, action: "delete" });
+```
+
+Root cause is a concurrency clash between the scanner and any review write:
+
+```mermaid
+sequenceDiagram
+    participant Scan as ScannerThread
+    participant DB as SQLite
+    participant API as ReviewAPI
+
+    Scan->>DB: open connection
+    loop every file
+        Scan->>DB: UPSERT files (no commit)
+        Note over Scan: sha256/phash/thumbnail I/O while txn open
+    end
+    API->>DB: INSERT review_decisions
+    DB-->>API: database is locked
+```
+
+1. **Scanner holds one long write transaction** — [`run_scan`](backend/app/scanner.py) opens a single `get_conn()` context and only commits after the entire folder walk + dedupe:
+
+```128:136:backend/app/scanner.py
+        with get_conn() as conn:
+            for path in files:
+                ...
+                _upsert_file(conn, path, ...)
+            _prune_missing(conn, scope, seen)
+            conn.commit()
+            rebuild_duplicate_groups(conn)
+            conn.commit()
+```
+
+While that transaction is open, even a single `INSERT INTO review_decisions` in [`api_create_decision`](backend/app/main.py) can fail immediately.
+
+2. **No SQLite concurrency tuning** — [`get_conn()`](backend/app/db.py) uses default settings (no WAL, zero busy timeout), so SQLite returns "database is locked" instead of waiting briefly for the scanner to release.
+
+Bulk delete (`Promise.all` in Inbox) is a separate concern and was **not** the trigger here. No batch API changes needed for this fix.
+
+## Fix strategy (two layers)
+
+### 1. Enable SQLite WAL + busy timeout
+
+In [`backend/app/db.py`](backend/app/db.py) `get_conn()`, after connect:
+
+- `PRAGMA journal_mode=WAL` — better concurrent read/write behavior
+- `PRAGMA busy_timeout=10000` (10s) — wait for scanner to release lock instead of instant 500
+
+Apply once per connection. No migration needed; WAL activates on next open.
+
+### 2. Shorten scanner transaction scope (primary fix)
+
+In [`backend/app/scanner.py`](backend/app/scanner.py) `run_scan`:
+
+- **Commit after each file upsert** so review/apply writes can interleave during long scans
+- Keep `_prune_missing` + `rebuild_duplicate_groups` in a final short transaction at the end
+- Structure:
+
+```python
+with get_conn() as conn:
+    for path in files:
+        _upsert_file(conn, path, ...)
+        conn.commit()          # release lock between files
+        scan_state.tick()
+with get_conn() as conn:
+    _prune_missing(conn, scope, seen)
+    conn.commit()
+    rebuild_duplicate_groups(conn)
+    conn.commit()
+```
+
+This is the most important change: metadata/thumbnail work in `_upsert_file` will no longer run inside an accumulating multi-file write transaction, and locks are released between files so a single **D** delete can succeed mid-scan.
+
+### Optional follow-up (out of scope unless you want it)
+
+- Batch decisions API for Inbox multi-select **D** — reduces parallel lock contention when deleting many at once, but not required to fix the reported single-delete failure.
+- Explicit retry loop in `api_create_decision` — only if manual testing still hits 500s during end-of-scan dedupe rebuild; `busy_timeout` should be sufficient.
+
+## Verification
+
+Manual test in Docker (same setup as your terminal):
+
+1. Start inbox scan (`POST /api/scan/inbox` or UI trigger)
+2. While scan status shows `running: true`, open a photo and press **D** (single delete in PhotoDetail)
+3. Expect **200** from `POST /api/review/decisions`; item appears in delete queue
+4. Confirm scan still completes and dedupe/queue state is consistent
+
+No automated test suite exists in this repo; verification is manual.
+
+## Files to change
+
+| File | Change |
+|------|--------|
+| [`backend/app/db.py`](backend/app/db.py) | WAL + busy_timeout in `get_conn()` |
+| [`backend/app/scanner.py`](backend/app/scanner.py) | Per-file commit; separate final prune/dedupe transaction |
+
+No frontend changes required for the reported bug.
+
+No book/release/changelog update unless you want this shipped as a patch release after implementation.
+
+---
+
 # Part VII — Release and Meta
 
-<a id="chapter-54-version-and-changelog"></a>
+<a id="chapter-55-version-and-changelog"></a>
 
-## Chapter 54: Version and changelog
+## Chapter 55: Version and changelog
 
 > **Overview:** Introduce date-based versioning (2026.07.04), add CHANGELOG.md documenting the initial release, sync version strings in backend and frontend, then commit, tag, and push to GitHub.
 
@@ -6859,9 +6988,9 @@ Optional (if `gh` is available): `gh release create 2026.07.04 --notes-file CHAN
 
 ---
 
-<a id="chapter-55-sidebar-version-badge"></a>
+<a id="chapter-56-sidebar-version-badge"></a>
 
-## Chapter 55: Sidebar version badge
+## Chapter 56: Sidebar version badge
 
 > **Overview:** Display the app version (`2026.07.04`) in the sidebar directly below the "Image Organizer" heading, sourced from `frontend/package.json` so it stays in sync with releases.
 
@@ -6926,9 +7055,9 @@ No new API endpoint or duplicate constant file.
 
 ---
 
-<a id="chapter-56-save-plans-gitignore"></a>
+<a id="chapter-57-save-plans-gitignore"></a>
 
-## Chapter 56: Save plans gitignore
+## Chapter 57: Save plans gitignore
 
 > **Overview:** Copy all Cursor plan files into `imageOrganizer/.cursor/plans/` and add that directory to `.gitignore` so plans stay local and are never pushed to GitHub.
 
@@ -6994,9 +7123,9 @@ git -C imageOrganizer check-ignore -v .cursor/plans/foo.plan.md  # confirms igno
 
 ---
 
-<a id="chapter-57-plans-development-book"></a>
+<a id="chapter-58-plans-development-book"></a>
 
-## Chapter 57: Plans development book
+## Chapter 58: Plans development book
 
 > **Overview:** Consolidate all 37 Image Organizer Cursor plan files into a single committed markdown book at docs/DEVELOPMENT_BOOK.md, organized by topic with a table of contents and readable chapter structure.
 
@@ -7118,9 +7247,9 @@ No change to the architecture cursor rule scope (book is design history, not liv
 
 ---
 
-<a id="chapter-58-book-update-and-release"></a>
+<a id="chapter-59-book-update-and-release"></a>
 
-## Chapter 58: Book update and release
+## Chapter 59: Book update and release
 
 > **Overview:** Add post-2026.07.05b feature plans to book.json, rebuild DEVELOPMENT_BOOK.md, write CHANGELOG 2026.07.07 for all uncommitted work, bump versions, commit, tag, and push to origin.
 
@@ -7218,9 +7347,9 @@ Requires network + git_write permissions for push.
 
 ---
 
-<a id="chapter-59-cursor-book-tool-repo"></a>
+<a id="chapter-60-cursor-book-tool-repo"></a>
 
-## Chapter 59: Cursor book tool repo
+## Chapter 60: Cursor book tool repo
 
 > **Overview:** Extract the development book builder into a standalone repo with a config-driven script and a reusable Cursor skill; migrate imageOrganizer to a thin `book.yaml` + wrapper script.
 
@@ -7422,5 +7551,92 @@ Optional: tag `v1.0.0` on `cursor-book` after migration verified.
 3. Generic skill reads correctly when copied to a fresh repo
 4. Public repo live at https://github.com/aherna04/cursor-book with README, script, and skill
 5. imageOrganizer submodule points at public URL; book regenerates with 44 chapters
+
+---
+
+<a id="chapter-61-release-20260710"></a>
+
+## Chapter 61: Release 2026.07.10
+
+> **Overview:** Document the SQLite lock fix in the development book and CHANGELOG, bump version strings to 2026.07.10, regenerate DEVELOPMENT_BOOK.md, then commit, tag, and push the release.
+
+## Scope
+
+Ship the uncommitted backend fix (2 files):
+
+- [`backend/app/db.py`](backend/app/db.py) — `PRAGMA journal_mode=WAL`, `PRAGMA busy_timeout=10000`
+- [`backend/app/scanner.py`](backend/app/scanner.py) — commit after each file during scan; prune/dedupe in a separate final transaction
+
+Release version: **`2026.07.10`** (date-based; follows `2026.07.07`).
+
+## 1. Register plan in [`book.json`](book.json)
+
+- Bump `"version"` to `2026.07.10`
+- Append to **Part VI — Dedupe and Integrity** `plans`:
+  - `fix_sqlite_lock_errors_2e08c386`
+
+Plan file already exists at `~/.cursor/plans/fix_sqlite_lock_errors_2e08c386.plan.md` (read by cursor-book at build time).
+
+## 2. Rebuild development book
+
+```bash
+python3 scripts/build_development_book.py
+```
+
+Regenerates [`docs/DEVELOPMENT_BOOK.md`](docs/DEVELOPMENT_BOOK.md) — do not edit by hand. Subtitle should show `Release 2026.07.10`; new chapter for the SQLite lock fix appears in Part VI.
+
+## 3. CHANGELOG — [`CHANGELOG.md`](CHANGELOG.md)
+
+Add new top section:
+
+```markdown
+## [2026.07.10] - 2026-07-10
+
+### Fixed
+
+- SQLite **database is locked** when marking delete (**D**) during an inbox/archive scan — WAL mode, busy timeout, and per-file scan commits release locks between files
+```
+
+## 4. Version bump (`2026.07.07` → `2026.07.10`)
+
+| File | Field |
+|------|-------|
+| [`frontend/package.json`](frontend/package.json) | `"version"` |
+| [`backend/app/main.py`](backend/app/main.py) | `FastAPI(..., version=...)` |
+| [`README.md`](README.md) | Version line |
+| [`book.json`](book.json) | `"version"` |
+
+Sidebar badge picks up `package.json` automatically — no frontend code change.
+
+## 5. Git release
+
+```bash
+git add -A
+git commit -m "$(cat <<'EOF'
+Release 2026.07.10
+
+Fix SQLite database locked on delete during scan (WAL, busy timeout, per-file scan commits).
+EOF
+)"
+git tag 2026.07.10
+git push origin main
+git push origin 2026.07.10
+```
+
+Requires `git_write` + network permissions for push.
+
+## Verification
+
+- `grep "2026.07.10" docs/DEVELOPMENT_BOOK.md README.md CHANGELOG.md` — version strings present
+- `grep -i "database is locked" docs/DEVELOPMENT_BOOK.md` — new chapter indexed
+- `git tag -l "2026.07.10"` — tag exists locally and on origin after push
+
+```mermaid
+flowchart LR
+    code[db.py + scanner.py] --> book[book.json + rebuild book]
+    book --> changelog[CHANGELOG.md]
+    changelog --> versions[version bumps]
+    versions --> git[commit tag push]
+```
 
 ---

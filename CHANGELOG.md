@@ -2,6 +2,12 @@
 
 Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
+## [2026.07.10] - 2026-07-10
+
+### Fixed
+
+- SQLite **database is locked** when marking delete (**D**) during an inbox/archive scan — WAL mode, busy timeout, and per-file scan commits release locks between files
+
 ## [2026.07.07] - 2026-07-07
 
 ### Added

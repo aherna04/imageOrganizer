@@ -1,6 +1,6 @@
 # Image Organizer
 
-**Version:** 2026.07.11c — see [CHANGELOG.md](CHANGELOG.md)
+**Version:** 2026.07.11d — see [CHANGELOG.md](CHANGELOG.md)
 
 Architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
@@ -29,7 +29,8 @@ Open **http://localhost:5173**
 | Archive | `/Users/alex/Media/photos/` |
 | Trash | `/Users/alex/Media/.trash/` |
 
-App data (SQLite, thumbnails): `~/.imageOrganizer/`
+App data (SQLite, thumbnails): `~/.imageOrganizer/`  
+Database backups: `~/.imageOrganizer/backups/` (Settings → **Backup database**, or `python backend/scripts/backup_database.py`)
 
 ## Workflow
 

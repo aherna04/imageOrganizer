@@ -138,6 +138,7 @@ Configured in `backend/app/config.py` (overridable via Settings UI → `config` 
 | `{MEDIA_ROOT}/photos/` | Organized archive (date-based subfolders after Apply) |
 | `{MEDIA_ROOT}/.trash/` | Soft-deleted files |
 | `{APP_DATA_DIR}/index.db` | SQLite database |
+| `{APP_DATA_DIR}/backups/` | Timestamped database backups (`index-YYYY-MM-DD_HH-MM-SS.db`) |
 | `{APP_DATA_DIR}/thumbs/` | Cached JPEG thumbnails (keyed by file id + mtime) |
 
 Environment variables:
@@ -237,8 +238,15 @@ Event-level tags (`event_tags`) label the event record itself and do not imply a
 
 - Multi-month grid with per-month label chips (events, people, tags) and an **Untagged** chip per month.
 - Top bar: **All / Untagged** global filter (applies across visible months), plus Archive/Inbox scope and Images/Videos media filter.
-- Day panel: bulk assign events/people/tags; tag search in label editors.
+- Day panel: selection bar and photo grid on the right; label editors below month calendars on the left when photos are selected; tag search in label editors.
 - Days with more than 100 photos paginate in the day panel (`GET /api/calendar/day?page=&page_size=`; default page size 100, max 500).
+
+### 9. Database backup
+
+- **Settings → Storage → Backup database** creates a consolidated SQLite copy via the online backup API (safe while the app runs with WAL).
+- Copies are written to `{APP_DATA_DIR}/backups/index-YYYY-MM-DD_HH-MM-SS.db`.
+- CLI: `python backend/scripts/backup_database.py` (optional `--db` path).
+- Use backups with [`restore_junctions_from_backup.py`](../backend/scripts/restore_junctions_from_backup.py) after a bad migration.
 
 ## API overview
 
@@ -248,6 +256,7 @@ Grouped by domain. See `/docs` for parameters and schemas.
 |-------|-----------|
 | Health | `GET /api/health` |
 | Config | `GET/PATCH /api/config` |
+| Database backup | `POST /api/database/backup`, `GET /api/database/backups` |
 | Scan | `POST /api/scan/inbox`, `/archive`, `/trash`, `GET /api/scan/status` |
 | Blur analysis | `POST /api/blur-analysis/inbox`, `/archive`, `/all`, `GET /api/blur-analysis/status` |
 | Files | `GET /api/files` (filters: location, day, event, person, tag, blurry), thumbnails, original, metadata |

@@ -4,6 +4,16 @@ Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
 ## [Unreleased]
 
+## [2026.07.11d] - 2026-07-11
+
+### Added
+
+- Database backup: datetime-stamped copies in `~/.imageOrganizer/backups/` via Settings or `backend/scripts/backup_database.py`
+
+### Changed
+
+- Calendar day tagging form (date, events, people, tags) moved below month calendars on the left when photos are selected
+
 ## [2026.07.11c] - 2026-07-11
 
 ### Added

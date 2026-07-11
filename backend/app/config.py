@@ -10,6 +10,7 @@ ARCHIVE_PATH = MEDIA_ROOT / "photos"
 TRASH_PATH = MEDIA_ROOT / ".trash"
 
 DB_PATH = APP_DATA_DIR / "index.db"
+BACKUPS_DIR = APP_DATA_DIR / "backups"
 THUMBS_DIR = APP_DATA_DIR / "thumbs"
 
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".heic", ".heif", ".tiff", ".tif", ".webp"}

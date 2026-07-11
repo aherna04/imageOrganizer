@@ -1,16 +1,19 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MediaFile, CalendarDayFilter, CalendarMediaType, api } from "../api/client";
 import BulkEventAssignBar from "./BulkEventAssignBar";
 import PhotoGridWithAlerts from "./PhotoGridWithAlerts";
 import PhotoDetail from "./PhotoDetail";
-import SingleFileLabelEditors from "./SingleFileLabelEditors";
-import BulkLabelEditors from "./BulkLabelEditors";
 import { invalidateAfterDateChange } from "../utils/invalidateAfterDateChange";
 import { calendarQueryOptions } from "../utils/calendarQueryOptions";
 import { togglePhotoSelection } from "../utils/photoSelection";
 
 const PAGE_SIZE = 100;
+
+export interface CalendarDayLabelContext {
+  selectedFiles: MediaFile[];
+  onDateChange: (keepFileId?: number) => void;
+}
 
 interface Props {
   date: string;
@@ -18,9 +21,17 @@ interface Props {
   mediaType: CalendarMediaType;
   filter?: CalendarDayFilter;
   onClose: () => void;
+  onLabelContextChange?: (ctx: CalendarDayLabelContext | null) => void;
 }
 
-export default function CalendarDayPanel({ date, location, mediaType, filter, onClose }: Props) {
+export default function CalendarDayPanel({
+  date,
+  location,
+  mediaType,
+  filter,
+  onClose,
+  onLabelContextChange,
+}: Props) {
   const qc = useQueryClient();
   const [page, setPage] = useState(1);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
@@ -72,27 +83,46 @@ export default function CalendarDayPanel({ date, location, mediaType, filter, on
     setSelectedIds(result.selectedIds);
   };
 
-  const handleLabelsChange = () => {
+  const handleLabelsChange = useCallback(() => {
     refetch();
     qc.invalidateQueries({ queryKey: ["events"] });
     qc.invalidateQueries({ queryKey: ["people"] });
     qc.invalidateQueries({ queryKey: ["tags"] });
     qc.invalidateQueries({ queryKey: ["calendar-labels"] });
     qc.invalidateQueries({ queryKey: ["calendar-summary"] });
-  };
+  }, [qc, refetch]);
 
-  const handleDateChange = (keepFileId?: number) => {
-    const openId = keepFileId ?? detailFile?.id;
-    invalidateAfterDateChange(qc);
-    refetch().then(({ data: dayData }) => {
-      if (!openId) return;
-      const still = dayData?.items.find((f) => f.id === openId);
-      setDetailFile(still ?? null);
-    });
-    handleLabelsChange();
-  };
+  const handleDateChange = useCallback(
+    (keepFileId?: number) => {
+      const openId = keepFileId ?? detailFile?.id;
+      invalidateAfterDateChange(qc);
+      refetch().then(({ data: dayData }) => {
+        if (!openId) return;
+        const still = dayData?.items.find((f) => f.id === openId);
+        setDetailFile(still ?? null);
+      });
+      handleLabelsChange();
+    },
+    [detailFile?.id, qc, refetch, handleLabelsChange],
+  );
 
-  const selectedFiles = data?.items.filter((f) => selectedIds.includes(f.id)) ?? [];
+  const selectedFiles = useMemo(
+    () => data?.items.filter((f) => selectedIds.includes(f.id)) ?? [],
+    [data?.items, selectedIds],
+  );
+
+  useEffect(() => {
+    if (!onLabelContextChange) return;
+    if (selectedFiles.length === 0) {
+      onLabelContextChange(null);
+      return;
+    }
+    onLabelContextChange({ selectedFiles, onDateChange: handleDateChange });
+  }, [selectedFiles, handleDateChange, onLabelContextChange]);
+
+  useEffect(() => {
+    return () => onLabelContextChange?.(null);
+  }, [onLabelContextChange]);
 
   return (
     <div className="calendar-day-panel">
@@ -142,13 +172,6 @@ export default function CalendarDayPanel({ date, location, mediaType, filter, on
           selectionAnchorRef.current = null;
         }}
       />
-
-      {selectedIds.length === 1 && selectedFiles[0] && (
-        <SingleFileLabelEditors file={selectedFiles[0]} onChange={handleDateChange} showTagSearch />
-      )}
-      {selectedIds.length >= 2 && (
-        <BulkLabelEditors selectedFiles={selectedFiles} onChange={handleDateChange} showTagSearch />
-      )}
 
       <PhotoGridWithAlerts
         files={data?.items ?? []}

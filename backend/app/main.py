@@ -19,6 +19,7 @@ from app.inbox_filters import (
 from app.media_filter import append_media_type_filter, filename_media_type_condition_literal
 from app.metadata import thumb_cache_path
 from app.storage_stats import get_storage_stats
+from app.db_backup import create_database_backup, list_database_backups
 from app.models import (
     ApplyResultOut,
     CalendarMonthEventOut,
@@ -75,6 +76,8 @@ from app.models import (
     ScanStatusOut,
     BlurAnalysisStatusOut,
     StorageStatsOut,
+    DatabaseBackupOut,
+    DatabaseBackupListOut,
     TagCreate,
     TagOut,
     TagUpdate,
@@ -95,7 +98,7 @@ from app.scanner import scan_state, start_scan_background
 from app.blur_analysis import blur_analysis_state, start_blur_analysis_background
 from app.trash_restore import restore_from_trash
 
-app = FastAPI(title="Image Organizer", version="2026.07.11c")
+app = FastAPI(title="Image Organizer", version="2026.07.11d")
 
 app.add_middleware(
     CORSMiddleware,
@@ -191,6 +194,17 @@ def api_update_config(body: ConfigUpdate):
 def api_storage_stats():
     with get_conn() as conn:
         return StorageStatsOut(**get_storage_stats(conn))
+
+
+@app.post("/api/database/backup", response_model=DatabaseBackupOut)
+def api_create_database_backup():
+    with get_conn() as conn:
+        return DatabaseBackupOut(**create_database_backup(conn))
+
+
+@app.get("/api/database/backups", response_model=DatabaseBackupListOut)
+def api_list_database_backups():
+    return DatabaseBackupListOut(items=[DatabaseBackupOut(**item) for item in list_database_backups()])
 
 
 @app.post("/api/scan/inbox")

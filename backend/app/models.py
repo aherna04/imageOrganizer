@@ -34,6 +34,17 @@ class StorageStatsOut(BaseModel):
     database_bytes: int
 
 
+class DatabaseBackupOut(BaseModel):
+    path: str
+    filename: str
+    size_bytes: int
+    created_at: str
+
+
+class DatabaseBackupListOut(BaseModel):
+    items: list[DatabaseBackupOut]
+
+
 class FileOut(BaseModel):
     id: int
     path: str

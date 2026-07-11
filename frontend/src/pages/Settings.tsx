@@ -7,8 +7,16 @@ function formatCount(count: number, label: string): string {
   return `${count.toLocaleString()} ${label}${count === 1 ? "" : "s"}`;
 }
 
+function formatBackupTime(iso: string): string {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return iso;
+  return date.toLocaleString();
+}
+
 export default function Settings() {
   const qc = useQueryClient();
+  const [backupMessage, setBackupMessage] = useState<string | null>(null);
+
   const { data: config } = useQuery({
     queryKey: ["config"],
     queryFn: api.getConfig,
@@ -17,6 +25,11 @@ export default function Settings() {
   const { data: storage } = useQuery({
     queryKey: ["storage-stats"],
     queryFn: api.getStorageStats,
+  });
+
+  const { data: backupsData } = useQuery({
+    queryKey: ["database-backups"],
+    queryFn: api.listDatabaseBackups,
   });
 
   const [form, setForm] = useState<Record<string, string>>({});
@@ -30,9 +43,22 @@ export default function Settings() {
     },
   });
 
+  const backup = useMutation({
+    mutationFn: api.createDatabaseBackup,
+    onSuccess: (result) => {
+      setBackupMessage(`Created ${result.filename} (${formatFileSize(result.size_bytes)})`);
+      qc.invalidateQueries({ queryKey: ["database-backups"] });
+      qc.invalidateQueries({ queryKey: ["storage-stats"] });
+    },
+    onError: (err: Error) => {
+      setBackupMessage(err.message || "Backup failed");
+    },
+  });
+
   if (!config) return <div>Loading...</div>;
 
   const val = (key: keyof typeof config) => form[key] ?? config[key];
+  const backups = (backupsData?.items ?? []).slice(0, 10);
 
   return (
     <div>
@@ -81,6 +107,38 @@ export default function Settings() {
             <span className="storage-stat-meta">index + WAL</span>
           </div>
         </div>
+
+        <div className="database-backup-actions">
+          <button
+            type="button"
+            className="btn btn-secondary"
+            disabled={backup.isPending}
+            onClick={() => {
+              setBackupMessage(null);
+              backup.mutate();
+            }}
+          >
+            {backup.isPending ? "Backing up..." : "Backup database"}
+          </button>
+          {backupMessage && <p className="database-backup-message">{backupMessage}</p>}
+        </div>
+
+        {backups.length > 0 && (
+          <div className="database-backup-list">
+            <h4 className="database-backup-list-title">Recent backups</h4>
+            <ul>
+              {backups.map((item) => (
+                <li key={item.path} className="database-backup-item">
+                  <span className="database-backup-filename">{item.filename}</span>
+                  <span className="database-backup-meta">
+                    {formatFileSize(item.size_bytes)} · {formatBackupTime(item.created_at)}
+                  </span>
+                  <span className="database-backup-path path">{item.path}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </section>
 
       <section className="settings-section">

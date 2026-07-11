@@ -2,7 +2,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { api, CalendarMonthFilter, CalendarMediaType, CalendarMonthSummary } from "../api/client";
-import CalendarDayPanel from "../components/CalendarDayPanel";
+import CalendarDayPanel, { CalendarDayLabelContext } from "../components/CalendarDayPanel";
+import CalendarDayLabelPanel from "../components/CalendarDayLabelPanel";
 import CalendarThreeMonthView from "../components/CalendarThreeMonthView";
 import { calendarQueryOptions } from "../utils/calendarQueryOptions";
 import { monthFilterToDayFilter } from "../utils/calendarFilter";
@@ -47,6 +48,7 @@ export default function CalendarPage() {
   const [calendarLabelFilter, setCalendarLabelFilter] = useState<"all" | "unlabeled">("all");
   const [windowStartIndex, setWindowStartIndex] = useState(0);
   const [monthFilter, setMonthFilter] = useState<CalendarMonthFilter | null>(null);
+  const [labelContext, setLabelContext] = useState<CalendarDayLabelContext | null>(null);
 
   const globalUnlabeled = calendarLabelFilter === "unlabeled";
 
@@ -129,6 +131,7 @@ export default function CalendarPage() {
   };
 
   const handleClearDay = () => {
+    setLabelContext(null);
     navigate(`/calendar/${urlYear}/${urlMonth}`);
   };
 
@@ -212,6 +215,26 @@ export default function CalendarPage() {
       <div className={`calendar-page-layout ${selectedDayStr ? "has-day" : ""}`}>
         {activeMonths.length === 0 ? (
           <div className="empty-state">No photos in archive. Scan inbox or archive to browse by date.</div>
+        ) : selectedDayStr ? (
+          <div className="calendar-left-column">
+            <CalendarThreeMonthView
+              visibleMonths={visibleMonths}
+              windowStartIndex={windowStartIndex}
+              totalMonths={activeMonths.length}
+              location={location}
+              mediaType={mediaType}
+              globalUnlabeled={globalUnlabeled}
+              selectedDay={selectedDay}
+              monthFilter={monthFilter}
+              mode="focus"
+              showWindowNav
+              onPrev={handlePrev}
+              onNext={handleNext}
+              onSelectDay={handleSelectDay}
+              onSelectFilter={handleSelectFilter}
+            />
+            <CalendarDayLabelPanel context={labelContext} />
+          </div>
         ) : (
           <CalendarThreeMonthView
             visibleMonths={visibleMonths}
@@ -222,8 +245,8 @@ export default function CalendarPage() {
             globalUnlabeled={globalUnlabeled}
             selectedDay={selectedDay}
             monthFilter={monthFilter}
-            mode={selectedDayStr ? "focus" : "browse"}
-            showWindowNav={!!selectedDayStr}
+            mode="browse"
+            showWindowNav={false}
             onPrev={handlePrev}
             onNext={handleNext}
             onSelectDay={handleSelectDay}
@@ -237,6 +260,7 @@ export default function CalendarPage() {
             mediaType={mediaType}
             filter={dayPanelFilter}
             onClose={handleClearDay}
+            onLabelContextChange={setLabelContext}
           />
         )}
       </div>

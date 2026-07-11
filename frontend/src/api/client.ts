@@ -79,6 +79,13 @@ export interface StorageStats {
   database_bytes: number;
 }
 
+export interface DatabaseBackup {
+  path: string;
+  filename: string;
+  size_bytes: number;
+  created_at: string;
+}
+
 export interface Metadata {
   capture_date: string | null;
   camera: string | null;
@@ -237,6 +244,10 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 export const api = {
   getConfig: () => request<Config>("/api/config"),
   getStorageStats: () => request<StorageStats>("/api/storage/stats"),
+  createDatabaseBackup: () =>
+    request<DatabaseBackup>("/api/database/backup", { method: "POST" }),
+  listDatabaseBackups: () =>
+    request<{ items: DatabaseBackup[] }>("/api/database/backups"),
   updateConfig: (data: Partial<Config>) =>
     request<Config>("/api/config", { method: "PATCH", body: JSON.stringify(data) }),
 

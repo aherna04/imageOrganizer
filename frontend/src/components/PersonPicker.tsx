@@ -7,13 +7,14 @@ interface Props {
   fileId: number;
   filePeople: Person[];
   onChange: () => void;
+  hideLabel?: boolean;
 }
 
 function personIds(people: Person[]) {
   return people.map((p) => p.id);
 }
 
-export default function PersonPicker({ fileId, filePeople, onChange }: Props) {
+export default function PersonPicker({ fileId, filePeople, onChange, hideLabel = false }: Props) {
   const qc = useQueryClient();
   const [newName, setNewName] = useState("");
   const [showNew, setShowNew] = useState(false);
@@ -68,8 +69,10 @@ export default function PersonPicker({ fileId, filePeople, onChange }: Props) {
 
   return (
     <div>
-      <label style={{ fontSize: "0.875rem", color: "#aab0bc" }}>People</label>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem", marginTop: "0.35rem" }}>
+      {!hideLabel && (
+        <label style={{ fontSize: "0.875rem", color: "#aab0bc" }}>People</label>
+      )}
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem", marginTop: hideLabel ? 0 : "0.35rem" }}>
         {allPeople.map((person) => (
           <button
             key={person.id}

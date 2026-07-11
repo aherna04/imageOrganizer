@@ -6,7 +6,8 @@ import InboxReviewBatchBar from "../components/InboxReviewBatchBar";
 import InboxUsedCamerasBar from "../components/InboxUsedCamerasBar";
 import InboxUsedPeopleBar from "../components/InboxUsedPeopleBar";
 import InboxUsedTagsBar from "../components/InboxUsedTagsBar";
-import PhotoGridWithAlerts from "../components/PhotoGridWithAlerts";
+import PhotoGrid from "../components/PhotoGrid";
+import PhotoAlertsBar from "../components/PhotoAlertsBar";
 import PhotoDetail from "../components/PhotoDetail";
 import ScanStatusBanner from "../components/ScanStatusBanner";
 import SingleFileLabelEditors from "../components/SingleFileLabelEditors";
@@ -14,6 +15,7 @@ import BulkLabelEditors from "../components/BulkLabelEditors";
 import { invalidateAfterDateChange } from "../utils/invalidateAfterDateChange";
 import { isEditableTarget } from "../utils/photoNavigation";
 import { togglePhotoSelection } from "../utils/photoSelection";
+import { usePhotoGridAlerts } from "../utils/usePhotoGridAlerts";
 
 type InboxFilter = "all" | "unlabeled" | "delete_queue";
 
@@ -218,6 +220,15 @@ export default function Inbox() {
   };
 
   const selectedFiles = data?.items.filter((f) => selectedIds.includes(f.id)) ?? [];
+  const gridFiles = data?.items ?? [];
+  const {
+    alertFilter,
+    setAlertFilter,
+    duplicateGroups,
+    duplicateIndex,
+    dateAlerts,
+    visibleFiles,
+  } = usePhotoGridAlerts(gridFiles);
   const total = data?.total ?? 0;
   const visibleCount = data?.items.length ?? 0;
   const queueCount = reviewQueue?.total ?? 0;
@@ -244,7 +255,7 @@ export default function Inbox() {
   }, [total, tagFilterId, activeTagName, personFilterId, activePersonName, cameraFilter, inboxFilter]);
 
   return (
-    <div>
+    <div className="inbox-page">
       <div className="page-header">
         <h2>Inbox</h2>
         <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
@@ -257,23 +268,12 @@ export default function Inbox() {
           </button>
         </div>
       </div>
-      <p style={{ color: "#8891a0", marginBottom: "1rem" }}>
-        Drop new photos into your inbox folder, scan, then submit batches (up to {INBOX_BATCH_LIMIT}) to
-        Review when ready. Use checkboxes for bulk labeling; click a thumbnail to view metadata.
+      <p className="page-intro">
+        Scan, submit batches to Review, and label with checkboxes or click for detail.
       </p>
 
-      {inboxFilter !== "delete_queue" && (
-        <InboxReviewBatchBar
-          availableCount={total}
-          queueCount={queueCount}
-          selectedCount={selectedIds.length}
-          submitting={submitBatch.isPending}
-          onSubmitNext={() => submitBatch.mutate(undefined)}
-          onSubmitSelected={() => submitBatch.mutate(selectedIds)}
-        />
-      )}
-
-      <div className="inbox-filter-bar">
+      <div className="inbox-sticky-controls">
+      <div className="inbox-toolbar">
         <div className="photo-alerts-filter">
           <button
             type="button"
@@ -298,6 +298,7 @@ export default function Inbox() {
             {deleteQueueCount > 0 && ` (${deleteQueueCount})`}
           </button>
         </div>
+
         {inboxFilter === "unlabeled" && total > 0 && (
           <span className="photo-alerts-chip date">{total} untagged</span>
         )}
@@ -310,21 +311,32 @@ export default function Inbox() {
         {personFilterId && activePersonName && (
           <span className="photo-alerts-chip duplicate">{activePersonName}</span>
         )}
-        {cameraFilter && (
-          <span className="photo-alerts-chip duplicate">{cameraFilter}</span>
-        )}
-      </div>
+        {cameraFilter && <span className="photo-alerts-chip duplicate">{cameraFilter}</span>}
 
-      <BulkEventAssignBar
-        selectedIds={selectedIds}
-        totalCount={data?.total}
-        visibleCount={visibleCount}
-        onSelectAll={() => setSelectedIds(data?.items.map((f) => f.id) ?? [])}
-        onClear={() => {
-          setSelectedIds([]);
-          selectionAnchorRef.current = null;
-        }}
-      />
+        {inboxFilter !== "delete_queue" && (
+          <InboxReviewBatchBar
+            compact
+            availableCount={total}
+            queueCount={queueCount}
+            selectedCount={selectedIds.length}
+            submitting={submitBatch.isPending}
+            onSubmitNext={() => submitBatch.mutate(undefined)}
+            onSubmitSelected={() => submitBatch.mutate(selectedIds)}
+          />
+        )}
+
+        <BulkEventAssignBar
+          variant="inline"
+          selectedIds={selectedIds}
+          totalCount={data?.total}
+          visibleCount={visibleCount}
+          onSelectAll={() => setSelectedIds(data?.items.map((f) => f.id) ?? [])}
+          onClear={() => {
+            setSelectedIds([]);
+            selectionAnchorRef.current = null;
+          }}
+        />
+      </div>
 
       {inboxFilter === "delete_queue" && selectedIds.length > 0 && (
         <div style={{ display: "flex", gap: "0.75rem", alignItems: "center", marginBottom: "1rem" }}>
@@ -339,11 +351,11 @@ export default function Inbox() {
       )}
 
       {selectedIds.length === 0 && inboxFilter !== "delete_queue" && (
-        <>
+        <div className="inbox-quick-filters">
           <InboxUsedPeopleBar activePersonId={personFilterId} onSelectPerson={changePersonFilter} />
           <InboxUsedTagsBar activeTagId={tagFilterId} onSelectTag={changeTagFilter} />
           <InboxUsedCamerasBar activeCamera={cameraFilter} onSelectCamera={changeCameraFilter} />
-        </>
+        </div>
       )}
 
       {inboxFilter !== "delete_queue" && selectedIds.length === 1 && selectedFiles[0] && (
@@ -353,8 +365,17 @@ export default function Inbox() {
         <BulkLabelEditors selectedFiles={selectedFiles} onChange={handleDateChange} showTagSearch />
       )}
 
-      <PhotoGridWithAlerts
-        files={data?.items ?? []}
+      <PhotoAlertsBar
+        files={gridFiles}
+        duplicateGroups={duplicateGroups}
+        filter={alertFilter}
+        onFilterChange={setAlertFilter}
+        onFixDates={handleDateChange}
+      />
+      </div>
+
+      <PhotoGrid
+        files={visibleFiles}
         selectedIds={selectedIds}
         activeDetailId={detailFile?.id}
         onToggleSelect={toggleSelect}
@@ -362,7 +383,9 @@ export default function Inbox() {
         multiSelectMode
         editableLabels
         onLabelsChange={handleLabelsChange}
-        onAlertsChange={handleDateChange}
+        duplicateIndex={duplicateIndex}
+        dateAlerts={dateAlerts}
+        alertFilter={alertFilter}
       />
       {detailFile && (
         <PhotoDetail

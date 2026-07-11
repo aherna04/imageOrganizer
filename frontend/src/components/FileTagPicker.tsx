@@ -37,20 +37,30 @@ export default function FileTagPicker({ fileId, fileTags, onChange, showTagSearc
   const selected = new Set(selectedIds);
   const alwaysInclude = useMemo(() => new Set(selectedIds), [selectedIds]);
   const searchActive = searchQuery.trim().length > 0;
+  const searchFirst = showTagSearch && !searchActive;
 
   const recentTags = useMemo(() => {
     const byId = new Map(allTags.map((t) => [t.id, t]));
     return recentIds.map((id) => byId.get(id)).filter((t): t is Tag => t != null);
   }, [allTags, recentIds]);
 
+  const assignedTags = useMemo(
+    () => allTags.filter((t) => selected.has(t.id)),
+    [allTags, selectedIds],
+  );
+
   const visibleTags = useMemo(() => {
+    if (searchFirst) {
+      const recentSet = new Set(recentTags.map((t) => t.id));
+      return assignedTags.filter((t) => !recentSet.has(t.id));
+    }
     let list = showTagSearch ? filterTagsByQuery(allTags, searchQuery, alwaysInclude) : allTags;
     if (!searchActive && recentTags.length > 0) {
       const recentSet = new Set(recentTags.map((t) => t.id));
       list = list.filter((t) => !recentSet.has(t.id));
     }
     return list;
-  }, [allTags, searchQuery, alwaysInclude, showTagSearch, searchActive, recentTags]);
+  }, [allTags, searchQuery, alwaysInclude, showTagSearch, searchActive, recentTags, searchFirst, assignedTags]);
 
   const toggle = async (tagId: number) => {
     const prev = selectedIds;
@@ -90,9 +100,8 @@ export default function FileTagPicker({ fileId, fileTags, onChange, showTagSearc
   return (
     <div>
       <label style={{ fontSize: "0.875rem", color: "#aab0bc" }}>Tags</label>
-      {showTagSearch && (
-        <LabelSearchInput value={searchQuery} onChange={setSearchQuery} />
-      )}
+      {showTagSearch && <LabelSearchInput value={searchQuery} onChange={setSearchQuery} />}
+      {searchFirst && <p className="label-search-hint">Search to add more tags</p>}
       {!searchActive && recentTags.length > 0 && (
         <div className="recent-tags">
           <span className="recent-tags-label">Recently used</span>
@@ -110,7 +119,7 @@ export default function FileTagPicker({ fileId, fileTags, onChange, showTagSearc
           </div>
         </div>
       )}
-      {showTagSearch && visibleTags.length === 0 ? (
+      {showTagSearch && searchActive && visibleTags.length === 0 ? (
         <p className="label-search-empty">No tags match — try another term</p>
       ) : (
         <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem", marginTop: "0.35rem" }}>

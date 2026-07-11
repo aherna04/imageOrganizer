@@ -2,6 +2,15 @@
 
 Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
+## [2026.07.11a] - 2026-07-11
+
+### Changed
+
+- Inbox compact layout — unified toolbar, inline quick filters, search-first tags, collapsible Events/People sections
+- Compact bulk date editor — bulk selection uses the same inline date row as single-select (`Date · N photos · [input] Apply From filename`)
+- Inbox sticky controls — toolbar, filters, label editors, and duplicate/date alerts bar stay pinned while scrolling the photo grid; page title and scan header scroll away
+- App scroll container — `.main` is the scrollport so sticky positioning works on Inbox and Review
+
 ## [2026.07.11] - 2026-07-11
 
 ### Fixed

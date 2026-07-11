@@ -29,38 +29,31 @@ export default function InboxUsedTagsBar({ activeTagId, onSelectTag }: Props) {
 
   if (tags.length === 0) return null;
 
-  const isFiltering = searchQuery.trim().length > 0;
-
   return (
-    <div className="inbox-used-tags">
-      <div className="inbox-used-tags-header">
-        <label className="inbox-used-tags-label">Used tags</label>
-        <span className="inbox-used-tags-hint">
-          {isFiltering
-            ? `${filteredTags.length} of ${tags.length} tags`
-            : "Filter by tag, then select photos to add more tags"}
-        </span>
+    <div className="inbox-quick-filter-row">
+      <label className="inbox-quick-filter-label">Tags</label>
+      <div className="inbox-quick-filter-body">
+        <LabelSearchInput value={searchQuery} onChange={setSearchQuery} />
+        {filteredTags.length === 0 ? (
+          <p className="label-search-empty">No tags match</p>
+        ) : (
+          <div className="inbox-quick-filter-chips">
+            {filteredTags.map((tag) => {
+              const isActive = activeTagId === tag.id;
+              return (
+                <button
+                  key={tag.id}
+                  type="button"
+                  className={`calendar-event-chip calendar-tag-chip${isActive ? " active" : ""}`}
+                  onClick={() => onSelectTag(isActive ? null : tag.id)}
+                >
+                  {tag.name} ({tag.photo_count})
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
-      <LabelSearchInput value={searchQuery} onChange={setSearchQuery} />
-      {filteredTags.length === 0 ? (
-        <p className="label-search-empty">No tags match — try another term</p>
-      ) : (
-        <div className="inbox-used-tags-chips">
-          {filteredTags.map((tag) => {
-            const isActive = activeTagId === tag.id;
-            return (
-              <button
-                key={tag.id}
-                type="button"
-                className={`calendar-event-chip calendar-tag-chip${isActive ? " active" : ""}`}
-                onClick={() => onSelectTag(isActive ? null : tag.id)}
-              >
-                {tag.name} ({tag.photo_count})
-              </button>
-            );
-          })}
-        </div>
-      )}
     </div>
   );
 }

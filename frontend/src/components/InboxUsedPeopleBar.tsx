@@ -16,12 +16,9 @@ export default function InboxUsedPeopleBar({ activePersonId, onSelectPerson }: P
   if (people.length === 0) return null;
 
   return (
-    <div className="inbox-used-tags">
-      <div className="inbox-used-tags-header">
-        <label className="inbox-used-tags-label">Used people</label>
-        <span className="inbox-used-tags-hint">Filter by person, then select photos to add more labels</span>
-      </div>
-      <div className="inbox-used-tags-chips">
+    <div className="inbox-quick-filter-row">
+      <label className="inbox-quick-filter-label">People</label>
+      <div className="inbox-quick-filter-chips">
         {people.map((person) => {
           const isActive = activePersonId === person.id;
           return (

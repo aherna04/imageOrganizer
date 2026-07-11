@@ -6,6 +6,7 @@ import { filenameDateDiffers, parseDateFromFilename } from "../utils/filenameDat
 interface Props {
   files: MediaFile[];
   onChange: () => void;
+  compact?: boolean;
 }
 
 function defaultDateInput(files: MediaFile[]): string {
@@ -18,7 +19,14 @@ function defaultDateInput(files: MediaFile[]): string {
   return "";
 }
 
-export default function CaptureDateEditor({ files, onChange }: Props) {
+function bulkCurrentLabel(uniqueDays: Set<string | null | undefined>): string {
+  const days = [...uniqueDays].filter(Boolean) as string[];
+  if (days.length === 0) return "No dates";
+  if (days.length === 1) return days[0];
+  return "Mixed dates";
+}
+
+export default function CaptureDateEditor({ files, onChange, compact = false }: Props) {
   const [dateInput, setDateInput] = useState("");
   const [message, setMessage] = useState<string | null>(null);
 
@@ -59,6 +67,74 @@ export default function CaptureDateEditor({ files, onChange }: Props) {
 
   if (files.length === 0) return null;
 
+  const filenameHint =
+    !isBulk && filenameDateDiffers(files[0].capture_day, files[0].filename)
+      ? filenameDateDiffers(files[0].capture_day, files[0].filename)
+      : null;
+
+  const bulkPartialParseableHint =
+    isBulk && parseableCount > 0 && parseableCount < files.length
+      ? `${parseableCount} of ${files.length} parseable from filename`
+      : null;
+
+  const applyLabel = compact
+    ? isBulk
+      ? `Apply (${files.length})`
+      : "Apply"
+    : isBulk
+      ? `Apply to ${files.length}`
+      : "Apply";
+
+  const filenameButtonLabel = compact ? "From filename" : "Use filename date";
+
+  const controls = (
+    <div className="capture-date-controls">
+      <input type="date" value={dateInput} onChange={(e) => setDateInput(e.target.value)} />
+      <button
+        type="button"
+        className="btn btn-secondary"
+        disabled={!dateInput || applyDate.isPending}
+        onClick={() => applyDate.mutate()}
+      >
+        {applyLabel}
+      </button>
+      <button
+        type="button"
+        className="btn btn-secondary"
+        disabled={parseableCount === 0 || fixFromFilename.isPending}
+        onClick={() => fixFromFilename.mutate()}
+      >
+        {filenameButtonLabel}
+      </button>
+      {message && <span className="capture-date-message">{message}</span>}
+    </div>
+  );
+
+  if (compact) {
+    const currentLabel = isBulk
+      ? bulkCurrentLabel(uniqueDays)
+      : (files[0].capture_day ?? "Unknown");
+
+    return (
+      <div className="capture-date-editor capture-date-editor-compact">
+        <span className="capture-date-compact-label">Date</span>
+        {isBulk && (
+          <span className="capture-date-compact-count">
+            {files.length} photo{files.length === 1 ? "" : "s"}
+          </span>
+        )}
+        <span className="capture-date-compact-current">{currentLabel}</span>
+        {filenameHint && (
+          <span className="capture-date-hint capture-date-hint-inline">Filename: {filenameHint}</span>
+        )}
+        {bulkPartialParseableHint && (
+          <span className="capture-date-hint capture-date-hint-inline">{bulkPartialParseableHint}</span>
+        )}
+        {controls}
+      </div>
+    );
+  }
+
   return (
     <div className="capture-date-editor">
       <label style={{ fontSize: "0.875rem", color: "#aab0bc" }}>
@@ -81,43 +157,13 @@ export default function CaptureDateEditor({ files, onChange }: Props) {
         </div>
       )}
 
-      {!isBulk && filenameDateDiffers(files[0].capture_day, files[0].filename) && (
-        <div className="capture-date-hint">
-          Filename suggests {filenameDateDiffers(files[0].capture_day, files[0].filename)}
-        </div>
+      {filenameHint && <div className="capture-date-hint">Filename suggests {filenameHint}</div>}
+
+      {bulkPartialParseableHint && (
+        <div className="capture-date-hint">{bulkPartialParseableHint}</div>
       )}
 
-      {isBulk && parseableCount > 0 && parseableCount < files.length && (
-        <div className="capture-date-hint">
-          {parseableCount} of {files.length} have a parseable filename date
-        </div>
-      )}
-
-      <div className="capture-date-controls">
-        <input
-          type="date"
-          value={dateInput}
-          onChange={(e) => setDateInput(e.target.value)}
-        />
-        <button
-          type="button"
-          className="btn btn-secondary"
-          disabled={!dateInput || applyDate.isPending}
-          onClick={() => applyDate.mutate()}
-        >
-          {isBulk ? `Apply to ${files.length}` : "Apply"}
-        </button>
-        <button
-          type="button"
-          className="btn btn-secondary"
-          disabled={parseableCount === 0 || fixFromFilename.isPending}
-          onClick={() => fixFromFilename.mutate()}
-        >
-          Use filename date
-        </button>
-      </div>
-
-      {message && <div className="capture-date-message">{message}</div>}
+      {controls}
     </div>
   );
 }

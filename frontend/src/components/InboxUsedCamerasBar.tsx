@@ -29,38 +29,31 @@ export default function InboxUsedCamerasBar({ activeCamera, onSelectCamera }: Pr
 
   if (cameras.length === 0) return null;
 
-  const isFiltering = searchQuery.trim().length > 0;
-
   return (
-    <div className="inbox-used-tags">
-      <div className="inbox-used-tags-header">
-        <label className="inbox-used-tags-label">Used cameras</label>
-        <span className="inbox-used-tags-hint">
-          {isFiltering
-            ? `${filteredCameras.length} of ${cameras.length} cameras`
-            : "Filter by camera, then select photos to review"}
-        </span>
+    <div className="inbox-quick-filter-row">
+      <label className="inbox-quick-filter-label">Cameras</label>
+      <div className="inbox-quick-filter-body">
+        <LabelSearchInput value={searchQuery} onChange={setSearchQuery} placeholder="Search cameras…" />
+        {filteredCameras.length === 0 ? (
+          <p className="label-search-empty">No cameras match</p>
+        ) : (
+          <div className="inbox-quick-filter-chips">
+            {filteredCameras.map((camera) => {
+              const isActive = activeCamera === camera.name;
+              return (
+                <button
+                  key={camera.name}
+                  type="button"
+                  className={`calendar-event-chip calendar-tag-chip${isActive ? " active" : ""}`}
+                  onClick={() => onSelectCamera(isActive ? null : camera.name)}
+                >
+                  {camera.name} ({camera.photo_count})
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
-      <LabelSearchInput value={searchQuery} onChange={setSearchQuery} placeholder="Search cameras…" />
-      {filteredCameras.length === 0 ? (
-        <p className="label-search-empty">No cameras match — try another term</p>
-      ) : (
-        <div className="inbox-used-tags-chips">
-          {filteredCameras.map((camera) => {
-            const isActive = activeCamera === camera.name;
-            return (
-              <button
-                key={camera.name}
-                type="button"
-                className={`calendar-event-chip calendar-tag-chip${isActive ? " active" : ""}`}
-                onClick={() => onSelectCamera(isActive ? null : camera.name)}
-              >
-                {camera.name} ({camera.photo_count})
-              </button>
-            );
-          })}
-        </div>
-      )}
     </div>
   );
 }

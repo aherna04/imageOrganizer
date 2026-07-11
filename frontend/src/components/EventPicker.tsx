@@ -6,13 +6,14 @@ interface Props {
   fileId: number;
   fileEvents: Event[];
   onChange: () => void;
+  hideLabel?: boolean;
 }
 
 function eventIds(events: Event[]) {
   return events.map((e) => e.id);
 }
 
-export default function EventPicker({ fileId, fileEvents, onChange }: Props) {
+export default function EventPicker({ fileId, fileEvents, onChange, hideLabel = false }: Props) {
   const [selectedIds, setSelectedIds] = useState(() => eventIds(fileEvents));
   const propIdsKey = [...eventIds(fileEvents)].sort((a, b) => a - b).join(",");
 
@@ -43,8 +44,10 @@ export default function EventPicker({ fileId, fileEvents, onChange }: Props) {
 
   return (
     <div>
-      <label style={{ fontSize: "0.875rem", color: "#aab0bc" }}>Events</label>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem", marginTop: "0.35rem" }}>
+      {!hideLabel && (
+        <label style={{ fontSize: "0.875rem", color: "#aab0bc" }}>Events</label>
+      )}
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem", marginTop: hideLabel ? 0 : "0.35rem" }}>
         {allEvents.map((ev) => (
           <button
             key={ev.id}

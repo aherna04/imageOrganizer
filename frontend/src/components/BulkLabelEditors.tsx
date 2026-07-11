@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { MediaFile, api } from "../api/client";
 import CaptureDateEditor from "./CaptureDateEditor";
+import CollapsibleSection from "./CollapsibleSection";
 import LabelSearchInput from "./LabelSearchInput";
 import { hasDuplicateName, personLabel } from "../utils/personLabel";
 import { filterTagsByQuery } from "../utils/filterLabelsByQuery";
@@ -63,13 +64,23 @@ export default function BulkLabelEditors({ selectedFiles, onChange, showTagSearc
   }, [tags, selectedFiles]);
 
   const tagSearchActive = tagSearchQuery.trim().length > 0;
+  const searchFirst = showTagSearch && !tagSearchActive;
 
   const recentTags = useMemo(() => {
     const byId = new Map(tags.map((t) => [t.id, t]));
     return recentIds.map((id) => byId.get(id)).filter((t): t is (typeof tags)[number] => t != null);
   }, [tags, recentIds]);
 
+  const assignedTags = useMemo(
+    () => tags.filter((t) => alwaysIncludeTagIds.has(t.id)),
+    [tags, alwaysIncludeTagIds],
+  );
+
   const visibleTags = useMemo(() => {
+    if (searchFirst) {
+      const recentSet = new Set(recentTags.map((t) => t.id));
+      return assignedTags.filter((t) => !recentSet.has(t.id));
+    }
     let list = showTagSearch
       ? filterTagsByQuery(tags, tagSearchQuery, alwaysIncludeTagIds)
       : tags;
@@ -78,7 +89,27 @@ export default function BulkLabelEditors({ selectedFiles, onChange, showTagSearc
       list = list.filter((t) => !recentSet.has(t.id));
     }
     return list;
-  }, [tags, tagSearchQuery, alwaysIncludeTagIds, showTagSearch, tagSearchActive, recentTags]);
+  }, [tags, tagSearchQuery, alwaysIncludeTagIds, showTagSearch, tagSearchActive, recentTags, searchFirst, assignedTags]);
+
+  const assignedEventCount = useMemo(() => {
+    const ids = new Set<number>();
+    for (const file of selectedFiles) {
+      for (const ev of file.events ?? []) {
+        ids.add(ev.id);
+      }
+    }
+    return ids.size;
+  }, [selectedFiles]);
+
+  const assignedPeopleCount = useMemo(() => {
+    const ids = new Set<number>();
+    for (const file of selectedFiles) {
+      for (const p of file.people ?? []) {
+        ids.add(p.id);
+      }
+    }
+    return ids.size;
+  }, [selectedFiles]);
 
   const toggleEvent = async (eventId: number, cov: Coverage) => {
     if (cov === "all") {
@@ -86,7 +117,7 @@ export default function BulkLabelEditors({ selectedFiles, onChange, showTagSearc
         selectedFiles.map((file) => {
           const next = (file.events ?? []).map((e) => e.id).filter((id) => id !== eventId);
           return api.setFileEvents(file.id, next);
-        })
+        }),
       );
     } else {
       await api.assignEventIds(eventId, fileIds);
@@ -154,149 +185,152 @@ export default function BulkLabelEditors({ selectedFiles, onChange, showTagSearc
     },
   });
 
+  const eventsSection = (
+    <>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem" }}>
+        {events.map((ev) => {
+          const cov = coverage(selectedFiles, (f) => (f.events ?? []).some((e) => e.id === ev.id));
+          return (
+            <button
+              key={ev.id}
+              type="button"
+              className={`badge event-badge ${chipClass("event-badge", cov)}`}
+              style={{
+                background: cov === "all" || cov === "some" ? ev.color : "#2a2f3a",
+                color: "#fff",
+                border:
+                  cov === "all"
+                    ? `2px solid ${ev.color}`
+                    : cov === "some"
+                      ? `2px dashed ${ev.color}`
+                      : "2px solid transparent",
+              }}
+              onClick={() => toggleEvent(ev.id, cov)}
+            >
+              {ev.name}
+            </button>
+          );
+        })}
+        {!showNewEvent ? (
+          <button
+            type="button"
+            className="badge event-badge tag-badge-add"
+            onClick={() => setShowNewEvent(true)}
+          >
+            + New event
+          </button>
+        ) : (
+          <div className="tag-picker-new">
+            <input
+              type="text"
+              placeholder="Event name"
+              value={newEventName}
+              onChange={(e) => setNewEventName(e.target.value)}
+              className="tag-picker-input"
+            />
+            <input
+              type="color"
+              value={newEventColor}
+              onChange={(e) => setNewEventColor(e.target.value)}
+              title="Event color"
+            />
+            <button
+              type="button"
+              className="btn btn-secondary"
+              disabled={!newEventName.trim() || createEvent.isPending}
+              onClick={() => createEvent.mutate()}
+            >
+              Add
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => {
+                setShowNewEvent(false);
+                setNewEventName("");
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        )}
+      </div>
+    </>
+  );
+
+  const peopleSection = (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem" }}>
+      {people.map((person) => {
+        const cov = coverage(selectedFiles, (f) => (f.people ?? []).some((p) => p.id === person.id));
+        return (
+          <button
+            key={person.id}
+            type="button"
+            className={chipClass("badge person-badge", cov)}
+            onClick={() => togglePerson(person.id, cov)}
+          >
+            {personLabel(person, people)}
+          </button>
+        );
+      })}
+      {!showNewPerson ? (
+        <button
+          type="button"
+          className="badge person-badge person-badge-add"
+          onClick={() => setShowNewPerson(true)}
+        >
+          + Add person
+        </button>
+      ) : (
+        <div className="tag-picker-new">
+          <input
+            type="text"
+            placeholder="Person name"
+            value={newPersonName}
+            onChange={(e) => setNewPersonName(e.target.value)}
+            className="tag-picker-input"
+          />
+          {nameExists && (
+            <span className="person-duplicate-warning">
+              {newPersonName.trim()} already exists — use existing or pick a different name.
+            </span>
+          )}
+          <button
+            type="button"
+            className="btn btn-secondary"
+            disabled={!newPersonName.trim() || createPerson.isPending}
+            onClick={() => createPerson.mutate()}
+          >
+            Add
+          </button>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={() => {
+              setShowNewPerson(false);
+              setNewPersonName("");
+            }}
+          >
+            Cancel
+          </button>
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <div className="single-file-label-editors">
-      <CaptureDateEditor files={selectedFiles} onChange={onChange} />
-      <div>
-        <label style={{ fontSize: "0.875rem", color: "#aab0bc" }}>
-          Events ({selectedFiles.length} photos)
-        </label>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem", marginTop: "0.35rem" }}>
-          {events.map((ev) => {
-            const cov = coverage(selectedFiles, (f) => (f.events ?? []).some((e) => e.id === ev.id));
-            return (
-              <button
-                key={ev.id}
-                type="button"
-                className={`badge event-badge ${chipClass("event-badge", cov)}`}
-                style={{
-                  background: cov === "all" || cov === "some" ? ev.color : "#2a2f3a",
-                  color: "#fff",
-                  border:
-                    cov === "all"
-                      ? `2px solid ${ev.color}`
-                      : cov === "some"
-                        ? `2px dashed ${ev.color}`
-                        : "2px solid transparent",
-                }}
-                onClick={() => toggleEvent(ev.id, cov)}
-              >
-                {ev.name}
-              </button>
-            );
-          })}
-          {!showNewEvent ? (
-            <button
-              type="button"
-              className="badge event-badge tag-badge-add"
-              onClick={() => setShowNewEvent(true)}
-            >
-              + New event
-            </button>
-          ) : (
-            <div className="tag-picker-new">
-              <input
-                type="text"
-                placeholder="Event name"
-                value={newEventName}
-                onChange={(e) => setNewEventName(e.target.value)}
-                className="tag-picker-input"
-              />
-              <input
-                type="color"
-                value={newEventColor}
-                onChange={(e) => setNewEventColor(e.target.value)}
-                title="Event color"
-              />
-              <button
-                type="button"
-                className="btn btn-secondary"
-                disabled={!newEventName.trim() || createEvent.isPending}
-                onClick={() => createEvent.mutate()}
-              >
-                Add
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={() => {
-                  setShowNewEvent(false);
-                  setNewEventName("");
-                }}
-              >
-                Cancel
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div style={{ marginTop: "0.75rem" }}>
-        <label style={{ fontSize: "0.875rem", color: "#aab0bc" }}>People</label>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem", marginTop: "0.35rem" }}>
-          {people.map((person) => {
-            const cov = coverage(selectedFiles, (f) => (f.people ?? []).some((p) => p.id === person.id));
-            return (
-              <button
-                key={person.id}
-                type="button"
-                className={chipClass("badge person-badge", cov)}
-                onClick={() => togglePerson(person.id, cov)}
-              >
-                {personLabel(person, people)}
-              </button>
-            );
-          })}
-          {!showNewPerson ? (
-            <button
-              type="button"
-              className="badge person-badge person-badge-add"
-              onClick={() => setShowNewPerson(true)}
-            >
-              + Add person
-            </button>
-          ) : (
-            <div className="tag-picker-new">
-              <input
-                type="text"
-                placeholder="Person name"
-                value={newPersonName}
-                onChange={(e) => setNewPersonName(e.target.value)}
-                className="tag-picker-input"
-              />
-              {nameExists && (
-                <span className="person-duplicate-warning">
-                  {newPersonName.trim()} already exists — use existing or pick a different name.
-                </span>
-              )}
-              <button
-                type="button"
-                className="btn btn-secondary"
-                disabled={!newPersonName.trim() || createPerson.isPending}
-                onClick={() => createPerson.mutate()}
-              >
-                Add
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={() => {
-                  setShowNewPerson(false);
-                  setNewPersonName("");
-                }}
-              >
-                Cancel
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div style={{ marginTop: "0.75rem" }}>
+      <CaptureDateEditor files={selectedFiles} onChange={onChange} compact />
+      <CollapsibleSection title="Events" count={assignedEventCount || undefined} defaultOpen={false}>
+        {eventsSection}
+      </CollapsibleSection>
+      <CollapsibleSection title="People" count={assignedPeopleCount || undefined} defaultOpen={false}>
+        {peopleSection}
+      </CollapsibleSection>
+      <div className="label-editor-tags">
         <label style={{ fontSize: "0.875rem", color: "#aab0bc" }}>Tags</label>
-        {showTagSearch && (
-          <LabelSearchInput value={tagSearchQuery} onChange={setTagSearchQuery} />
-        )}
+        {showTagSearch && <LabelSearchInput value={tagSearchQuery} onChange={setTagSearchQuery} />}
+        {searchFirst && <p className="label-search-hint">Search to add more tags</p>}
         {!tagSearchActive && recentTags.length > 0 && (
           <div className="recent-tags">
             <span className="recent-tags-label">Recently used</span>
@@ -317,57 +351,57 @@ export default function BulkLabelEditors({ selectedFiles, onChange, showTagSearc
             </div>
           </div>
         )}
-        {showTagSearch && visibleTags.length === 0 ? (
+        {showTagSearch && tagSearchActive && visibleTags.length === 0 ? (
           <p className="label-search-empty">No tags match — try another term</p>
         ) : (
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem", marginTop: "0.35rem" }}>
-          {visibleTags.map((tag) => {
-            const cov = tagCoverage(tag.id);
-            return (
-              <button
-                key={tag.id}
-                type="button"
-                className={chipClass("badge tag-badge", cov)}
-                onClick={() => toggleTag(tag.id, cov)}
-              >
-                {tag.name}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem", marginTop: "0.35rem" }}>
+            {visibleTags.map((tag) => {
+              const cov = tagCoverage(tag.id);
+              return (
+                <button
+                  key={tag.id}
+                  type="button"
+                  className={chipClass("badge tag-badge", cov)}
+                  onClick={() => toggleTag(tag.id, cov)}
+                >
+                  {tag.name}
+                </button>
+              );
+            })}
+            {!showNewTag ? (
+              <button type="button" className="badge tag-badge tag-badge-add" onClick={() => setShowNewTag(true)}>
+                + Add tag
               </button>
-            );
-          })}
-          {!showNewTag ? (
-            <button type="button" className="badge tag-badge tag-badge-add" onClick={() => setShowNewTag(true)}>
-              + Add tag
-            </button>
-          ) : (
-            <div className="tag-picker-new">
-              <input
-                type="text"
-                placeholder="Tag name"
-                value={newTagName}
-                onChange={(e) => setNewTagName(e.target.value)}
-                className="tag-picker-input"
-              />
-              <button
-                type="button"
-                className="btn btn-secondary"
-                disabled={!newTagName.trim() || createTag.isPending}
-                onClick={() => createTag.mutate()}
-              >
-                Add
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={() => {
-                  setShowNewTag(false);
-                  setNewTagName("");
-                }}
-              >
-                Cancel
-              </button>
-            </div>
-          )}
-        </div>
+            ) : (
+              <div className="tag-picker-new">
+                <input
+                  type="text"
+                  placeholder="Tag name"
+                  value={newTagName}
+                  onChange={(e) => setNewTagName(e.target.value)}
+                  className="tag-picker-input"
+                />
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  disabled={!newTagName.trim() || createTag.isPending}
+                  onClick={() => createTag.mutate()}
+                >
+                  Add
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => {
+                    setShowNewTag(false);
+                    setNewTagName("");
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
+          </div>
         )}
       </div>
     </div>

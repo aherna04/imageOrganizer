@@ -1,12 +1,5 @@
-import { useMemo, useState, type ComponentProps } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { api } from "../api/client";
-import {
-  AlertFilter,
-  buildDateAlertMap,
-  buildDuplicateIndex,
-  filterFilesByAlerts,
-} from "../utils/photoAlerts";
+import { type ComponentProps } from "react";
+import { usePhotoGridAlerts } from "../utils/usePhotoGridAlerts";
 import PhotoAlertsBar from "./PhotoAlertsBar";
 import PhotoGrid from "./PhotoGrid";
 
@@ -17,19 +10,14 @@ interface Props extends PhotoGridProps {
 }
 
 export default function PhotoGridWithAlerts({ files, onAlertsChange, ...gridProps }: Props) {
-  const [alertFilter, setAlertFilter] = useState<AlertFilter>("all");
-
-  const { data: duplicateGroups = [] } = useQuery({
-    queryKey: ["duplicates"],
-    queryFn: api.duplicates,
-  });
-
-  const duplicateIndex = useMemo(() => buildDuplicateIndex(duplicateGroups), [duplicateGroups]);
-  const dateAlerts = useMemo(() => buildDateAlertMap(files), [files]);
-  const visibleFiles = useMemo(
-    () => filterFilesByAlerts(files, alertFilter, dateAlerts, duplicateIndex),
-    [files, alertFilter, dateAlerts, duplicateIndex]
-  );
+  const {
+    alertFilter,
+    setAlertFilter,
+    duplicateGroups,
+    duplicateIndex,
+    dateAlerts,
+    visibleFiles,
+  } = usePhotoGridAlerts(files);
 
   return (
     <>

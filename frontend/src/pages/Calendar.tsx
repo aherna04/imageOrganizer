@@ -1,10 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { api, CalendarMonthFilter, CalendarMediaType, CalendarMonthSummary } from "../api/client";
 import CalendarDayPanel from "../components/CalendarDayPanel";
 import CalendarThreeMonthView from "../components/CalendarThreeMonthView";
+import { calendarQueryOptions } from "../utils/calendarQueryOptions";
 import { monthFilterToDayFilter } from "../utils/calendarFilter";
+import { invalidateCalendarQueries } from "../utils/invalidateCalendarQueries";
 
 function findMonthIndex(months: CalendarMonthSummary[], year: number, month: number): number {
   return months.findIndex((m) => m.year === year && m.month === month);
@@ -33,6 +35,7 @@ function nearestMonthIndex(months: CalendarMonthSummary[]): number {
 
 export default function CalendarPage() {
   const navigate = useNavigate();
+  const qc = useQueryClient();
   const params = useParams();
   const now = new Date();
   const urlYear = params.year ? Number(params.year) : now.getFullYear();
@@ -44,9 +47,32 @@ export default function CalendarPage() {
   const [windowStartIndex, setWindowStartIndex] = useState(0);
   const [monthFilter, setMonthFilter] = useState<CalendarMonthFilter | null>(null);
 
-  const { data: monthsData } = useQuery({
-    queryKey: ["calendar-months", location, mediaType],
-    queryFn: () => api.calendarMonths(location, mediaType),
+  const { data: monthsData } = useQuery(
+    calendarQueryOptions({
+      queryKey: ["calendar-months", location, mediaType],
+      queryFn: () => api.calendarMonths(location, mediaType),
+    }),
+  );
+
+  const { data: scanStatus } = useQuery({
+    queryKey: ["scan-status"],
+    queryFn: api.scanStatus,
+    refetchInterval: (q) => (q.state.data?.running ? 2000 : false),
+  });
+
+  const wasScanning = useRef(false);
+  useEffect(() => {
+    if (wasScanning.current && scanStatus && !scanStatus.running && scanStatus.scope === "archive") {
+      invalidateCalendarQueries(qc);
+    }
+    wasScanning.current = scanStatus?.running ?? false;
+  }, [scanStatus?.running, scanStatus?.scope, qc]);
+
+  const scanArchive = useMutation({
+    mutationFn: api.scanArchive,
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["scan-status"] });
+    },
   });
 
   const activeMonths = monthsData?.months ?? [];
@@ -90,7 +116,7 @@ export default function CalendarPage() {
     navigate(`/calendar/${year}/${month}/${day}`);
   };
 
-  const handleSelectFilter = (year: number, month: number, filter: CalendarMonthFilter | null) => {
+  const handleSelectFilter = (_year: number, _month: number, filter: CalendarMonthFilter | null) => {
     setMonthFilter(filter);
   };
 
@@ -117,7 +143,11 @@ export default function CalendarPage() {
     <div>
       <div className="page-header">
         <h2>Calendar</h2>
-        <button className="btn btn-secondary" onClick={() => api.scanArchive().then(() => {})}>
+        <button
+          className="btn btn-secondary"
+          onClick={() => scanArchive.mutate()}
+          disabled={scanArchive.isPending || scanStatus?.running}
+        >
           Scan archive
         </button>
       </div>

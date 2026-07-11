@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api/client";
 import { filterByNameQuery } from "../utils/filterLabelsByQuery";
+import { invalidateCalendarQueries } from "../utils/invalidateCalendarQueries";
 
 function cameraCountLabel(camera: { photo_count: number; inbox_count: number; archive_count: number }) {
   if (camera.inbox_count > 0 && camera.archive_count > 0) {
@@ -18,7 +19,7 @@ export default function CamerasPage() {
   const { data: status } = useQuery({
     queryKey: ["scan-status"],
     queryFn: api.scanStatus,
-    refetchInterval: (q) => (q.state.data?.running ? 1000 : false),
+    refetchInterval: (q) => (q.state.data?.running ? 2000 : false),
   });
 
   const { data, refetch } = useQuery({
@@ -33,6 +34,9 @@ export default function CamerasPage() {
     if (wasScanning.current && status && !status.running) {
       refetch();
       qc.invalidateQueries({ queryKey: ["inbox-cameras"] });
+      if (status.scope === "archive") {
+        invalidateCalendarQueries(qc);
+      }
     }
     wasScanning.current = status?.running ?? false;
   }, [status?.running, refetch, qc]);

@@ -2,6 +2,18 @@
 
 Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
+## [2026.07.11] - 2026-07-11
+
+### Fixed
+
+- Inbox scan freezing the UI — mtime fast-path skips re-hashing unchanged files; thumbnails deferred to lazy API generation
+- Inbox grid staying stale during scan — incremental refresh every ~2.5s while scan runs
+
+### Changed
+
+- Calendar session cache — month/day/label API responses cached in React Query for the browser session; invalidated on archive scan, apply, and label/date changes
+- Scan status isolated in memoized `ScanStatusBanner`; poll interval 1s → 2s (Inbox, Calendar, Cameras)
+
 ## [2026.07.10a] - 2026-07-10
 
 ### Fixed

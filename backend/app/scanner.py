@@ -8,7 +8,6 @@ from app.metadata import (
     compute_phash,
     compute_sha256,
     extract_metadata,
-    generate_thumbnail,
     iter_media_files,
 )
 
@@ -61,14 +60,13 @@ def _location_for_path(path: Path, scope: str) -> str:
     return "inbox" if scope == "inbox" else "archive"
 
 
-def _upsert_file(conn, path: Path, location: str) -> tuple[Path, int, float] | None:
-    """Upsert file row. Returns (path, file_id, mtime) for thumbnail work after commit."""
+def _upsert_file(conn, path: Path, location: str) -> None:
+    existing = conn.execute("SELECT id, mtime FROM files WHERE path = ?", (str(path),)).fetchone()
     meta = extract_metadata(path)
+    if existing and existing["mtime"] == meta["mtime"]:
+        return
     sha = compute_sha256(path)
     phash = compute_phash(path)
-    existing = conn.execute("SELECT id, mtime FROM files WHERE path = ?", (str(path),)).fetchone()
-    if existing and existing["mtime"] == meta["mtime"]:
-        return None
     conn.execute(
         """
         INSERT INTO files (
@@ -104,10 +102,6 @@ def _upsert_file(conn, path: Path, location: str) -> tuple[Path, int, float] | N
             meta["height"],
         ),
     )
-    row = conn.execute("SELECT id, mtime FROM files WHERE path = ?", (str(path),)).fetchone()
-    if row:
-        return (path, row["id"], row["mtime"])
-    return None
 
 
 def _prune_missing(conn, scope: str, seen_paths: set[str]) -> None:
@@ -129,14 +123,8 @@ def run_scan(scope: str) -> None:
         with get_conn() as conn:
             for path in files:
                 seen.add(str(path))
-                thumb = _upsert_file(conn, path, _location_for_path(path, scope))
+                _upsert_file(conn, path, _location_for_path(path, scope))
                 conn.commit()
-                if thumb:
-                    thumb_path, file_id, mtime = thumb
-                    try:
-                        generate_thumbnail(thumb_path, file_id, mtime)
-                    except Exception:
-                        pass
                 scan_state.tick()
         with get_conn() as conn:
             _prune_missing(conn, scope, seen)

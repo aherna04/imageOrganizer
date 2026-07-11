@@ -1,6 +1,6 @@
 # Image Organizer — Development Book
 
-*Release 2026.07.10 · collected Cursor implementation plans*
+*Release 2026.07.11 · collected Cursor implementation plans*
 
 Related: [ARCHITECTURE.md](ARCHITECTURE.md) · [CHANGELOG.md](../CHANGELOG.md)
 
@@ -30,70 +30,73 @@ This book collects the Cursor agent implementation plans written while building 
 13. [Event calendar deeplink](#chapter-13-event-calendar-deeplink)
 14. [Edit event title](#chapter-14-edit-event-title)
 15. [Calendar media type filter](#chapter-15-calendar-media-type-filter)
+16. [Calendar session cache](#chapter-16-calendar-session-cache)
 
 ### Part III — Inbox and Review
 
-16. [Inbox multi-select events](#chapter-16-inbox-multi-select-events)
-17. [Inbox unlabeled filter](#chapter-17-inbox-unlabeled-filter)
-18. [Inbox used tags filter](#chapter-18-inbox-used-tags-filter)
-19. [Inbox tag search](#chapter-19-inbox-tag-search)
-20. [Advance after mark delete](#chapter-20-advance-after-mark-delete)
-21. [Inbox delete queue view](#chapter-21-inbox-delete-queue-view)
-22. [Remove apply alert popup](#chapter-22-remove-apply-alert-popup)
-23. [Inbox camera filters](#chapter-23-inbox-camera-filters)
-24. [Cameras nav page](#chapter-24-cameras-nav-page)
-25. [Fix stale review preview](#chapter-25-fix-stale-review-preview)
-26. [Review page layout](#chapter-26-review-page-layout)
-27. [Inbox batch review](#chapter-27-inbox-batch-review)
-28. [Inbox bulk delete shortcut](#chapter-28-inbox-bulk-delete-shortcut)
-29. [Review queue preview release](#chapter-29-review-queue-preview-release)
-30. [Global photo sort setting](#chapter-30-global-photo-sort-setting)
+17. [Inbox multi-select events](#chapter-17-inbox-multi-select-events)
+18. [Inbox unlabeled filter](#chapter-18-inbox-unlabeled-filter)
+19. [Inbox used tags filter](#chapter-19-inbox-used-tags-filter)
+20. [Inbox tag search](#chapter-20-inbox-tag-search)
+21. [Advance after mark delete](#chapter-21-advance-after-mark-delete)
+22. [Inbox delete queue view](#chapter-22-inbox-delete-queue-view)
+23. [Remove apply alert popup](#chapter-23-remove-apply-alert-popup)
+24. [Inbox camera filters](#chapter-24-inbox-camera-filters)
+25. [Cameras nav page](#chapter-25-cameras-nav-page)
+26. [Fix stale review preview](#chapter-26-fix-stale-review-preview)
+27. [Review page layout](#chapter-27-review-page-layout)
+28. [Inbox batch review](#chapter-28-inbox-batch-review)
+29. [Inbox bulk delete shortcut](#chapter-29-inbox-bulk-delete-shortcut)
+30. [Review queue preview release](#chapter-30-review-queue-preview-release)
+31. [Global photo sort setting](#chapter-31-global-photo-sort-setting)
+32. [Fix inbox scan jank](#chapter-32-fix-inbox-scan-jank)
 
 ### Part IV — Labels and Photo UX
 
-31. [Photo tags feature](#chapter-31-photo-tags-feature)
-32. [Removable grid labels](#chapter-32-removable-grid-labels)
-33. [Bulk chip label editors](#chapter-33-bulk-chip-label-editors)
-34. [People bulk and CRUD](#chapter-34-people-bulk-and-crud)
-35. [People name browse links](#chapter-35-people-name-browse-links)
-36. [Detail multi-tag select](#chapter-36-detail-multi-tag-select)
-37. [Split select vs detail](#chapter-37-split-select-vs-detail)
-38. [Fix thumbnail orientation](#chapter-38-fix-thumbnail-orientation)
-39. [Shift-click range select](#chapter-39-shift-click-range-select)
-40. [ESC close detail viewer](#chapter-40-esc-close-detail-viewer)
-41. [Recently used tags](#chapter-41-recently-used-tags)
-42. [Browse label mode](#chapter-42-browse-label-mode)
-43. [Tags page search](#chapter-43-tags-page-search)
-44. [Single video playback](#chapter-44-single-video-playback)
-45. [Fix zoom view scroll and nav](#chapter-45-fix-zoom-view-scroll-and-nav)
-46. [Fix zoom scale-to-fit](#chapter-46-fix-zoom-scale-to-fit)
+33. [Photo tags feature](#chapter-33-photo-tags-feature)
+34. [Removable grid labels](#chapter-34-removable-grid-labels)
+35. [Bulk chip label editors](#chapter-35-bulk-chip-label-editors)
+36. [People bulk and CRUD](#chapter-36-people-bulk-and-crud)
+37. [People name browse links](#chapter-37-people-name-browse-links)
+38. [Detail multi-tag select](#chapter-38-detail-multi-tag-select)
+39. [Split select vs detail](#chapter-39-split-select-vs-detail)
+40. [Fix thumbnail orientation](#chapter-40-fix-thumbnail-orientation)
+41. [Shift-click range select](#chapter-41-shift-click-range-select)
+42. [ESC close detail viewer](#chapter-42-esc-close-detail-viewer)
+43. [Recently used tags](#chapter-43-recently-used-tags)
+44. [Browse label mode](#chapter-44-browse-label-mode)
+45. [Tags page search](#chapter-45-tags-page-search)
+46. [Single video playback](#chapter-46-single-video-playback)
+47. [Fix zoom view scroll and nav](#chapter-47-fix-zoom-view-scroll-and-nav)
+48. [Fix zoom scale-to-fit](#chapter-48-fix-zoom-scale-to-fit)
 
 ### Part V — Dates and Alerts
 
-47. [Filename date mismatch](#chapter-47-filename-date-mismatch)
-48. [Browser date correction](#chapter-48-browser-date-correction)
-49. [Photo grid alerts](#chapter-49-photo-grid-alerts)
-50. [Photo keyboard navigation](#chapter-50-photo-keyboard-navigation)
+49. [Filename date mismatch](#chapter-49-filename-date-mismatch)
+50. [Browser date correction](#chapter-50-browser-date-correction)
+51. [Photo grid alerts](#chapter-51-photo-grid-alerts)
+52. [Photo keyboard navigation](#chapter-52-photo-keyboard-navigation)
 
 ### Part VI — Dedupe and Integrity
 
-51. [Duplicate keeper defaults](#chapter-51-duplicate-keeper-defaults)
-52. [Fix tag counts after dedupe](#chapter-52-fix-tag-counts-after-dedupe)
-53. [Fix orphan tag counts](#chapter-53-fix-orphan-tag-counts)
-54. [Fix SQLite lock errors](#chapter-54-fix-sqlite-lock-errors)
+53. [Duplicate keeper defaults](#chapter-53-duplicate-keeper-defaults)
+54. [Fix tag counts after dedupe](#chapter-54-fix-tag-counts-after-dedupe)
+55. [Fix orphan tag counts](#chapter-55-fix-orphan-tag-counts)
+56. [Fix SQLite lock errors](#chapter-56-fix-sqlite-lock-errors)
+57. [Fix remaining scan locks](#chapter-57-fix-remaining-scan-locks)
 
 ### Part VII — Release and Meta
 
-55. [Version and changelog](#chapter-55-version-and-changelog)
-56. [Sidebar version badge](#chapter-56-sidebar-version-badge)
-57. [Save plans gitignore](#chapter-57-save-plans-gitignore)
-58. [Plans development book](#chapter-58-plans-development-book)
+58. [Version and changelog](#chapter-58-version-and-changelog)
+59. [Sidebar version badge](#chapter-59-sidebar-version-badge)
+60. [Save plans gitignore](#chapter-60-save-plans-gitignore)
+61. [Plans development book](#chapter-61-plans-development-book)
 
 ### Appendix — Unlisted Plans
 
-59. [Book update and release](#chapter-59-book-update-and-release)
-60. [Cursor book tool repo](#chapter-60-cursor-book-tool-repo)
-61. [Release 2026.07.10](#chapter-61-release-20260710)
+62. [Book update and release](#chapter-62-book-update-and-release)
+63. [Cursor book tool repo](#chapter-63-cursor-book-tool-repo)
+64. [Release 2026.07.10](#chapter-64-release-20260710)
 
 ### Skipped Duplicates
 
@@ -2498,11 +2501,128 @@ Existing [`.calendar-filters`](frontend/src/index.css) flex layout already suppo
 
 ---
 
+<a id="chapter-16-calendar-session-cache"></a>
+
+## Chapter 16: Calendar session cache
+
+> **Overview:** Cache calendar API responses in React Query for the browser session so revisiting Calendar reuses in-memory data instead of refetching summary/labels for every month; explicit invalidation on scan, apply, and label/date changes keeps data fresh.
+
+## Problem
+
+Every visit to Calendar in **browse mode** fires **2 requests per month** (`/api/calendar/summary` + `/api/calendar/labels`). Your log shows ~80 requests for archive (2017–2026). Navigating away and back repeats the full burst because:
+
+- [`CalendarMonthColumn.tsx`](frontend/src/components/CalendarMonthColumn.tsx) mounts one column per month with two `useQuery` hooks each
+- Global [`main.tsx`](frontend/src/main.tsx) `staleTime` is only **5 seconds** — data goes stale quickly and refetches on remount
+
+```mermaid
+flowchart LR
+    subgraph firstVisit [First visit]
+        months[calendar/months] --> col1[summary+labels x N months]
+    end
+    subgraph revisit [Revisit after 5s]
+        col1 --> refetch[Full refetch again]
+    end
+```
+
+Browse mode intentionally renders **all** months ([`Calendar.tsx`](frontend/src/pages/Calendar.tsx) `visibleMonths = activeMonths`), so first load will always be N×2 requests. Goal: **cache hits on revisit** for the life of the SPA session (container running, no hard refresh).
+
+## Approach: React Query session cache
+
+Add shared calendar query defaults with long `staleTime` and generous `gcTime`. Data stays fresh until **explicit invalidation** (already wired for apply, date changes, label edits).
+
+### 1. Shared options helper
+
+New [`frontend/src/utils/calendarQueryOptions.ts`](frontend/src/utils/calendarQueryOptions.ts):
+
+```typescript
+/** Treat calendar grid data as fresh for the SPA session; invalidate on scan/apply/label changes. */
+export const CALENDAR_STALE_TIME = Infinity;
+export const CALENDAR_GC_TIME = 1000 * 60 * 60 * 8; // 8h in memory after unmount
+
+export function calendarQueryOptions<T>(options: { queryKey: ...; queryFn: ... }) {
+  return { ...options, staleTime: CALENDAR_STALE_TIME, gcTime: CALENDAR_GC_TIME };
+}
+```
+
+Use `Infinity` for `staleTime` so revisiting Calendar serves cached data with **zero network** unless invalidated.
+
+### 2. Apply to calendar queries
+
+| File | Query keys |
+|------|------------|
+| [`Calendar.tsx`](frontend/src/pages/Calendar.tsx) | `calendar-months` |
+| [`CalendarMonthColumn.tsx`](frontend/src/components/CalendarMonthColumn.tsx) | `calendar-summary`, `calendar-labels` |
+| [`CalendarDayPanel.tsx`](frontend/src/components/CalendarDayPanel.tsx) | `calendar-day` |
+
+Example in `CalendarMonthColumn`:
+
+```typescript
+const { data: summary } = useQuery(calendarQueryOptions({
+  queryKey: ["calendar-summary", year, month, location, dayFilter, mediaType],
+  queryFn: () => api.calendarSummary(...),
+}));
+```
+
+### 3. Keep invalidation paths (no stale forever bugs)
+
+Existing invalidators already target calendar keys — no change needed except ensuring scan triggers them:
+
+| Trigger | File | Keys invalidated |
+|---------|------|------------------|
+| Apply review | [`invalidateAfterApply.ts`](frontend/src/utils/invalidateAfterApply.ts) | summary, labels, day, months |
+| Date change | [`invalidateAfterDateChange.ts`](frontend/src/utils/invalidateAfterDateChange.ts) | same |
+| Day panel labels | [`CalendarDayPanel.tsx`](frontend/src/components/CalendarDayPanel.tsx) | labels, summary |
+| Events CRUD | [`Events.tsx`](frontend/src/pages/Events.tsx) | labels, summary |
+
+**Fix gap:** [`Calendar.tsx`](frontend/src/pages/Calendar.tsx) line 120 — `scanArchive().then(() => {})` does **not** invalidate calendar cache. After scan, calendar would show stale data until hard refresh.
+
+Add helper `invalidateCalendarQueries(qc)` (or extend existing util) and call it:
+- On **Scan archive** success in `Calendar.tsx`
+- On **Scan archive** success in [`Cameras.tsx`](frontend/src/pages/Cameras.tsx) (optional but consistent)
+
+Pattern:
+
+```typescript
+qc.invalidateQueries({ queryKey: ["calendar-months"] });
+qc.invalidateQueries({ queryKey: ["calendar-summary"] });
+qc.invalidateQueries({ queryKey: ["calendar-labels"] });
+qc.invalidateQueries({ queryKey: ["calendar-day"] });
+```
+
+### 4. Out of scope (future)
+
+- **Batch API** for all month summaries in one request (backend change; would help first load)
+- **Lazy-load month columns** with Intersection Observer (helps first load in browse mode)
+- **Server-side Redis cache** (user asked for session-level; in-memory React Query is sufficient)
+
+## Verification
+
+1. Open Calendar (browse mode) — note request count in backend logs (~N×2 + 1 for months)
+2. Navigate to Inbox, wait >5s, return to Calendar — **no** summary/labels refetch (only months list if needed from cache)
+3. Change location/media filter — new query keys, expected fetch once, then cached
+4. Run **Scan archive**, return to Calendar — calendar refetches after invalidation
+5. Apply review or edit capture date — calendar updates via existing invalidators
+
+## Files to change
+
+| File | Change |
+|------|--------|
+| [`frontend/src/utils/calendarQueryOptions.ts`](frontend/src/utils/calendarQueryOptions.ts) | New shared staleTime/gcTime helper |
+| [`frontend/src/utils/invalidateAfterDateChange.ts`](frontend/src/utils/invalidateAfterDateChange.ts) or new `invalidateCalendarQueries.ts` | Extract reusable calendar invalidation |
+| [`Calendar.tsx`](frontend/src/pages/Calendar.tsx) | Use calendar query options; invalidate after scan |
+| [`CalendarMonthColumn.tsx`](frontend/src/components/CalendarMonthColumn.tsx) | Use calendar query options |
+| [`CalendarDayPanel.tsx`](frontend/src/components/CalendarDayPanel.tsx) | Use calendar query options |
+| [`Cameras.tsx`](frontend/src/pages/Cameras.tsx) | Invalidate calendar after archive scan (optional) |
+
+No backend changes. Patch release **2026.07.10b** if shipping immediately.
+
+---
+
 # Part III — Inbox and Review
 
-<a id="chapter-16-inbox-multi-select-events"></a>
+<a id="chapter-17-inbox-multi-select-events"></a>
 
-## Chapter 16: Inbox multi-select events
+## Chapter 17: Inbox multi-select events
 
 > **Overview:** Add multi-select and bulk event/trip assignment to the Inbox page, reusing existing backend APIs and the selection pattern already used on the Calendar day panel.
 
@@ -2615,9 +2735,9 @@ Update helper text under the header to mention: *Click to select, double-click t
 
 ---
 
-<a id="chapter-17-inbox-unlabeled-filter"></a>
+<a id="chapter-18-inbox-unlabeled-filter"></a>
 
-## Chapter 17: Inbox unlabeled filter
+## Chapter 18: Inbox unlabeled filter
 
 > **Overview:** Add an Inbox filter to show only fully unlabeled photos (no tags, people, or events) so you can focus on tagging before import. Backend query param for correct counts/pagination; frontend toggle matching existing alert-filter UX.
 
@@ -2738,9 +2858,9 @@ No schema changes.
 
 ---
 
-<a id="chapter-18-inbox-used-tags-filter"></a>
+<a id="chapter-19-inbox-used-tags-filter"></a>
 
-## Chapter 18: Inbox used tags filter
+## Chapter 19: Inbox used tags filter
 
 > **Overview:** When no photos are selected on Inbox, show tags already used on inbox files as clickable filter chips. Selecting a tag filters the grid via existing tag_id query so you can select that group and add more tags.
 
@@ -2863,9 +2983,9 @@ Optional small addition in [`frontend/src/index.css`](frontend/src/index.css):
 
 ---
 
-<a id="chapter-19-inbox-tag-search"></a>
+<a id="chapter-20-inbox-tag-search"></a>
 
-## Chapter 19: Inbox tag search
+## Chapter 20: Inbox tag search
 
 > **Overview:** Add a client-side search box to filter tag chips on the Inbox page only — in the Used tags bar (no selection) and in the Tags section when one or more photos are selected.
 
@@ -2989,9 +3109,9 @@ Chip container can get `max-height` + `overflow-y: auto` when tag count > ~20 (o
 
 ---
 
-<a id="chapter-20-advance-after-mark-delete"></a>
+<a id="chapter-21-advance-after-mark-delete"></a>
 
-## Chapter 20: Advance after mark delete
+## Chapter 21: Advance after mark delete
 
 > **Overview:** After Mark delete in PhotoDetail, advance to the next photo (or previous if at end) and keep the drawer open instead of closing. Add keyboard D for quick mark delete. Fix parent refetch sync so Inbox/Calendar do not clear detail when navigating away from a deleted file.
 
@@ -3137,9 +3257,9 @@ No backend changes.
 
 ---
 
-<a id="chapter-21-inbox-delete-queue-view"></a>
+<a id="chapter-22-inbox-delete-queue-view"></a>
 
-## Chapter 21: Inbox delete queue view
+## Chapter 22: Inbox delete queue view
 
 > **Overview:** Add a "Delete queue" filter on Inbox that shows photos marked for delete in a grid (with detail view), plus Restore/undelete actions that remove pending delete decisions and return photos to the normal inbox.
 
@@ -3296,9 +3416,9 @@ When **not** in delete queue mode, Mark delete behavior unchanged.
 
 ---
 
-<a id="chapter-22-remove-apply-alert-popup"></a>
+<a id="chapter-23-remove-apply-alert-popup"></a>
 
-## Chapter 22: Remove apply alert popup
+## Chapter 23: Remove apply alert popup
 
 > **Overview:** Replace the blocking browser `alert()` after Apply on the Review page with inline status text next to the button, so apply completes without a modal interruption.
 
@@ -3346,9 +3466,9 @@ User sees apply progress on the button, a brief inline confirmation, and the ope
 
 ---
 
-<a id="chapter-23-inbox-camera-filters"></a>
+<a id="chapter-24-inbox-camera-filters"></a>
 
-## Chapter 23: Inbox camera filters
+## Chapter 24: Inbox camera filters
 
 > **Overview:** Add a searchable \"Used cameras\" filter bar on Inbox, mirroring Used tags: list distinct cameras from inbox files, client-side search, and filter the grid via a new `camera` query param on `GET /api/files`.
 
@@ -3458,9 +3578,9 @@ In [`frontend/src/pages/Inbox.tsx`](frontend/src/pages/Inbox.tsx):
 
 ---
 
-<a id="chapter-24-cameras-nav-page"></a>
+<a id="chapter-25-cameras-nav-page"></a>
 
-## Chapter 24: Cameras nav page
+## Chapter 25: Cameras nav page
 
 > **Overview:** Add a Cameras sidebar page listing all distinct cameras from inbox and archive (EXIF-derived, read-only), with search and links to browse photos by camera — matching the People/Tags pattern.
 
@@ -3583,9 +3703,9 @@ Invalidate `["cameras"]` alongside `["inbox-cameras"]` when inbox/archive scan c
 
 ---
 
-<a id="chapter-25-fix-stale-review-preview"></a>
+<a id="chapter-26-fix-stale-review-preview"></a>
 
-## Chapter 25: Fix stale review preview
+## Chapter 26: Fix stale review preview
 
 > **Overview:** After Apply on the Review page, invalidate and refetch the organize preview query so moved inbox files disappear from the table instead of showing stale cached data.
 
@@ -3647,9 +3767,9 @@ No backend changes required — `POST /api/organize/preview` already filters `lo
 
 ---
 
-<a id="chapter-26-review-page-layout"></a>
+<a id="chapter-27-review-page-layout"></a>
 
-## Chapter 26: Review page layout
+## Chapter 27: Review page layout
 
 > **Overview:** Reorder the Review page so the review queue and Apply changes action sit at the top in a sticky panel, and make the long organize preview and operations log collapsible with scrollable bodies for large queues.
 
@@ -3782,9 +3902,9 @@ Sticky offset: `top: 0` within main content (sidebar layout unchanged).
 
 ---
 
-<a id="chapter-27-inbox-batch-review"></a>
+<a id="chapter-28-inbox-batch-review"></a>
 
-## Chapter 27: Inbox batch review
+## Chapter 28: Inbox batch review
 
 > **Overview:** Let users submit manageable batches (up to 250) from Inbox to the Review queue, hide already-queued files from the default Inbox view, and fix append-safe queueing so delete marks are not wiped.
 
@@ -3924,9 +4044,9 @@ Update Inbox description text to mention batch submit.
 
 ---
 
-<a id="chapter-28-inbox-bulk-delete-shortcut"></a>
+<a id="chapter-29-inbox-bulk-delete-shortcut"></a>
 
-## Chapter 28: Inbox bulk delete shortcut
+## Chapter 29: Inbox bulk delete shortcut
 
 > **Overview:** Add a keyboard handler on the Inbox page so pressing D marks all checkbox-selected photos for delete, without opening detail view.
 
@@ -4005,9 +4125,9 @@ Optional: show deleting state / disable repeat presses via `bulkDeleteMutation.i
 
 ---
 
-<a id="chapter-29-review-queue-preview-release"></a>
+<a id="chapter-30-review-queue-preview-release"></a>
 
-## Chapter 29: Review queue preview release
+## Chapter 30: Review queue preview release
 
 > **Overview:** Add a list/grid toggle with thumbnail preview in the Review queue panel, PhotoDetail on click, and a "Return to inbox" action that releases queued decisions so files reappear in Inbox.
 
@@ -4107,9 +4227,9 @@ releaseReviewQueue: (fileIds?: number[]) =>
 
 ---
 
-<a id="chapter-30-global-photo-sort-setting"></a>
+<a id="chapter-31-global-photo-sort-setting"></a>
 
-## Chapter 30: Global photo sort setting
+## Chapter 31: Global photo sort setting
 
 > **Overview:** Add a photo_sort_order config setting (newest/oldest first) in Settings, applied globally to all photo grids and inbox batch ordering. Default remains newest first.
 
@@ -4218,11 +4338,122 @@ No per-page changes — all grids already call `api.listFiles` / `api.calendarDa
 
 ---
 
+<a id="chapter-32-fix-inbox-scan-jank"></a>
+
+## Chapter 32: Fix inbox scan jank
+
+> **Overview:** Stop inbox scan from freezing the UI by reducing per-file scanner work (mtime-fast-path, defer thumbnails), and keeping the Inbox grid responsive with isolated status updates and incremental refetch during scan.
+
+# Fix inbox scan pausing rendering
+
+## Diagnosis
+
+During inbox scan the UI feels frozen for two independent reasons:
+
+```mermaid
+sequenceDiagram
+    participant UI as InboxPage
+    participant API as Backend
+    participant Scan as ScannerThread
+
+    loop every 1s
+        UI->>API: GET scan/status
+        Note over UI: Full page re-render
+    end
+    loop each file
+        Scan->>Scan: sha256 + phash + thumbnail
+        Note over Scan: CPU/disk saturated
+    end
+    UI->>API: GET files/thumbnails
+    Note over API: Slow while scan runs
+    Note over UI: Grid stale until scan ends
+```
+
+### Backend: expensive work per file
+
+In [`scanner.py`](backend/app/scanner.py) `_upsert_file`:
+
+```66:71:backend/app/scanner.py
+    meta = extract_metadata(path)
+    sha = compute_sha256(path)
+    phash = compute_phash(path)
+    existing = conn.execute("SELECT id, mtime FROM files WHERE path = ?", (str(path),)).fetchone()
+    if existing and existing["mtime"] == meta["mtime"]:
+        return None
+```
+
+**sha256 + phash run before the mtime skip** — every re-scan re-reads and hashes every file even when unchanged. For 91 photos this saturates CPU/disk and slows all API responses (single uvicorn worker in [`backend/Dockerfile`](backend/Dockerfile)).
+
+After upsert, the scanner also **generates thumbnails synchronously** while the grid is requesting the same thumbs via `GET /api/files/{id}/thumbnail` — duplicate PIL/ffmpeg work.
+
+### Frontend: stale grid + frequent re-renders
+
+[`Inbox.tsx`](frontend/src/pages/Inbox.tsx):
+
+- Polls `scan-status` every **1s** while running → updates `status` → **entire Inbox re-renders** (grid, filter bars, batch bar)
+- File list **only refetches when scan finishes** (`wasScanning` effect) — photos don't appear until scan completes, so the page looks "paused"
+- No memoization isolating the scan progress text from the photo grid
+
+## Fix strategy
+
+### 1. Backend: mtime-fast-path (big win on re-scan)
+
+In [`scanner.py`](backend/app/scanner.py) `_upsert_file`:
+
+1. `stat` / light metadata read first
+2. SELECT existing row by path
+3. If `mtime` unchanged → **return immediately** (no sha256, phash, or thumbnail)
+4. Only compute hashes and INSERT for new/changed files
+
+This alone makes repeat inbox scans near-instant for unchanged files.
+
+### 2. Backend: defer thumbnail generation during scan
+
+In `run_scan` loop, **remove** the post-commit `generate_thumbnail` call. Thumbnails are already created lazily by [`api_thumbnail`](backend/app/main.py) on first grid load.
+
+Optional: after scan completes, spawn a low-priority background thread to pre-warm thumbs for newly upserted file IDs (out of scope unless first load still feels slow).
+
+### 3. Frontend: isolate scan status from grid
+
+Extract a memoized `ScanStatusBanner` component (or inline `React.memo`) that only receives `status` props. Parent passes stable callbacks so **PhotoGridWithAlerts does not re-render** when `processed/total` ticks.
+
+### 4. Frontend: incremental inbox refresh during scan
+
+In [`Inbox.tsx`](frontend/src/pages/Inbox.tsx), while `status.running && status.scope === "inbox"`:
+
+- Debounced refetch of the files query (e.g. every **2–3s** or when `processed` increases by ≥5)
+- Keeps grid updating as files are indexed instead of waiting for scan complete
+
+Keep the existing refetch-on-complete for duplicates/cameras invalidation.
+
+### 5. Frontend: slower status polling
+
+Change `refetchInterval` from **1000ms → 2000ms** during scan (Inbox, Cameras, Calendar). Progress text updates half as often; less render churn.
+
+## Verification
+
+1. Re-scan inbox with **unchanged** 10 photos — completes in seconds, UI stays responsive
+2. Add new photos, scan — grid fills incrementally during scan; thumbnails load lazily
+3. Navigate/scroll/select during scan — no multi-second freezes
+4. Dedupe + scan complete message still appear; delete (**D**) still works mid-scan (2026.07.10a fixes)
+
+## Files to change
+
+| File | Change |
+|------|--------|
+| [`backend/app/scanner.py`](backend/app/scanner.py) | Mtime check before hashes; skip thumbnail in scan loop |
+| [`frontend/src/pages/Inbox.tsx`](frontend/src/pages/Inbox.tsx) | Memoized status banner; debounced refetch during scan; 2s poll |
+| [`frontend/src/components/ScanStatusBanner.tsx`](frontend/src/components/ScanStatusBanner.tsx) | New small memoized component (optional file) |
+
+No release version specified — can ship as **2026.07.10b** with calendar cache if not yet released, or **2026.07.11**.
+
+---
+
 # Part IV — Labels and Photo UX
 
-<a id="chapter-31-photo-tags-feature"></a>
+<a id="chapter-33-photo-tags-feature"></a>
 
-## Chapter 31: Photo tags feature
+## Chapter 33: Photo tags feature
 
 > **Overview:** Add direct photo-level tags (Cars, Typewriter, house project) via a new `file_tags` table and APIs mirroring People, plus bulk tagging on Inbox/Calendar, a Tags management page, and Browse/filter/display updates.
 
@@ -4369,9 +4600,9 @@ Add nav link and route in [`App.tsx`](/Users/alex/Documents/github/imageOrganize
 
 ---
 
-<a id="chapter-32-removable-grid-labels"></a>
+<a id="chapter-34-removable-grid-labels"></a>
 
-## Chapter 32: Removable grid labels
+## Chapter 34: Removable grid labels
 
 > **Overview:** Add removable event/people/tag chips (X) on every PhotoGrid card, plus inline pickers when one photo is selected on Inbox/Calendar for easier adding without bulk dropdowns.
 
@@ -4483,9 +4714,9 @@ Event badge × uses contrasting hover; person/tag badges use existing colors.
 
 ---
 
-<a id="chapter-33-bulk-chip-label-editors"></a>
+<a id="chapter-35-bulk-chip-label-editors"></a>
 
-## Chapter 33: Bulk chip label editors
+## Chapter 35: Bulk chip label editors
 
 > **Overview:** Add chip-based bulk label editors (events, people, tags) when 2+ photos are selected, matching the single-select UX. Replace redundant dropdown bulk bars with a unified selection panel.
 
@@ -4584,9 +4815,9 @@ Apply to event/person/tag chips in partial state.
 
 ---
 
-<a id="chapter-34-people-bulk-and-crud"></a>
+<a id="chapter-36-people-bulk-and-crud"></a>
 
-## Chapter 34: People bulk and CRUD
+## Chapter 36: People bulk and CRUD
 
 > **Overview:** Add bulk untag for selected photos, a dedicated People page (like Events) for create/edit/delete/merge, and disambiguate duplicate names in dropdowns and badges.
 
@@ -4740,9 +4971,9 @@ Or **Delete** the unused Alex if it has 0 photos.
 
 ---
 
-<a id="chapter-35-people-name-browse-links"></a>
+<a id="chapter-37-people-name-browse-links"></a>
 
-## Chapter 35: People name browse links
+## Chapter 37: People name browse links
 
 > **Overview:** Make person names clickable links to browse (matching Tags), and remove the redundant Browse button from both People and Tags list rows.
 
@@ -4787,9 +5018,9 @@ No changes — [`.people-list-name-link`](frontend/src/index.css) already provid
 
 ---
 
-<a id="chapter-36-detail-multi-tag-select"></a>
+<a id="chapter-38-detail-multi-tag-select"></a>
 
-## Chapter 36: Detail multi-tag select
+## Chapter 38: Detail multi-tag select
 
 > **Overview:** Fix PhotoDetail so clicking multiple tag chips adds each tag without overwriting previous selections. Root cause: stale `detailFile` state and pickers that rebuild the full tag list from outdated props on every click.
 
@@ -4894,9 +5125,9 @@ Apply the local-state pattern to [`PersonPicker.tsx`](frontend/src/components/Pe
 
 ---
 
-<a id="chapter-37-split-select-vs-detail"></a>
+<a id="chapter-39-split-select-vs-detail"></a>
 
-## Chapter 37: Split select vs detail
+## Chapter 39: Split select vs detail
 
 > **Overview:** Decouple multi-select from the detail drawer: checkbox toggles selection only; clicking the thumbnail opens PhotoDetail. Applies to Inbox and Calendar day panel.
 
@@ -5000,9 +5231,9 @@ Same `detailFile` state + `onOpenDetail`; clear `detailFile` in existing `useEff
 
 ---
 
-<a id="chapter-38-fix-thumbnail-orientation"></a>
+<a id="chapter-40-fix-thumbnail-orientation"></a>
 
-## Chapter 38: Fix thumbnail orientation
+## Chapter 40: Fix thumbnail orientation
 
 > **Overview:** Apply EXIF orientation when generating image thumbnails so grid and detail previews match the correctly oriented full-size view. Bump thumbnail cache version so existing wrong thumbs are regenerated.
 
@@ -5104,9 +5335,9 @@ Thumbs regenerate on first grid load per file (lazy). No rescan needed. User can
 
 ---
 
-<a id="chapter-39-shift-click-range-select"></a>
+<a id="chapter-41-shift-click-range-select"></a>
 
-## Chapter 39: Shift-click range select
+## Chapter 41: Shift-click range select
 
 > **Overview:** Add Shift+click range selection to the photo grid so selecting one photo then Shift+clicking another selects all visible photos between them (Inbox and Calendar day panel).
 
@@ -5199,9 +5430,9 @@ No change required — selected cards already show `.photo-card.selected` border
 
 ---
 
-<a id="chapter-40-esc-close-detail-viewer"></a>
+<a id="chapter-42-esc-close-detail-viewer"></a>
 
-## Chapter 40: ESC close detail viewer
+## Chapter 42: ESC close detail viewer
 
 > **Overview:** Make Escape close the PhotoDetail drawer when the full-size lightbox is not open; lightbox still closes first if open.
 
@@ -5266,9 +5497,9 @@ No CSS or parent changes — Inbox, Calendar, Browse all pass `onClose={() => se
 
 ---
 
-<a id="chapter-41-recently-used-tags"></a>
+<a id="chapter-43-recently-used-tags"></a>
 
-## Chapter 41: Recently used tags
+## Chapter 43: Recently used tags
 
 > **Overview:** Add a client-side "Recently used" tag row above the full tag list in bulk and single-file tag pickers, persisted in localStorage and updated whenever the user applies a tag.
 
@@ -5381,9 +5612,9 @@ No frontend test suite exists; manual verification only unless you want Vitest a
 
 ---
 
-<a id="chapter-42-browse-label-mode"></a>
+<a id="chapter-44-browse-label-mode"></a>
 
-## Chapter 42: Browse label mode
+## Chapter 44: Browse label mode
 
 > **Overview:** Add an explicit "Label photos" mode to Browse that enables Inbox-style multi-select and bulk event/tag/people editing via existing BulkLabelEditors components, without changing backend APIs.
 
@@ -5496,9 +5727,9 @@ Manual smoke test on `/browse/tag/ft-lauderdale-air-and-sea-show` (or any tag wi
 
 ---
 
-<a id="chapter-43-tags-page-search"></a>
+<a id="chapter-45-tags-page-search"></a>
 
-## Chapter 43: Tags page search
+## Chapter 45: Tags page search
 
 > **Overview:** Add a client-side search filter to the Tags management page, reusing the existing LabelSearchInput and filterByNameQuery utilities already used on Cameras and Inbox tag bars.
 
@@ -5586,9 +5817,9 @@ No new CSS required. Optional: wrap search input with `style={{ marginBottom: "1
 
 ---
 
-<a id="chapter-44-single-video-playback"></a>
+<a id="chapter-46-single-video-playback"></a>
 
-## Chapter 44: Single video playback
+## Chapter 46: Single video playback
 
 > **Overview:** Fix double audio in PhotoDetail by ensuring only one video element plays at a time: pause/unmount the drawer video when the lightbox (zoom) opens, and only play in the lightbox.
 
@@ -5685,9 +5916,9 @@ Esc closes lightbox first; drawer shows video again (paused at start since eleme
 
 ---
 
-<a id="chapter-45-fix-zoom-view-scroll-and-nav"></a>
+<a id="chapter-47-fix-zoom-view-scroll-and-nav"></a>
 
-## Chapter 45: Fix zoom view scroll and nav
+## Chapter 47: Fix zoom view scroll and nav
 
 > **Overview:** Restore the zoom overlay (click detail image): pan/scroll large photos again, and keep Left/Right/D working without exiting back to the detail drawer. Drawer scroll is fine — not in scope.
 
@@ -5807,9 +6038,9 @@ Zoom closes only when user intends it: **Esc**, click backdrop/image, or drawer 
 
 ---
 
-<a id="chapter-46-fix-zoom-scale-to-fit"></a>
+<a id="chapter-48-fix-zoom-scale-to-fit"></a>
 
-## Chapter 46: Fix zoom scale-to-fit
+## Chapter 48: Fix zoom scale-to-fit
 
 > **Overview:** Image cropping in zoom happens because the stage wrapper breaks max-height percentage resolution. Revert to the original flex-on-lightbox layout so images scale to fit the viewport without cropping.
 
@@ -5909,9 +6140,9 @@ Keep the existing fix: `file.id` effect does **not** call `setLightboxOpen(false
 
 # Part V — Dates and Alerts
 
-<a id="chapter-47-filename-date-mismatch"></a>
+<a id="chapter-49-filename-date-mismatch"></a>
 
-## Chapter 47: Filename date mismatch
+## Chapter 49: Filename date mismatch
 
 > **Overview:** Detect when organize preview uses a different date than embedded in the filename (e.g. prefix 2016-11-18 vs IMG_20150717), flag mismatches on the Review preview table, and let the user apply filename-based dates to fix target paths and DB capture_date.
 
@@ -6045,9 +6276,9 @@ After fix, row should show corrected path and clear mismatch flag.
 
 ---
 
-<a id="chapter-48-browser-date-correction"></a>
+<a id="chapter-50-browser-date-correction"></a>
 
-## Chapter 48: Browser date correction
+## Chapter 50: Browser date correction
 
 > **Overview:** Add manual and filename-based capture date correction in the calendar day panel (and matching single/bulk editor surfaces), backed by general file APIs and extended filename parsing for patterns like Screenshot_2014-11-27.
 
@@ -6194,9 +6425,9 @@ Reuse `.preview-date-warning` color or add `.capture-date-hint` for filename-sug
 
 ---
 
-<a id="chapter-49-photo-grid-alerts"></a>
+<a id="chapter-51-photo-grid-alerts"></a>
 
-## Chapter 49: Photo grid alerts
+## Chapter 51: Photo grid alerts
 
 > **Overview:** Add a reusable alerts bar and per-card badges on all photo grids, surfacing filename date mismatches and duplicate-group membership with an optional "Alerts only" filter.
 
@@ -6327,9 +6558,9 @@ Reuse `.capture-date-hint` yellow for date badge consistency.
 
 ---
 
-<a id="chapter-50-photo-keyboard-navigation"></a>
+<a id="chapter-52-photo-keyboard-navigation"></a>
 
-## Chapter 50: Photo keyboard navigation
+## Chapter 52: Photo keyboard navigation
 
 > **Overview:** Add linear arrow-key navigation (prev/next) through the current photo set in PhotoDetail and the lightbox, wired from Calendar day panel and other grid pages that open detail.
 
@@ -6438,9 +6669,9 @@ CSS in [`index.css`](frontend/src/index.css):
 
 # Part VI — Dedupe and Integrity
 
-<a id="chapter-51-duplicate-keeper-defaults"></a>
+<a id="chapter-53-duplicate-keeper-defaults"></a>
 
-## Chapter 51: Duplicate keeper defaults
+## Chapter 53: Duplicate keeper defaults
 
 > **Overview:** Prefer non-copy filenames (no `(1)` / `_(1)` suffix) as default duplicate keeper when groups are built, and merge events/people/tags onto the keeper when a non-keeper duplicate is deleted from the Duplicates page.
 
@@ -6555,9 +6786,9 @@ Mirror backend regex for optional UI badge `(copy)` on cards; not required for c
 
 ---
 
-<a id="chapter-52-fix-tag-counts-after-dedupe"></a>
+<a id="chapter-54-fix-tag-counts-after-dedupe"></a>
 
-## Chapter 52: Fix tag counts after dedupe
+## Chapter 54: Fix tag counts after dedupe
 
 > **Overview:** Tag sidebar counts stay at 12 after duplicate cleanup because dismissed copies still retain label associations until Review apply deletes them, and the UI does not refresh tag/people counts after apply. Fix both the backend dismiss flow and frontend cache invalidation.
 
@@ -6660,9 +6891,9 @@ No schema migration required.
 
 ---
 
-<a id="chapter-53-fix-orphan-tag-counts"></a>
+<a id="chapter-55-fix-orphan-tag-counts"></a>
 
-## Chapter 53: Fix orphan tag counts
+## Chapter 55: Fix orphan tag counts
 
 > **Overview:** The original dedupe/cache fixes are already in place, but sidebar tag counts still include orphaned `file_tags` rows for deleted files because count queries do not join `files` and SQLite foreign keys are disabled. Fix count SQL, enable FK enforcement, and clean up existing orphan rows.
 
@@ -6769,9 +7000,9 @@ Once `GET /api/tags` returns 6, the Browse sidebar (`tags.photo_count`) will mat
 
 ---
 
-<a id="chapter-54-fix-sqlite-lock-errors"></a>
+<a id="chapter-56-fix-sqlite-lock-errors"></a>
 
-## Chapter 54: Fix SQLite lock errors
+## Chapter 56: Fix SQLite lock errors
 
 > **Overview:** Fix the 500 on single delete (D in PhotoDetail) during inbox scan by improving SQLite concurrency (WAL + busy timeout) and shortening scanner transaction scope so review writes can interleave.
 
@@ -6896,11 +7127,182 @@ No book/release/changelog update unless you want this shipped as a patch release
 
 ---
 
+<a id="chapter-57-fix-remaining-scan-locks"></a>
+
+## Chapter 57: Fix remaining scan locks
+
+> **Overview:** 2026.07.10 busy_timeout works (delete succeeds after waiting) but lock hold during thumbnail/dedupe causes multi-second delays and occasional 500s when wait exceeds 10s. Shorten lock windows in scanner/dedupe; optional frontend feedback during slow delete. Patch as 2026.07.10a.
+
+# Fix slow / flaky delete during scan
+
+## Updated diagnosis
+
+User report: after **waiting**, the delete error cleared. That matches **2026.07.10** behavior — `PRAGMA busy_timeout=10000` makes SQLite retry the insert for up to 10 seconds instead of failing instantly.
+
+So the fix is **working**, but the experience is poor:
+
+- **D** can hang for several seconds while the scan holds a write lock
+- Terminal may still show **500** if the lock is held **longer than 10s** (dedupe rebuild phase)
+- No UI feedback that the app is waiting on the scan (PhotoDetail has `acting` state but no message)
+
+The terminal 500 was likely either a request that exceeded the 10s wait during dedupe, or an attempt before the backend picked up 2026.07.10.
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant API as ReviewAPI
+    participant DB as SQLite
+    participant Scan as ScannerThread
+
+    User->>API: POST delete
+    Scan->>DB: hold write lock (thumbnail or dedupe)
+    API->>DB: INSERT (retry up to 10s)
+    alt lock released in time
+        DB-->>API: success
+        API-->>User: 200 after delay
+    else lock held over 10s
+        DB-->>API: database is locked
+        API-->>User: 500
+    end
+```
+
+## Remaining lock windows (same root cause, reframed)
+
+### Gap 1: Thumbnail after write, before commit
+
+In [`_upsert_file`](backend/app/scanner.py), `generate_thumbnail()` runs after INSERT but before `run_scan`'s `conn.commit()` — disk I/O keeps the write lock held.
+
+### Gap 2: Dedupe rebuild is one long transaction
+
+[`rebuild_duplicate_groups`](backend/app/dedupe.py) holds a single write transaction through O(n²) phash grouping — can exceed 10s on larger libraries.
+
+## Fix strategy
+
+### 1. Release lock before thumbnail I/O (primary)
+
+In [`scanner.py`](backend/app/scanner.py):
+
+- Move `generate_thumbnail` out of `_upsert_file`
+- `conn.commit()` immediately after DB upsert, **then** generate thumbnail
+
+```python
+for path in files:
+    seen.add(str(path))
+    thumb = _upsert_file(conn, path, location)  # None or (path, file_id, mtime)
+    conn.commit()
+    if thumb:
+        generate_thumbnail(*thumb)
+    scan_state.tick()
+```
+
+Goal: delete during file loop succeeds in milliseconds, not seconds.
+
+### 2. Commit incrementally during dedupe rebuild
+
+In [`dedupe.py`](backend/app/dedupe.py) `rebuild_duplicate_groups`:
+
+- `conn.commit()` after each exact-hash group
+- `conn.commit()` after each perceptual group
+- Short final transaction for `reconcile_default_keepers`
+
+Goal: delete during dedupe phase rarely waits; never exceeds 10s timeout.
+
+### 3. Scan + delete UX (optional, small)
+
+- [`scanner.py`](backend/app/scanner.py): set `scan_state.message = "Building duplicate index..."` before dedupe
+- [`PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx): while `acting` during delete, show subtle "Saving…" or "Waiting for scan…" (only if delete takes >500ms) so long waits aren't mistaken for a hang
+
+No backend retry loop needed — `busy_timeout` already handles short contention.
+
+## "Delete called twice?" (log noise vs real bug)
+
+### Complete log for one delete (terminal L99–123)
+
+| Step | Request | Purpose |
+|------|---------|---------|
+| 1 | `POST /api/review/decisions` | **The only delete** |
+| 2–9 | tags, people, events, inbox/*, review/queue, `pending_delete`, inbox list | Refetch wave 1 |
+| 10–11 | `files/4658/metadata`, inbox/* again | Advance to next photo + wave 2 start |
+| 12–20 | Same endpoints again (2–4× each) | Refetch wave 2 |
+| 21–22 | `files/4658/original`, inbox list ×2 | Load next photo in detail |
+
+**Counts for one D press:** 1 POST, **4×** `pending_delete`, **4×** inbox `page_size=200`, duplicate tags/people/events/review-queue.
+
+**Not a double delete** — it's **double cache invalidation**:
+
+```mermaid
+sequenceDiagram
+    participant PD as PhotoDetail
+    participant Inbox
+    participant RQ as ReactQuery
+
+    PD->>PD: createDecision (POST)
+    PD->>PD: onChangeFile(next)
+    PD->>RQ: handleLabelsChange — invalidate all
+    PD->>Inbox: onDateChange(next.id)
+    Inbox->>RQ: invalidateAfterDateChange + refetch
+    Inbox->>RQ: handleLabelsChange again — invalidate all
+    RQ-->>PD: metadata + original for next file
+```
+
+[`PhotoDetail.handleLabelsChange`](frontend/src/components/PhotoDetail.tsx) always calls `onDateChange?.(keepFileId)`. In Inbox, that is [`handleDateChange`](frontend/src/pages/Inbox.tsx) which **also** calls `handleLabelsChange()` and `refetch()` — so every delete-after-advance triggers **two full invalidation waves**.
+
+**Fix (include in 2026.07.10a):** On delete success, either:
+- Call a slimmer invalidation from PhotoDetail (don't chain into full `handleDateChange`), or
+- Make Inbox `handleDateChange` skip `handleLabelsChange()` when labels were already invalidated (e.g. optional `alreadyInvalidated` flag), or
+- Consolidate to one shared `invalidateAfterReviewChange(qc)` used once per delete
+
+Goal: one POST + one refetch wave (~8 GETs instead of ~20).
+
+### Real double-POST bug (separate edge case)
+
+| Handler | When it fires |
+|---------|----------------|
+| [`Inbox.tsx`](frontend/src/pages/Inbox.tsx) | `selectedIds.length > 0` → bulk `createDecision` per selected id |
+| [`PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx) | always → single `createDecision` for detail file |
+
+If detail is open **and** the detail photo is checkbox-selected, **both** can run on one **D** press (`stopPropagation` in Inbox does not block the second listener on the same target). That would insert **two** delete decisions for the same `file_id` (no UNIQUE constraint on `review_decisions`).
+
+**Fix (include in 2026.07.10a):**
+
+- In [`Inbox.tsx`](frontend/src/pages/Inbox.tsx): skip bulk **D** when `detailFile != null` (detail owns keyboard)
+- In [`PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx): `e.stopImmediatePropagation()` on **D** so Inbox never also fires
+- Optional: use `useRef` for in-flight delete guard (synchronous) instead of `acting` state alone
+
+### Out of scope
+
+- Increasing `busy_timeout` beyond 10s (masks the problem; prefer shorter locks)
+- Batch decisions API
+
+## Release
+
+Patch **`2026.07.10a`** — CHANGELOG under Fixed: faster delete during scan; fewer lock timeouts. Version bumps in `package.json`, `main.py`, `README.md`, `book.json`.
+
+## Verification
+
+1. Start inbox scan on a non-trivial library
+2. Press **D** mid-scan → **200** within ~1s (not multi-second hang)
+3. Press **D** during dedupe phase (scan still `running`) → **200**, no 500
+4. Scan completes; delete queue consistent
+
+## Files to change
+
+| File | Change |
+|------|--------|
+| [`backend/app/scanner.py`](backend/app/scanner.py) | Commit before thumbnail; dedupe status message |
+| [`backend/app/dedupe.py`](backend/app/dedupe.py) | Incremental commits during group rebuild |
+| [`frontend/src/components/PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx) | Optional slow-delete feedback; stopImmediatePropagation on D |
+| [`frontend/src/pages/Inbox.tsx`](frontend/src/pages/Inbox.tsx) | Skip bulk D when detail open; avoid double invalidation on handleDateChange |
+
+No changes to `busy_timeout` or `api_create_decision` retry logic.
+
+---
+
 # Part VII — Release and Meta
 
-<a id="chapter-55-version-and-changelog"></a>
+<a id="chapter-58-version-and-changelog"></a>
 
-## Chapter 55: Version and changelog
+## Chapter 58: Version and changelog
 
 > **Overview:** Introduce date-based versioning (2026.07.04), add CHANGELOG.md documenting the initial release, sync version strings in backend and frontend, then commit, tag, and push to GitHub.
 
@@ -6988,9 +7390,9 @@ Optional (if `gh` is available): `gh release create 2026.07.04 --notes-file CHAN
 
 ---
 
-<a id="chapter-56-sidebar-version-badge"></a>
+<a id="chapter-59-sidebar-version-badge"></a>
 
-## Chapter 56: Sidebar version badge
+## Chapter 59: Sidebar version badge
 
 > **Overview:** Display the app version (`2026.07.04`) in the sidebar directly below the "Image Organizer" heading, sourced from `frontend/package.json` so it stays in sync with releases.
 
@@ -7055,9 +7457,9 @@ No new API endpoint or duplicate constant file.
 
 ---
 
-<a id="chapter-57-save-plans-gitignore"></a>
+<a id="chapter-60-save-plans-gitignore"></a>
 
-## Chapter 57: Save plans gitignore
+## Chapter 60: Save plans gitignore
 
 > **Overview:** Copy all Cursor plan files into `imageOrganizer/.cursor/plans/` and add that directory to `.gitignore` so plans stay local and are never pushed to GitHub.
 
@@ -7123,9 +7525,9 @@ git -C imageOrganizer check-ignore -v .cursor/plans/foo.plan.md  # confirms igno
 
 ---
 
-<a id="chapter-58-plans-development-book"></a>
+<a id="chapter-61-plans-development-book"></a>
 
-## Chapter 58: Plans development book
+## Chapter 61: Plans development book
 
 > **Overview:** Consolidate all 37 Image Organizer Cursor plan files into a single committed markdown book at docs/DEVELOPMENT_BOOK.md, organized by topic with a table of contents and readable chapter structure.
 
@@ -7247,9 +7649,9 @@ No change to the architecture cursor rule scope (book is design history, not liv
 
 ---
 
-<a id="chapter-59-book-update-and-release"></a>
+<a id="chapter-62-book-update-and-release"></a>
 
-## Chapter 59: Book update and release
+## Chapter 62: Book update and release
 
 > **Overview:** Add post-2026.07.05b feature plans to book.json, rebuild DEVELOPMENT_BOOK.md, write CHANGELOG 2026.07.07 for all uncommitted work, bump versions, commit, tag, and push to origin.
 
@@ -7347,9 +7749,9 @@ Requires network + git_write permissions for push.
 
 ---
 
-<a id="chapter-60-cursor-book-tool-repo"></a>
+<a id="chapter-63-cursor-book-tool-repo"></a>
 
-## Chapter 60: Cursor book tool repo
+## Chapter 63: Cursor book tool repo
 
 > **Overview:** Extract the development book builder into a standalone repo with a config-driven script and a reusable Cursor skill; migrate imageOrganizer to a thin `book.yaml` + wrapper script.
 
@@ -7554,9 +7956,9 @@ Optional: tag `v1.0.0` on `cursor-book` after migration verified.
 
 ---
 
-<a id="chapter-61-release-20260710"></a>
+<a id="chapter-64-release-20260710"></a>
 
-## Chapter 61: Release 2026.07.10
+## Chapter 64: Release 2026.07.10
 
 > **Overview:** Document the SQLite lock fix in the development book and CHANGELOG, bump version strings to 2026.07.10, regenerate DEVELOPMENT_BOOK.md, then commit, tag, and push the release.
 

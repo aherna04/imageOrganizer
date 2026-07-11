@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { api, CalendarMonthFilter, CalendarMediaType, CalendarMonthSummary } from "../api/client";
+import { calendarQueryOptions } from "../utils/calendarQueryOptions";
 import { monthFilterToDayFilter } from "../utils/calendarFilter";
 import CalendarMonth from "./CalendarMonth";
 import CalendarMonthLabels from "./CalendarMonthLabels";
@@ -32,15 +33,19 @@ export default function CalendarMonthColumn({
 }: Props) {
   const dayFilter = monthFilterToDayFilter(monthFilter, year, month);
 
-  const { data: summary } = useQuery({
-    queryKey: ["calendar-summary", year, month, location, dayFilter, mediaType],
-    queryFn: () => api.calendarSummary(year, month, location, dayFilter, mediaType),
-  });
+  const { data: summary } = useQuery(
+    calendarQueryOptions({
+      queryKey: ["calendar-summary", year, month, location, dayFilter, mediaType],
+      queryFn: () => api.calendarSummary(year, month, location, dayFilter, mediaType),
+    }),
+  );
 
-  const { data: labelsData } = useQuery({
-    queryKey: ["calendar-labels", year, month, location, mediaType],
-    queryFn: () => api.calendarLabels(year, month, location, mediaType),
-  });
+  const { data: labelsData } = useQuery(
+    calendarQueryOptions({
+      queryKey: ["calendar-labels", year, month, location, mediaType],
+      queryFn: () => api.calendarLabels(year, month, location, mediaType),
+    }),
+  );
 
   const selectedDate =
     selectedDay?.year === year && selectedDay?.month === month

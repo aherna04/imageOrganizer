@@ -7,6 +7,7 @@ import PhotoDetail from "./PhotoDetail";
 import SingleFileLabelEditors from "./SingleFileLabelEditors";
 import BulkLabelEditors from "./BulkLabelEditors";
 import { invalidateAfterDateChange } from "../utils/invalidateAfterDateChange";
+import { calendarQueryOptions } from "../utils/calendarQueryOptions";
 import { togglePhotoSelection } from "../utils/photoSelection";
 
 interface Props {
@@ -23,10 +24,12 @@ export default function CalendarDayPanel({ date, location, mediaType, filter, on
   const [detailFile, setDetailFile] = useState<MediaFile | null>(null);
   const selectionAnchorRef = useRef<number | null>(null);
 
-  const { data, refetch } = useQuery({
-    queryKey: ["calendar-day", date, location, filter, mediaType],
-    queryFn: () => api.calendarDay(date, location, filter, mediaType),
-  });
+  const { data, refetch } = useQuery(
+    calendarQueryOptions({
+      queryKey: ["calendar-day", date, location, filter, mediaType],
+      queryFn: () => api.calendarDay(date, location, filter, mediaType),
+    }),
+  );
 
   useEffect(() => {
     setSelectedIds([]);

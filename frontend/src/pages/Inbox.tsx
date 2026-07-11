@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { INBOX_BATCH_LIMIT, MediaFile, api } from "../api/client";
 import BulkEventAssignBar from "../components/BulkEventAssignBar";
 import InboxReviewBatchBar from "../components/InboxReviewBatchBar";
@@ -8,6 +8,7 @@ import InboxUsedPeopleBar from "../components/InboxUsedPeopleBar";
 import InboxUsedTagsBar from "../components/InboxUsedTagsBar";
 import PhotoGridWithAlerts from "../components/PhotoGridWithAlerts";
 import PhotoDetail from "../components/PhotoDetail";
+import ScanStatusBanner from "../components/ScanStatusBanner";
 import SingleFileLabelEditors from "../components/SingleFileLabelEditors";
 import BulkLabelEditors from "../components/BulkLabelEditors";
 import { invalidateAfterDateChange } from "../utils/invalidateAfterDateChange";
@@ -24,12 +25,10 @@ export default function Inbox() {
   const [tagFilterId, setTagFilterId] = useState<number | null>(null);
   const [personFilterId, setPersonFilterId] = useState<number | null>(null);
   const [cameraFilter, setCameraFilter] = useState<string | null>(null);
-
-  const { data: status } = useQuery({
-    queryKey: ["scan-status"],
-    queryFn: api.scanStatus,
-    refetchInterval: (q) => (q.state.data?.running ? 1000 : false),
-  });
+  const [scanRunning, setScanRunning] = useState(false);
+  const handleScanRunningChange = useCallback((running: boolean) => {
+    setScanRunning(running);
+  }, []);
 
   const { data: usedTagsData } = useQuery({
     queryKey: ["inbox-tags"],
@@ -67,17 +66,7 @@ export default function Inbox() {
       }),
   });
 
-  const wasScanning = useRef(false);
   const selectionAnchorRef = useRef<number | null>(null);
-  useEffect(() => {
-    if (wasScanning.current && status && !status.running) {
-      refetch();
-      qc.invalidateQueries({ queryKey: ["duplicates"] });
-      qc.invalidateQueries({ queryKey: ["inbox-cameras"] });
-      qc.invalidateQueries({ queryKey: ["cameras"] });
-    }
-    wasScanning.current = status?.running ?? false;
-  }, [status?.running, refetch, qc]);
 
   const scan = useMutation({
     mutationFn: api.scanInbox,
@@ -259,19 +248,11 @@ export default function Inbox() {
       <div className="page-header">
         <h2>Inbox</h2>
         <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
-          {status && (
-            <span className="scan-status">
-              {status.running
-                ? status.message?.startsWith("Building")
-                  ? status.message
-                  : `Scanning ${status.scope}: ${status.processed}/${status.total}`
-                : status.message ?? ""}
-            </span>
-          )}
+          <ScanStatusBanner onRunningChange={handleScanRunningChange} />
           <span className="badge" style={{ background: "#6366f1", color: "#fff" }}>
             {headerBadge}
           </span>
-          <button className="btn" onClick={() => scan.mutate()} disabled={scan.isPending || status?.running}>
+          <button className="btn" onClick={() => scan.mutate()} disabled={scan.isPending || scanRunning}>
             Scan inbox
           </button>
         </div>

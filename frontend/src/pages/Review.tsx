@@ -1,11 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { MediaFile, api } from "../api/client";
 import ApplyPanel from "../components/ApplyPanel";
 import CollapsibleSection from "../components/CollapsibleSection";
 import PhotoDetail from "../components/PhotoDetail";
 import PhotoGrid from "../components/PhotoGrid";
 import { invalidateAfterApply, invalidateAfterQueueRelease } from "../utils/invalidateAfterApply";
+import { invalidateAfterReviewChange } from "../utils/invalidateAfterReviewChange";
+import { togglePhotoSelection } from "../utils/photoSelection";
 
 type QueueView = "list" | "grid";
 
@@ -13,6 +15,8 @@ export default function Review() {
   const qc = useQueryClient();
   const [queueView, setQueueView] = useState<QueueView>("list");
   const [detailFile, setDetailFile] = useState<MediaFile | null>(null);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const selectionAnchorRef = useRef<number | null>(null);
 
   const { data: queue, refetch: refetchQueue } = useQuery({
     queryKey: ["review-queue"],
@@ -37,6 +41,17 @@ export default function Review() {
     onSuccess: () => {
       invalidateAfterQueueRelease(qc);
       setDetailFile(null);
+      setSelectedIds([]);
+      selectionAnchorRef.current = null;
+      refetchQueue();
+      refetchPreview();
+    },
+  });
+
+  const restoreMutation = useMutation({
+    mutationFn: (fileIds: number[]) => api.cancelReviewDecisions(fileIds),
+    onSuccess: () => {
+      invalidateAfterReviewChange(qc);
       refetchQueue();
       refetchPreview();
     },
@@ -63,6 +78,18 @@ export default function Review() {
     [queue?.items],
   );
 
+  const deleteFileIds = useMemo(() => {
+    const ids = new Set<number>();
+    for (const item of queue?.items ?? []) {
+      if (item.action === "delete") {
+        ids.add(item.file_id);
+      }
+    }
+    return ids;
+  }, [queue?.items]);
+
+  const deleteCount = deleteFileIds.size;
+
   const targetPathByFileId = useMemo(() => {
     const map: Record<number, string> = {};
     for (const item of queue?.items ?? []) {
@@ -82,11 +109,28 @@ export default function Review() {
   const previewBatchLimited =
     preview?.inbox_total != null && preview.inbox_total > preview.total;
 
+  const selectedDeleteIds = selectedIds.filter((id) => deleteFileIds.has(id));
+
   const handleApplied = () => {
     invalidateAfterApply(qc);
     setDetailFile(null);
+    setSelectedIds([]);
+    selectionAnchorRef.current = null;
     refetchPreview();
     refetchQueue();
+  };
+
+  const handleRestore = (fileIds: number[]) => {
+    const ids = fileIds.filter((id) => deleteFileIds.has(id));
+    if (ids.length === 0) return;
+    restoreMutation.mutate(ids, {
+      onSuccess: () => {
+        if (detailFile && ids.includes(detailFile.id)) {
+          setDetailFile(null);
+        }
+        setSelectedIds((prev) => prev.filter((id) => !ids.includes(id)));
+      },
+    });
   };
 
   const handleReturnToInbox = () => {
@@ -97,6 +141,23 @@ export default function Review() {
         : `Return ${queueCount} queued photo${queueCount === 1 ? "" : "s"} to Inbox?`;
     if (!window.confirm(message)) return;
     releaseQueue.mutate();
+  };
+
+  const toggleSelect = (id: number, event: React.MouseEvent) => {
+    const result = togglePhotoSelection(
+      queueFiles,
+      selectedIds,
+      id,
+      event.shiftKey,
+      selectionAnchorRef.current,
+    );
+    selectionAnchorRef.current = result.anchorIndex;
+    setSelectedIds(result.selectedIds);
+  };
+
+  const handleDetailChange = () => {
+    refetchQueue();
+    refetchPreview();
   };
 
   return (
@@ -127,6 +188,16 @@ export default function Review() {
                     Grid
                   </button>
                 </div>
+                {deleteCount > 0 && (
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    disabled={restoreMutation.isPending}
+                    onClick={() => handleRestore([...deleteFileIds])}
+                  >
+                    {restoreMutation.isPending ? "Restoring..." : `Restore all deletes (${deleteCount})`}
+                  </button>
+                )}
                 <button
                   type="button"
                   className="btn btn-secondary"
@@ -163,15 +234,40 @@ export default function Review() {
                         {item.target_path && ` → ${item.target_path}`}
                       </div>
                     </div>
+                    {item.action === "delete" && (
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        disabled={restoreMutation.isPending}
+                        onClick={() => handleRestore([item.file_id])}
+                      >
+                        Restore
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>
             ) : (
               <div className="review-queue-grid">
+                {selectedDeleteIds.length > 0 && (
+                  <div style={{ display: "flex", gap: "0.75rem", alignItems: "center", marginBottom: "0.75rem" }}>
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      disabled={restoreMutation.isPending}
+                      onClick={() => handleRestore(selectedDeleteIds)}
+                    >
+                      Restore {selectedDeleteIds.length}
+                    </button>
+                  </div>
+                )}
                 <PhotoGrid
                   files={queueFiles}
+                  selectedIds={selectedIds}
                   activeDetailId={detailFile?.id}
-                  onSelect={setDetailFile}
+                  onToggleSelect={toggleSelect}
+                  onOpenDetail={setDetailFile}
+                  multiSelectMode
                   subtitleByFileId={targetPathByFileId}
                 />
               </div>
@@ -294,6 +390,8 @@ export default function Review() {
           files={queueFiles}
           onChangeFile={setDetailFile}
           onClose={() => setDetailFile(null)}
+          deleteQueueMode={deleteFileIds.has(detailFile.id)}
+          onDateChange={handleDetailChange}
         />
       )}
     </div>

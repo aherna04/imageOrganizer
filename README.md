@@ -1,6 +1,6 @@
 # Image Organizer
 
-**Version:** 2026.07.11b — see [CHANGELOG.md](CHANGELOG.md)
+**Version:** 2026.07.11c — see [CHANGELOG.md](CHANGELOG.md)
 
 Architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
@@ -37,13 +37,13 @@ App data (SQLite, thumbnails): `~/.imageOrganizer/`
 2. Open **Inbox** → **Scan inbox**
 3. Review duplicates, metadata, and events
 4. **Review** → **Preview inbox organize** → **Apply changes**
-5. Browse organized photos in **Calendar** or by **Events**
+5. Browse organized photos in **Calendar** or by **Events** (calendar day panel paginates days with 100+ photos)
 
 ### Trash and restore
 
 After **Apply**, deleted files move to `.trash/` (not permanent). Open **Trash** in the sidebar to browse them, run **Scan trash** to index files already on disk, and **Restore** single or bulk selections back to their original inbox/archive path.
 
-The Inbox **Delete queue** filter is different: it shows photos *marked* for delete before Apply.
+The Inbox **Delete queue** filter is different: it shows photos *marked* for delete before Apply. On **Review**, use **Restore** to undo delete decisions before Apply without clearing organize/keep items in the queue.
 
 ### Find blurry photos (optional)
 

@@ -10,6 +10,7 @@ import { isFilterActive, isUnlabeledFilterActive } from "../utils/calendarFilter
 interface Props {
   labels: CalendarMonthLabelsData;
   activeFilter: CalendarMonthFilter | null;
+  globalUnlabeled?: boolean;
   onSelectFilter: (filter: CalendarMonthFilter | null) => void;
 }
 
@@ -22,10 +23,21 @@ function hasLabels(labels: CalendarMonthLabelsData): boolean {
   );
 }
 
-export default function CalendarMonthLabels({ labels, activeFilter, onSelectFilter }: Props) {
+export default function CalendarMonthLabels({
+  labels,
+  activeFilter,
+  globalUnlabeled = false,
+  onSelectFilter,
+}: Props) {
   const { year, month, events, people, tags, unlabeled_count } = labels;
   const hasActive =
-    activeFilter?.year === year && activeFilter?.month === month && activeFilter !== null;
+    !globalUnlabeled &&
+    activeFilter?.year === year &&
+    activeFilter?.month === month &&
+    activeFilter !== null;
+
+  const untaggedActive =
+    globalUnlabeled || isUnlabeledFilterActive(activeFilter, year, month);
 
   if (!hasLabels(labels)) {
     return <div className="calendar-month-labels empty">No labels this month</div>;
@@ -40,6 +52,10 @@ export default function CalendarMonthLabels({ labels, activeFilter, onSelectFilt
   };
 
   const toggleUnlabeled = () => {
+    if (globalUnlabeled) {
+      onSelectFilter({ year, month, kind: "unlabeled" });
+      return;
+    }
     if (isUnlabeledFilterActive(activeFilter, year, month)) {
       onSelectFilter(null);
     } else {
@@ -60,7 +76,7 @@ export default function CalendarMonthLabels({ labels, activeFilter, onSelectFilt
       {unlabeled_count > 0 && (
         <button
           type="button"
-          className={`calendar-event-chip calendar-unlabeled-chip ${isUnlabeledFilterActive(activeFilter, year, month) ? "active" : ""}`}
+          className={`calendar-event-chip calendar-unlabeled-chip ${untaggedActive ? "active" : ""}`}
           onClick={toggleUnlabeled}
         >
           Untagged ({unlabeled_count})

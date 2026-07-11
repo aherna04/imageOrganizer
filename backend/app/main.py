@@ -95,7 +95,7 @@ from app.scanner import scan_state, start_scan_background
 from app.blur_analysis import blur_analysis_state, start_blur_analysis_background
 from app.trash_restore import restore_from_trash
 
-app = FastAPI(title="Image Organizer", version="2026.07.11b")
+app = FastAPI(title="Image Organizer", version="2026.07.11c")
 
 app.add_middleware(
     CORSMiddleware,

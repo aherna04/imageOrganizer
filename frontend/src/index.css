@@ -709,6 +709,33 @@ button {
   margin-bottom: 0.75rem;
 }
 
+.calendar-day-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.calendar-day-pagination-label {
+  color: #8891a0;
+  font-size: 0.875rem;
+}
+
+.calendar-day-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.calendar-day-pagination-page {
+  color: #8891a0;
+  font-size: 0.875rem;
+  min-width: 5.5rem;
+  text-align: center;
+}
+
 @media (max-width: 1099px) {
   .calendar-day-panel {
     border-left: none;

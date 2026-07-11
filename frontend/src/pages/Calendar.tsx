@@ -44,8 +44,11 @@ export default function CalendarPage() {
 
   const [location, setLocation] = useState("archive");
   const [mediaType, setMediaType] = useState<CalendarMediaType>("all");
+  const [calendarLabelFilter, setCalendarLabelFilter] = useState<"all" | "unlabeled">("all");
   const [windowStartIndex, setWindowStartIndex] = useState(0);
   const [monthFilter, setMonthFilter] = useState<CalendarMonthFilter | null>(null);
+
+  const globalUnlabeled = calendarLabelFilter === "unlabeled";
 
   const { data: monthsData } = useQuery(
     calendarQueryOptions({
@@ -107,7 +110,9 @@ export default function CalendarPage() {
     return activeMonths;
   }, [activeMonths, windowStartIndex, selectedDayStr]);
 
-  const dayPanelFilter = monthFilterToDayFilter(monthFilter, urlYear, urlMonth);
+  const dayPanelFilter = globalUnlabeled
+    ? { unlabeled: true as const }
+    : monthFilterToDayFilter(monthFilter, urlYear, urlMonth);
 
   const handleSelectDay = (year: number, month: number, day: number) => {
     if (monthFilter && (monthFilter.year !== year || monthFilter.month !== month)) {
@@ -117,6 +122,9 @@ export default function CalendarPage() {
   };
 
   const handleSelectFilter = (_year: number, _month: number, filter: CalendarMonthFilter | null) => {
+    if (filter !== null) {
+      setCalendarLabelFilter("all");
+    }
     setMonthFilter(filter);
   };
 
@@ -158,6 +166,7 @@ export default function CalendarPage() {
           onChange={(e) => {
             setLocation(e.target.value);
             setMonthFilter(null);
+            setCalendarLabelFilter("all");
           }}
         >
           <option value="archive">Archive only</option>
@@ -169,12 +178,35 @@ export default function CalendarPage() {
           onChange={(e) => {
             setMediaType(e.target.value as CalendarMediaType);
             setMonthFilter(null);
+            setCalendarLabelFilter("all");
           }}
         >
           <option value="all">All media</option>
           <option value="image">Images</option>
           <option value="video">Videos</option>
         </select>
+        <div className="photo-alerts-filter">
+          <button
+            type="button"
+            className={`btn btn-secondary${calendarLabelFilter === "all" ? " active" : ""}`}
+            onClick={() => {
+              setCalendarLabelFilter("all");
+              setMonthFilter(null);
+            }}
+          >
+            All
+          </button>
+          <button
+            type="button"
+            className={`btn btn-secondary${calendarLabelFilter === "unlabeled" ? " active" : ""}`}
+            onClick={() => {
+              setCalendarLabelFilter("unlabeled");
+              setMonthFilter(null);
+            }}
+          >
+            Untagged
+          </button>
+        </div>
       </div>
 
       <div className={`calendar-page-layout ${selectedDayStr ? "has-day" : ""}`}>
@@ -187,6 +219,7 @@ export default function CalendarPage() {
             totalMonths={activeMonths.length}
             location={location}
             mediaType={mediaType}
+            globalUnlabeled={globalUnlabeled}
             selectedDay={selectedDay}
             monthFilter={monthFilter}
             mode={selectedDayStr ? "focus" : "browse"}

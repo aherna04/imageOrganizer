@@ -4,6 +4,14 @@ Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
 ## [Unreleased]
 
+## [2026.07.11c] - 2026-07-11
+
+### Added
+
+- Calendar global **Untagged** filter in top bar (All / Untagged next to Archive and Media)
+- Review queue: Restore button for delete decisions (list, grid bulk, and photo detail)
+- Calendar day panel: Prev/Next pagination when a day has more than 100 photos
+
 ## [2026.07.11b] - 2026-07-11
 
 ### Added

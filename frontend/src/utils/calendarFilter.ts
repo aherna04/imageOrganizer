@@ -12,6 +12,16 @@ export function monthFilterToDayFilter(
   return { unlabeled: true };
 }
 
+export function resolveDayFilter(
+  filter: CalendarMonthFilter | null,
+  year: number,
+  month: number,
+  globalUnlabeled: boolean
+): CalendarDayFilter | undefined {
+  if (globalUnlabeled) return { unlabeled: true };
+  return monthFilterToDayFilter(filter, year, month);
+}
+
 export function isFilterActive(
   filter: CalendarMonthFilter | null,
   year: number,

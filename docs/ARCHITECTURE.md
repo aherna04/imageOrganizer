@@ -164,8 +164,9 @@ Supported media: common image formats (JPEG, PNG, HEIC, WebP, TIFF) and video (M
 
 1. User marks files on Review page → `POST /api/review/decisions` (delete, skip, etc.).
 2. Queue shown at `GET /api/review/queue`.
-3. `POST /api/apply` executes queued operations: move/rename into archive layout or move deletes to `.trash/` (files row kept with `location='trash'`).
-4. Results logged in `operations_log`.
+3. **Restore** on delete decisions (`POST /api/review/decisions/cancel`) removes them from the queue without affecting organize/keep items; available in list, grid bulk, and photo detail.
+4. `POST /api/apply` executes queued operations: move/rename into archive layout or move deletes to `.trash/` (files row kept with `location='trash'`).
+5. Results logged in `operations_log`.
 
 ### 4. Trash and restore
 
@@ -232,6 +233,13 @@ Implementation: [`metadata.py`](../backend/app/metadata.py) (`compute_blur_score
 
 Event-level tags (`event_tags`) label the event record itself and do not imply all event photos carry that tag.
 
+### 8. Calendar browse
+
+- Multi-month grid with per-month label chips (events, people, tags) and an **Untagged** chip per month.
+- Top bar: **All / Untagged** global filter (applies across visible months), plus Archive/Inbox scope and Images/Videos media filter.
+- Day panel: bulk assign events/people/tags; tag search in label editors.
+- Days with more than 100 photos paginate in the day panel (`GET /api/calendar/day?page=&page_size=`; default page size 100, max 500).
+
 ## API overview
 
 Grouped by domain. See `/docs` for parameters and schemas.
@@ -244,12 +252,12 @@ Grouped by domain. See `/docs` for parameters and schemas.
 | Blur analysis | `POST /api/blur-analysis/inbox`, `/archive`, `/all`, `GET /api/blur-analysis/status` |
 | Files | `GET /api/files` (filters: location, day, event, person, tag, blurry), thumbnails, original, metadata |
 | File relations | `PATCH /api/files/{id}/events`, `/people`, `/tags` |
-| Calendar | `GET /api/calendar/months`, `/summary`, `/events`, `/day` |
+| Calendar | `GET /api/calendar/months`, `/summary`, `/events`, `/day` (paginated; `page`, `page_size`) |
 | Events | CRUD, files list, assign-ids, assign-range |
 | People | CRUD, merge, assign-ids, unassign-ids |
 | Tags | CRUD, merge, assign-ids, unassign-ids |
 | Duplicates | `GET /api/duplicates`, `PATCH .../keeper` |
-| Review / organize | preview, decisions, queue, apply |
+| Review / organize | preview, decisions, cancel (restore delete), queue, apply |
 | Operations | `GET /api/operations` |
 | Trash | `GET /api/files?location=trash`, `POST /api/trash/restore` |
 
@@ -258,7 +266,7 @@ Grouped by domain. See `/docs` for parameters and schemas.
 | Route | Page |
 |-------|------|
 | `/inbox` | Scan inbox; bulk assign events, people, tags |
-| `/calendar`, `/calendar/:y/:m/:d` | Multi-month view; day panel with bulk assign |
+| `/calendar`, `/calendar/:y/:m/:d` | Multi-month view; day panel with bulk assign and pagination |
 | `/events`, `/events/:slug` | Event list and detail |
 | `/people` | People CRUD, merge, delete |
 | `/tags` | Tags CRUD, merge, delete |
@@ -266,7 +274,7 @@ Grouped by domain. See `/docs` for parameters and schemas.
 | `/duplicates` | Duplicate review |
 | `/blurry` | Analyze sharpness; review blurry photos; mark for delete |
 | `/trash` | Browse `.trash/`; scan and restore deleted photos |
-| `/review` | Decision queue and Apply |
+| `/review` | Decision queue, restore deletes, and Apply |
 | `/settings` | Paths, rename patterns, blur threshold |
 
 Version is shown in the sidebar (from `frontend/package.json`).

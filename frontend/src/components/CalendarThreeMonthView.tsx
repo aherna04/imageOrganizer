@@ -12,6 +12,7 @@ interface Props {
   totalMonths: number;
   location: string;
   mediaType: CalendarMediaType;
+  globalUnlabeled: boolean;
   selectedDay?: { year: number; month: number; day: number } | null;
   monthFilter: CalendarMonthFilter | null;
   mode: "browse" | "focus";
@@ -32,6 +33,7 @@ export default function CalendarThreeMonthView({
   totalMonths,
   location,
   mediaType,
+  globalUnlabeled,
   selectedDay,
   monthFilter,
   mode,
@@ -69,6 +71,7 @@ export default function CalendarThreeMonthView({
             month={m.month}
             location={location}
             mediaType={mediaType}
+            globalUnlabeled={globalUnlabeled}
             selectedDay={selectedDay}
             monthFilter={monthFilter}
             onSelectDay={onSelectDay}

@@ -10,6 +10,8 @@ import { invalidateAfterDateChange } from "../utils/invalidateAfterDateChange";
 import { calendarQueryOptions } from "../utils/calendarQueryOptions";
 import { togglePhotoSelection } from "../utils/photoSelection";
 
+const PAGE_SIZE = 100;
+
 interface Props {
   date: string;
   location: string;
@@ -20,22 +22,42 @@ interface Props {
 
 export default function CalendarDayPanel({ date, location, mediaType, filter, onClose }: Props) {
   const qc = useQueryClient();
+  const [page, setPage] = useState(1);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [detailFile, setDetailFile] = useState<MediaFile | null>(null);
   const selectionAnchorRef = useRef<number | null>(null);
 
   const { data, refetch } = useQuery(
     calendarQueryOptions({
-      queryKey: ["calendar-day", date, location, filter, mediaType],
-      queryFn: () => api.calendarDay(date, location, filter, mediaType),
+      queryKey: ["calendar-day", date, location, filter, mediaType, page],
+      queryFn: () => api.calendarDay(date, location, filter, mediaType, page, PAGE_SIZE),
     }),
   );
 
   useEffect(() => {
+    setPage(1);
     setSelectedIds([]);
     setDetailFile(null);
     selectionAnchorRef.current = null;
   }, [date, location, filter, mediaType]);
+
+  const total = data?.total ?? 0;
+  const pageSize = data?.page_size ?? PAGE_SIZE;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const rangeStart = total === 0 ? 0 : (page - 1) * pageSize + 1;
+  const rangeEnd = Math.min(page * pageSize, total);
+  const showPagination = total > PAGE_SIZE;
+
+  const clearSelection = () => {
+    setSelectedIds([]);
+    setDetailFile(null);
+    selectionAnchorRef.current = null;
+  };
+
+  const goToPage = (nextPage: number) => {
+    setPage(nextPage);
+    clearSelection();
+  };
 
   const toggleSelect = (id: number, event: React.MouseEvent) => {
     const files = data?.items ?? [];
@@ -81,9 +103,39 @@ export default function CalendarDayPanel({ date, location, mediaType, filter, on
         </button>
       </div>
 
+      {showPagination && (
+        <div className="calendar-day-pagination">
+          <span className="calendar-day-pagination-label">
+            {total} photos · {rangeStart}–{rangeEnd}
+          </span>
+          <div className="calendar-day-pagination-controls">
+            <button
+              type="button"
+              className="btn btn-secondary"
+              disabled={page <= 1}
+              onClick={() => goToPage(page - 1)}
+            >
+              Prev
+            </button>
+            <span className="calendar-day-pagination-page">
+              Page {page} of {totalPages}
+            </span>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              disabled={page >= totalPages}
+              onClick={() => goToPage(page + 1)}
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
+
       <BulkEventAssignBar
         selectedIds={selectedIds}
         totalCount={data?.total}
+        visibleCount={data?.items.length}
         onSelectAll={() => setSelectedIds(data?.items.map((f) => f.id) ?? [])}
         onClear={() => {
           setSelectedIds([]);

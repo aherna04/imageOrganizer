@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { api, CalendarMonthFilter, CalendarMediaType, CalendarMonthSummary } from "../api/client";
 import { calendarQueryOptions } from "../utils/calendarQueryOptions";
-import { monthFilterToDayFilter } from "../utils/calendarFilter";
+import { resolveDayFilter } from "../utils/calendarFilter";
 import CalendarMonth from "./CalendarMonth";
 import CalendarMonthLabels from "./CalendarMonthLabels";
 
@@ -15,6 +15,7 @@ interface Props {
   month: number;
   location: string;
   mediaType: CalendarMediaType;
+  globalUnlabeled: boolean;
   selectedDay?: { year: number; month: number; day: number } | null;
   monthFilter: CalendarMonthFilter | null;
   onSelectDay: (year: number, month: number, day: number) => void;
@@ -26,12 +27,13 @@ export default function CalendarMonthColumn({
   month,
   location,
   mediaType,
+  globalUnlabeled,
   selectedDay,
   monthFilter,
   onSelectDay,
   onSelectFilter,
 }: Props) {
-  const dayFilter = monthFilterToDayFilter(monthFilter, year, month);
+  const dayFilter = resolveDayFilter(monthFilter, year, month, globalUnlabeled);
 
   const { data: summary } = useQuery(
     calendarQueryOptions({
@@ -75,6 +77,7 @@ export default function CalendarMonthColumn({
         <CalendarMonthLabels
           labels={labelsData}
           activeFilter={activeFilterForMonth}
+          globalUnlabeled={globalUnlabeled}
           onSelectFilter={(filter) => onSelectFilter(year, month, filter)}
         />
       )}

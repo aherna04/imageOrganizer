@@ -328,9 +328,11 @@ export const api = {
     date: string,
     location = "archive",
     filter?: CalendarDayFilter,
-    mediaType: CalendarMediaType = "all"
+    mediaType: CalendarMediaType = "all",
+    page = 1,
+    pageSize = 100
   ) => {
-    const q = new URLSearchParams({ date, location });
+    const q = new URLSearchParams({ date, location, page: String(page), page_size: String(pageSize) });
     appendCalendarFilter(q, filter);
     appendMediaType(q, mediaType);
     return request<FileList>(`/api/calendar/day?${q}`);

@@ -20,6 +20,7 @@ from app.media_filter import append_media_type_filter, filename_media_type_condi
 from app.metadata import thumb_cache_path
 from app.storage_stats import get_storage_stats
 from app.db_backup import create_database_backup, list_database_backups
+from app.mosaic import generate_mosaic, preview_mosaic, resolve_mosaic_output_path
 from app.models import (
     ApplyResultOut,
     CalendarMonthEventOut,
@@ -78,6 +79,9 @@ from app.models import (
     StorageStatsOut,
     DatabaseBackupOut,
     DatabaseBackupListOut,
+    MosaicRequest,
+    MosaicPreviewOut,
+    MosaicGenerateOut,
     TagCreate,
     TagOut,
     TagUpdate,
@@ -98,7 +102,7 @@ from app.scanner import scan_state, start_scan_background
 from app.blur_analysis import blur_analysis_state, start_blur_analysis_background
 from app.trash_restore import restore_from_trash
 
-app = FastAPI(title="Image Organizer", version="2026.07.11d")
+app = FastAPI(title="Image Organizer", version="2026.07.11e")
 
 app.add_middleware(
     CORSMiddleware,
@@ -205,6 +209,74 @@ def api_create_database_backup():
 @app.get("/api/database/backups", response_model=DatabaseBackupListOut)
 def api_list_database_backups():
     return DatabaseBackupListOut(items=[DatabaseBackupOut(**item) for item in list_database_backups()])
+
+
+def _validate_mosaic_request(body: MosaicRequest) -> None:
+    if body.filter_type != "all" and body.filter_id is None:
+        raise HTTPException(400, f"filter_id required when filter_type is {body.filter_type}")
+
+
+def _mosaic_source_path(conn, source_file_id: int) -> Path:
+    row = conn.execute("SELECT path, filename FROM files WHERE id = ?", (source_file_id,)).fetchone()
+    if not row:
+        raise HTTPException(404, "Source file not found")
+    path = Path(row["path"])
+    if not path.exists():
+        raise HTTPException(404, "Source file not found on disk")
+    from app.config import is_video_path
+
+    if is_video_path(path):
+        raise HTTPException(400, "Source must be an image")
+    return path
+
+
+@app.post("/api/mosaic/preview", response_model=MosaicPreviewOut)
+def api_mosaic_preview(body: MosaicRequest):
+    _validate_mosaic_request(body)
+    with get_conn() as conn:
+        source_path = _mosaic_source_path(conn, body.source_file_id)
+        try:
+            result = preview_mosaic(
+                conn,
+                source_path,
+                body.filter_type,
+                body.filter_id,
+                body.location,
+                body.columns,
+            )
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+    return MosaicPreviewOut(**result)
+
+
+@app.post("/api/mosaic/generate", response_model=MosaicGenerateOut)
+def api_mosaic_generate(body: MosaicRequest):
+    _validate_mosaic_request(body)
+    with get_conn() as conn:
+        source_path = _mosaic_source_path(conn, body.source_file_id)
+        try:
+            result = generate_mosaic(
+                conn,
+                source_path,
+                body.filter_type,
+                body.filter_id,
+                body.location,
+                body.columns,
+            )
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+    return MosaicGenerateOut(**result)
+
+
+@app.get("/api/mosaic/output/{filename}")
+def api_mosaic_output(filename: str):
+    try:
+        path = resolve_mosaic_output_path(filename)
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
+    if not path.is_file():
+        raise HTTPException(404, "Mosaic not found")
+    return FileResponse(path, media_type="image/jpeg", filename=filename)
 
 
 @app.post("/api/scan/inbox")
@@ -446,6 +518,16 @@ def api_list_files(
         ).fetchall()
         items = [_file_out(conn, r, cfg) for r in rows]
     return FileListOut(items=items, total=total, page=page, page_size=page_size)
+
+
+@app.get("/api/files/{file_id}", response_model=FileOut)
+def api_get_file(file_id: int):
+    with get_conn() as conn:
+        row = conn.execute("SELECT * FROM files WHERE id = ?", (file_id,)).fetchone()
+        if not row:
+            raise HTTPException(404, "File not found")
+        cfg = get_config(conn)
+        return _file_out(conn, row, cfg)
 
 
 @app.get("/api/files/{file_id}/thumbnail")

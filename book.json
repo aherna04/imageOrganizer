@@ -1,6 +1,6 @@
 {
   "title": "Image Organizer — Development Book",
-  "version": "2026.07.11d",
+  "version": "2026.07.11e",
   "output": "docs/DEVELOPMENT_BOOK.md",
   "plans_dir": "~/.cursor/plans",
   "related_links": "[ARCHITECTURE.md](ARCHITECTURE.md) · [CHANGELOG.md](../CHANGELOG.md)",
@@ -29,7 +29,9 @@
         "event_calendar_deeplink_1d75d191",
         "edit_event_title_ca9ac782",
         "calendar_media_type_filter_6c5b28cd",
-        "calendar_session_cache_91b69896"
+        "calendar_session_cache_91b69896",
+        "calendar_untagged_edit_mode_784337b4",
+        "fix_calendar_tag_search_layout_b6045329"
       ]
     },
     {
@@ -53,7 +55,9 @@
         "fix_inbox_scan_jank_daa2a966",
         "inbox_compact_layout_6bc030f7",
         "compact_bulk_date_editor_285b6ca2",
-        "inbox_sticky_controls_0e71ad95"
+        "inbox_sticky_controls_0e71ad95",
+        "trash_view_pagination_37bee8a8",
+        "sticky_page_controls_8e91d4ea"
       ]
     },
     {
@@ -74,7 +78,11 @@
         "tags_page_search_f082aca9",
         "single_video_playback_3b73c5e1",
         "fix_lightbox_pan_and_delete_718fe59d",
-        "fix_zoom_scale-to-fit_35b9a5d7"
+        "fix_zoom_scale-to-fit_35b9a5d7",
+        "mosaic_from_detail_viewer_0be53aa4",
+        "fix_mosaic_navigation_53027605",
+        "lightbox_tag_fonts_47cf67f1",
+        "subtle_delete_icon_0844dd84"
       ]
     },
     {

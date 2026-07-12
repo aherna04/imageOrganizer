@@ -45,6 +45,32 @@ class DatabaseBackupListOut(BaseModel):
     items: list[DatabaseBackupOut]
 
 
+class MosaicRequest(BaseModel):
+    source_file_id: int
+    filter_type: Literal["all", "tag", "person", "event"] = "all"
+    filter_id: int | None = None
+    location: Literal["archive", "all"] = "archive"
+    columns: int = Field(default=60, ge=10, le=120)
+
+
+class MosaicPreviewOut(BaseModel):
+    tile_count: int
+    columns: int
+    rows: int
+    output_width: int
+    output_height: int
+
+
+class MosaicGenerateOut(BaseModel):
+    filename: str
+    url: str
+    width: int
+    height: int
+    tile_count: int
+    columns: int
+    rows: int
+
+
 class FileOut(BaseModel):
     id: int
     path: str

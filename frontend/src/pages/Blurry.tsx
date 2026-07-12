@@ -119,40 +119,42 @@ export default function Blurry() {
         the absolute threshold in Settings.
       </p>
 
-      <div className="blurry-toolbar">
-        <div className="photo-alerts-filter">
-          <button
-            type="button"
-            className={`btn btn-secondary${locationFilter === "all" ? " active" : ""}`}
-            onClick={() => setLocationFilter("all")}
-          >
-            All
-          </button>
-          <button
-            type="button"
-            className={`btn btn-secondary${locationFilter === "inbox" ? " active" : ""}`}
-            onClick={() => setLocationFilter("inbox")}
-          >
-            Inbox
-          </button>
-          <button
-            type="button"
-            className={`btn btn-secondary${locationFilter === "archive" ? " active" : ""}`}
-            onClick={() => setLocationFilter("archive")}
-          >
-            Archive
-          </button>
-        </div>
+      <div className="page-sticky-controls">
+        <div className="blurry-toolbar">
+          <div className="photo-alerts-filter">
+            <button
+              type="button"
+              className={`btn btn-secondary${locationFilter === "all" ? " active" : ""}`}
+              onClick={() => setLocationFilter("all")}
+            >
+              All
+            </button>
+            <button
+              type="button"
+              className={`btn btn-secondary${locationFilter === "inbox" ? " active" : ""}`}
+              onClick={() => setLocationFilter("inbox")}
+            >
+              Inbox
+            </button>
+            <button
+              type="button"
+              className={`btn btn-secondary${locationFilter === "archive" ? " active" : ""}`}
+              onClick={() => setLocationFilter("archive")}
+            >
+              Archive
+            </button>
+          </div>
 
-        {selectedIds.length > 0 && (
-          <button
-            className="btn btn-danger"
-            disabled={bulkDeleteMutation.isPending}
-            onClick={() => bulkDeleteMutation.mutate(selectedIds)}
-          >
-            Mark {selectedIds.length} for delete
-          </button>
-        )}
+          {selectedIds.length > 0 && (
+            <button
+              className="btn btn-danger"
+              disabled={bulkDeleteMutation.isPending}
+              onClick={() => bulkDeleteMutation.mutate(selectedIds)}
+            >
+              Mark {selectedIds.length} for delete
+            </button>
+          )}
+        </div>
       </div>
 
       {isLoading && <div className="empty-state">Loading…</div>}

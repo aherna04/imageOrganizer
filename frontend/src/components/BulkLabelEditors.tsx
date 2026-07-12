@@ -295,7 +295,7 @@ export default function BulkLabelEditors({ selectedFiles, onChange, showTagSearc
           </div>
         </div>
       )}
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem", marginTop: recentPeople.length > 0 ? "0.35rem" : 0 }}>
+      <div className="tag-picker-chips" style={{ marginTop: recentPeople.length > 0 ? "0.35rem" : 0 }}>
         {visiblePeople.map((person) => {
           const cov = coverage(selectedFiles, (f) => (f.people ?? []).some((p) => p.id === person.id));
           return (
@@ -401,7 +401,7 @@ export default function BulkLabelEditors({ selectedFiles, onChange, showTagSearc
         {showTagSearch && tagSearchActive && visibleTags.length === 0 ? (
           <p className="label-search-empty">No tags match — try another term</p>
         ) : (
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem", marginTop: "0.35rem" }}>
+          <div className="tag-picker-chips" style={{ marginTop: "0.35rem" }}>
             {visibleTags.map((tag) => {
               const cov = tagCoverage(tag.id);
               return (

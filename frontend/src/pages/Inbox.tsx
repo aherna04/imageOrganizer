@@ -277,7 +277,7 @@ export default function Inbox() {
         Scan, submit batches to Review, and label with checkboxes or click for detail.
       </p>
 
-      <div className="inbox-sticky-controls">
+      <div className="page-sticky-controls">
       <div className="inbox-toolbar">
         <div className="photo-alerts-filter">
           <button

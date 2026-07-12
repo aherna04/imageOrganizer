@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { MediaFile, api } from "../api/client";
 import {
   adjacentFile,
@@ -14,6 +15,7 @@ import PersonPicker from "./PersonPicker";
 import FileTagPicker from "./FileTagPicker";
 import PhotoCardLabels from "./PhotoCardLabels";
 import { invalidateAfterReviewChange } from "../utils/invalidateAfterReviewChange";
+import { mosaicSourcePath } from "../utils/mosaicPath";
 import { personLabel } from "../utils/personLabel";
 
 interface Props {
@@ -35,6 +37,7 @@ export default function PhotoDetail({
   deleteQueueMode = false,
   trashMode = false,
 }: Props) {
+  const navigate = useNavigate();
   const qc = useQueryClient();
   const currentFile = files?.find((f) => f.id === file.id) ?? file;
   const { data: meta, refetch } = useQuery({
@@ -244,15 +247,35 @@ export default function PhotoDetail({
     <>
       <div className="drawer-overlay" onClick={lightboxOpen ? undefined : onClose}>
         <div className="drawer" onClick={(e) => e.stopPropagation()}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-          <button className="btn btn-secondary" onClick={onClose}>
+        <div className="photo-detail-header">
+          <button type="button" className="btn btn-secondary" onClick={onClose}>
             Close
           </button>
-          {canNavigate && fileIndex >= 0 && (
-            <span style={{ color: "#8891a0", fontSize: "0.875rem" }}>
-              {fileIndex + 1} / {files!.length}
-            </span>
-          )}
+          <div className="photo-detail-header-right">
+            {canNavigate && fileIndex >= 0 && (
+              <span className="photo-detail-index">
+                {fileIndex + 1} / {files!.length}
+              </span>
+            )}
+            {!trashMode && !deleteQueueMode && (
+              <button
+                type="button"
+                className="photo-detail-delete-btn"
+                title="Mark delete (D)"
+                aria-label="Mark delete"
+                disabled={acting}
+                onClick={() => void handleMarkDelete()}
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <path d="M3 6h18" />
+                  <path d="M8 6V4h8v2" />
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                  <path d="M10 11v6" />
+                  <path d="M14 11v6" />
+                </svg>
+              </button>
+            )}
+          </div>
         </div>
         {file.media_type === "video" ? (
           lightboxOpen ? (
@@ -284,34 +307,37 @@ export default function PhotoDetail({
           {actingSlow && (
             <span style={{ color: "#8891a0", fontSize: "0.875rem" }}>Saving…</span>
           )}
-          {trashMode ? (
-            <button
-              className="btn btn-secondary"
-              title="Restore to original location"
-              disabled={acting}
-              onClick={() => void handleTrashRestore()}
-            >
-              Restore
-            </button>
-          ) : deleteQueueMode ? (
-            <button
-              className="btn btn-secondary"
-              title="Restore to inbox"
-              disabled={acting}
-              onClick={() => void handleRestore()}
-            >
-              Restore
-            </button>
-          ) : (
-            <button
-              className="btn btn-danger"
-              title="Mark delete (D)"
-              disabled={acting}
-              onClick={() => void handleMarkDelete()}
-            >
-              Mark delete
-            </button>
-          )}
+          <div className="photo-detail-title-actions">
+            {!trashMode && !deleteQueueMode && file.media_type === "image" && (
+              <button
+                type="button"
+                className="btn btn-secondary"
+                title="Build a photomosaic from this photo"
+                onClick={() => navigate(mosaicSourcePath(file.id))}
+              >
+                Create mosaic
+              </button>
+            )}
+            {trashMode ? (
+              <button
+                className="btn btn-secondary"
+                title="Restore to original location"
+                disabled={acting}
+                onClick={() => void handleTrashRestore()}
+              >
+                Restore
+              </button>
+            ) : deleteQueueMode ? (
+              <button
+                className="btn btn-secondary"
+                title="Restore to inbox"
+                disabled={acting}
+                onClick={() => void handleRestore()}
+              >
+                Restore
+              </button>
+            ) : null}
+          </div>
         </div>
         {(currentFile.events?.length || currentFile.people?.length || currentFile.tags?.length) ? (
           <div className="photo-detail-applied-labels">

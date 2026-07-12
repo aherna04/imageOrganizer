@@ -139,6 +139,7 @@ Configured in `backend/app/config.py` (overridable via Settings UI → `config` 
 | `{MEDIA_ROOT}/.trash/` | Soft-deleted files |
 | `{APP_DATA_DIR}/index.db` | SQLite database |
 | `{APP_DATA_DIR}/backups/` | Timestamped database backups (`index-YYYY-MM-DD_HH-MM-SS.db`) |
+| `{APP_DATA_DIR}/mosaics/` | Generated photomosaic JPEGs |
 | `{APP_DATA_DIR}/thumbs/` | Cached JPEG thumbnails (keyed by file id + mtime) |
 
 Environment variables:
@@ -248,6 +249,12 @@ Event-level tags (`event_tags`) label the event record itself and do not imply a
 - CLI: `python backend/scripts/backup_database.py` (optional `--db` path).
 - Use backups with [`restore_junctions_from_backup.py`](../backend/scripts/restore_junctions_from_backup.py) after a bad migration.
 
+### 10. Photomosaic
+
+- **Mosaic** page (`/mosaic`): select a source image, filter tile pool by tag/person/event/all, generate a color-matched grid mosaic.
+- `POST /api/mosaic/preview` — tile count and output dimensions.
+- `POST /api/mosaic/generate` — writes JPEG to `{APP_DATA_DIR}/mosaics/`; served at `GET /api/mosaic/output/{filename}`.
+
 ## API overview
 
 Grouped by domain. See `/docs` for parameters and schemas.
@@ -257,6 +264,7 @@ Grouped by domain. See `/docs` for parameters and schemas.
 | Health | `GET /api/health` |
 | Config | `GET/PATCH /api/config` |
 | Database backup | `POST /api/database/backup`, `GET /api/database/backups` |
+| Mosaic | `POST /api/mosaic/preview`, `POST /api/mosaic/generate`, `GET /api/mosaic/output/{filename}` |
 | Scan | `POST /api/scan/inbox`, `/archive`, `/trash`, `GET /api/scan/status` |
 | Blur analysis | `POST /api/blur-analysis/inbox`, `/archive`, `/all`, `GET /api/blur-analysis/status` |
 | Files | `GET /api/files` (filters: location, day, event, person, tag, blurry), thumbnails, original, metadata |
@@ -280,9 +288,10 @@ Grouped by domain. See `/docs` for parameters and schemas.
 | `/people` | People CRUD, merge, delete |
 | `/tags` | Tags CRUD, merge, delete |
 | `/browse`, `/browse/:kind/:slug` | Filter by person or tag |
+| `/mosaic` | Photomosaic from source photo + filtered tile pool |
 | `/duplicates` | Duplicate review |
 | `/blurry` | Analyze sharpness; review blurry photos; mark for delete |
-| `/trash` | Browse `.trash/`; scan and restore deleted photos |
+| `/trash` | Browse `.trash/` (paginated); scan and restore deleted photos |
 | `/review` | Decision queue, restore deletes, and Apply |
 | `/settings` | Paths, rename patterns, blur threshold |
 

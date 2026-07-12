@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { api, CalendarMonthFilter, CalendarMediaType, CalendarMonthSummary } from "../api/client";
+import { api, CalendarDayFilter, CalendarMonthFilter, CalendarMediaType, CalendarMonthSummary } from "../api/client";
 import CalendarDayPanel, { CalendarDayLabelContext } from "../components/CalendarDayPanel";
 import CalendarDayLabelPanel from "../components/CalendarDayLabelPanel";
 import CalendarThreeMonthView from "../components/CalendarThreeMonthView";
@@ -112,9 +112,10 @@ export default function CalendarPage() {
     return activeMonths;
   }, [activeMonths, windowStartIndex, selectedDayStr]);
 
-  const dayPanelFilter = globalUnlabeled
-    ? { unlabeled: true as const }
-    : monthFilterToDayFilter(monthFilter, urlYear, urlMonth);
+  const dayPanelFilter = useMemo((): CalendarDayFilter | undefined => {
+    if (globalUnlabeled) return { unlabeled: true };
+    return monthFilterToDayFilter(monthFilter, urlYear, urlMonth);
+  }, [globalUnlabeled, monthFilter, urlYear, urlMonth]);
 
   const handleSelectDay = (year: number, month: number, day: number) => {
     if (monthFilter && (monthFilter.year !== year || monthFilter.month !== month)) {
@@ -217,23 +218,25 @@ export default function CalendarPage() {
           <div className="empty-state">No photos in archive. Scan inbox or archive to browse by date.</div>
         ) : selectedDayStr ? (
           <div className="calendar-left-column">
-            <CalendarThreeMonthView
-              visibleMonths={visibleMonths}
-              windowStartIndex={windowStartIndex}
-              totalMonths={activeMonths.length}
-              location={location}
-              mediaType={mediaType}
-              globalUnlabeled={globalUnlabeled}
-              selectedDay={selectedDay}
-              monthFilter={monthFilter}
-              mode="focus"
-              showWindowNav
-              onPrev={handlePrev}
-              onNext={handleNext}
-              onSelectDay={handleSelectDay}
-              onSelectFilter={handleSelectFilter}
-            />
-            <CalendarDayLabelPanel context={labelContext} />
+            <div className="calendar-left-stack">
+              <CalendarThreeMonthView
+                visibleMonths={visibleMonths}
+                windowStartIndex={windowStartIndex}
+                totalMonths={activeMonths.length}
+                location={location}
+                mediaType={mediaType}
+                globalUnlabeled={globalUnlabeled}
+                selectedDay={selectedDay}
+                monthFilter={monthFilter}
+                mode="focus"
+                showWindowNav
+                onPrev={handlePrev}
+                onNext={handleNext}
+                onSelectDay={handleSelectDay}
+                onSelectFilter={handleSelectFilter}
+              />
+              <CalendarDayLabelPanel context={labelContext} />
+            </div>
           </div>
         ) : (
           <CalendarThreeMonthView

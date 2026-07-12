@@ -138,14 +138,7 @@ export default function FileTagPicker({
       {showTagSearch && searchActive && visibleTags.length === 0 ? (
         <p className="label-search-empty">No tags match — try another term</p>
       ) : (
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: "0.35rem",
-            marginTop: hideLabel ? 0 : "0.35rem",
-          }}
-        >
+        <div className="tag-picker-chips" style={{ marginTop: hideLabel ? 0 : "0.35rem" }}>
           {visibleTags.map((tag) => (
             <button
               key={tag.id}

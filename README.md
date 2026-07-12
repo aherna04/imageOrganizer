@@ -1,6 +1,6 @@
 # Image Organizer
 
-**Version:** 2026.07.11d — see [CHANGELOG.md](CHANGELOG.md)
+**Version:** 2026.07.11e — see [CHANGELOG.md](CHANGELOG.md)
 
 Architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
@@ -42,7 +42,7 @@ Database backups: `~/.imageOrganizer/backups/` (Settings → **Backup database**
 
 ### Trash and restore
 
-After **Apply**, deleted files move to `.trash/` (not permanent). Open **Trash** in the sidebar to browse them, run **Scan trash** to index files already on disk, and **Restore** single or bulk selections back to their original inbox/archive path.
+After **Apply**, deleted files move to `.trash/` (not permanent). Open **Trash** in the sidebar to browse them (paginated at 100 per page when trash is large), run **Scan trash** to index files already on disk, and **Restore** single or bulk selections back to their original inbox/archive path.
 
 The Inbox **Delete queue** filter is different: it shows photos *marked* for delete before Apply. On **Review**, use **Restore** to undo delete decisions before Apply without clearing organize/keep items in the queue.
 
@@ -54,6 +54,12 @@ The Inbox **Delete queue** filter is different: it shows photos *marked* for del
 4. Filter by **All**, **Inbox**, or **Archive**
 5. Select photos → **Mark for delete** to queue them on Review (same as Inbox delete flow)
 6. Tune sensitivity in **Settings → Quality → Blur detection threshold** (higher = more photos flagged; default 150). Obvious outliers are flagged automatically even when the threshold is low.
+
+### Photomosaic (optional)
+
+1. Open any photo in detail → **Create mosaic**, or go to **Mosaic** in the sidebar
+2. On Mosaic, choose tile pool filters (tag, person, event, or all) and grid size
+3. **Generate** — output is saved under `~/.imageOrganizer/mosaics/` and shown in the browser
 
 ## Safety
 

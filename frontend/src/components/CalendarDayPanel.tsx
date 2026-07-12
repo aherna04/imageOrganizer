@@ -38,10 +38,14 @@ export default function CalendarDayPanel({
   const [detailFile, setDetailFile] = useState<MediaFile | null>(null);
   const selectionAnchorRef = useRef<number | null>(null);
 
+  const editingUntagged =
+    !!filter?.unlabeled && (selectedIds.length > 0 || detailFile != null);
+  const queryFilter = editingUntagged ? undefined : filter;
+
   const { data, refetch } = useQuery(
     calendarQueryOptions({
-      queryKey: ["calendar-day", date, location, filter, mediaType, page],
-      queryFn: () => api.calendarDay(date, location, filter, mediaType, page, PAGE_SIZE),
+      queryKey: ["calendar-day", date, location, queryFilter, mediaType, page],
+      queryFn: () => api.calendarDay(date, location, queryFilter, mediaType, page, PAGE_SIZE),
     }),
   );
 
@@ -50,7 +54,7 @@ export default function CalendarDayPanel({
     setSelectedIds([]);
     setDetailFile(null);
     selectionAnchorRef.current = null;
-  }, [date, location, filter, mediaType]);
+  }, [date, location, mediaType, filter?.unlabeled, filter?.eventId, filter?.personId, filter?.tagId]);
 
   const total = data?.total ?? 0;
   const pageSize = data?.page_size ?? PAGE_SIZE;
@@ -126,52 +130,54 @@ export default function CalendarDayPanel({
 
   return (
     <div className="calendar-day-panel">
-      <div className="calendar-day-panel-header-row">
-        <h3 className="calendar-day-panel-header">{date}</h3>
-        <button type="button" className="btn btn-secondary" onClick={onClose}>
-          Close
-        </button>
-      </div>
-
-      {showPagination && (
-        <div className="calendar-day-pagination">
-          <span className="calendar-day-pagination-label">
-            {total} photos · {rangeStart}–{rangeEnd}
-          </span>
-          <div className="calendar-day-pagination-controls">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              disabled={page <= 1}
-              onClick={() => goToPage(page - 1)}
-            >
-              Prev
-            </button>
-            <span className="calendar-day-pagination-page">
-              Page {page} of {totalPages}
-            </span>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              disabled={page >= totalPages}
-              onClick={() => goToPage(page + 1)}
-            >
-              Next
-            </button>
-          </div>
+      <div className="page-sticky-controls">
+        <div className="calendar-day-panel-header-row">
+          <h3 className="calendar-day-panel-header">{date}</h3>
+          <button type="button" className="btn btn-secondary" onClick={onClose}>
+            Close
+          </button>
         </div>
-      )}
 
-      <BulkEventAssignBar
-        selectedIds={selectedIds}
-        totalCount={data?.total}
-        visibleCount={data?.items.length}
-        onSelectAll={() => setSelectedIds(data?.items.map((f) => f.id) ?? [])}
-        onClear={() => {
-          setSelectedIds([]);
-          selectionAnchorRef.current = null;
-        }}
-      />
+        {showPagination && (
+          <div className="calendar-day-pagination">
+            <span className="calendar-day-pagination-label">
+              {total} photos · {rangeStart}–{rangeEnd}
+            </span>
+            <div className="calendar-day-pagination-controls">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                disabled={page <= 1}
+                onClick={() => goToPage(page - 1)}
+              >
+                Prev
+              </button>
+              <span className="calendar-day-pagination-page">
+                Page {page} of {totalPages}
+              </span>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                disabled={page >= totalPages}
+                onClick={() => goToPage(page + 1)}
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
+
+        <BulkEventAssignBar
+          selectedIds={selectedIds}
+          totalCount={data?.total}
+          visibleCount={data?.items.length}
+          onSelectAll={() => setSelectedIds(data?.items.map((f) => f.id) ?? [])}
+          onClear={() => {
+            setSelectedIds([]);
+            selectionAnchorRef.current = null;
+          }}
+        />
+      </div>
 
       <PhotoGridWithAlerts
         files={data?.items ?? []}

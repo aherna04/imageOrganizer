@@ -7,16 +7,31 @@ import ScanStatusBanner from "../components/ScanStatusBanner";
 import { invalidateAfterReviewChange } from "../utils/invalidateAfterReviewChange";
 import { nextFileAfterRemoval } from "../utils/photoNavigation";
 
+const PAGE_SIZE = 100;
+
 export default function Trash() {
   const qc = useQueryClient();
+  const [page, setPage] = useState(1);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [detailFile, setDetailFile] = useState<MediaFile | null>(null);
   const [scanRunning, setScanRunning] = useState(false);
 
   const { data, isLoading, refetch } = useQuery({
-    queryKey: ["files", "trash"],
-    queryFn: () => api.listFiles({ location: "trash", page_size: 200 }),
+    queryKey: ["files", "trash", page],
+    queryFn: () => api.listFiles({ location: "trash", page, page_size: PAGE_SIZE }),
   });
+
+  const adjustPageAfterRefetch = useCallback(
+    (listData: typeof data) => {
+      const newTotal = listData?.total ?? 0;
+      const ps = listData?.page_size ?? PAGE_SIZE;
+      const newTotalPages = Math.max(1, Math.ceil(newTotal / ps));
+      if ((listData?.items.length ?? 0) === 0 && page > 1) {
+        setPage(newTotalPages);
+      }
+    },
+    [page],
+  );
 
   const scan = useMutation({
     mutationFn: api.scanTrash,
@@ -28,14 +43,27 @@ export default function Trash() {
 
   const restoreMutation = useMutation({
     mutationFn: (fileIds: number[]) => api.restoreFromTrash(fileIds),
-    onSuccess: () => {
+    onSuccess: async () => {
       invalidateAfterReviewChange(qc);
       qc.invalidateQueries({ queryKey: ["files", "trash"] });
+      const { data: listData } = await refetch();
+      adjustPageAfterRefetch(listData);
     },
   });
 
   const files = data?.items ?? [];
   const total = data?.total ?? 0;
+  const pageSize = data?.page_size ?? PAGE_SIZE;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const rangeStart = total === 0 ? 0 : (page - 1) * pageSize + 1;
+  const rangeEnd = Math.min(page * pageSize, total);
+  const showPagination = total > PAGE_SIZE;
+
+  const goToPage = (nextPage: number) => {
+    setPage(nextPage);
+    setSelectedIds([]);
+    setDetailFile(null);
+  };
 
   const toggleSelect = (id: number) => {
     setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
@@ -49,6 +77,7 @@ export default function Trash() {
       qc.invalidateQueries({ queryKey: ["files", "trash"] });
     }
     refetch().then(({ data: listData }) => {
+      adjustPageAfterRefetch(listData);
       if (!openId) return;
       const still = listData?.items.find((f) => f.id === openId);
       if (still) {
@@ -95,15 +124,48 @@ export default function Trash() {
         different from the Inbox <strong>Delete queue</strong>, which shows photos marked for delete before Apply.
       </p>
 
-      {selectedIds.length > 0 && (
-        <div className="trash-toolbar">
-          <button
-            className="btn btn-secondary"
-            disabled={restoreMutation.isPending}
-            onClick={handleBulkRestore}
-          >
-            Restore {selectedIds.length}
-          </button>
+      {(selectedIds.length > 0 || showPagination) && (
+        <div className="page-sticky-controls">
+          {selectedIds.length > 0 && (
+            <div className="trash-toolbar">
+              <button
+                className="btn btn-secondary"
+                disabled={restoreMutation.isPending}
+                onClick={handleBulkRestore}
+              >
+                Restore {selectedIds.length}
+              </button>
+            </div>
+          )}
+
+          {showPagination && (
+            <div className="calendar-day-pagination">
+              <span className="calendar-day-pagination-label">
+                {total} photos · {rangeStart}–{rangeEnd}
+              </span>
+              <div className="calendar-day-pagination-controls">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  disabled={page <= 1}
+                  onClick={() => goToPage(page - 1)}
+                >
+                  Prev
+                </button>
+                <span className="calendar-day-pagination-page">
+                  Page {page} of {totalPages}
+                </span>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  disabled={page >= totalPages}
+                  onClick={() => goToPage(page + 1)}
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

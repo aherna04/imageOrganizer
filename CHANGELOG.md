@@ -4,6 +4,26 @@ Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
 ## [Unreleased]
 
+## [2026.07.11e] - 2026-07-11
+
+### Added
+
+- **Mosaic** page — build a photomosaic from a source photo and a tile pool filtered by tag, person, event, or all archive/inbox photos (`POST /api/mosaic/preview`, `POST /api/mosaic/generate`)
+- **Create mosaic** in photo detail navigates to Mosaic with the current image as source
+- Trash **Prev/Next** pagination (100 photos per page) when trash holds more than 100 items
+
+### Fixed
+
+- Browse photo detail no longer bounces back after **Create mosaic**
+- Calendar **Untagged** filter — checkbox selection no longer resets on re-render; photos stay in the day panel while tagging a multi-select batch
+- Calendar day tag search panel no longer expands the left column when many tags are selected
+
+### Changed
+
+- Shared **sticky controls** (`.page-sticky-controls`) — pagination and action toolbars stay pinned while scrolling on Trash, Blurry, Calendar day panel, and Inbox
+- Photo detail header — subtle trash icon for mark delete; **Create mosaic** for images
+- Lightbox tag/people overlay — larger chip and search typography
+
 ## [2026.07.11d] - 2026-07-11
 
 ### Added

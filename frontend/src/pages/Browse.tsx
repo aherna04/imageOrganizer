@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { MediaFile, api } from "../api/client";
 import BulkEventAssignBar from "../components/BulkEventAssignBar";
 import BulkLabelEditors from "../components/BulkLabelEditors";
@@ -13,7 +13,6 @@ import { togglePhotoSelection } from "../utils/photoSelection";
 
 export default function BrowsePage() {
   const { kind, slug } = useParams();
-  const navigate = useNavigate();
   const qc = useQueryClient();
   const [search, setSearch] = useState("");
   const [detailFile, setDetailFile] = useState<MediaFile | null>(null);
@@ -288,10 +287,7 @@ export default function BrowsePage() {
             invalidateAfterDateChange(qc);
             invalidateBrowseFiles();
           }}
-          onClose={() => {
-            setDetailFile(null);
-            navigate(`/browse/${kind}/${slug}`, { replace: true });
-          }}
+          onClose={() => setDetailFile(null)}
         />
       )}
     </div>

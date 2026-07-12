@@ -86,6 +86,32 @@ export interface DatabaseBackup {
   created_at: string;
 }
 
+export interface MosaicPreview {
+  tile_count: number;
+  columns: number;
+  rows: number;
+  output_width: number;
+  output_height: number;
+}
+
+export interface MosaicResult {
+  filename: string;
+  url: string;
+  width: number;
+  height: number;
+  tile_count: number;
+  columns: number;
+  rows: number;
+}
+
+export interface MosaicRequest {
+  source_file_id: number;
+  filter_type?: "all" | "tag" | "person" | "event";
+  filter_id?: number;
+  location?: "archive" | "all";
+  columns?: number;
+}
+
 export interface Metadata {
   capture_date: string | null;
   camera: string | null;
@@ -248,6 +274,12 @@ export const api = {
     request<DatabaseBackup>("/api/database/backup", { method: "POST" }),
   listDatabaseBackups: () =>
     request<{ items: DatabaseBackup[] }>("/api/database/backups"),
+
+  mosaicPreview: (body: MosaicRequest) =>
+    request<MosaicPreview>("/api/mosaic/preview", { method: "POST", body: JSON.stringify(body) }),
+
+  mosaicGenerate: (body: MosaicRequest) =>
+    request<MosaicResult>("/api/mosaic/generate", { method: "POST", body: JSON.stringify(body) }),
   updateConfig: (data: Partial<Config>) =>
     request<Config>("/api/config", { method: "PATCH", body: JSON.stringify(data) }),
 
@@ -276,6 +308,8 @@ export const api = {
     });
     return request<FileList>(`/api/files?${q}`);
   },
+
+  getFile: (id: number) => request<MediaFile>(`/api/files/${id}`),
 
   thumbUrl: (id: number) => `/api/files/${id}/thumbnail`,
   originalUrl: (id: number) => `/api/files/${id}/original`,

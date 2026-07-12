@@ -221,6 +221,14 @@ class CalendarMonthLabelsOut(BaseModel):
     unlabeled_count: int = 0
 
 
+class CalendarYearLabelsOut(BaseModel):
+    year: int
+    events: list[CalendarMonthEventOut]
+    people: list[CalendarMonthPersonOut]
+    tags: list[CalendarMonthTagOut]
+    unlabeled_count: int = 0
+
+
 class EventCreate(BaseModel):
     name: str
     color: str = "#6366f1"

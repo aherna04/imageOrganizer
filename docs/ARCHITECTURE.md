@@ -238,7 +238,8 @@ Event-level tags (`event_tags`) label the event record itself and do not imply a
 ### 8. Calendar browse
 
 - Multi-month grid with per-month label chips (events, people, tags) and an **Untagged** chip per month.
-- Top bar: **All / Untagged** global filter (applies across visible months), plus Archive/Inbox scope and Images/Videos media filter.
+- Top bar: year selector (defaults to latest year with photos), **All / Untagged** global filter, Archive/Inbox scope, and Images/Videos media filter.
+- When a single year is selected, a year-level label bar aggregates events, people, and tags for that year and filters all month grids globally (`GET /api/calendar/year-labels`).
 - Day panel: selection bar and photo grid on the right; label editors below month calendars on the left when photos are selected; tag search in label editors.
 - Days with more than 100 photos paginate in the day panel (`GET /api/calendar/day?page=&page_size=`; default page size 100, max 500).
 
@@ -269,7 +270,7 @@ Grouped by domain. See `/docs` for parameters and schemas.
 | Blur analysis | `POST /api/blur-analysis/inbox`, `/archive`, `/all`, `GET /api/blur-analysis/status` |
 | Files | `GET /api/files` (filters: location, day, event, person, tag, blurry), thumbnails, original, metadata |
 | File relations | `PATCH /api/files/{id}/events`, `/people`, `/tags` |
-| Calendar | `GET /api/calendar/months`, `/summary`, `/events`, `/day` (paginated; `page`, `page_size`) |
+| Calendar | `GET /api/calendar/months`, `/summary`, `/labels`, `/year-labels`, `/events`, `/day` (paginated; `page`, `page_size`) |
 | Events | CRUD, files list, assign-ids, assign-range |
 | People | CRUD, merge, assign-ids, unassign-ids |
 | Tags | CRUD, merge, assign-ids, unassign-ids |

@@ -4,6 +4,17 @@ Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
 ## [Unreleased]
 
+## [2026.07.12] - 2026-07-12
+
+### Added
+
+- Calendar **year selector** — filter the month grid to one year (defaults to latest year with photos; **All years** restores full browse)
+- Calendar **year-level label bar** — when a single year is selected, shows aggregated events, people, and tags for that year as a global filter across all month grids (`GET /api/calendar/year-labels`)
+
+### Changed
+
+- Year label filter and per-month chip filters are mutually exclusive; day panel respects the active year or month filter
+
 ## [2026.07.11e] - 2026-07-11
 
 ### Added

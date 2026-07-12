@@ -26,6 +26,7 @@ from app.models import (
     CalendarMonthEventOut,
     CalendarMonthEventsOut,
     CalendarMonthLabelsOut,
+    CalendarYearLabelsOut,
     CalendarMonthPersonOut,
     CalendarMonthTagOut,
     CalendarMonthSummary,
@@ -102,7 +103,7 @@ from app.scanner import scan_state, start_scan_background
 from app.blur_analysis import blur_analysis_state, start_blur_analysis_background
 from app.trash_restore import restore_from_trash
 
-app = FastAPI(title="Image Organizer", version="2026.07.11e")
+app = FastAPI(title="Image Organizer", version="2026.07.12")
 
 app.add_middleware(
     CORSMiddleware,
@@ -736,6 +737,69 @@ def _month_location_clauses(
     return clauses, params
 
 
+def _year_location_clauses(
+    year: int,
+    location: str,
+    media_type: Literal["image", "video"] | None = None,
+) -> tuple[list[str], list]:
+    clauses = ["f.capture_day LIKE ?"]
+    params: list = [f"{year:04d}%"]
+    if location == "archive":
+        clauses.append("f.location = 'archive'")
+    elif location == "inbox":
+        clauses.append("f.location = 'inbox'")
+    append_media_type_filter(clauses, params, "f.filename", media_type)
+    return clauses, params
+
+
+def _fetch_calendar_label_rows(
+    conn,
+    where: str,
+    params: list,
+) -> tuple[list, list, list, int]:
+    event_rows = conn.execute(
+        f"""
+        SELECT e.id, e.name, e.slug, e.color, COUNT(fe.file_id) AS photo_count
+        FROM events e
+        JOIN file_events fe ON fe.event_id = e.id
+        JOIN files f ON f.id = fe.file_id
+        WHERE {where}
+        GROUP BY e.id
+        ORDER BY e.name
+        """,
+        params,
+    ).fetchall()
+    people_rows = conn.execute(
+        f"""
+        SELECT p.id, p.name, p.slug, COUNT(fp.file_id) AS photo_count
+        FROM people p
+        JOIN file_people fp ON fp.person_id = p.id
+        JOIN files f ON f.id = fp.file_id
+        WHERE {where}
+        GROUP BY p.id
+        ORDER BY p.name
+        """,
+        params,
+    ).fetchall()
+    tag_rows = conn.execute(
+        f"""
+        SELECT t.id, t.name, t.slug, COUNT(ft.file_id) AS photo_count
+        FROM tags t
+        JOIN file_tags ft ON ft.tag_id = t.id
+        JOIN files f ON f.id = ft.file_id
+        WHERE {where}
+        GROUP BY t.id
+        ORDER BY t.name
+        """,
+        params,
+    ).fetchall()
+    unlabeled_count = conn.execute(
+        f"SELECT COUNT(*) FROM files f WHERE {where} AND {_unlabeled_clause('f')}",
+        params,
+    ).fetchone()[0]
+    return event_rows, people_rows, tag_rows, unlabeled_count
+
+
 @app.get("/api/calendar/labels", response_model=CalendarMonthLabelsOut)
 def api_calendar_labels(
     year: int,
@@ -747,49 +811,58 @@ def api_calendar_labels(
     with get_conn() as conn:
         clauses, params = _month_location_clauses(month_str, location, media_type)
         where = " AND ".join(clauses)
-        event_rows = conn.execute(
-            f"""
-            SELECT e.id, e.name, e.slug, e.color, COUNT(fe.file_id) AS photo_count
-            FROM events e
-            JOIN file_events fe ON fe.event_id = e.id
-            JOIN files f ON f.id = fe.file_id
-            WHERE {where}
-            GROUP BY e.id
-            ORDER BY e.name
-            """,
-            params,
-        ).fetchall()
-        people_rows = conn.execute(
-            f"""
-            SELECT p.id, p.name, p.slug, COUNT(fp.file_id) AS photo_count
-            FROM people p
-            JOIN file_people fp ON fp.person_id = p.id
-            JOIN files f ON f.id = fp.file_id
-            WHERE {where}
-            GROUP BY p.id
-            ORDER BY p.name
-            """,
-            params,
-        ).fetchall()
-        tag_rows = conn.execute(
-            f"""
-            SELECT t.id, t.name, t.slug, COUNT(ft.file_id) AS photo_count
-            FROM tags t
-            JOIN file_tags ft ON ft.tag_id = t.id
-            JOIN files f ON f.id = ft.file_id
-            WHERE {where}
-            GROUP BY t.id
-            ORDER BY t.name
-            """,
-            params,
-        ).fetchall()
-        unlabeled_count = conn.execute(
-            f"SELECT COUNT(*) FROM files f WHERE {where} AND {_unlabeled_clause('f')}",
-            params,
-        ).fetchone()[0]
+        event_rows, people_rows, tag_rows, unlabeled_count = _fetch_calendar_label_rows(
+            conn, where, params
+        )
     return CalendarMonthLabelsOut(
         year=year,
         month=month,
+        unlabeled_count=unlabeled_count,
+        events=[
+            CalendarMonthEventOut(
+                id=r["id"],
+                name=r["name"],
+                slug=r["slug"],
+                color=r["color"],
+                photo_count=r["photo_count"],
+            )
+            for r in event_rows
+        ],
+        people=[
+            CalendarMonthPersonOut(
+                id=r["id"],
+                name=r["name"],
+                slug=r["slug"],
+                photo_count=r["photo_count"],
+            )
+            for r in people_rows
+        ],
+        tags=[
+            CalendarMonthTagOut(
+                id=r["id"],
+                name=r["name"],
+                slug=r["slug"],
+                photo_count=r["photo_count"],
+            )
+            for r in tag_rows
+        ],
+    )
+
+
+@app.get("/api/calendar/year-labels", response_model=CalendarYearLabelsOut)
+def api_calendar_year_labels(
+    year: int,
+    location: str = Query("archive"),
+    media_type: Literal["image", "video"] | None = None,
+):
+    with get_conn() as conn:
+        clauses, params = _year_location_clauses(year, location, media_type)
+        where = " AND ".join(clauses)
+        event_rows, people_rows, tag_rows, unlabeled_count = _fetch_calendar_label_rows(
+            conn, where, params
+        )
+    return CalendarYearLabelsOut(
+        year=year,
         unlabeled_count=unlabeled_count,
         events=[
             CalendarMonthEventOut(

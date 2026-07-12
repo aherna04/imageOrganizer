@@ -692,6 +692,10 @@ button {
   font-size: 0.875rem;
 }
 
+.calendar-year-labels {
+  margin-bottom: 0.75rem;
+}
+
 .calendar-window-nav {
   display: flex;
   align-items: center;

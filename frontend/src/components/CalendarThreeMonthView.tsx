@@ -1,5 +1,12 @@
-import { CalendarMonthFilter, CalendarMediaType, CalendarMonthSummary } from "../api/client";
+import {
+  CalendarMonthFilter,
+  CalendarMediaType,
+  CalendarMonthSummary,
+  CalendarYearFilter,
+  CalendarYearLabels as CalendarYearLabelsData,
+} from "../api/client";
 import CalendarMonthColumn from "./CalendarMonthColumn";
+import CalendarYearLabels from "./CalendarYearLabels";
 
 const MONTH_NAMES = [
   "January", "February", "March", "April", "May", "June",
@@ -10,6 +17,9 @@ interface Props {
   visibleMonths: CalendarMonthSummary[];
   windowStartIndex: number;
   totalMonths: number;
+  yearLabel?: number | "all";
+  yearLabelsData?: CalendarYearLabelsData;
+  yearLabelFilter: CalendarYearFilter | null;
   location: string;
   mediaType: CalendarMediaType;
   globalUnlabeled: boolean;
@@ -21,6 +31,7 @@ interface Props {
   onNext: () => void;
   onSelectDay: (year: number, month: number, day: number) => void;
   onSelectFilter: (year: number, month: number, filter: CalendarMonthFilter | null) => void;
+  onSelectYearFilter: (filter: CalendarYearFilter | null) => void;
 }
 
 function monthLabel(m: CalendarMonthSummary) {
@@ -31,6 +42,9 @@ export default function CalendarThreeMonthView({
   visibleMonths,
   windowStartIndex,
   totalMonths,
+  yearLabel,
+  yearLabelsData,
+  yearLabelFilter,
   location,
   mediaType,
   globalUnlabeled,
@@ -42,9 +56,11 @@ export default function CalendarThreeMonthView({
   onNext,
   onSelectDay,
   onSelectFilter,
+  onSelectYearFilter,
 }: Props) {
   const hasPrev = windowStartIndex > 0;
   const hasNext = windowStartIndex + 3 < totalMonths;
+  const showYearLabels = mode === "browse" && yearLabel !== undefined && yearLabel !== "all" && yearLabelsData;
 
   return (
     <div className={`calendar-three-month calendar-month-grid ${mode}`}>
@@ -61,7 +77,19 @@ export default function CalendarThreeMonthView({
           </button>
         </div>
       ) : (
-        <p className="calendar-browse-summary">{totalMonths} months with photos</p>
+        <p className="calendar-browse-summary">
+          {yearLabel !== undefined && yearLabel !== "all"
+            ? `${totalMonths} months in ${yearLabel}`
+            : `${totalMonths} months with photos`}
+        </p>
+      )}
+      {showYearLabels && (
+        <CalendarYearLabels
+          labels={yearLabelsData}
+          activeFilter={yearLabelFilter}
+          globalUnlabeled={globalUnlabeled}
+          onSelectFilter={onSelectYearFilter}
+        />
       )}
       <div className="calendar-three-month-columns">
         {visibleMonths.map((m) => (
@@ -74,6 +102,8 @@ export default function CalendarThreeMonthView({
             globalUnlabeled={globalUnlabeled}
             selectedDay={selectedDay}
             monthFilter={monthFilter}
+            yearLabelFilter={yearLabelFilter}
+            filterYear={yearLabel ?? "all"}
             onSelectDay={onSelectDay}
             onSelectFilter={onSelectFilter}
           />

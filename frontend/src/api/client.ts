@@ -204,6 +204,20 @@ export type CalendarMonthFilter =
   | { year: number; month: number; kind: "tag"; id: number }
   | { year: number; month: number; kind: "unlabeled" };
 
+export interface CalendarYearLabels {
+  year: number;
+  events: CalendarMonthEvent[];
+  people: CalendarMonthPerson[];
+  tags: CalendarMonthTag[];
+  unlabeled_count: number;
+}
+
+export type CalendarYearFilter =
+  | { year: number; kind: "event"; id: number }
+  | { year: number; kind: "person"; id: number }
+  | { year: number; kind: "tag"; id: number }
+  | { year: number; kind: "unlabeled" };
+
 export type CalendarMediaType = "all" | "image" | "video";
 
 export interface CalendarDayFilter {
@@ -360,6 +374,12 @@ export const api = {
     const q = new URLSearchParams({ year: String(year), month: String(month), location });
     appendMediaType(q, mediaType);
     return request<CalendarMonthLabels>(`/api/calendar/labels?${q}`);
+  },
+
+  calendarYearLabels: (year: number, location = "archive", mediaType: CalendarMediaType = "all") => {
+    const q = new URLSearchParams({ year: String(year), location });
+    appendMediaType(q, mediaType);
+    return request<CalendarYearLabels>(`/api/calendar/year-labels?${q}`);
   },
 
   calendarEvents: (year: number, month: number, location = "archive") => {

@@ -6,5 +6,6 @@ export function invalidateCalendarQueries(qc: QueryClient) {
   qc.invalidateQueries({ queryKey: ["calendar-labels"] });
   qc.invalidateQueries({ queryKey: ["calendar-year-labels"] });
   qc.invalidateQueries({ queryKey: ["calendar-year-photos"] });
+  qc.invalidateQueries({ queryKey: ["calendar-month-photos"] });
   qc.invalidateQueries({ queryKey: ["calendar-day"] });
 }

@@ -1,6 +1,6 @@
 # Image Organizer
 
-**Version:** 2026.07.12a — see [CHANGELOG.md](CHANGELOG.md)
+**Version:** 2026.07.12b — see [CHANGELOG.md](CHANGELOG.md)
 
 Architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
@@ -38,7 +38,7 @@ Database backups: `~/.imageOrganizer/backups/` (Settings → **Backup database**
 2. Open **Inbox** → **Scan inbox**
 3. Review duplicates, metadata, and events
 4. **Review** → **Preview inbox organize** → **Apply changes**
-5. Browse organized photos in **Calendar** (year selector, year-level tag/event/person filters, and a paginated photo grid when a year chip is selected) or by **Events** (calendar day panel paginates days with 100+ photos)
+5. Browse organized photos in **Calendar** (year selector, year/month label filters, paginated photo grids when a year chip or month title is selected) or by **Events** (calendar day panel paginates days with 100+ photos)
 
 ### Trash and restore
 

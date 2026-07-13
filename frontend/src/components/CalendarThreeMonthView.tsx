@@ -24,6 +24,7 @@ interface Props {
   onNext: () => void;
   onSelectDay: (year: number, month: number, day: number) => void;
   onSelectFilter: (year: number, month: number, filter: CalendarMonthFilter | null) => void;
+  onSelectMonth?: (year: number, month: number) => void;
 }
 
 function monthLabel(m: CalendarMonthSummary) {
@@ -48,6 +49,7 @@ export default function CalendarThreeMonthView({
   onNext,
   onSelectDay,
   onSelectFilter,
+  onSelectMonth,
 }: Props) {
   const hasPrev = windowStartIndex > 0;
   const hasNext = windowStartIndex + 3 < totalMonths;
@@ -86,6 +88,7 @@ export default function CalendarThreeMonthView({
             filterYear={filterYear}
             onSelectDay={onSelectDay}
             onSelectFilter={onSelectFilter}
+            onSelectMonth={onSelectMonth}
           />
         ))}
       </div>

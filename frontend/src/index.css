@@ -711,6 +711,24 @@ button {
   font-weight: 600;
 }
 
+.calendar-month-photos-panel {
+  width: 100%;
+}
+
+.calendar-month-photos-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.calendar-month-photos-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
 .calendar-window-nav {
   display: flex;
   align-items: center;
@@ -770,6 +788,22 @@ button {
   font-size: 0.9rem;
   font-weight: 600;
   color: #e8eaed;
+}
+
+button.calendar-month-column-title {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+button.calendar-month-column-title:hover,
+button.calendar-month-column-title:focus-visible {
+  color: #7eb8ff;
+  outline: none;
 }
 
 .calendar-month-labels {

@@ -4,12 +4,15 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { api, CalendarDayFilter, CalendarMonthFilter, CalendarMediaType, CalendarMonthSummary, CalendarYearFilter } from "../api/client";
 import CalendarDayPanel, { CalendarDayLabelContext } from "../components/CalendarDayPanel";
 import CalendarDayLabelPanel from "../components/CalendarDayLabelPanel";
+import CalendarMonthPhotosPanel from "../components/CalendarMonthPhotosPanel";
 import CalendarThreeMonthView from "../components/CalendarThreeMonthView";
 import CalendarYearLabels from "../components/CalendarYearLabels";
 import CalendarYearPhotosPanel from "../components/CalendarYearPhotosPanel";
 import { calendarQueryOptions } from "../utils/calendarQueryOptions";
 import {
   monthFilterToDayFilter,
+  monthPhotosSearchParams,
+  parseMonthFilterFromSearchParams,
   parseYearFilterFromSearchParams,
   yearFilterToDayFilter,
   yearFilterToSearchParams,
@@ -112,10 +115,25 @@ export default function CalendarPage() {
     [activeMonths, effectiveYear],
   );
 
+  const monthPhotosMode = searchParams.get("view") === "month";
+
+  const monthLabelFilter = useMemo((): CalendarMonthFilter | null => {
+    if (!monthPhotosMode) return null;
+    return parseMonthFilterFromSearchParams(searchParams, urlYear, urlMonth);
+  }, [searchParams, urlYear, urlMonth, monthPhotosMode]);
+
+  const { data: monthLabelsData } = useQuery({
+    ...calendarQueryOptions({
+      queryKey: ["calendar-labels", urlYear, urlMonth, location, mediaType],
+      queryFn: () => api.calendarLabels(urlYear, urlMonth, location, mediaType),
+    }),
+    enabled: monthPhotosMode && !dayParam,
+  });
+
   const yearLabelFilter = useMemo((): CalendarYearFilter | null => {
-    if (effectiveYear === "all") return null;
+    if (effectiveYear === "all" || monthPhotosMode) return null;
     return parseYearFilterFromSearchParams(searchParams, effectiveYear);
-  }, [searchParams, effectiveYear]);
+  }, [searchParams, effectiveYear, monthPhotosMode]);
 
   const { data: yearLabelsData } = useQuery({
     ...calendarQueryOptions({
@@ -154,7 +172,11 @@ export default function CalendarPage() {
     ? `${selectedDay.year}-${String(selectedDay.month).padStart(2, "0")}-${String(selectedDay.day).padStart(2, "0")}`
     : undefined;
 
-  const browseView = !selectedDayStr && yearLabelFilter ? "yearPhotos" : "months";
+  const browseView = !selectedDayStr && monthPhotosMode
+    ? "monthPhotos"
+    : !selectedDayStr && yearLabelFilter
+      ? "yearPhotos"
+      : "months";
 
   const visibleMonths = useMemo(() => {
     if (selectedDayStr) {
@@ -216,6 +238,24 @@ export default function CalendarPage() {
     navigate(calendarPath(year, month, day, searchString || undefined));
   };
 
+  const handleSelectMonth = (year: number, month: number) => {
+    setCalendarLabelFilter("all");
+    setMonthFilter(null);
+    navigate(calendarPath(year, month, undefined, "view=month"));
+  };
+
+  const handleSelectMonthFilter = (filter: CalendarMonthFilter | null) => {
+    if (filter !== null) {
+      setCalendarLabelFilter("all");
+    }
+    const search = monthPhotosSearchParams(filter);
+    navigate(calendarPath(urlYear, urlMonth, undefined, search));
+  };
+
+  const handleBackToMonthGrid = () => {
+    navigate(calendarPath(urlYear, urlMonth));
+  };
+
   const handleSelectFilter = (_year: number, _month: number, filter: CalendarMonthFilter | null) => {
     if (filter !== null) {
       setCalendarLabelFilter("all");
@@ -253,7 +293,8 @@ export default function CalendarPage() {
     setMonthFilter(null);
   };
 
-  const showYearLabelBar = effectiveYear !== "all" && yearLabelsData && !selectedDayStr;
+  const showYearLabelBar =
+    effectiveYear !== "all" && yearLabelsData && !selectedDayStr && browseView === "months";
 
   return (
     <div>
@@ -354,6 +395,7 @@ export default function CalendarPage() {
                 onNext={handleNext}
                 onSelectDay={handleSelectDay}
                 onSelectFilter={handleSelectFilter}
+                onSelectMonth={handleSelectMonth}
               />
               <CalendarDayLabelPanel context={labelContext} />
             </div>
@@ -373,7 +415,18 @@ export default function CalendarPage() {
                 />
               </>
             )}
-            {browseView === "yearPhotos" && yearLabelFilter && yearLabelsData ? (
+            {browseView === "monthPhotos" && monthLabelsData ? (
+              <CalendarMonthPhotosPanel
+                year={urlYear}
+                month={urlMonth}
+                filter={monthLabelFilter}
+                location={location}
+                mediaType={mediaType}
+                labels={monthLabelsData}
+                onBack={handleBackToMonthGrid}
+                onSelectFilter={handleSelectMonthFilter}
+              />
+            ) : browseView === "yearPhotos" && yearLabelFilter && yearLabelsData ? (
               <CalendarYearPhotosPanel
                 year={effectiveYear as number}
                 filter={yearLabelFilter}
@@ -400,6 +453,7 @@ export default function CalendarPage() {
                 onNext={handleNext}
                 onSelectDay={handleSelectDay}
                 onSelectFilter={handleSelectFilter}
+                onSelectMonth={handleSelectMonth}
               />
             )}
           </div>

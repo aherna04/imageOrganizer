@@ -4,6 +4,18 @@ Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
 ## [Unreleased]
 
+## [2026.07.12b] - 2026-07-12
+
+### Added
+
+- Calendar **month photo grid** — click a month title in browse mode to open a paginated photo grid for that month
+- `GET /api/files?capture_month=` — list files by capture month (`capture_day LIKE 'YYYY-MM%'`; mutually exclusive with `capture_day` and `capture_year`)
+- Month photo grid **URL sync** via `?view=month` (+ optional `tag_id`, `person_id`, `event_id`, `unlabeled=1`); **Back to calendar** or browser Back restores the year month grid
+
+### Changed
+
+- Month titles are clickable in browse mode; year and month photo views are mutually exclusive
+
 ## [2026.07.12a] - 2026-07-12
 
 ### Added

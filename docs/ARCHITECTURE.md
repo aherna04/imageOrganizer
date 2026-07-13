@@ -240,7 +240,8 @@ Event-level tags (`event_tags`) label the event record itself and do not imply a
 - Multi-month grid with per-month label chips (events, people, tags) and an **Untagged** chip per month.
 - Top bar: year selector (defaults to latest year with photos), **All / Untagged** global filter, Archive/Inbox scope, and Images/Videos media filter.
 - When a single year is selected, a year-level label bar aggregates events, people, and tags for that year (`GET /api/calendar/year-labels`). Selecting a chip switches browse to a paginated year photo grid (`CalendarYearPhotosPanel`) instead of the month grid; **All** clears the filter and restores months. Filter state syncs to URL query params (`tag_id`, `person_id`, `event_id`, `unlabeled=1`) for bookmarking and browser Back.
-- Day panel: selection bar and photo grid on the right; label editors below month calendars on the left when photos are selected; tag search in label editors. Day navigation preserves active year-filter query params.
+- Clicking a month title in browse mode opens a paginated month photo grid (`CalendarMonthPhotosPanel`) via `?view=month` on `/calendar/:y/:m`. Month label chips inside that panel filter the grid using the same query param names. Year and month photo views are mutually exclusive.
+- Day panel: selection bar and photo grid on the right; label editors below month calendars on the left when photos are selected; tag search in label editors. Day navigation preserves active filter query params.
 - Days with more than 100 photos paginate in the day panel (`GET /api/calendar/day?page=&page_size=`; default page size 100, max 500).
 
 ### 9. Database backup
@@ -268,7 +269,7 @@ Grouped by domain. See `/docs` for parameters and schemas.
 | Mosaic | `POST /api/mosaic/preview`, `POST /api/mosaic/generate`, `GET /api/mosaic/output/{filename}` |
 | Scan | `POST /api/scan/inbox`, `/archive`, `/trash`, `GET /api/scan/status` |
 | Blur analysis | `POST /api/blur-analysis/inbox`, `/archive`, `/all`, `GET /api/blur-analysis/status` |
-| Files | `GET /api/files` (filters: location, `capture_day`, `capture_year`, event, person, tag, blurry), thumbnails, original, metadata |
+| Files | `GET /api/files` (filters: location, `capture_day`, `capture_year`, `capture_month`, event, person, tag, blurry), thumbnails, original, metadata |
 | File relations | `PATCH /api/files/{id}/events`, `/people`, `/tags` |
 | Calendar | `GET /api/calendar/months`, `/summary`, `/labels`, `/year-labels`, `/events`, `/day` (paginated; `page`, `page_size`) |
 | Events | CRUD, files list, assign-ids, assign-range |
@@ -284,7 +285,7 @@ Grouped by domain. See `/docs` for parameters and schemas.
 | Route | Page |
 |-------|------|
 | `/inbox` | Scan inbox; bulk assign events, people, tags |
-| `/calendar`, `/calendar/:y/:m/:d` | Multi-month view or year-filter photo grid; day panel with bulk assign and pagination; optional `?tag_id=` / `?person_id=` / `?event_id=` / `?unlabeled=1` |
+| `/calendar`, `/calendar/:y/:m/:d` | Multi-month view, year-filter photo grid, or month photo grid (`?view=month`); day panel with bulk assign and pagination; optional `?tag_id=` / `?person_id=` / `?event_id=` / `?unlabeled=1` |
 | `/events`, `/events/:slug` | Event list and detail |
 | `/people` | People CRUD, merge, delete |
 | `/tags` | Tags CRUD, merge, delete |

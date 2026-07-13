@@ -22,6 +22,7 @@ interface Props {
   filterYear: number | "all";
   onSelectDay: (year: number, month: number, day: number) => void;
   onSelectFilter: (year: number, month: number, filter: CalendarMonthFilter | null) => void;
+  onSelectMonth?: (year: number, month: number) => void;
 }
 
 export default function CalendarMonthColumn({
@@ -36,6 +37,7 @@ export default function CalendarMonthColumn({
   filterYear,
   onSelectDay,
   onSelectFilter,
+  onSelectMonth,
 }: Props) {
   const dayFilter = resolveDayFilter(
     monthFilter,
@@ -69,9 +71,19 @@ export default function CalendarMonthColumn({
 
   return (
     <div className="calendar-month-column">
-      <h4 className="calendar-month-column-title">
-        {MONTH_NAMES[month - 1]} {year}
-      </h4>
+      {onSelectMonth ? (
+        <button
+          type="button"
+          className="calendar-month-column-title"
+          onClick={() => onSelectMonth(year, month)}
+        >
+          {MONTH_NAMES[month - 1]} {year}
+        </button>
+      ) : (
+        <h4 className="calendar-month-column-title">
+          {MONTH_NAMES[month - 1]} {year}
+        </h4>
+      )}
       <CalendarMonth
         year={year}
         month={month}

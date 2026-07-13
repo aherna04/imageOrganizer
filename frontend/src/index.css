@@ -729,6 +729,12 @@ button {
   font-weight: 600;
 }
 
+.calendar-photo-grid-sticky {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
 .calendar-window-nav {
   display: flex;
   align-items: center;

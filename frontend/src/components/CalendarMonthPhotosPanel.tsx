@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   CalendarMediaType,
   CalendarMonthFilter,
@@ -7,11 +7,15 @@ import {
   MediaFile,
   api,
 } from "../api/client";
+import BulkEventAssignBar from "./BulkEventAssignBar";
+import BulkLabelEditors from "./BulkLabelEditors";
 import CalendarMonthLabels from "./CalendarMonthLabels";
 import PhotoDetail from "./PhotoDetail";
 import PhotoGridWithAlerts from "./PhotoGridWithAlerts";
+import SingleFileLabelEditors from "./SingleFileLabelEditors";
 import { invalidateAfterDateChange } from "../utils/invalidateAfterDateChange";
 import { monthFilterLabelName, monthFilterToListFilesParams } from "../utils/calendarFilter";
+import { togglePhotoSelection } from "../utils/photoSelection";
 
 const PAGE_SIZE = 100;
 
@@ -43,7 +47,9 @@ export default function CalendarMonthPhotosPanel({
 }: Props) {
   const qc = useQueryClient();
   const [page, setPage] = useState(1);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [detailFile, setDetailFile] = useState<MediaFile | null>(null);
+  const selectionAnchorRef = useRef<number | null>(null);
 
   const listParams = monthFilterToListFilesParams(filter, year, month, location, mediaType);
 
@@ -52,9 +58,15 @@ export default function CalendarMonthPhotosPanel({
     queryFn: () => api.listFiles({ ...listParams, page }),
   });
 
+  const clearSelection = () => {
+    setSelectedIds([]);
+    setDetailFile(null);
+    selectionAnchorRef.current = null;
+  };
+
   useEffect(() => {
     setPage(1);
-    setDetailFile(null);
+    clearSelection();
   }, [filter, year, month, location, mediaType]);
 
   const total = data?.total ?? 0;
@@ -68,8 +80,32 @@ export default function CalendarMonthPhotosPanel({
     ? `${monthFilterLabelName(filter, labels)} · ${total} photos in ${monthName}`
     : `${monthName} · ${total} photos`;
 
+  const goToPage = (nextPage: number) => {
+    setPage(nextPage);
+    clearSelection();
+  };
+
+  const toggleSelect = (id: number, event: React.MouseEvent) => {
+    const files = data?.items ?? [];
+    const result = togglePhotoSelection(
+      files,
+      selectedIds,
+      id,
+      event.shiftKey,
+      selectionAnchorRef.current,
+    );
+    selectionAnchorRef.current = result.anchorIndex;
+    setSelectedIds(result.selectedIds);
+  };
+
+  const selectedFiles = useMemo(
+    () => data?.items.filter((f) => selectedIds.includes(f.id)) ?? [],
+    [data?.items, selectedIds],
+  );
+
   const handleLabelsChange = () => {
     refetch();
+    qc.invalidateQueries({ queryKey: ["calendar-month-photos"] });
     qc.invalidateQueries({ queryKey: ["calendar-labels"] });
     qc.invalidateQueries({ queryKey: ["calendar-summary"] });
     qc.invalidateQueries({ queryKey: ["calendar-year-labels"] });
@@ -83,7 +119,7 @@ export default function CalendarMonthPhotosPanel({
 
   return (
     <div className="calendar-month-photos-panel">
-      <div className="page-sticky-controls">
+      <div className="page-sticky-controls calendar-photo-grid-sticky">
         <div className="calendar-month-photos-header">
           <button type="button" className="btn btn-secondary" onClick={onBack}>
             ← Back to calendar
@@ -105,7 +141,7 @@ export default function CalendarMonthPhotosPanel({
                 type="button"
                 className="btn btn-secondary"
                 disabled={page <= 1}
-                onClick={() => setPage((p) => p - 1)}
+                onClick={() => goToPage(page - 1)}
               >
                 Prev
               </button>
@@ -116,12 +152,28 @@ export default function CalendarMonthPhotosPanel({
                 type="button"
                 className="btn btn-secondary"
                 disabled={page >= totalPages}
-                onClick={() => setPage((p) => p + 1)}
+                onClick={() => goToPage(page + 1)}
               >
                 Next
               </button>
             </div>
           </div>
+        )}
+        <BulkEventAssignBar
+          selectedIds={selectedIds}
+          totalCount={total}
+          visibleCount={data?.items.length}
+          onSelectAll={() => setSelectedIds(data?.items.map((f) => f.id) ?? [])}
+          onClear={() => {
+            setSelectedIds([]);
+            selectionAnchorRef.current = null;
+          }}
+        />
+        {selectedIds.length === 1 && selectedFiles[0] && (
+          <SingleFileLabelEditors file={selectedFiles[0]} onChange={handleLabelsChange} showTagSearch />
+        )}
+        {selectedIds.length >= 2 && (
+          <BulkLabelEditors selectedFiles={selectedFiles} onChange={handleLabelsChange} showTagSearch />
         )}
       </div>
 
@@ -130,11 +182,11 @@ export default function CalendarMonthPhotosPanel({
       {total > 0 && (
         <PhotoGridWithAlerts
           files={data?.items ?? []}
-          selectedIds={[]}
+          selectedIds={selectedIds}
           activeDetailId={detailFile?.id}
-          onToggleSelect={() => {}}
+          onToggleSelect={toggleSelect}
           onOpenDetail={setDetailFile}
-          multiSelectMode={false}
+          multiSelectMode
           size="large"
           editableLabels
           onLabelsChange={handleLabelsChange}

@@ -4,6 +4,16 @@ Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
 ## [Unreleased]
 
+## [2026.07.12c] - 2026-07-12
+
+### Fixed
+
+- Calendar **month and year photo grids** — photo selection and bulk tag/people/event labeling now work (checkboxes were visible but previously no-ops)
+
+### Changed
+
+- Month and year photo grids show `BulkEventAssignBar` and bulk label editors when photos are selected (same pattern as Inbox and calendar day panel)
+
 ## [2026.07.12b] - 2026-07-12
 
 ### Added

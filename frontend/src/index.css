@@ -692,8 +692,23 @@ button {
   font-size: 0.875rem;
 }
 
+.calendar-browse-column {
+  width: 100%;
+  min-width: 0;
+}
+
 .calendar-year-labels {
   margin-bottom: 0.75rem;
+}
+
+.calendar-year-photos-panel {
+  width: 100%;
+}
+
+.calendar-year-photos-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
 }
 
 .calendar-window-nav {

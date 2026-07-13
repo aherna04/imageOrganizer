@@ -1,7 +1,7 @@
 {
   "name": "image-organizer-frontend",
   "private": true,
-  "version": "2026.07.12",
+  "version": "2026.07.12a",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",

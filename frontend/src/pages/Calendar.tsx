@@ -1,12 +1,19 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { api, CalendarDayFilter, CalendarMonthFilter, CalendarMediaType, CalendarMonthSummary, CalendarYearFilter } from "../api/client";
 import CalendarDayPanel, { CalendarDayLabelContext } from "../components/CalendarDayPanel";
 import CalendarDayLabelPanel from "../components/CalendarDayLabelPanel";
 import CalendarThreeMonthView from "../components/CalendarThreeMonthView";
+import CalendarYearLabels from "../components/CalendarYearLabels";
+import CalendarYearPhotosPanel from "../components/CalendarYearPhotosPanel";
 import { calendarQueryOptions } from "../utils/calendarQueryOptions";
-import { monthFilterToDayFilter, yearFilterToDayFilter } from "../utils/calendarFilter";
+import {
+  monthFilterToDayFilter,
+  parseYearFilterFromSearchParams,
+  yearFilterToDayFilter,
+  yearFilterToSearchParams,
+} from "../utils/calendarFilter";
 import { invalidateCalendarQueries } from "../utils/invalidateCalendarQueries";
 
 function findMonthIndex(months: CalendarMonthSummary[], year: number, month: number): number {
@@ -34,14 +41,21 @@ function nearestMonthIndex(months: CalendarMonthSummary[]): number {
   return best;
 }
 
+function calendarPath(year: number, month: number, day?: number, search?: string) {
+  const pathname = day ? `/calendar/${year}/${month}/${day}` : `/calendar/${year}/${month}`;
+  return search ? { pathname, search: `?${search}` } : { pathname };
+}
+
 export default function CalendarPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const qc = useQueryClient();
   const params = useParams();
   const now = new Date();
   const urlYear = params.year ? Number(params.year) : now.getFullYear();
   const urlMonth = params.month ? Number(params.month) : now.getMonth() + 1;
   const dayParam = params.day;
+  const searchString = searchParams.toString();
 
   const [location, setLocation] = useState("archive");
   const [mediaType, setMediaType] = useState<CalendarMediaType>("all");
@@ -49,7 +63,6 @@ export default function CalendarPage() {
   const [selectedYear, setSelectedYear] = useState<number | "all" | null>(null);
   const [windowStartIndex, setWindowStartIndex] = useState(0);
   const [monthFilter, setMonthFilter] = useState<CalendarMonthFilter | null>(null);
-  const [yearLabelFilter, setYearLabelFilter] = useState<CalendarYearFilter | null>(null);
   const [labelContext, setLabelContext] = useState<CalendarDayLabelContext | null>(null);
 
   const globalUnlabeled = calendarLabelFilter === "unlabeled";
@@ -99,6 +112,11 @@ export default function CalendarPage() {
     [activeMonths, effectiveYear],
   );
 
+  const yearLabelFilter = useMemo((): CalendarYearFilter | null => {
+    if (effectiveYear === "all") return null;
+    return parseYearFilterFromSearchParams(searchParams, effectiveYear);
+  }, [searchParams, effectiveYear]);
+
   const { data: yearLabelsData } = useQuery({
     ...calendarQueryOptions({
       queryKey: ["calendar-year-labels", effectiveYear, location, mediaType],
@@ -119,13 +137,13 @@ export default function CalendarPage() {
     if (idx < 0) {
       idx = nearestMonthIndex(filteredMonths);
       const m = filteredMonths[idx];
-      navigate(`/calendar/${m.year}/${m.month}`, { replace: true });
+      navigate(calendarPath(m.year, m.month, undefined, searchString || undefined), { replace: true });
       return;
     }
     if (dayParam) {
       setWindowStartIndex(alignWindowStart(idx, filteredMonths.length));
     }
-  }, [filteredMonths, urlYear, urlMonth, dayParam, navigate]);
+  }, [filteredMonths, urlYear, urlMonth, dayParam, navigate, searchString]);
 
   const selectedDay = useMemo(() => {
     if (!dayParam) return null;
@@ -135,6 +153,8 @@ export default function CalendarPage() {
   const selectedDayStr = selectedDay
     ? `${selectedDay.year}-${String(selectedDay.month).padStart(2, "0")}-${String(selectedDay.day).padStart(2, "0")}`
     : undefined;
+
+  const browseView = !selectedDayStr && yearLabelFilter ? "yearPhotos" : "months";
 
   const visibleMonths = useMemo(() => {
     if (selectedDayStr) {
@@ -153,18 +173,21 @@ export default function CalendarPage() {
     return undefined;
   }, [globalUnlabeled, monthFilter, yearLabelFilter, urlYear, urlMonth, effectiveYear]);
 
+  const clearYearFilterSearch = () => {
+    navigate(calendarPath(urlYear, urlMonth));
+  };
+
   const resetFilters = () => {
     setMonthFilter(null);
-    setYearLabelFilter(null);
     setCalendarLabelFilter("all");
     setSelectedYear(null);
+    clearYearFilterSearch();
   };
 
   const handleYearChange = (value: string) => {
     const next: number | "all" = value === "all" ? "all" : Number(value);
     setSelectedYear(next);
     setMonthFilter(null);
-    setYearLabelFilter(null);
     setWindowStartIndex(0);
 
     if (dayParam && next !== "all" && next !== urlYear) {
@@ -172,7 +195,7 @@ export default function CalendarPage() {
       const first = months[0];
       if (first) {
         setLabelContext(null);
-        navigate(`/calendar/${first.year}/${first.month}`);
+        navigate(calendarPath(first.year, first.month));
       }
       return;
     }
@@ -181,7 +204,7 @@ export default function CalendarPage() {
       const months = next === "all" ? activeMonths : activeMonths.filter((m) => m.year === next);
       const first = months[0];
       if (first) {
-        navigate(`/calendar/${first.year}/${first.month}`, { replace: true });
+        navigate(calendarPath(first.year, first.month), { replace: true });
       }
     }
   };
@@ -190,13 +213,13 @@ export default function CalendarPage() {
     if (monthFilter && (monthFilter.year !== year || monthFilter.month !== month)) {
       setMonthFilter(null);
     }
-    navigate(`/calendar/${year}/${month}/${day}`);
+    navigate(calendarPath(year, month, day, searchString || undefined));
   };
 
   const handleSelectFilter = (_year: number, _month: number, filter: CalendarMonthFilter | null) => {
     if (filter !== null) {
       setCalendarLabelFilter("all");
-      setYearLabelFilter(null);
+      clearYearFilterSearch();
     }
     setMonthFilter(filter);
   };
@@ -206,12 +229,13 @@ export default function CalendarPage() {
       setCalendarLabelFilter("all");
       setMonthFilter(null);
     }
-    setYearLabelFilter(filter);
+    const search = yearFilterToSearchParams(filter);
+    navigate(calendarPath(urlYear, urlMonth, undefined, search || undefined));
   };
 
   const handleClearDay = () => {
     setLabelContext(null);
-    navigate(`/calendar/${urlYear}/${urlMonth}`);
+    navigate(calendarPath(urlYear, urlMonth, undefined, searchString || undefined));
   };
 
   const handlePrev = () => {
@@ -228,6 +252,8 @@ export default function CalendarPage() {
     });
     setMonthFilter(null);
   };
+
+  const showYearLabelBar = effectiveYear !== "all" && yearLabelsData && !selectedDayStr;
 
   return (
     <div>
@@ -285,7 +311,7 @@ export default function CalendarPage() {
             onClick={() => {
               setCalendarLabelFilter("all");
               setMonthFilter(null);
-              setYearLabelFilter(null);
+              clearYearFilterSearch();
             }}
           >
             All
@@ -296,7 +322,7 @@ export default function CalendarPage() {
             onClick={() => {
               setCalendarLabelFilter("unlabeled");
               setMonthFilter(null);
-              setYearLabelFilter(null);
+              clearYearFilterSearch();
             }}
           >
             Untagged
@@ -315,45 +341,68 @@ export default function CalendarPage() {
                 windowStartIndex={windowStartIndex}
                 totalMonths={filteredMonths.length}
                 yearLabel={effectiveYear}
-                yearLabelsData={yearLabelsData}
-                yearLabelFilter={yearLabelFilter}
                 location={location}
                 mediaType={mediaType}
                 globalUnlabeled={globalUnlabeled}
                 selectedDay={selectedDay}
                 monthFilter={monthFilter}
+                yearLabelFilter={yearLabelFilter}
+                filterYear={effectiveYear}
                 mode="focus"
                 showWindowNav
                 onPrev={handlePrev}
                 onNext={handleNext}
                 onSelectDay={handleSelectDay}
                 onSelectFilter={handleSelectFilter}
-                onSelectYearFilter={handleSelectYearFilter}
               />
               <CalendarDayLabelPanel context={labelContext} />
             </div>
           </div>
         ) : (
-          <CalendarThreeMonthView
-            visibleMonths={visibleMonths}
-            windowStartIndex={windowStartIndex}
-            totalMonths={filteredMonths.length}
-            yearLabel={effectiveYear}
-            yearLabelsData={yearLabelsData}
-            yearLabelFilter={yearLabelFilter}
-            location={location}
-            mediaType={mediaType}
-            globalUnlabeled={globalUnlabeled}
-            selectedDay={selectedDay}
-            monthFilter={monthFilter}
-            mode="browse"
-            showWindowNav={false}
-            onPrev={handlePrev}
-            onNext={handleNext}
-            onSelectDay={handleSelectDay}
-            onSelectFilter={handleSelectFilter}
-            onSelectYearFilter={handleSelectYearFilter}
-          />
+          <div className="calendar-browse-column">
+            {showYearLabelBar && (
+              <>
+                {browseView === "months" && (
+                  <p className="calendar-browse-summary">{filteredMonths.length} months in {effectiveYear}</p>
+                )}
+                <CalendarYearLabels
+                  labels={yearLabelsData}
+                  activeFilter={yearLabelFilter}
+                  globalUnlabeled={globalUnlabeled}
+                  onSelectFilter={handleSelectYearFilter}
+                />
+              </>
+            )}
+            {browseView === "yearPhotos" && yearLabelFilter && yearLabelsData ? (
+              <CalendarYearPhotosPanel
+                year={effectiveYear as number}
+                filter={yearLabelFilter}
+                location={location}
+                mediaType={mediaType}
+                labels={yearLabelsData}
+              />
+            ) : (
+              <CalendarThreeMonthView
+                visibleMonths={visibleMonths}
+                windowStartIndex={windowStartIndex}
+                totalMonths={filteredMonths.length}
+                yearLabel={effectiveYear}
+                location={location}
+                mediaType={mediaType}
+                globalUnlabeled={globalUnlabeled}
+                selectedDay={selectedDay}
+                monthFilter={monthFilter}
+                yearLabelFilter={yearLabelFilter}
+                filterYear={effectiveYear}
+                mode="browse"
+                showWindowNav={false}
+                onPrev={handlePrev}
+                onNext={handleNext}
+                onSelectDay={handleSelectDay}
+                onSelectFilter={handleSelectFilter}
+              />
+            )}
+          </div>
         )}
         {selectedDayStr && (
           <CalendarDayPanel

@@ -103,7 +103,7 @@ from app.scanner import scan_state, start_scan_background
 from app.blur_analysis import blur_analysis_state, start_blur_analysis_background
 from app.trash_restore import restore_from_trash
 
-app = FastAPI(title="Image Organizer", version="2026.07.12")
+app = FastAPI(title="Image Organizer", version="2026.07.12a")
 
 app.add_middleware(
     CORSMiddleware,
@@ -456,6 +456,7 @@ def api_inbox_cameras():
 def api_list_files(
     location: str | None = None,
     capture_day: str | None = None,
+    capture_year: int | None = None,
     event_id: int | None = None,
     person_id: int | None = None,
     tag_id: int | None = None,
@@ -469,6 +470,8 @@ def api_list_files(
 ):
     if pending_delete and location != "inbox":
         raise HTTPException(status_code=400, detail="pending_delete requires location=inbox")
+    if capture_day and capture_year:
+        raise HTTPException(status_code=400, detail="capture_day and capture_year are mutually exclusive")
     clauses: list[str] = []
     params: list = []
     if location:
@@ -481,6 +484,9 @@ def api_list_files(
     if capture_day:
         clauses.append("f.capture_day = ?")
         params.append(capture_day)
+    if capture_year:
+        clauses.append("f.capture_day LIKE ?")
+        params.append(f"{capture_year:04d}%")
     if event_id:
         clauses.append("f.id IN (SELECT file_id FROM file_events WHERE event_id = ?)")
         params.append(event_id)

@@ -1,6 +1,6 @@
 {
   "title": "Image Organizer — Development Book",
-  "version": "2026.07.12",
+  "version": "2026.07.12a",
   "output": "docs/DEVELOPMENT_BOOK.md",
   "plans_dir": "~/.cursor/plans",
   "related_links": "[ARCHITECTURE.md](ARCHITECTURE.md) · [CHANGELOG.md](../CHANGELOG.md)",
@@ -33,7 +33,8 @@
         "calendar_untagged_edit_mode_784337b4",
         "fix_calendar_tag_search_layout_b6045329",
         "calendar_year_selector_c16a2e26",
-        "calendar_year_tag_filter_354e78e9"
+        "calendar_year_tag_filter_354e78e9",
+        "year_filter_photo_grid_68ead783"
       ]
     },
     {

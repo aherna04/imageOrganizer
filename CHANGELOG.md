@@ -4,6 +4,18 @@ Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
 ## [Unreleased]
 
+## [2026.07.12a] - 2026-07-12
+
+### Added
+
+- Calendar **year filter photo grid** — selecting a year-level label chip (tag, person, event, or Untagged) replaces the month grid with a paginated photo grid for that year
+- `GET /api/files?capture_year=` — list files by capture year (`capture_day LIKE 'YYYY%'`; mutually exclusive with `capture_day`)
+- Calendar **URL query sync** for year filters (`tag_id`, `person_id`, `event_id`, `unlabeled=1`) — bookmarkable; browser Back restores the month grid
+
+### Changed
+
+- Year label bar lives on the Calendar page; browse toggles between month grid and year photo grid via internal `months` / `yearPhotos` view
+
 ## [2026.07.12] - 2026-07-12
 
 ### Added

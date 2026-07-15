@@ -1,10 +1,10 @@
 # Image Organizer
 
-**Version:** 2026.07.12c — see [CHANGELOG.md](CHANGELOG.md)
+**Version:** 2026.07.14 — see [CHANGELOG.md](CHANGELOG.md)
 
 Architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
-Local web app for organizing photos and videos: inbox landing folder, calendar browse, event labels, people and tags, browse by person/tag, deduplication, blur detection, and safe apply.
+Local web app for organizing photos and videos: inbox landing folder, calendar browse, event labels, people and tags, browse by person/tag/camera (AND intersection), deduplication, blur detection, and safe apply.
 
 ## Prerequisites
 
@@ -39,6 +39,7 @@ Database backups: `~/.imageOrganizer/backups/` (Settings → **Backup database**
 3. Review duplicates, metadata, and events
 4. **Review** → **Preview inbox organize** → **Apply changes**
 5. Browse organized photos in **Calendar** (year selector, year/month label filters, paginated photo grids when a year chip or month title is selected) or by **Events** (calendar day panel paginates days with 100+ photos)
+6. **Browse** — select tags, people, and cameras to narrow with AND intersection; sidebars show co-occurring labels and cameras in the current selection
 
 ### Trash and restore
 

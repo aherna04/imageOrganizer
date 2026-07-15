@@ -53,6 +53,7 @@ from app.models import (
     FixDatesFromFilenameIn,
     FixDatesFromFilenameOut,
     InboxPeopleOut,
+    BrowseCooccurringOut,
     InboxCameraOut,
     InboxCamerasOut,
     InboxTagsOut,
@@ -103,7 +104,7 @@ from app.scanner import scan_state, start_scan_background
 from app.blur_analysis import blur_analysis_state, start_blur_analysis_background
 from app.trash_restore import restore_from_trash
 
-app = FastAPI(title="Image Organizer", version="2026.07.12c")
+app = FastAPI(title="Image Organizer", version="2026.07.14")
 
 app.add_middleware(
     CORSMiddleware,
@@ -459,12 +460,12 @@ def api_list_files(
     capture_year: int | None = None,
     capture_month: str | None = None,
     event_id: int | None = None,
-    person_id: int | None = None,
-    tag_id: int | None = None,
+    person_id: list[int] = Query(default=[]),
+    tag_id: list[int] = Query(default=[]),
     unlabeled: bool = False,
     pending_delete: bool = False,
     blurry: bool = False,
-    camera: str | None = None,
+    camera: list[str] = Query(default=[]),
     media_type: Literal["image", "video"] | None = None,
     page: int = Query(1, ge=1),
     page_size: int = Query(50, ge=1, le=200),
@@ -476,6 +477,17 @@ def api_list_files(
             status_code=400,
             detail="capture_day, capture_year, and capture_month are mutually exclusive",
         )
+    # Direct Python callers (e.g. api_calendar_day) skip FastAPI injection; Query defaults
+    # remain Query objects unless coerced.
+    if not isinstance(person_id, list):
+        person_id = []
+    if not isinstance(tag_id, list):
+        tag_id = []
+    if not isinstance(camera, list):
+        camera = []
+    tag_ids = list(dict.fromkeys(tag_id))
+    person_ids = list(dict.fromkeys(person_id))
+    cameras = list(dict.fromkeys(c for c in camera if c))
     clauses: list[str] = []
     params: list = []
     if location:
@@ -497,15 +509,15 @@ def api_list_files(
     if event_id:
         clauses.append("f.id IN (SELECT file_id FROM file_events WHERE event_id = ?)")
         params.append(event_id)
-    if person_id:
+    for pid in person_ids:
         clauses.append("f.id IN (SELECT file_id FROM file_people WHERE person_id = ?)")
-        params.append(person_id)
-    if tag_id:
+        params.append(pid)
+    for tid in tag_ids:
         clauses.append("f.id IN (SELECT file_id FROM file_tags WHERE tag_id = ?)")
-        params.append(tag_id)
-    if camera:
+        params.append(tid)
+    for cam in cameras:
         clauses.append("f.camera = ?")
-        params.append(camera)
+        params.append(cam)
     if unlabeled:
         clauses.append(_unlabeled_clause("f"))
     with get_conn() as conn:
@@ -988,8 +1000,8 @@ def api_calendar_day(
         location=loc,
         capture_day=date,
         event_id=event_id,
-        person_id=person_id,
-        tag_id=tag_id,
+        person_id=[person_id] if person_id is not None else [],
+        tag_id=[tag_id] if tag_id is not None else [],
         unlabeled=unlabeled,
         media_type=media_type,
         page=page,
@@ -1001,6 +1013,195 @@ def api_calendar_day(
 def api_list_tags():
     with get_conn() as conn:
         return [_tag_out(t) for t in tags_svc.list_tags(conn)]
+
+
+@app.get("/api/tags/cooccurring", response_model=InboxTagsOut)
+def api_tags_cooccurring(
+    tag_id: list[int] = Query(default=[]),
+    location: str | None = None,
+    media_type: Literal["image", "video"] | None = None,
+):
+    """Tags that co-occur on files matching all selected tag_ids (AND), with counts in that set."""
+    result = _browse_cooccurring(
+        tag_ids=tag_id,
+        person_ids=[],
+        cameras=[],
+        location=location,
+        media_type=media_type,
+    )
+    return InboxTagsOut(tags=result.tags)
+
+
+@app.get("/api/browse/cooccurring", response_model=BrowseCooccurringOut)
+def api_browse_cooccurring(
+    tag_id: list[int] = Query(default=[]),
+    person_id: list[int] = Query(default=[]),
+    camera: list[str] = Query(default=[]),
+    location: str | None = None,
+    media_type: Literal["image", "video"] | None = None,
+):
+    """Tags, people, and cameras that co-occur on files matching the current Browse AND filters."""
+    return _browse_cooccurring(
+        tag_ids=tag_id,
+        person_ids=person_id,
+        cameras=camera,
+        location=location,
+        media_type=media_type,
+    )
+
+
+def _browse_cooccurring(
+    *,
+    tag_ids: list[int],
+    person_ids: list[int],
+    cameras: list[str],
+    location: str | None,
+    media_type: Literal["image", "video"] | None,
+) -> BrowseCooccurringOut:
+    tag_ids = list(dict.fromkeys(tag_ids))
+    person_ids = list(dict.fromkeys(person_ids))
+    cameras = list(dict.fromkeys(c for c in cameras if c))
+    if not tag_ids and not person_ids and not cameras:
+        raise HTTPException(
+            status_code=400,
+            detail="at least one tag_id, person_id, or camera is required",
+        )
+
+    clauses: list[str] = []
+    params: list = []
+    if location:
+        clauses.append("f.location = ?")
+        params.append(location)
+    for pid in person_ids:
+        clauses.append("f.id IN (SELECT file_id FROM file_people WHERE person_id = ?)")
+        params.append(pid)
+    for tid in tag_ids:
+        clauses.append("f.id IN (SELECT file_id FROM file_tags WHERE tag_id = ?)")
+        params.append(tid)
+    for cam in cameras:
+        clauses.append("f.camera = ?")
+        params.append(cam)
+    append_media_type_filter(clauses, params, "f.filename", media_type)
+    where = ("AND " + " AND ".join(clauses)) if clauses else ""
+
+    with get_conn() as conn:
+        if tag_ids:
+            tag_placeholders = ",".join("?" * len(tag_ids))
+            tag_rows = conn.execute(
+                f"""
+                SELECT t.id, t.name, t.slug, COUNT(DISTINCT f.id) AS photo_count
+                FROM tags t
+                JOIN file_tags ft ON ft.tag_id = t.id
+                JOIN files f ON f.id = ft.file_id
+                WHERE t.id NOT IN ({tag_placeholders})
+                  {where}
+                GROUP BY t.id
+                HAVING photo_count > 0
+                ORDER BY photo_count DESC, t.name
+                """,
+                [*tag_ids, *params],
+            ).fetchall()
+        else:
+            tag_rows = conn.execute(
+                f"""
+                SELECT t.id, t.name, t.slug, COUNT(DISTINCT f.id) AS photo_count
+                FROM tags t
+                JOIN file_tags ft ON ft.tag_id = t.id
+                JOIN files f ON f.id = ft.file_id
+                WHERE 1=1
+                  {where}
+                GROUP BY t.id
+                HAVING photo_count > 0
+                ORDER BY photo_count DESC, t.name
+                """,
+                params,
+            ).fetchall()
+
+        if person_ids:
+            person_placeholders = ",".join("?" * len(person_ids))
+            person_rows = conn.execute(
+                f"""
+                SELECT p.id, p.name, p.slug, COUNT(DISTINCT f.id) AS photo_count
+                FROM people p
+                JOIN file_people fp ON fp.person_id = p.id
+                JOIN files f ON f.id = fp.file_id
+                WHERE p.id NOT IN ({person_placeholders})
+                  {where}
+                GROUP BY p.id
+                HAVING photo_count > 0
+                ORDER BY photo_count DESC, p.name
+                """,
+                [*person_ids, *params],
+            ).fetchall()
+        else:
+            person_rows = conn.execute(
+                f"""
+                SELECT p.id, p.name, p.slug, COUNT(DISTINCT f.id) AS photo_count
+                FROM people p
+                JOIN file_people fp ON fp.person_id = p.id
+                JOIN files f ON f.id = fp.file_id
+                WHERE 1=1
+                  {where}
+                GROUP BY p.id
+                HAVING photo_count > 0
+                ORDER BY photo_count DESC, p.name
+                """,
+                params,
+            ).fetchall()
+
+        if cameras:
+            camera_placeholders = ",".join("?" * len(cameras))
+            camera_rows = conn.execute(
+                f"""
+                SELECT f.camera AS name, COUNT(*) AS photo_count
+                FROM files f
+                WHERE f.camera IS NOT NULL AND f.camera != ''
+                  AND f.camera NOT IN ({camera_placeholders})
+                  {where}
+                GROUP BY f.camera
+                HAVING photo_count > 0
+                ORDER BY photo_count DESC, f.camera
+                """,
+                [*cameras, *params],
+            ).fetchall()
+        else:
+            camera_rows = conn.execute(
+                f"""
+                SELECT f.camera AS name, COUNT(*) AS photo_count
+                FROM files f
+                WHERE f.camera IS NOT NULL AND f.camera != ''
+                  {where}
+                GROUP BY f.camera
+                HAVING photo_count > 0
+                ORDER BY photo_count DESC, f.camera
+                """,
+                params,
+            ).fetchall()
+
+    return BrowseCooccurringOut(
+        tags=[
+            CalendarMonthTagOut(
+                id=r["id"],
+                name=r["name"],
+                slug=r["slug"],
+                photo_count=r["photo_count"],
+            )
+            for r in tag_rows
+        ],
+        people=[
+            CalendarMonthPersonOut(
+                id=r["id"],
+                name=r["name"],
+                slug=r["slug"],
+                photo_count=r["photo_count"],
+            )
+            for r in person_rows
+        ],
+        cameras=[
+            InboxCameraOut(name=r["name"], photo_count=r["photo_count"])
+            for r in camera_rows
+        ],
+    )
 
 
 @app.post("/api/tags", response_model=TagOut)

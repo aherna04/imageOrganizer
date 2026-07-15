@@ -231,7 +231,7 @@ Implementation: [`metadata.py`](../backend/app/metadata.py) (`compute_blur_score
 
 - **Events** — assign photos to trips (`file_events`); bulk bars on Inbox/Calendar.
 - **People** — tag who appears in a photo (`file_people`).
-- **Tags** — generic categories on photos (`file_tags`); Browse filters by direct file tags.
+- **Tags** — generic categories on photos (`file_tags`); Browse supports multi-label **AND** filtering (`/browse/tags?tag=…&person=…&camera=…`) with co-occurring tags, a **people subset**, and a **cameras subset** for the current selection (`GET /api/browse/cooccurring`). Calendar year/month chips remain single-label (multi-chip follow-up).
 
 Event-level tags (`event_tags`) label the event record itself and do not imply all event photos carry that tag.
 
@@ -269,12 +269,13 @@ Grouped by domain. See `/docs` for parameters and schemas.
 | Mosaic | `POST /api/mosaic/preview`, `POST /api/mosaic/generate`, `GET /api/mosaic/output/{filename}` |
 | Scan | `POST /api/scan/inbox`, `/archive`, `/trash`, `GET /api/scan/status` |
 | Blur analysis | `POST /api/blur-analysis/inbox`, `/archive`, `/all`, `GET /api/blur-analysis/status` |
-| Files | `GET /api/files` (filters: location, `capture_day`, `capture_year`, `capture_month`, event, person, tag, blurry), thumbnails, original, metadata |
+| Files | `GET /api/files` (filters: location, `capture_day`, `capture_year`, `capture_month`, event, repeated `person_id` AND, repeated `tag_id` AND, repeated `camera` AND, blurry), thumbnails, original, metadata |
 | File relations | `PATCH /api/files/{id}/events`, `/people`, `/tags` |
 | Calendar | `GET /api/calendar/months`, `/summary`, `/labels`, `/year-labels`, `/events`, `/day` (paginated; `page`, `page_size`) |
 | Events | CRUD, files list, assign-ids, assign-range |
 | People | CRUD, merge, assign-ids, unassign-ids |
-| Tags | CRUD, merge, assign-ids, unassign-ids |
+| Tags | CRUD, merge, assign-ids, unassign-ids, `GET /api/tags/cooccurring` |
+| Browse filters | `GET /api/browse/cooccurring` (tags + people + cameras in AND selection) |
 | Duplicates | `GET /api/duplicates`, `PATCH .../keeper` |
 | Review / organize | preview, decisions, cancel (restore delete), queue, apply |
 | Operations | `GET /api/operations` |
@@ -289,7 +290,7 @@ Grouped by domain. See `/docs` for parameters and schemas.
 | `/events`, `/events/:slug` | Event list and detail |
 | `/people` | People CRUD, merge, delete |
 | `/tags` | Tags CRUD, merge, delete |
-| `/browse`, `/browse/:kind/:slug` | Filter by person or tag |
+| `/browse`, `/browse/tags`, `/browse/:kind/:slug` | Filter by tag/person/camera AND intersection (`/browse/tags?tag=` / `?person=` / `?camera=`; co-occurring tags, people, and cameras subset in sidebar) |
 | `/mosaic` | Photomosaic from source photo + filtered tile pool |
 | `/duplicates` | Duplicate review |
 | `/blurry` | Analyze sharpness; review blurry photos; mark for delete |

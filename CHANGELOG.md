@@ -4,6 +4,27 @@ Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
 ## [Unreleased]
 
+## [2026.07.14] - 2026-07-14
+
+### Added
+
+- Browse **multi-tag AND intersection** — select Cars, then add co-occurring tags (e.g. Corvette 94) to narrow the result set; active filter chips and an **Also tagged** sidebar list with counts within the current selection
+- Browse **people subset** — while a filter is active, the People list shows only people present in that result set; click to AND a person into the filter (`?person=`)
+- Browse **cameras subset** — while a filter is active, the Cameras list shows only cameras present in that result set (with in-set counts); click to AND a camera into the filter (`?camera=`)
+- `GET /api/files` accepts repeated `tag_id`, `person_id`, and `camera` (AND across all)
+- `GET /api/browse/cooccurring` — co-occurring tags, people, and cameras for the current AND filter
+- `GET /api/tags/cooccurring?tag_id=` — tags present on the filtered file set with photo counts (excludes already-selected tags)
+
+### Fixed
+
+- Browse **Also tagged** sidebar buttons — dark readable chips (UA white button background was washing out text)
+- Calendar **day panel** — listing files no longer 500s when `api_list_files` is called without `camera` (unresolved FastAPI `Query` default)
+
+### Changed
+
+- `/browse/tag/:slug`, `/browse/person/:slug`, and `/browse/camera/:name` redirect to `/browse/tags?tag=` / `?person=` / `?camera=`; multi-filter URLs use `/browse/tags?tag=a&person=b&camera=…`
+- Browse accents use **Wimbledon purple** (`#582C83`)
+
 ## [2026.07.12c] - 2026-07-12
 
 ### Fixed

@@ -2,6 +2,10 @@
   box-sizing: border-box;
 }
 
+:root {
+  --browse-accent: #582c83; /* Wimbledon purple */
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -2310,7 +2314,61 @@ button.calendar-month-column-title:focus-visible {
 
 .browse-list-item.active {
   background: #252a36;
-  border: 1px solid #6366f1;
+  border: 1px solid var(--browse-accent);
+}
+
+.browse-list-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.9rem;
+  color: #e8eaed;
+  background: #161922;
+  border: 1px solid #2a2f3a;
+  cursor: pointer;
+  text-align: left;
+}
+
+.browse-list-btn:hover {
+  background: #252a36;
+  border-color: var(--browse-accent);
+}
+
+.browse-active-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.browse-active-tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--browse-accent);
+  background: #1c2030;
+  color: #e8eaed;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.browse-active-tag-chip:hover {
+  background: #2a3148;
+}
+
+.browse-active-tag-chip span {
+  opacity: 0.75;
+}
+
+.browse-active-tag-chip.person {
+  border-style: dashed;
 }
 
 .browse-count {
@@ -2333,8 +2391,13 @@ button.calendar-month-column-title:focus-visible {
 
 .browse-results-header-label-mode {
   padding: 0.75rem 1rem;
-  border: 1px solid #6366f1;
+  border: 1px solid var(--browse-accent);
   border-radius: 10px;
+}
+
+.browse-results-count {
+  background: var(--browse-accent);
+  color: #fff;
 }
 
 .browse-results-header-actions {

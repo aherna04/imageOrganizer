@@ -188,10 +188,6 @@ class InboxTagsOut(BaseModel):
     tags: list[CalendarMonthTagOut]
 
 
-class InboxPeopleOut(BaseModel):
-    people: list[CalendarMonthPersonOut]
-
-
 class InboxCameraOut(BaseModel):
     name: str
     photo_count: int
@@ -199,6 +195,16 @@ class InboxCameraOut(BaseModel):
 
 class InboxCamerasOut(BaseModel):
     cameras: list[InboxCameraOut]
+
+
+class BrowseCooccurringOut(BaseModel):
+    tags: list[CalendarMonthTagOut]
+    people: list[CalendarMonthPersonOut]
+    cameras: list[InboxCameraOut]
+
+
+class InboxPeopleOut(BaseModel):
+    people: list[CalendarMonthPersonOut]
 
 
 class CameraOut(BaseModel):

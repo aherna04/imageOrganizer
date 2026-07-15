@@ -75,6 +75,7 @@ export default function App() {
           <Route path="/tags" element={<TagsPage />} />
           <Route path="/cameras" element={<CamerasPage />} />
           <Route path="/browse" element={<BrowsePage />} />
+          <Route path="/browse/tags" element={<BrowsePage />} />
           <Route path="/browse/:kind/:slug" element={<BrowsePage />} />
           <Route path="/mosaic" element={<Mosaic />} />
           <Route path="/duplicates" element={<Duplicates />} />

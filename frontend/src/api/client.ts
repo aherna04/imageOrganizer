@@ -315,10 +315,15 @@ export const api = {
 
   listCameras: () => request<{ cameras: Camera[] }>("/api/cameras"),
 
-  listFiles: (params: Record<string, string | number | boolean | undefined>) => {
+  listFiles: (params: Record<string, string | number | boolean | (string | number)[] | undefined>) => {
     const q = new URLSearchParams();
     Object.entries(params).forEach(([k, v]) => {
-      if (v !== undefined && v !== "") q.set(k, String(v));
+      if (v === undefined || v === "") return;
+      if (Array.isArray(v)) {
+        v.forEach((item) => q.append(k, String(item)));
+      } else {
+        q.set(k, String(v));
+      }
     });
     return request<FileList>(`/api/files?${q}`);
   },
@@ -427,6 +432,29 @@ export const api = {
     }),
 
   listTags: () => request<Tag[]>("/api/tags"),
+
+  listCooccurringTags: (tagIds: number[], location?: string) => {
+    const q = new URLSearchParams();
+    tagIds.forEach((id) => q.append("tag_id", String(id)));
+    if (location) q.set("location", location);
+    return request<{ tags: Tag[] }>(`/api/tags/cooccurring?${q}`);
+  },
+
+  listBrowseCooccurring: (opts: {
+    tagIds?: number[];
+    personIds?: number[];
+    cameraNames?: string[];
+    location?: string;
+  }) => {
+    const q = new URLSearchParams();
+    (opts.tagIds ?? []).forEach((id) => q.append("tag_id", String(id)));
+    (opts.personIds ?? []).forEach((id) => q.append("person_id", String(id)));
+    (opts.cameraNames ?? []).forEach((name) => q.append("camera", name));
+    if (opts.location) q.set("location", opts.location);
+    return request<{ tags: Tag[]; people: Person[]; cameras: InboxUsedCamera[] }>(
+      `/api/browse/cooccurring?${q}`,
+    );
+  },
   createTag: (name: string) =>
     request<Tag>("/api/tags", { method: "POST", body: JSON.stringify({ name }) }),
   updateTag: (id: number, data: { name: string }) =>

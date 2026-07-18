@@ -55,6 +55,22 @@ def create_tag(conn: sqlite3.Connection, name: str) -> dict:
     return get_tag(conn, cur.lastrowid)  # type: ignore[arg-type]
 
 
+def get_or_create_tag(conn: sqlite3.Connection, name: str) -> dict:
+    cleaned = name.strip()
+    if not cleaned:
+        raise ValueError("Tag name is required")
+    base_slug = slugify(cleaned)
+    row = conn.execute(
+        "SELECT id FROM tags WHERE lower(name) = lower(?) OR slug = ?",
+        (cleaned, base_slug),
+    ).fetchone()
+    if row:
+        tag = get_tag(conn, row["id"])
+        if tag:
+            return tag
+    return create_tag(conn, cleaned)
+
+
 def get_file_tags(conn: sqlite3.Connection, file_id: int) -> list[dict]:
     rows = conn.execute(
         """

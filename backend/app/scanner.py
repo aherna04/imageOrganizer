@@ -116,6 +116,15 @@ def _upsert_file(conn, path: Path, location: str) -> None:
     )
 
 
+def upsert_file(conn, path: Path, location: str) -> int:
+    """Index a media file and return its files.id."""
+    _upsert_file(conn, path, location)
+    row = conn.execute("SELECT id FROM files WHERE path = ?", (str(path),)).fetchone()
+    if not row:
+        raise ValueError(f"Failed to index {path}")
+    return int(row["id"])
+
+
 def _prune_missing(conn, scope: str, seen_paths: set[str]) -> None:
     location = _location_for_scope(scope)
     rows = conn.execute("SELECT id, path FROM files WHERE location = ?", (location,)).fetchall()

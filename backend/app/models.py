@@ -64,6 +64,7 @@ class MosaicPreviewOut(BaseModel):
 class MosaicGenerateOut(BaseModel):
     filename: str
     url: str
+    file_id: int
     width: int
     height: int
     tile_count: int

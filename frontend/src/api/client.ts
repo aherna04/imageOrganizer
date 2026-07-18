@@ -97,6 +97,7 @@ export interface MosaicPreview {
 export interface MosaicResult {
   filename: string;
   url: string;
+  file_id: number;
   width: number;
   height: number;
   tile_count: number;

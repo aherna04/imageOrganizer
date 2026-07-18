@@ -4,6 +4,13 @@ Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
 ## [Unreleased]
 
+## [2026.07.18] - 2026-07-18
+
+### Changed
+
+- Generated mosaics are saved under `{archive}/mosaics/`, indexed as archive photos, and auto-tagged **mosaic**
+- Mark-delete / review decisions only refetch inbox files, delete-queue count, and review queue (no tags/people/events storm)
+
 ## [2026.07.14] - 2026-07-14
 
 ### Added

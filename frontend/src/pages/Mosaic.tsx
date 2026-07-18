@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { MediaFile, MosaicResult, api } from "../api/client";
@@ -14,6 +14,7 @@ function parseSourceId(raw: string | null): number | null {
 }
 
 export default function MosaicPage() {
+  const qc = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
   const sourceId = parseSourceId(searchParams.get("source"));
 
@@ -60,6 +61,8 @@ export default function MosaicPage() {
     onSuccess: (data) => {
       setResult(data);
       setError(null);
+      qc.invalidateQueries({ queryKey: ["files"] });
+      qc.invalidateQueries({ queryKey: ["tags"] });
     },
     onError: (err: Error) => {
       setError(err.message || "Mosaic generation failed");
@@ -251,7 +254,12 @@ export default function MosaicPage() {
             <section className="mosaic-result-section">
               <h3 className="settings-section-title">Result</h3>
               <p className="mosaic-result-meta">
-                {result.width}×{result.height} px · {result.tile_count} tiles · {result.columns}×{result.rows} grid
+                {result.width}×{result.height} px · {result.tile_count} tiles · {result.columns}×{result.rows}{" "}
+                grid
+              </p>
+              <p className="mosaic-hint">
+                Saved to library · tagged{" "}
+                <Link to="/browse/tags?tag=mosaic">mosaic</Link>
               </p>
               <div className="mosaic-result-actions">
                 <a className="btn btn-secondary" href={result.url} download={result.filename}>

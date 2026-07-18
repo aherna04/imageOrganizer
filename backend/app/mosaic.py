@@ -12,8 +12,11 @@ from typing import Literal
 from PIL import Image, ImageOps
 
 from app.config import MOSAICS_DIR, is_video_path
+from app.db import get_config, get_conn
 from app.media_filter import append_media_type_filter
 from app.metadata import generate_thumbnail, thumb_cache_path
+from app.scanner import upsert_file
+from app import tags as tags_svc
 
 MAX_TILES = 2000
 DEFAULT_TILE_PX = 24
@@ -189,14 +192,22 @@ def generate_mosaic(
             tile_img = best.image.resize((tile_px, tile_px), Image.Resampling.LANCZOS)
             canvas.paste(tile_img, (col * tile_px, row * tile_px))
 
-    MOSAICS_DIR.mkdir(parents=True, exist_ok=True)
+    cfg = get_config(conn)
+    mosaics_dir = Path(cfg["archive_path"]) / "mosaics"
+    mosaics_dir.mkdir(parents=True, exist_ok=True)
     filename = f"mosaic-{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.jpg"
-    out_path = MOSAICS_DIR / filename
+    out_path = mosaics_dir / filename
     canvas.save(out_path, "JPEG", quality=92, optimize=True)
+
+    file_id = upsert_file(conn, out_path, "archive")
+    conn.commit()
+    mosaic_tag = tags_svc.get_or_create_tag(conn, "mosaic")
+    tags_svc.assign_tags_by_ids(conn, [mosaic_tag["id"]], [file_id])
 
     return {
         "filename": filename,
         "url": f"/api/mosaic/output/{filename}",
+        "file_id": file_id,
         "width": out_w,
         "height": out_h,
         "tile_count": len(tiles),
@@ -208,7 +219,15 @@ def generate_mosaic(
 def resolve_mosaic_output_path(filename: str) -> Path:
     if not MOSAIC_FILENAME_RE.match(filename):
         raise ValueError("Invalid mosaic filename")
-    path = (MOSAICS_DIR / filename).resolve()
-    if MOSAICS_DIR.resolve() not in path.parents:
+    with get_conn() as conn:
+        lib_dir = (Path(get_config(conn)["archive_path"]) / "mosaics").resolve()
+    lib_path = (lib_dir / filename).resolve()
+    if lib_path.parent != lib_dir:
         raise ValueError("Invalid mosaic path")
-    return path
+    if lib_path.is_file():
+        return lib_path
+    legacy_dir = MOSAICS_DIR.resolve()
+    legacy_path = (legacy_dir / filename).resolve()
+    if legacy_path.parent != legacy_dir:
+        raise ValueError("Invalid mosaic path")
+    return legacy_path

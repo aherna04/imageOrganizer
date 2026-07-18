@@ -1,6 +1,6 @@
 # Image Organizer
 
-**Version:** 2026.07.14 — see [CHANGELOG.md](CHANGELOG.md)
+**Version:** 2026.07.18 — see [CHANGELOG.md](CHANGELOG.md)
 
 Architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
@@ -60,7 +60,7 @@ The Inbox **Delete queue** filter is different: it shows photos *marked* for del
 
 1. Open any photo in detail → **Create mosaic**, or go to **Mosaic** in the sidebar
 2. On Mosaic, choose tile pool filters (tag, person, event, or all) and grid size
-3. **Generate** — output is saved under `~/.imageOrganizer/mosaics/` and shown in the browser
+3. **Generate** — output is saved under `{archive}/mosaics/` (e.g. `photos/mosaics/`), indexed as an archive photo, and tagged **mosaic**
 
 ## Safety
 

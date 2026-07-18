@@ -136,10 +136,10 @@ Configured in `backend/app/config.py` (overridable via Settings UI → `config` 
 |------|------|
 | `{MEDIA_ROOT}/inbox/` | New imports; scanned but not organized until Apply |
 | `{MEDIA_ROOT}/photos/` | Organized archive (date-based subfolders after Apply) |
+| `{MEDIA_ROOT}/photos/mosaics/` | Generated photomosaic JPEGs (indexed + tagged `mosaic`) |
 | `{MEDIA_ROOT}/.trash/` | Soft-deleted files |
 | `{APP_DATA_DIR}/index.db` | SQLite database |
 | `{APP_DATA_DIR}/backups/` | Timestamped database backups (`index-YYYY-MM-DD_HH-MM-SS.db`) |
-| `{APP_DATA_DIR}/mosaics/` | Generated photomosaic JPEGs |
 | `{APP_DATA_DIR}/thumbs/` | Cached JPEG thumbnails (keyed by file id + mtime) |
 
 Environment variables:
@@ -255,7 +255,7 @@ Event-level tags (`event_tags`) label the event record itself and do not imply a
 
 - **Mosaic** page (`/mosaic`): select a source image, filter tile pool by tag/person/event/all, generate a color-matched grid mosaic.
 - `POST /api/mosaic/preview` — tile count and output dimensions.
-- `POST /api/mosaic/generate` — writes JPEG to `{APP_DATA_DIR}/mosaics/`; served at `GET /api/mosaic/output/{filename}`.
+- `POST /api/mosaic/generate` — writes JPEG to `{archive_path}/mosaics/`, indexes it as an archive file, auto-tags **mosaic**; served at `GET /api/mosaic/output/{filename}` (falls back to legacy `{APP_DATA_DIR}/mosaics/` for older files).
 
 ## API overview
 

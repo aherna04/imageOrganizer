@@ -31,6 +31,18 @@ class ScanState:
                 "message": self.message,
             }
 
+    def claim(self, scope: str) -> bool:
+        """Atomically mark scan as running. Returns False if already running."""
+        with self.lock:
+            if self.running:
+                return False
+            self.running = True
+            self.scope = scope
+            self.processed = 0
+            self.total = 0
+            self.message = f"Starting {scope} scan..."
+            return True
+
     def start(self, scope: str, total: int) -> None:
         with self.lock:
             self.running = True
@@ -134,14 +146,15 @@ def _prune_missing(conn, scope: str, seen_paths: set[str]) -> None:
 
 
 def run_scan(scope: str) -> None:
-    with get_conn() as conn:
-        cfg = get_config(conn)
-    root = _scan_root(scope, cfg)
-    files = iter_media_files(root)
-    scan_state.start(scope, len(files))
-    seen: set[str] = set()
-    location = _location_for_scope(scope)
+    finish_message = f"Scan failed: unknown error"
     try:
+        with get_conn() as conn:
+            cfg = get_config(conn)
+        root = _scan_root(scope, cfg)
+        files = iter_media_files(root)
+        scan_state.start(scope, len(files))
+        seen: set[str] = set()
+        location = _location_for_scope(scope)
         with get_conn() as conn:
             for path in files:
                 seen.add(str(path))
@@ -156,17 +169,19 @@ def run_scan(scope: str) -> None:
             with get_conn() as conn:
                 rebuild_duplicate_groups(conn)
                 conn.commit()
-        scan_state.finish(f"Scan complete: {len(files)} files")
+        finish_message = f"Scan complete: {len(files)} files"
     except Exception as exc:
-        scan_state.finish(f"Scan failed: {exc}")
+        finish_message = f"Scan failed: {exc}"
+    finally:
+        scan_state.finish(finish_message)
 
 
 def start_scan_background(scope: str) -> bool:
     from app.blur_analysis import blur_analysis_state
 
-    if scan_state.snapshot()["running"]:
-        return False
     if blur_analysis_state.snapshot()["running"]:
+        return False
+    if not scan_state.claim(scope):
         return False
     thread = threading.Thread(target=run_scan, args=(scope,), daemon=True)
     thread.start()

@@ -4,6 +4,12 @@ Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
 ## [Unreleased]
 
+## [2026.07.18a] - 2026-07-18
+
+### Fixed
+
+- Scan buttons no longer silently no-op when blocked — show sharpness-analysis / already-running errors; scan and blur analysis always clear their running flag on failure
+
 ## [2026.07.18] - 2026-07-18
 
 ### Changed

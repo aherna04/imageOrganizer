@@ -6,6 +6,7 @@ import PhotoGrid from "../components/PhotoGrid";
 import ScanStatusBanner from "../components/ScanStatusBanner";
 import { invalidateAfterReviewChange } from "../utils/invalidateAfterReviewChange";
 import { nextFileAfterRemoval } from "../utils/photoNavigation";
+import { useScanBlockers } from "../utils/useScanBlockers";
 
 const PAGE_SIZE = 100;
 
@@ -15,6 +16,7 @@ export default function Trash() {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [detailFile, setDetailFile] = useState<MediaFile | null>(null);
   const [scanRunning, setScanRunning] = useState(false);
+  const { blurRunning, blockedReason } = useScanBlockers();
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["files", "trash", page],
@@ -108,12 +110,24 @@ export default function Trash() {
         <h2>Trash</h2>
         <div style={{ display: "flex", gap: "0.75rem", alignItems: "center", flexWrap: "wrap" }}>
           <ScanStatusBanner onRunningChange={handleScanRunningChange} />
+          {blockedReason && !scanRunning && (
+            <span className="scan-status">{blockedReason}</span>
+          )}
+          {scan.isError && (
+            <span className="scan-status" style={{ color: "#f87171" }}>
+              {scan.error instanceof Error ? scan.error.message : "Scan failed"}
+            </span>
+          )}
           {total > 0 && (
             <span className="badge" style={{ background: "#6366f1", color: "#fff" }}>
               {total} in trash
             </span>
           )}
-          <button className="btn" onClick={() => scan.mutate()} disabled={scan.isPending || scanRunning}>
+          <button
+            className="btn"
+            onClick={() => scan.mutate()}
+            disabled={scan.isPending || scanRunning || blurRunning}
+          >
             Scan trash
           </button>
         </div>

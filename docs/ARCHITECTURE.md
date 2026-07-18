@@ -154,8 +154,9 @@ Supported media: common image formats (JPEG, PNG, HEIC, WebP, TIFF) and video (M
 ### 1. Scan
 
 1. User triggers scan (inbox or archive) → `POST /api/scan/inbox` or `/archive`.
-2. `scanner.py` walks the folder in a background thread; status via `GET /api/scan/status`.
+2. `scanner.py` claims the scan mutex immediately, then walks the folder in a background thread; status via `GET /api/scan/status`.
 3. For each file: read metadata (`metadata.py`), compute SHA256/pHash, upsert `files` row, generate thumbnail.
+4. Scan and blur analysis are mutually exclusive (409 if the other is running). The UI disables Scan and shows a reason while sharpness analysis is active; the running flag always clears when the job finishes or fails.
 
 ### 2. Organize preview
 
@@ -186,7 +187,7 @@ The Inbox **Delete queue** filter (`pending_delete=true`) is separate: it shows 
 
 ### 6. Blur detection
 
-Sharpness analysis is a **separate pass** from inbox/archive scan. Scan and blur analysis cannot run at the same time.
+Sharpness analysis is a **separate pass** from inbox/archive scan. Scan and blur analysis cannot run at the same time (mutex + UI disable/feedback on Scan buttons).
 
 #### User flow
 

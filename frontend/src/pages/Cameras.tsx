@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { api } from "../api/client";
 import { filterByNameQuery } from "../utils/filterLabelsByQuery";
 import { invalidateCalendarQueries } from "../utils/invalidateCalendarQueries";
+import { useScanBlockers } from "../utils/useScanBlockers";
 
 function cameraCountLabel(camera: { photo_count: number; inbox_count: number; archive_count: number }) {
   if (camera.inbox_count > 0 && camera.archive_count > 0) {
@@ -21,6 +22,8 @@ export default function CamerasPage() {
     queryFn: api.scanStatus,
     refetchInterval: (q) => (q.state.data?.running ? 2000 : false),
   });
+
+  const { blurRunning, blockedReason } = useScanBlockers();
 
   const { data, refetch } = useQuery({
     queryKey: ["cameras"],
@@ -67,10 +70,18 @@ export default function CamerasPage() {
                 : status.message ?? ""}
             </span>
           )}
+          {blockedReason && !scanning && (
+            <span className="scan-status">{blockedReason}</span>
+          )}
+          {scanArchive.isError && (
+            <span className="scan-status" style={{ color: "#f87171" }}>
+              {scanArchive.error instanceof Error ? scanArchive.error.message : "Scan failed"}
+            </span>
+          )}
           <button
             className="btn btn-secondary"
             onClick={() => scanArchive.mutate()}
-            disabled={scanArchive.isPending || scanning}
+            disabled={scanArchive.isPending || scanning || blurRunning}
           >
             Scan archive
           </button>

@@ -26,6 +26,18 @@ class BlurAnalysisState:
                 "message": self.message,
             }
 
+    def claim(self, scope: str) -> bool:
+        """Atomically mark analysis as running. Returns False if already running."""
+        with self.lock:
+            if self.running:
+                return False
+            self.running = True
+            self.scope = scope
+            self.processed = 0
+            self.total = 0
+            self.message = f"Starting sharpness analysis ({scope})..."
+            return True
+
     def start(self, scope: str, total: int) -> None:
         with self.lock:
             self.running = True
@@ -61,15 +73,16 @@ def _image_files_query(scope: str) -> tuple[str, list]:
 
 
 def run_blur_analysis(scope: str) -> None:
-    with get_conn() as conn:
-        where, params = _image_files_query(scope)
-        rows = conn.execute(
-            f"SELECT f.id, f.path FROM files f {where} ORDER BY f.id",
-            params,
-        ).fetchall()
-
-    blur_analysis_state.start(scope, len(rows))
+    finish_message = "Sharpness analysis failed: unknown error"
     try:
+        with get_conn() as conn:
+            where, params = _image_files_query(scope)
+            rows = conn.execute(
+                f"SELECT f.id, f.path FROM files f {where} ORDER BY f.id",
+                params,
+            ).fetchall()
+
+        blur_analysis_state.start(scope, len(rows))
         for row in rows:
             path = Path(row["path"])
             score = None if is_video_path(path) else compute_blur_score(path)
@@ -80,9 +93,11 @@ def run_blur_analysis(scope: str) -> None:
                 )
                 conn.commit()
             blur_analysis_state.tick()
-        blur_analysis_state.finish(f"Sharpness analysis complete: {len(rows)} images")
+        finish_message = f"Sharpness analysis complete: {len(rows)} images"
     except Exception as exc:
-        blur_analysis_state.finish(f"Sharpness analysis failed: {exc}")
+        finish_message = f"Sharpness analysis failed: {exc}"
+    finally:
+        blur_analysis_state.finish(finish_message)
 
 
 def start_blur_analysis_background(scope: str) -> bool:
@@ -90,7 +105,7 @@ def start_blur_analysis_background(scope: str) -> bool:
 
     if scan_state.snapshot()["running"]:
         return False
-    if blur_analysis_state.snapshot()["running"]:
+    if not blur_analysis_state.claim(scope):
         return False
     thread = threading.Thread(target=run_blur_analysis, args=(scope,), daemon=True)
     thread.start()

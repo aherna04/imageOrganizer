@@ -18,6 +18,7 @@ import {
   yearFilterToSearchParams,
 } from "../utils/calendarFilter";
 import { invalidateCalendarQueries } from "../utils/invalidateCalendarQueries";
+import { useScanBlockers } from "../utils/useScanBlockers";
 
 function findMonthIndex(months: CalendarMonthSummary[], year: number, month: number): number {
   return months.findIndex((m) => m.year === year && m.month === month);
@@ -82,6 +83,8 @@ export default function CalendarPage() {
     queryFn: api.scanStatus,
     refetchInterval: (q) => (q.state.data?.running ? 2000 : false),
   });
+
+  const { blurRunning, blockedReason } = useScanBlockers();
 
   const wasScanning = useRef(false);
   useEffect(() => {
@@ -300,13 +303,23 @@ export default function CalendarPage() {
     <div>
       <div className="page-header">
         <h2>Calendar</h2>
-        <button
-          className="btn btn-secondary"
-          onClick={() => scanArchive.mutate()}
-          disabled={scanArchive.isPending || scanStatus?.running}
-        >
-          Scan archive
-        </button>
+        <div style={{ display: "flex", gap: "0.75rem", alignItems: "center", flexWrap: "wrap" }}>
+          {blockedReason && !scanStatus?.running && (
+            <span className="scan-status">{blockedReason}</span>
+          )}
+          {scanArchive.isError && (
+            <span className="scan-status" style={{ color: "#f87171" }}>
+              {scanArchive.error instanceof Error ? scanArchive.error.message : "Scan failed"}
+            </span>
+          )}
+          <button
+            className="btn btn-secondary"
+            onClick={() => scanArchive.mutate()}
+            disabled={scanArchive.isPending || scanStatus?.running || blurRunning}
+          >
+            Scan archive
+          </button>
+        </div>
       </div>
 
       <div className="calendar-filters">

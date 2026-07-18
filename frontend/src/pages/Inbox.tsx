@@ -16,6 +16,7 @@ import { invalidateAfterDateChange } from "../utils/invalidateAfterDateChange";
 import { isEditableTarget, nextFileAfterRemoval } from "../utils/photoNavigation";
 import { togglePhotoSelection } from "../utils/photoSelection";
 import { usePhotoGridAlerts } from "../utils/usePhotoGridAlerts";
+import { useScanBlockers } from "../utils/useScanBlockers";
 
 type InboxFilter = "all" | "unlabeled" | "delete_queue";
 
@@ -28,6 +29,7 @@ export default function Inbox() {
   const [personFilterId, setPersonFilterId] = useState<number | null>(null);
   const [cameraFilter, setCameraFilter] = useState<string | null>(null);
   const [scanRunning, setScanRunning] = useState(false);
+  const { blurRunning, blockedReason } = useScanBlockers();
   const handleScanRunningChange = useCallback((running: boolean) => {
     setScanRunning(running);
   }, []);
@@ -265,10 +267,22 @@ export default function Inbox() {
         <h2>Inbox</h2>
         <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
           <ScanStatusBanner onRunningChange={handleScanRunningChange} />
+          {blockedReason && !scanRunning && (
+            <span className="scan-status">{blockedReason}</span>
+          )}
+          {scan.isError && (
+            <span className="scan-status" style={{ color: "#f87171" }}>
+              {scan.error instanceof Error ? scan.error.message : "Scan failed"}
+            </span>
+          )}
           <span className="badge" style={{ background: "#6366f1", color: "#fff" }}>
             {headerBadge}
           </span>
-          <button className="btn" onClick={() => scan.mutate()} disabled={scan.isPending || scanRunning}>
+          <button
+            className="btn"
+            onClick={() => scan.mutate()}
+            disabled={scan.isPending || scanRunning || blurRunning}
+          >
             Scan inbox
           </button>
         </div>

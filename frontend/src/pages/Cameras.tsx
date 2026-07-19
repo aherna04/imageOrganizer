@@ -20,7 +20,10 @@ export default function CamerasPage() {
   const { data: status } = useQuery({
     queryKey: ["scan-status"],
     queryFn: api.scanStatus,
-    refetchInterval: (q) => (q.state.data?.running ? 2000 : false),
+    refetchInterval: (q) => {
+      const phase = q.state.data?.phase;
+      return phase && phase !== "idle" ? 2000 : false;
+    },
   });
 
   const { blurRunning, blockedReason } = useScanBlockers();

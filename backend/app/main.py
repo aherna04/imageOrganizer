@@ -100,11 +100,11 @@ from app.blur_detect import (
     parse_blur_threshold,
 )
 from app.organizer import apply_operations, fix_dates_from_filename, inbox_available_count, preview_organize, queue_inbox_batch
-from app.scanner import scan_state, start_scan_background
+from app.scanner import combined_scan_status, scan_state, start_scan_background
 from app.blur_analysis import blur_analysis_state, start_blur_analysis_background
 from app.trash_restore import restore_from_trash
 
-app = FastAPI(title="Image Organizer", version="2026.07.19a")
+app = FastAPI(title="Image Organizer", version="2026.07.19b")
 
 app.add_middleware(
     CORSMiddleware,
@@ -310,7 +310,7 @@ def api_scan_trash():
 
 @app.get("/api/scan/status", response_model=ScanStatusOut)
 def api_scan_status():
-    return ScanStatusOut(**scan_state.snapshot())
+    return ScanStatusOut(**combined_scan_status())
 
 
 @app.post("/api/blur-analysis/inbox")

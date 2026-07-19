@@ -3,7 +3,7 @@ from pathlib import Path
 
 from app.config import ARCHIVE_PATH, INBOX_PATH
 from app.db import get_config, get_conn
-from app.dedupe import rebuild_duplicate_groups
+from app.dedupe import start_dedupe_rebuild_background
 from app.metadata import (
     compute_phash,
     compute_sha256,
@@ -20,6 +20,7 @@ class ScanState:
         self.processed = 0
         self.total = 0
         self.message: str | None = None
+        self.phase: str = "idle"
 
     def snapshot(self) -> dict:
         with self.lock:
@@ -29,6 +30,7 @@ class ScanState:
                 "processed": self.processed,
                 "total": self.total,
                 "message": self.message,
+                "phase": self.phase,
             }
 
     def claim(self, scope: str) -> bool:
@@ -40,6 +42,7 @@ class ScanState:
             self.scope = scope
             self.processed = 0
             self.total = 0
+            self.phase = "scanning"
             self.message = f"Starting {scope} scan..."
             return True
 
@@ -49,11 +52,18 @@ class ScanState:
             self.scope = scope
             self.processed = 0
             self.total = total
+            self.phase = "scanning"
             self.message = f"Scanning {scope}..."
 
     def tick(self) -> None:
         with self.lock:
             self.processed += 1
+
+    def set_phase(self, phase: str, message: str | None = None) -> None:
+        with self.lock:
+            self.phase = phase
+            if message is not None:
+                self.message = message
 
     def set_message(self, message: str) -> None:
         with self.lock:
@@ -62,10 +72,28 @@ class ScanState:
     def finish(self, message: str) -> None:
         with self.lock:
             self.running = False
+            self.phase = "idle"
             self.message = message
 
 
 scan_state = ScanState()
+
+
+def combined_scan_status() -> dict:
+    """Scan progress, or building_duplicates when only the background dedupe is active."""
+    from app.dedupe import dedupe_state
+
+    snap = scan_state.snapshot()
+    if snap["running"]:
+        return snap
+    dedupe = dedupe_state.snapshot()
+    if dedupe["running"]:
+        return {
+            **snap,
+            "phase": "building_duplicates",
+            "message": dedupe["message"] or "Building duplicate index...",
+        }
+    return {**snap, "phase": "idle"}
 
 
 def _location_for_scope(scope: str) -> str:
@@ -146,7 +174,9 @@ def _prune_missing(conn, scope: str, seen_paths: set[str]) -> None:
 
 
 def run_scan(scope: str) -> None:
-    finish_message = f"Scan failed: unknown error"
+    finish_message = "Scan failed: unknown error"
+    released = False
+    kick_dedupe = False
     try:
         with get_conn() as conn:
             cfg = get_config(conn)
@@ -161,19 +191,22 @@ def run_scan(scope: str) -> None:
                 _upsert_file(conn, path, location)
                 conn.commit()
                 scan_state.tick()
+        scan_state.set_phase("pruning", "Removing missing files...")
         with get_conn() as conn:
             _prune_missing(conn, scope, seen)
             conn.commit()
-        if scope != "trash":
-            scan_state.set_message("Building duplicate index...")
-            with get_conn() as conn:
-                rebuild_duplicate_groups(conn)
-                conn.commit()
         finish_message = f"Scan complete: {len(files)} files"
+        scan_state.finish(finish_message)
+        released = True
+        if scope != "trash":
+            kick_dedupe = True
     except Exception as exc:
         finish_message = f"Scan failed: {exc}"
     finally:
-        scan_state.finish(finish_message)
+        if not released:
+            scan_state.finish(finish_message)
+        if kick_dedupe:
+            start_dedupe_rebuild_background()
 
 
 def start_scan_background(scope: str) -> bool:

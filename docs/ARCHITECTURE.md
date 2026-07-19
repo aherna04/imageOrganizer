@@ -48,10 +48,10 @@ Full interactive API spec: `http://localhost:8000/docs` when the backend is runn
 | `db.py` | SQLite schema, connection, config key-value store |
 | `models.py` | Pydantic request/response models |
 | `config.py` | Paths, supported extensions, env vars |
-| `scanner.py` | Background scan of inbox/archive into `files` |
+| `scanner.py` | Background scan of inbox/archive into `files`; releases before duplicate rebuild |
 | `metadata.py` | EXIF/ffprobe extraction, thumbnails |
 | `organizer.py` | Date-folder and rename preview/apply |
-| `dedupe.py` | Exact (SHA256) and perceptual (pHash) duplicate groups |
+| `dedupe.py` | Exact (SHA256) and perceptual (pHash) duplicate groups; background rebuild after scan |
 | `blur_analysis.py` | Background sharpness analysis job + status |
 | `blur_detect.py` | Threshold parsing, p10 outlier helper, shared `is_blurry` logic |
 | `events.py` | Trip/event CRUD and file assignment |
@@ -154,9 +154,10 @@ Supported media: common image formats (JPEG, PNG, HEIC, WebP, TIFF) and video (M
 ### 1. Scan
 
 1. User triggers scan (inbox or archive) → `POST /api/scan/inbox` or `/archive`.
-2. `scanner.py` claims the scan mutex immediately, then walks the folder in a background thread; status via `GET /api/scan/status`.
+2. `scanner.py` claims the scan mutex immediately, then walks the folder in a background thread; status via `GET /api/scan/status` (`phase`: `scanning` → `pruning`).
 3. For each file: read metadata (`metadata.py`), compute SHA256/pHash, upsert `files` row, generate thumbnail.
-4. Scan and blur analysis are mutually exclusive (409 if the other is running). The UI disables Scan and shows a reason while sharpness analysis is active; the running flag always clears when the job finishes or fails.
+4. After prune, the scan mutex is released (`running=false`). Inbox/archive scans then kick a **background duplicate-index rebuild** (`phase=building_duplicates`) that does not block a new scan.
+5. Scan and blur analysis are mutually exclusive (409 if the other is running). Dedupe rebuild does not block scan or blur. The UI disables Scan and shows a reason while sharpness analysis is active; the running flag always clears when the scan job finishes or fails.
 
 ### 2. Organize preview
 
@@ -182,8 +183,9 @@ The Inbox **Delete queue** filter (`pending_delete=true`) is separate: it shows 
 
 ### 5. Deduplication
 
-1. `dedupe.py` groups by SHA256 (exact) and pHash distance (perceptual).
-2. UI at `/duplicates`; user picks keeper per group → `PATCH /api/duplicates/{id}/keeper`.
+1. After inbox/archive scan, `start_dedupe_rebuild_background()` rebuilds groups (single-flight; coalesces if another scan finishes mid-rebuild).
+2. `dedupe.py` groups by SHA256 (exact) and pHash distance (perceptual).
+3. UI at `/duplicates`; user picks keeper per group → `PATCH /api/duplicates/{id}/keeper`.
 
 ### 6. Blur detection
 

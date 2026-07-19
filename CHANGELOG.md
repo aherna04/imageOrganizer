@@ -4,6 +4,13 @@ Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
 ## [Unreleased]
 
+## [2026.07.19b] - 2026-07-19
+
+### Changed
+
+- Duplicate index rebuild runs in the background after a scan finishes — Scan inbox stays available while the banner shows **Building duplicate index…**
+- Scan status exposes a `phase` (`scanning` / `pruning` / `building_duplicates` / `idle`) so the banner labels each stage
+
 ## [2026.07.19a] - 2026-07-19
 
 ### Fixed

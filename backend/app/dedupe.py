@@ -1,9 +1,11 @@
 import re
 import sqlite3
+import threading
 
 import imagehash
 
 from app.config import PHASH_THRESHOLD
+from app.db import get_conn
 
 _COPY_SUFFIX = re.compile(r"(?:[\s_]\(\d+\)|_\(\d+\))(?=\.[^.]+$)")
 
@@ -227,3 +229,61 @@ def get_duplicate_groups(conn: sqlite3.Connection) -> list[dict]:
             }
         )
     return result
+
+
+class DedupeState:
+    def __init__(self) -> None:
+        self.lock = threading.Lock()
+        self.running = False
+        self.message: str | None = None
+        self.dirty = False
+
+    def snapshot(self) -> dict:
+        with self.lock:
+            return {
+                "running": self.running,
+                "message": self.message,
+            }
+
+    def request(self) -> bool:
+        """Claim a rebuild slot. If already running, coalesce and return False."""
+        with self.lock:
+            if self.running:
+                self.dirty = True
+                return False
+            self.running = True
+            self.dirty = False
+            self.message = "Building duplicate index..."
+            return True
+
+    def finish_or_rerun(self) -> bool:
+        """End rebuild, or return True to run again after a coalesced request."""
+        with self.lock:
+            if self.dirty:
+                self.dirty = False
+                self.message = "Building duplicate index..."
+                return True
+            self.running = False
+            self.message = None
+            return False
+
+
+dedupe_state = DedupeState()
+
+
+def _run_dedupe_rebuild() -> None:
+    while True:
+        try:
+            with get_conn() as conn:
+                rebuild_duplicate_groups(conn)
+                conn.commit()
+        except Exception:
+            pass
+        if not dedupe_state.finish_or_rerun():
+            break
+
+
+def start_dedupe_rebuild_background() -> None:
+    if not dedupe_state.request():
+        return
+    threading.Thread(target=_run_dedupe_rebuild, daemon=True).start()

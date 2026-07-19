@@ -131,6 +131,7 @@ export interface ScanStatus {
   processed: number;
   total: number;
   message: string | null;
+  phase: "idle" | "scanning" | "pruning" | "building_duplicates";
 }
 
 export interface BlurAnalysisStatus {

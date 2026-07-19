@@ -125,6 +125,7 @@ class ScanStatusOut(BaseModel):
     processed: int
     total: int
     message: str | None
+    phase: Literal["idle", "scanning", "pruning", "building_duplicates"] = "idle"
 
 
 class BlurAnalysisStatusOut(BaseModel):

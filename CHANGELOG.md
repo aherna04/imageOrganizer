@@ -4,6 +4,12 @@ Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
 ## [Unreleased]
 
+## [2026.07.19a] - 2026-07-19
+
+### Fixed
+
+- Development book — register the throttle-inbox plan in `book.json` (removes duplicate chapter from raced rebuild)
+
 ## [2026.07.19] - 2026-07-19
 
 ### Changed

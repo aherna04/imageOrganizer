@@ -4,6 +4,12 @@ Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
 ## [Unreleased]
 
+## [2026.07.19] - 2026-07-19
+
+### Changed
+
+- Inbox no longer full-refetches the photo grid every few seconds during a scan — status still polls; the grid refreshes when the scan completes
+
 ## [2026.07.18a] - 2026-07-18
 
 ### Fixed

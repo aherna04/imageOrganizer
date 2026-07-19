@@ -1,6 +1,6 @@
 # Image Organizer — Development Book
 
-*Release 2026.07.18a · collected Cursor implementation plans*
+*Release 2026.07.19 · collected Cursor implementation plans*
 
 Related: [ARCHITECTURE.md](ARCHITECTURE.md) · [CHANGELOG.md](../CHANGELOG.md)
 
@@ -157,7 +157,9 @@ This book collects the Cursor agent implementation plans written while building 
 122. [Release 2026.07.14](#chapter-122-release-20260714)
 123. [Review restore deletes](#chapter-123-review-restore-deletes)
 124. [Slim inbox delete refetch](#chapter-124-slim-inbox-delete-refetch)
-125. [Trash view and restore](#chapter-125-trash-view-and-restore)
+125. [Throttle inbox scan refetch](#chapter-125-throttle-inbox-scan-refetch)
+126. [Throttle inbox scan refetch](#chapter-126-throttle-inbox-scan-refetch)
+127. [Trash view and restore](#chapter-127-trash-view-and-restore)
 
 ### Skipped Duplicates
 
@@ -14724,9 +14726,141 @@ Mark delete in Inbox detail → logs show files + pending_delete count + review-
 
 ---
 
-<a id="chapter-125-trash-view-and-restore"></a>
+<a id="chapter-125-throttle-inbox-scan-refetch"></a>
 
-## Chapter 125: Trash view and restore
+## Chapter 125: Throttle inbox scan refetch
+
+> **Overview:** Stop reloading the full Inbox grid every few seconds during a scan. Keep lightweight status polling; refresh the grid once when the scan finishes (plus a much rarer mid-scan update if useful).
+
+## Problem
+
+While an inbox scan runs, [`ScanStatusBanner`](frontend/src/components/ScanStatusBanner.tsx) does two expensive things on top of status polling:
+
+1. **Interval** — invalidate `["files", "inbox"]` every **2.5s** (refetches all ~200 inbox files + delete-queue badge via prefix match).
+2. **Per-progress** — invalidate again every **5 files** processed.
+
+That rebuilds the grid repeatedly and loads the single backend worker — felt as scroll jank. Status polling (`GET /api/scan/status` every 2s) is cheap and stays.
+
+## Approach
+
+Keep status polls. Remove continuous full-grid refetches during scan. Refresh the inbox (and related keys) **once when the scan stops**.
+
+```mermaid
+flowchart LR
+  scanOn[Scan running] --> status["Poll scan/status every 2s"]
+  scanOn --> noGrid["Do NOT refetch files/inbox"]
+  scanOff[Scan finishes] --> once["Invalidate files/inbox once"]
+```
+
+## Changes
+
+### 1. [`frontend/src/components/ScanStatusBanner.tsx`](frontend/src/components/ScanStatusBanner.tsx)
+
+- **Keep** `refetchInterval` on `scan-status` while `running`.
+- **Keep** the completion effect that invalidates inbox/trash/duplicates/cameras when `wasScanning → !running`.
+- **Remove** the two mid-scan invalidate effects:
+  - interval every `INBOX_REFETCH_INTERVAL_MS` for inbox
+  - interval for trash during trash scan
+  - “every 5 processed” timeout invalidate
+- Delete unused constants (`INBOX_REFETCH_EVERY`, `INBOX_REFETCH_INTERVAL_MS`) and `lastInboxRefetchProcessed` ref.
+
+Optional light touch (include): one invalidate of inbox at **scan start** is unnecessary — list is already loaded. End-of-scan is enough. New files won’t appear live during scan; progress text still updates.
+
+### 2. Trash scan
+
+Same component handles trash: remove mid-scan trash list refetch; completion effect already invalidates `["files", "trash"]`.
+
+### 3. Blur status poll (small related tweak)
+
+[`useScanBlockers`](frontend/src/utils/useScanBlockers.ts) polls blur every **8s** while idle. Leave as-is (cheap). Not the scroll bottleneck.
+
+### 4. Docs
+
+[`CHANGELOG.md`](CHANGELOG.md) Unreleased: Inbox no longer full-refetches the grid every few seconds during scan; updates when scan completes.
+
+## Out of scope
+
+- Grid virtualization (separate follow-up)
+- Changing thumbnail/`loading="lazy"` behavior
+- Archive scan calendar invalidation (already end-of-scan only)
+
+## Verify
+
+1. Start inbox scan — network shows repeated `scan/status`, **not** repeated `files?location=inbox&page_size=200`.
+2. Scroll Inbox during scan — smoother; grid content may be briefly stale until scan ends.
+3. Scan completes — grid refreshes once with new photos; delete-queue badge and cameras update.
+
+---
+
+<a id="chapter-126-throttle-inbox-scan-refetch"></a>
+
+## Chapter 126: Throttle inbox scan refetch
+
+> **Overview:** Stop reloading the full Inbox grid every few seconds during a scan. Keep lightweight status polling; refresh the grid once when the scan finishes (plus a much rarer mid-scan update if useful).
+
+## Problem
+
+While an inbox scan runs, [`ScanStatusBanner`](frontend/src/components/ScanStatusBanner.tsx) does two expensive things on top of status polling:
+
+1. **Interval** — invalidate `["files", "inbox"]` every **2.5s** (refetches all ~200 inbox files + delete-queue badge via prefix match).
+2. **Per-progress** — invalidate again every **5 files** processed.
+
+That rebuilds the grid repeatedly and loads the single backend worker — felt as scroll jank. Status polling (`GET /api/scan/status` every 2s) is cheap and stays.
+
+## Approach
+
+Keep status polls. Remove continuous full-grid refetches during scan. Refresh the inbox (and related keys) **once when the scan stops**.
+
+```mermaid
+flowchart LR
+  scanOn[Scan running] --> status["Poll scan/status every 2s"]
+  scanOn --> noGrid["Do NOT refetch files/inbox"]
+  scanOff[Scan finishes] --> once["Invalidate files/inbox once"]
+```
+
+## Changes
+
+### 1. [`frontend/src/components/ScanStatusBanner.tsx`](frontend/src/components/ScanStatusBanner.tsx)
+
+- **Keep** `refetchInterval` on `scan-status` while `running`.
+- **Keep** the completion effect that invalidates inbox/trash/duplicates/cameras when `wasScanning → !running`.
+- **Remove** the two mid-scan invalidate effects:
+  - interval every `INBOX_REFETCH_INTERVAL_MS` for inbox
+  - interval for trash during trash scan
+  - “every 5 processed” timeout invalidate
+- Delete unused constants (`INBOX_REFETCH_EVERY`, `INBOX_REFETCH_INTERVAL_MS`) and `lastInboxRefetchProcessed` ref.
+
+Optional light touch (include): one invalidate of inbox at **scan start** is unnecessary — list is already loaded. End-of-scan is enough. New files won’t appear live during scan; progress text still updates.
+
+### 2. Trash scan
+
+Same component handles trash: remove mid-scan trash list refetch; completion effect already invalidates `["files", "trash"]`.
+
+### 3. Blur status poll (small related tweak)
+
+[`useScanBlockers`](frontend/src/utils/useScanBlockers.ts) polls blur every **8s** while idle. Leave as-is (cheap). Not the scroll bottleneck.
+
+### 4. Docs
+
+[`CHANGELOG.md`](CHANGELOG.md) Unreleased: Inbox no longer full-refetches the grid every few seconds during scan; updates when scan completes.
+
+## Out of scope
+
+- Grid virtualization (separate follow-up)
+- Changing thumbnail/`loading="lazy"` behavior
+- Archive scan calendar invalidation (already end-of-scan only)
+
+## Verify
+
+1. Start inbox scan — network shows repeated `scan/status`, **not** repeated `files?location=inbox&page_size=200`.
+2. Scroll Inbox during scan — smoother; grid content may be briefly stale until scan ends.
+3. Scan completes — grid refreshes once with new photos; delete-queue badge and cameras update.
+
+---
+
+<a id="chapter-127-trash-view-and-restore"></a>
+
+## Chapter 127: Trash view and restore
 
 > **Overview:** Add a Trash page listing files in `.trash/`, with scan and restore back to the original location (from operations log). Requires soft-delete in apply (keep DB rows with location=trash) plus a small schema migration and new API endpoints.
 

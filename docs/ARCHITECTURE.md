@@ -51,7 +51,7 @@ Full interactive API spec: `http://localhost:8000/docs` when the backend is runn
 | `scanner.py` | Background scan of inbox/archive into `files`; releases before duplicate rebuild |
 | `metadata.py` | EXIF/ffprobe extraction, thumbnails |
 | `organizer.py` | Date-folder and rename preview/apply |
-| `dedupe.py` | Exact (SHA256) and perceptual (pHash) duplicate groups; background rebuild after scan |
+| `dedupe.py` | Exact (SHA256) and perceptual (pHash) duplicate groups for inbox/archive only; background rebuild after scan (offline pHash) |
 | `blur_analysis.py` | Background sharpness analysis job + status |
 | `blur_detect.py` | Threshold parsing, p10 outlier helper, shared `is_blurry` logic |
 | `events.py` | Trip/event CRUD and file assignment |
@@ -183,8 +183,8 @@ The Inbox **Delete queue** filter (`pending_delete=true`) is separate: it shows 
 
 ### 5. Deduplication
 
-1. After inbox/archive scan, `start_dedupe_rebuild_background()` rebuilds groups (single-flight; coalesces if another scan finishes mid-rebuild).
-2. `dedupe.py` groups by SHA256 (exact) and pHash distance (perceptual).
+1. After inbox/archive scan, `start_dedupe_rebuild_background()` rebuilds groups (single-flight; coalesces if another scan finishes mid-rebuild). Exact SHA writes and perceptual writes use short commits; the O(n²) pHash pass runs with **no open DB connection** so Calendar and other APIs stay responsive.
+2. `dedupe.py` groups by SHA256 (exact) and pHash distance (perceptual), **excluding `location='trash'`**. The Duplicates API also omits trash members and drops groups with fewer than two remaining files.
 3. UI at `/duplicates`; user picks keeper per group → `PATCH /api/duplicates/{id}/keeper`.
 
 ### 6. Blur detection

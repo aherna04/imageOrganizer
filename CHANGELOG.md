@@ -4,6 +4,13 @@ Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
 ## [Unreleased]
 
+## [2026.07.19c] - 2026-07-19
+
+### Fixed
+
+- Duplicates no longer include files in trash (index and API only use inbox/archive)
+- Duplicate rebuild holds the DB only for short write bursts — Calendar is less likely to stall during **Building duplicate index…**
+
 ## [2026.07.19b] - 2026-07-19
 
 ### Changed

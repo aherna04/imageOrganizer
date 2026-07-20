@@ -11,14 +11,24 @@ export default function CalendarDayLabelPanel({ context }: Props) {
     return null;
   }
 
-  const { selectedFiles, onDateChange } = context;
+  const { selectedFiles, onLabelsChange, onDateChange } = context;
 
   return (
     <div className="calendar-tagging-panel">
       {selectedFiles.length === 1 ? (
-        <SingleFileLabelEditors file={selectedFiles[0]} onChange={onDateChange} showTagSearch />
+        <SingleFileLabelEditors
+          file={selectedFiles[0]}
+          onLabelsChange={onLabelsChange}
+          onDateChange={onDateChange}
+          showTagSearch
+        />
       ) : (
-        <BulkLabelEditors selectedFiles={selectedFiles} onChange={onDateChange} showTagSearch />
+        <BulkLabelEditors
+          selectedFiles={selectedFiles}
+          onLabelsChange={onLabelsChange}
+          onDateChange={onDateChange}
+          showTagSearch
+        />
       )}
     </div>
   );

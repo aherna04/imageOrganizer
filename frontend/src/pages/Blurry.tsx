@@ -6,6 +6,7 @@ import PhotoDetail from "../components/PhotoDetail";
 import PhotoGrid from "../components/PhotoGrid";
 import { invalidateAfterReviewChange } from "../utils/invalidateAfterReviewChange";
 import { invalidateAfterDateChange } from "../utils/invalidateAfterDateChange";
+import { invalidateAfterLabelChange } from "../utils/invalidateAfterLabelChange";
 import { nextFileAfterRemoval } from "../utils/photoNavigation";
 
 type LocationFilter = "all" | "inbox" | "archive";
@@ -80,6 +81,16 @@ export default function Blurry() {
         return;
       }
       setDetailFile(nextFileAfterRemoval(prevItems, openId, listData?.items ?? []));
+    });
+  };
+
+  const handleLabelsChange = (keepFileId?: number) => {
+    const openId = keepFileId ?? detailFile?.id;
+    invalidateAfterLabelChange(qc);
+    refetch().then(({ data: listData }) => {
+      if (!openId) return;
+      const still = listData?.items.find((f) => f.id === openId);
+      setDetailFile(still ?? null);
     });
   };
 
@@ -183,6 +194,7 @@ export default function Blurry() {
           files={files}
           onChangeFile={setDetailFile}
           onDateChange={handleDateChange}
+          onLabelsChange={handleLabelsChange}
           onClose={() => setDetailFile(null)}
         />
       )}

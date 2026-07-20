@@ -8,6 +8,7 @@ import PhotoGridWithAlerts from "../components/PhotoGridWithAlerts";
 import PhotoDetail from "../components/PhotoDetail";
 import SingleFileLabelEditors from "../components/SingleFileLabelEditors";
 import { invalidateAfterDateChange } from "../utils/invalidateAfterDateChange";
+import { invalidateAfterLabelChange } from "../utils/invalidateAfterLabelChange";
 import { personLabel } from "../utils/personLabel";
 import { togglePhotoSelection } from "../utils/photoSelection";
 
@@ -207,9 +208,7 @@ export default function BrowsePage() {
   const handleLabelsChange = (keepFileId?: number) => {
     const openId = keepFileId ?? detailFile?.id;
     invalidateBrowseFiles();
-    qc.invalidateQueries({ queryKey: ["events"] });
-    qc.invalidateQueries({ queryKey: ["people"] });
-    qc.invalidateQueries({ queryKey: ["tags"] });
+    invalidateAfterLabelChange(qc);
     if (openId) {
       refetchPhotos().then(({ data: browseData }) => {
         const still = browseData?.items.find((f) => f.id === openId);
@@ -511,14 +510,22 @@ export default function BrowsePage() {
                   {selectedIds.length === 1 && selectedFiles[0] && (
                     <SingleFileLabelEditors
                       file={selectedFiles[0]}
-                      onChange={handleLabelsChange}
+                      onLabelsChange={handleLabelsChange}
+                      onDateChange={() => {
+                        invalidateAfterDateChange(qc);
+                        invalidateBrowseFiles();
+                      }}
                       showTagSearch
                     />
                   )}
                   {selectedIds.length >= 2 && (
                     <BulkLabelEditors
                       selectedFiles={selectedFiles}
-                      onChange={handleLabelsChange}
+                      onLabelsChange={handleLabelsChange}
+                      onDateChange={() => {
+                        invalidateAfterDateChange(qc);
+                        invalidateBrowseFiles();
+                      }}
                       showTagSearch
                     />
                   )}
@@ -529,7 +536,7 @@ export default function BrowsePage() {
                 files={photos?.items ?? []}
                 activeDetailId={detailFile?.id}
                 editableLabels
-                onLabelsChange={invalidateBrowseFiles}
+                onLabelsChange={handleLabelsChange}
                 onAlertsChange={() => {
                   invalidateAfterDateChange(qc);
                   invalidateBrowseFiles();
@@ -561,6 +568,7 @@ export default function BrowsePage() {
             invalidateAfterDateChange(qc);
             invalidateBrowseFiles();
           }}
+          onLabelsChange={handleLabelsChange}
           onClose={() => setDetailFile(null)}
         />
       )}

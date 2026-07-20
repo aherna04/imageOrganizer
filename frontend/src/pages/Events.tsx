@@ -7,6 +7,7 @@ import PhotoDetail from "../components/PhotoDetail";
 import TagPicker from "../components/TagPicker";
 import { calendarDayPath } from "../utils/calendarPath";
 import { invalidateAfterDateChange } from "../utils/invalidateAfterDateChange";
+import { invalidateAfterLabelChange } from "../utils/invalidateAfterLabelChange";
 
 export default function EventsPage() {
   const { slug } = useParams();
@@ -157,7 +158,10 @@ export default function EventsPage() {
           activeDetailId={selected?.id}
           onSelect={setSelected}
           editableLabels
-          onLabelsChange={() => qc.invalidateQueries({ queryKey: ["event-files", activeEvent.id] })}
+          onLabelsChange={() => {
+            invalidateAfterLabelChange(qc);
+            qc.invalidateQueries({ queryKey: ["event-files", activeEvent.id] });
+          }}
           onAlertsChange={() => {
             invalidateAfterDateChange(qc);
             qc.invalidateQueries({ queryKey: ["event-files", activeEvent!.id] });
@@ -170,6 +174,10 @@ export default function EventsPage() {
             onChangeFile={setSelected}
             onDateChange={() => {
               invalidateAfterDateChange(qc);
+              qc.invalidateQueries({ queryKey: ["event-files", activeEvent!.id] });
+            }}
+            onLabelsChange={() => {
+              invalidateAfterLabelChange(qc);
               qc.invalidateQueries({ queryKey: ["event-files", activeEvent!.id] });
             }}
             onClose={() => setSelected(null)}

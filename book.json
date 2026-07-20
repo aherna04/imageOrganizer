@@ -1,6 +1,6 @@
 {
   "title": "Image Organizer — Development Book",
-  "version": "2026.07.19d",
+  "version": "2026.07.19e",
   "output": "docs/DEVELOPMENT_BOOK.md",
   "plans_dir": "~/.cursor/plans",
   "related_links": "[ARCHITECTURE.md](ARCHITECTURE.md) · [CHANGELOG.md](../CHANGELOG.md)",
@@ -96,7 +96,8 @@
         "fix_mosaic_navigation_53027605",
         "library_mosaic_save_eb20dbfd",
         "lightbox_tag_fonts_47cf67f1",
-        "subtle_delete_icon_0844dd84"
+        "subtle_delete_icon_0844dd84",
+        "cut_tag_refetch_storm_8dda7fb5"
       ]
     },
     {
@@ -154,6 +155,9 @@
     },
     "co-locate_library_storage_6f564eda": {
       "note": "Duplicate of `co-locate_library_storage_34eee391`."
+    },
+    "cut_tag_refetch_storm_c31fe440": {
+      "note": "Duplicate of `cut_tag_refetch_storm_8dda7fb5`."
     }
   }
 }

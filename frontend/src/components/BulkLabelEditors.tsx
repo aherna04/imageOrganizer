@@ -13,7 +13,10 @@ type Coverage = "all" | "some" | "none";
 
 interface Props {
   selectedFiles: MediaFile[];
-  onChange: () => void;
+  /** Tag / person / event assignment changed. */
+  onLabelsChange: () => void;
+  /** Capture date changed (calendar path invalidation). */
+  onDateChange: () => void;
   showTagSearch?: boolean;
 }
 
@@ -30,7 +33,12 @@ function chipClass(base: string, cov: Coverage): string {
   return base;
 }
 
-export default function BulkLabelEditors({ selectedFiles, onChange, showTagSearch = false }: Props) {
+export default function BulkLabelEditors({
+  selectedFiles,
+  onLabelsChange,
+  onDateChange,
+  showTagSearch = false,
+}: Props) {
   const qc = useQueryClient();
   const fileIds = selectedFiles.map((f) => f.id);
 
@@ -134,7 +142,7 @@ export default function BulkLabelEditors({ selectedFiles, onChange, showTagSearc
     } else {
       await api.assignEventIds(eventId, fileIds);
     }
-    onChange();
+    onLabelsChange();
   };
 
   const togglePerson = async (personId: number, cov: Coverage) => {
@@ -144,7 +152,7 @@ export default function BulkLabelEditors({ selectedFiles, onChange, showTagSearc
       await api.assignPeopleIds([personId], fileIds);
       recordRecentPerson(personId);
     }
-    onChange();
+    onLabelsChange();
   };
 
   const toggleTag = async (tagId: number, cov: Coverage) => {
@@ -154,7 +162,7 @@ export default function BulkLabelEditors({ selectedFiles, onChange, showTagSearc
       await api.assignTagIds([tagId], fileIds);
       recordRecentTag(tagId);
     }
-    onChange();
+    onLabelsChange();
   };
 
   const createEvent = useMutation({
@@ -166,7 +174,7 @@ export default function BulkLabelEditors({ selectedFiles, onChange, showTagSearc
       qc.invalidateQueries({ queryKey: ["events"] });
       setNewEventName("");
       setShowNewEvent(false);
-      onChange();
+      onLabelsChange();
     },
   });
 
@@ -181,7 +189,7 @@ export default function BulkLabelEditors({ selectedFiles, onChange, showTagSearc
       qc.invalidateQueries({ queryKey: ["people"] });
       setNewPersonName("");
       setShowNewPerson(false);
-      onChange();
+      onLabelsChange();
     },
   });
 
@@ -196,7 +204,7 @@ export default function BulkLabelEditors({ selectedFiles, onChange, showTagSearc
       qc.invalidateQueries({ queryKey: ["tags"] });
       setNewTagName("");
       setShowNewTag(false);
-      onChange();
+      onLabelsChange();
     },
   });
 
@@ -357,7 +365,7 @@ export default function BulkLabelEditors({ selectedFiles, onChange, showTagSearc
 
   return (
     <div className="single-file-label-editors">
-      <CaptureDateEditor files={selectedFiles} onChange={onChange} compact />
+      <CaptureDateEditor files={selectedFiles} onChange={onDateChange} compact />
       <CollapsibleSection
         title="Events"
         count={assignedEventCount || undefined}

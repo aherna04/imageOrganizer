@@ -160,6 +160,11 @@ export default function Review() {
     refetchPreview();
   };
 
+  const handleLabelsChange = () => {
+    refetchQueue();
+    refetchPreview();
+  };
+
   return (
     <div>
       <div className="page-header">
@@ -392,6 +397,7 @@ export default function Review() {
           onClose={() => setDetailFile(null)}
           deleteQueueMode={deleteFileIds.has(detailFile.id)}
           onDateChange={handleDetailChange}
+          onLabelsChange={handleLabelsChange}
         />
       )}
     </div>

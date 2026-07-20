@@ -4,6 +4,12 @@ Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
 ## [Unreleased]
 
+## [2026.07.19e] - 2026-07-19
+
+### Fixed
+
+- Tagging a file no longer triggers a date-change refetch storm — label edits use a narrow invalidate path (`invalidateAfterLabelChange`) instead of calendar/review/delete-queue wipes
+
 ## [2026.07.19d] - 2026-07-19
 
 ### Added

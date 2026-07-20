@@ -15,6 +15,7 @@ import PersonPicker from "./PersonPicker";
 import FileTagPicker from "./FileTagPicker";
 import PhotoCardLabels from "./PhotoCardLabels";
 import { invalidateAfterReviewChange } from "../utils/invalidateAfterReviewChange";
+import { invalidateAfterLabelChange } from "../utils/invalidateAfterLabelChange";
 import { mosaicSourcePath } from "../utils/mosaicPath";
 import { personLabel } from "../utils/personLabel";
 
@@ -24,6 +25,8 @@ interface Props {
   files?: MediaFile[];
   onChangeFile?: (file: MediaFile) => void;
   onDateChange?: (keepFileId?: number, options?: { skipInvalidation?: boolean }) => void;
+  /** Tag / person / event edits — must not go through onDateChange. */
+  onLabelsChange?: (keepFileId?: number) => void;
   deleteQueueMode?: boolean;
   trashMode?: boolean;
 }
@@ -34,6 +37,7 @@ export default function PhotoDetail({
   files,
   onChangeFile,
   onDateChange,
+  onLabelsChange,
   deleteQueueMode = false,
   trashMode = false,
 }: Props) {
@@ -73,17 +77,14 @@ export default function PhotoDetail({
 
   const handleLabelsChange = useCallback(
     (keepFileId?: number) => {
-      qc.invalidateQueries({ queryKey: ["files"] });
-      qc.invalidateQueries({ queryKey: ["tags"] });
-      qc.invalidateQueries({ queryKey: ["people"] });
-      qc.invalidateQueries({ queryKey: ["events"] });
-      qc.invalidateQueries({ queryKey: ["inbox-tags"] });
-      qc.invalidateQueries({ queryKey: ["inbox-people"] });
-      qc.invalidateQueries({ queryKey: ["files", "inbox", "delete_queue_count"] });
-      qc.invalidateQueries({ queryKey: ["review-queue"] });
-      onDateChange?.(keepFileId);
+      // Parent owns file-list refetch; only refresh global label caches if no parent handler.
+      if (onLabelsChange) {
+        onLabelsChange(keepFileId);
+      } else {
+        invalidateAfterLabelChange(qc);
+      }
     },
-    [qc, onDateChange],
+    [qc, onLabelsChange],
   );
 
   const removeLightboxTag = useCallback(

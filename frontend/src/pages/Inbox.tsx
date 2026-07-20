@@ -13,6 +13,8 @@ import ScanStatusBanner from "../components/ScanStatusBanner";
 import SingleFileLabelEditors from "../components/SingleFileLabelEditors";
 import BulkLabelEditors from "../components/BulkLabelEditors";
 import { invalidateAfterDateChange } from "../utils/invalidateAfterDateChange";
+import { invalidateAfterLabelChange } from "../utils/invalidateAfterLabelChange";
+import { invalidateAfterReviewChange } from "../utils/invalidateAfterReviewChange";
 import { isEditableTarget, nextFileAfterRemoval } from "../utils/photoNavigation";
 import { togglePhotoSelection } from "../utils/photoSelection";
 import { usePhotoGridAlerts } from "../utils/usePhotoGridAlerts";
@@ -158,20 +160,14 @@ export default function Inbox() {
 
   const handleLabelsChange = () => {
     refetch();
-    qc.invalidateQueries({ queryKey: ["events"] });
-    qc.invalidateQueries({ queryKey: ["people"] });
-    qc.invalidateQueries({ queryKey: ["tags"] });
-    qc.invalidateQueries({ queryKey: ["inbox-tags"] });
-    qc.invalidateQueries({ queryKey: ["inbox-people"] });
-    qc.invalidateQueries({ queryKey: ["inbox-cameras"] });
-    qc.invalidateQueries({ queryKey: ["files", "inbox", "delete_queue_count"] });
-    qc.invalidateQueries({ queryKey: ["review-queue"] });
+    invalidateAfterLabelChange(qc, { inboxFacets: true });
   };
 
   const restoreMutation = useMutation({
     mutationFn: (fileIds: number[]) => api.cancelReviewDecisions(fileIds),
     onSuccess: () => {
-      handleLabelsChange();
+      refetch();
+      invalidateAfterReviewChange(qc);
     },
   });
 
@@ -186,7 +182,8 @@ export default function Inbox() {
     mutationFn: (fileIds: number[]) =>
       Promise.all(fileIds.map((file_id) => api.createDecision({ file_id, action: "delete" }))),
     onSuccess: () => {
-      handleLabelsChange();
+      refetch();
+      invalidateAfterReviewChange(qc);
       setSelectedIds([]);
       selectionAnchorRef.current = null;
       setDetailFile(null);
@@ -213,7 +210,8 @@ export default function Inbox() {
     const prevItems = data?.items ?? [];
     if (!options?.skipInvalidation) {
       invalidateAfterDateChange(qc);
-      handleLabelsChange();
+      // Facets / delete queue can change when files move days; refresh inbox list facets lightly.
+      invalidateAfterLabelChange(qc, { inboxFacets: true });
     }
     refetch().then(({ data: listData }) => {
       if (!openId) return;
@@ -378,10 +376,20 @@ export default function Inbox() {
       )}
 
       {inboxFilter !== "delete_queue" && selectedIds.length === 1 && selectedFiles[0] && (
-        <SingleFileLabelEditors file={selectedFiles[0]} onChange={handleDateChange} showTagSearch />
+        <SingleFileLabelEditors
+          file={selectedFiles[0]}
+          onLabelsChange={handleLabelsChange}
+          onDateChange={handleDateChange}
+          showTagSearch
+        />
       )}
       {inboxFilter !== "delete_queue" && selectedIds.length >= 2 && (
-        <BulkLabelEditors selectedFiles={selectedFiles} onChange={handleDateChange} showTagSearch />
+        <BulkLabelEditors
+          selectedFiles={selectedFiles}
+          onLabelsChange={handleLabelsChange}
+          onDateChange={handleDateChange}
+          showTagSearch
+        />
       )}
 
       <PhotoAlertsBar
@@ -401,7 +409,10 @@ export default function Inbox() {
         onOpenDetail={setDetailFile}
         multiSelectMode
         editableLabels
-        onLabelsChange={handleLabelsChange}
+        onLabelsChange={() => {
+          refetch();
+          invalidateAfterLabelChange(qc, { kinds: ["tags"], inboxFacets: true });
+        }}
         duplicateIndex={duplicateIndex}
         dateAlerts={dateAlerts}
         alertFilter={alertFilter}
@@ -412,6 +423,7 @@ export default function Inbox() {
           files={data?.items ?? []}
           onChangeFile={setDetailFile}
           onDateChange={handleDateChange}
+          onLabelsChange={handleLabelsChange}
           onClose={() => setDetailFile(null)}
           deleteQueueMode={inboxFilter === "delete_queue"}
         />

@@ -5,6 +5,7 @@ import PhotoDetail from "../components/PhotoDetail";
 import PhotoGrid from "../components/PhotoGrid";
 import ScanStatusBanner from "../components/ScanStatusBanner";
 import { invalidateAfterReviewChange } from "../utils/invalidateAfterReviewChange";
+import { invalidateAfterLabelChange } from "../utils/invalidateAfterLabelChange";
 import { nextFileAfterRemoval } from "../utils/photoNavigation";
 import { useScanBlockers } from "../utils/useScanBlockers";
 
@@ -87,6 +88,16 @@ export default function Trash() {
         return;
       }
       setDetailFile(nextFileAfterRemoval(prevItems, openId, listData?.items ?? []));
+    });
+  };
+
+  const handleLabelsChange = (keepFileId?: number) => {
+    const openId = keepFileId ?? detailFile?.id;
+    invalidateAfterLabelChange(qc);
+    refetch().then(({ data: listData }) => {
+      if (!openId) return;
+      const still = listData?.items.find((f) => f.id === openId);
+      setDetailFile(still ?? null);
     });
   };
 
@@ -209,6 +220,7 @@ export default function Trash() {
           files={files}
           onChangeFile={setDetailFile}
           onDateChange={handleDateChange}
+          onLabelsChange={handleLabelsChange}
           onClose={() => setDetailFile(null)}
           trashMode
         />

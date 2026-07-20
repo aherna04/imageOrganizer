@@ -7,24 +7,32 @@ import PersonPicker from "./PersonPicker";
 
 interface Props {
   file: MediaFile;
-  onChange: () => void;
+  /** Tag / person / event assignment changed. */
+  onLabelsChange: () => void;
+  /** Capture date changed (calendar path invalidation). */
+  onDateChange: () => void;
   showTagSearch?: boolean;
 }
 
-export default function SingleFileLabelEditors({ file, onChange, showTagSearch = false }: Props) {
+export default function SingleFileLabelEditors({
+  file,
+  onLabelsChange,
+  onDateChange,
+  showTagSearch = false,
+}: Props) {
   const eventCount = file.events?.length ?? 0;
   const peopleCount = file.people?.length ?? 0;
 
   return (
     <div className="single-file-label-editors">
-      <CaptureDateEditor files={[file]} onChange={onChange} compact />
+      <CaptureDateEditor files={[file]} onChange={onDateChange} compact />
       <CollapsibleSection
         title="Events"
         count={eventCount || undefined}
         defaultOpen={false}
         persistKey="imageOrganizer.collapsible.inbox.events"
       >
-        <EventPicker fileId={file.id} fileEvents={file.events ?? []} onChange={onChange} hideLabel />
+        <EventPicker fileId={file.id} fileEvents={file.events ?? []} onChange={onLabelsChange} hideLabel />
       </CollapsibleSection>
       <CollapsibleSection
         title="People"
@@ -32,12 +40,12 @@ export default function SingleFileLabelEditors({ file, onChange, showTagSearch =
         defaultOpen={false}
         persistKey="imageOrganizer.collapsible.inbox.people"
       >
-        <PersonPicker fileId={file.id} filePeople={file.people ?? []} onChange={onChange} hideLabel />
+        <PersonPicker fileId={file.id} filePeople={file.people ?? []} onChange={onLabelsChange} hideLabel />
       </CollapsibleSection>
       <FileTagPicker
         fileId={file.id}
         fileTags={file.tags ?? []}
-        onChange={onChange}
+        onChange={onLabelsChange}
         showTagSearch={showTagSearch}
       />
     </div>

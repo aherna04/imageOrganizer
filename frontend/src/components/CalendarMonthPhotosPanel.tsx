@@ -14,6 +14,7 @@ import PhotoDetail from "./PhotoDetail";
 import PhotoGridWithAlerts from "./PhotoGridWithAlerts";
 import SingleFileLabelEditors from "./SingleFileLabelEditors";
 import { invalidateAfterDateChange } from "../utils/invalidateAfterDateChange";
+import { invalidateAfterLabelChange } from "../utils/invalidateAfterLabelChange";
 import { monthFilterLabelName, monthFilterToListFilesParams } from "../utils/calendarFilter";
 import { togglePhotoSelection } from "../utils/photoSelection";
 
@@ -105,16 +106,15 @@ export default function CalendarMonthPhotosPanel({
 
   const handleLabelsChange = () => {
     refetch();
+    invalidateAfterLabelChange(qc, { calendarFacets: true });
     qc.invalidateQueries({ queryKey: ["calendar-month-photos"] });
-    qc.invalidateQueries({ queryKey: ["calendar-labels"] });
-    qc.invalidateQueries({ queryKey: ["calendar-summary"] });
-    qc.invalidateQueries({ queryKey: ["calendar-year-labels"] });
   };
 
   const handleDateChange = () => {
     invalidateAfterDateChange(qc);
     refetch();
-    handleLabelsChange();
+    invalidateAfterLabelChange(qc, { calendarFacets: true });
+    qc.invalidateQueries({ queryKey: ["calendar-month-photos"] });
   };
 
   return (
@@ -170,10 +170,20 @@ export default function CalendarMonthPhotosPanel({
           }}
         />
         {selectedIds.length === 1 && selectedFiles[0] && (
-          <SingleFileLabelEditors file={selectedFiles[0]} onChange={handleLabelsChange} showTagSearch />
+          <SingleFileLabelEditors
+            file={selectedFiles[0]}
+            onLabelsChange={handleLabelsChange}
+            onDateChange={handleDateChange}
+            showTagSearch
+          />
         )}
         {selectedIds.length >= 2 && (
-          <BulkLabelEditors selectedFiles={selectedFiles} onChange={handleLabelsChange} showTagSearch />
+          <BulkLabelEditors
+            selectedFiles={selectedFiles}
+            onLabelsChange={handleLabelsChange}
+            onDateChange={handleDateChange}
+            showTagSearch
+          />
         )}
       </div>
 
@@ -200,6 +210,7 @@ export default function CalendarMonthPhotosPanel({
           files={data?.items ?? []}
           onChangeFile={setDetailFile}
           onDateChange={handleDateChange}
+          onLabelsChange={handleLabelsChange}
           onClose={() => setDetailFile(null)}
         />
       )}

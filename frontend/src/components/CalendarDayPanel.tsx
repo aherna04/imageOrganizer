@@ -5,6 +5,7 @@ import BulkEventAssignBar from "./BulkEventAssignBar";
 import PhotoGridWithAlerts from "./PhotoGridWithAlerts";
 import PhotoDetail from "./PhotoDetail";
 import { invalidateAfterDateChange } from "../utils/invalidateAfterDateChange";
+import { invalidateAfterLabelChange } from "../utils/invalidateAfterLabelChange";
 import { calendarQueryOptions } from "../utils/calendarQueryOptions";
 import { togglePhotoSelection } from "../utils/photoSelection";
 
@@ -12,6 +13,7 @@ const PAGE_SIZE = 100;
 
 export interface CalendarDayLabelContext {
   selectedFiles: MediaFile[];
+  onLabelsChange: () => void;
   onDateChange: (keepFileId?: number) => void;
 }
 
@@ -89,11 +91,7 @@ export default function CalendarDayPanel({
 
   const handleLabelsChange = useCallback(() => {
     refetch();
-    qc.invalidateQueries({ queryKey: ["events"] });
-    qc.invalidateQueries({ queryKey: ["people"] });
-    qc.invalidateQueries({ queryKey: ["tags"] });
-    qc.invalidateQueries({ queryKey: ["calendar-labels"] });
-    qc.invalidateQueries({ queryKey: ["calendar-summary"] });
+    invalidateAfterLabelChange(qc, { calendarFacets: true });
   }, [qc, refetch]);
 
   const handleDateChange = useCallback(
@@ -105,9 +103,9 @@ export default function CalendarDayPanel({
         const still = dayData?.items.find((f) => f.id === openId);
         setDetailFile(still ?? null);
       });
-      handleLabelsChange();
+      invalidateAfterLabelChange(qc, { calendarFacets: true });
     },
-    [detailFile?.id, qc, refetch, handleLabelsChange],
+    [detailFile?.id, qc, refetch],
   );
 
   const selectedFiles = useMemo(
@@ -121,8 +119,12 @@ export default function CalendarDayPanel({
       onLabelContextChange(null);
       return;
     }
-    onLabelContextChange({ selectedFiles, onDateChange: handleDateChange });
-  }, [selectedFiles, handleDateChange, onLabelContextChange]);
+    onLabelContextChange({
+      selectedFiles,
+      onLabelsChange: handleLabelsChange,
+      onDateChange: handleDateChange,
+    });
+  }, [selectedFiles, handleLabelsChange, handleDateChange, onLabelContextChange]);
 
   useEffect(() => {
     return () => onLabelContextChange?.(null);
@@ -197,6 +199,7 @@ export default function CalendarDayPanel({
           files={data?.items ?? []}
           onChangeFile={setDetailFile}
           onDateChange={handleDateChange}
+          onLabelsChange={handleLabelsChange}
           onClose={() => setDetailFile(null)}
         />
       )}

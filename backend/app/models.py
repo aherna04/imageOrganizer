@@ -12,6 +12,8 @@ class ConfigOut(BaseModel):
     rename_pattern: str
     photo_sort_order: Literal["asc", "desc"] = "desc"
     blur_threshold: str = "150"
+    media_root: str | None = None
+    app_data_dir: str | None = None
 
 
 class ConfigUpdate(BaseModel):
@@ -22,6 +24,18 @@ class ConfigUpdate(BaseModel):
     rename_pattern: str | None = None
     photo_sort_order: Literal["asc", "desc"] | None = None
     blur_threshold: str | None = None
+
+
+class LibraryMoveRequest(BaseModel):
+    new_media_root: str = Field(..., min_length=1)
+
+
+class LibraryMoveStatusOut(BaseModel):
+    running: bool
+    message: str | None = None
+    error: str | None = None
+    done: bool = False
+    restart_required: bool = False
 
 
 class StorageStatsOut(BaseModel):

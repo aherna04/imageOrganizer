@@ -8,7 +8,14 @@ from fastapi.responses import FileResponse
 from app import events as events_svc
 from app import people as people_svc
 from app import tags as tags_svc
-from app.config import ensure_media_dirs, media_type_for_suffix, mime_type_for_path
+from app.config import (
+    APP_DATA_DIR,
+    MEDIA_ROOT,
+    ensure_media_dirs,
+    media_type_for_suffix,
+    mime_type_for_path,
+)
+from app.library_migrate import library_move_state, start_library_move_background
 from app.db import get_config, get_conn, get_file_events, init_db, row_to_dict, update_config, file_list_order_clause
 from app.dedupe import dismiss_duplicate_member, get_duplicate_groups
 from app.inbox_filters import (
@@ -70,6 +77,8 @@ from app.models import (
     PersonCreate,
     PersonOut,
     PersonUpdate,
+    LibraryMoveRequest,
+    LibraryMoveStatusOut,
     ReviewDecisionCreate,
     ReviewDecisionOut,
     ReviewDecisionsCancel,
@@ -104,7 +113,7 @@ from app.scanner import combined_scan_status, scan_state, start_scan_background
 from app.blur_analysis import blur_analysis_state, start_blur_analysis_background
 from app.trash_restore import restore_from_trash
 
-app = FastAPI(title="Image Organizer", version="2026.07.19c")
+app = FastAPI(title="Image Organizer", version="2026.07.19d")
 
 app.add_middleware(
     CORSMiddleware,
@@ -117,6 +126,11 @@ app.add_middleware(
 
 @app.on_event("startup")
 def startup() -> None:
+    from app.library_migrate import relocate_legacy_app_data
+
+    msg = relocate_legacy_app_data(MEDIA_ROOT, APP_DATA_DIR)
+    if msg:
+        print(f"[imageOrganizer] {msg}")
     ensure_media_dirs()
     init_db()
 
@@ -184,7 +198,11 @@ def _file_out(conn, row, cfg: dict | None = None) -> FileOut:
 def api_get_config():
     with get_conn() as conn:
         cfg = get_config(conn)
-    return ConfigOut(**cfg)
+    return ConfigOut(
+        **cfg,
+        media_root=str(MEDIA_ROOT),
+        app_data_dir=str(APP_DATA_DIR),
+    )
 
 
 @app.patch("/api/config", response_model=ConfigOut)
@@ -193,7 +211,37 @@ def api_update_config(body: ConfigUpdate):
     with get_conn() as conn:
         cfg = update_config(conn, updates)
     ensure_media_dirs()
-    return ConfigOut(**cfg)
+    return ConfigOut(
+        **cfg,
+        media_root=str(MEDIA_ROOT),
+        app_data_dir=str(APP_DATA_DIR),
+    )
+
+
+@app.post("/api/library/move", response_model=LibraryMoveStatusOut)
+def api_library_move(body: LibraryMoveRequest):
+    from app.blur_analysis import blur_analysis_state
+    from app.dedupe import dedupe_state
+    from app.scanner import scan_state
+
+    if scan_state.snapshot()["running"]:
+        raise HTTPException(409, "Scan already running")
+    if blur_analysis_state.snapshot()["running"]:
+        raise HTTPException(409, "Sharpness analysis already running")
+    if dedupe_state.snapshot()["running"]:
+        raise HTTPException(409, "Duplicate index rebuild already running")
+    if library_move_state.snapshot()["running"]:
+        raise HTTPException(409, "Library move already running")
+
+    new_root = Path(body.new_media_root).expanduser()
+    if not start_library_move_background(MEDIA_ROOT, new_root):
+        raise HTTPException(409, "Library move already running")
+    return LibraryMoveStatusOut(**library_move_state.snapshot())
+
+
+@app.get("/api/library/move/status", response_model=LibraryMoveStatusOut)
+def api_library_move_status():
+    return LibraryMoveStatusOut(**library_move_state.snapshot())
 
 
 @app.get("/api/storage/stats", response_model=StorageStatsOut)

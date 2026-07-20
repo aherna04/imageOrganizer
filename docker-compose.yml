@@ -6,10 +6,9 @@ services:
     volumes:
       - ./backend:/app
       - ${MEDIA_HOST_PATH:-/Users/alex/Media}:/media
-      - ${APP_DATA_HOST_PATH:-/Users/alex/.imageOrganizer}:/data
     environment:
-      MEDIA_ROOT: /media
-      APP_DATA_DIR: /data
+      MEDIA_ROOT: ${MEDIA_ROOT:-/media}
+      APP_DATA_DIR: ${APP_DATA_DIR:-/media/.imageOrganizer}
     restart: unless-stopped
 
   frontend:

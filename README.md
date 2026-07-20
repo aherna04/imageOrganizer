@@ -1,6 +1,6 @@
 # Image Organizer
 
-**Version:** 2026.07.19c — see [CHANGELOG.md](CHANGELOG.md)
+**Version:** 2026.07.19d — see [CHANGELOG.md](CHANGELOG.md)
 
 Architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
@@ -25,12 +25,16 @@ Open **http://localhost:5173**
 
 | Role | Default path |
 |------|--------------|
-| Inbox | `/Users/alex/Media/inbox/` |
-| Archive | `/Users/alex/Media/photos/` |
-| Trash | `/Users/alex/Media/.trash/` |
+| Inbox | `{MEDIA_ROOT}/inbox/` |
+| Archive | `{MEDIA_ROOT}/photos/` |
+| Trash | `{MEDIA_ROOT}/.trash/` |
+| Catalog | `{MEDIA_ROOT}/.imageOrganizer/` (`index.db`, thumbs, backups) |
 
-App data (SQLite, thumbnails): `~/.imageOrganizer/`  
-Database backups: `~/.imageOrganizer/backups/` (Settings → **Backup database**, or `python backend/scripts/backup_database.py`)
+Default `MEDIA_ROOT` is `/Users/alex/Media` (Docker: `/media` via `MEDIA_HOST_PATH`).
+
+Override catalog location with `APP_DATA_DIR` (e.g. fast SSD) while keeping media on a large disk. Settings shows the resolved library/catalog paths and can **Move library** to a new root (copy + path rewrite; restart required).
+
+Cold migrate CLI: `python backend/scripts/migrate_library.py --from OLD --to NEW` (see script help). On first start, a legacy `~/.imageOrganizer` catalog is relocated into `{MEDIA_ROOT}/.imageOrganizer` when the co-located path is empty.
 
 ## Workflow
 
@@ -82,7 +86,7 @@ Configure in **Settings**:
 # Backend
 cd backend && python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-MEDIA_ROOT=/Users/alex/Media APP_DATA_DIR=~/.imageOrganizer uvicorn app.main:app --reload
+MEDIA_ROOT=/Users/alex/Media APP_DATA_DIR=/Users/alex/Media/.imageOrganizer uvicorn app.main:app --reload
 
 # Frontend
 cd frontend && npm install && npm run dev

@@ -67,6 +67,16 @@ export interface Config {
   rename_pattern: string;
   photo_sort_order: "asc" | "desc";
   blur_threshold: string;
+  media_root?: string | null;
+  app_data_dir?: string | null;
+}
+
+export interface LibraryMoveStatus {
+  running: boolean;
+  message: string | null;
+  error: string | null;
+  done: boolean;
+  restart_required: boolean;
 }
 
 export interface StorageStats {
@@ -305,6 +315,13 @@ export const api = {
     request<MosaicResult>("/api/mosaic/generate", { method: "POST", body: JSON.stringify(body) }),
   updateConfig: (data: Partial<Config>) =>
     request<Config>("/api/config", { method: "PATCH", body: JSON.stringify(data) }),
+
+  moveLibrary: (new_media_root: string) =>
+    request<LibraryMoveStatus>("/api/library/move", {
+      method: "POST",
+      body: JSON.stringify({ new_media_root }),
+    }),
+  moveLibraryStatus: () => request<LibraryMoveStatus>("/api/library/move/status"),
 
   scanInbox: () => request<{ ok: boolean }>("/api/scan/inbox", { method: "POST" }),
   scanArchive: () => request<{ ok: boolean }>("/api/scan/archive", { method: "POST" }),

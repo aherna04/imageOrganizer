@@ -1,6 +1,6 @@
 # Image Organizer — Development Book
 
-*Release 2026.07.19c · collected Cursor implementation plans*
+*Release 2026.07.19d · collected Cursor implementation plans*
 
 Related: [ARCHITECTURE.md](ARCHITECTURE.md) · [CHANGELOG.md](../CHANGELOG.md)
 
@@ -117,56 +117,58 @@ This book collects the Cursor agent implementation plans written while building 
 85. [Sidebar version badge](#chapter-85-sidebar-version-badge)
 86. [Save plans gitignore](#chapter-86-save-plans-gitignore)
 87. [Plans development book](#chapter-87-plans-development-book)
+88. [Co-locate library storage](#chapter-88-co-locate-library-storage)
 
 ### Appendix — Unlisted Plans
 
-88. [Blur feature documentation](#chapter-88-blur-feature-documentation)
-89. [Blurry image detection](#chapter-89-blurry-image-detection)
-90. [Blurry scroll and nav](#chapter-90-blurry-scroll-and-nav)
-91. [Book update and release](#chapter-91-book-update-and-release)
-92. [Browse cameras subset](#chapter-92-browse-cameras-subset)
-93. [Browse multi-tag AND](#chapter-93-browse-multi-tag-and)
-94. [Browse subset people fix](#chapter-94-browse-subset-people-fix)
-95. [Calendar day pagination](#chapter-95-calendar-day-pagination)
-96. [Calendar global untagged](#chapter-96-calendar-global-untagged)
-97. [Calendar tagging bottom-left](#chapter-97-calendar-tagging-bottom-left)
-98. [Calendar untagged edit mode](#chapter-98-calendar-untagged-edit-mode)
-99. [Calendar untagged filter](#chapter-99-calendar-untagged-filter)
-100. [Cursor book tool repo](#chapter-100-cursor-book-tool-repo)
-101. [Database datetime backups](#chapter-101-database-datetime-backups)
-102. [Detail applied labels](#chapter-102-detail-applied-labels)
+89. [Blur feature documentation](#chapter-89-blur-feature-documentation)
+90. [Blurry image detection](#chapter-90-blurry-image-detection)
+91. [Blurry scroll and nav](#chapter-91-blurry-scroll-and-nav)
+92. [Book update and release](#chapter-92-book-update-and-release)
+93. [Browse cameras subset](#chapter-93-browse-cameras-subset)
+94. [Browse multi-tag AND](#chapter-94-browse-multi-tag-and)
+95. [Browse subset people fix](#chapter-95-browse-subset-people-fix)
+96. [Calendar day pagination](#chapter-96-calendar-day-pagination)
+97. [Calendar global untagged](#chapter-97-calendar-global-untagged)
+98. [Calendar tagging bottom-left](#chapter-98-calendar-tagging-bottom-left)
+99. [Calendar untagged edit mode](#chapter-99-calendar-untagged-edit-mode)
+100. [Calendar untagged filter](#chapter-100-calendar-untagged-filter)
+101. [Cursor book tool repo](#chapter-101-cursor-book-tool-repo)
+102. [Database datetime backups](#chapter-102-database-datetime-backups)
 103. [Detail applied labels](#chapter-103-detail-applied-labels)
-104. [Fix blocked scan clicks](#chapter-104-fix-blocked-scan-clicks)
-105. [Fix blur detection threshold](#chapter-105-fix-blur-detection-threshold)
-106. [Fix calendar tag search layout](#chapter-106-fix-calendar-tag-search-layout)
-107. [Fix camera model order](#chapter-107-fix-camera-model-order)
-108. [Fix label data loss](#chapter-108-fix-label-data-loss)
-109. [Fix lightbox scale-to-fit](#chapter-109-fix-lightbox-scale-to-fit)
-110. [Fix mosaic navigation](#chapter-110-fix-mosaic-navigation)
-111. [Fix tag wrap blowout](#chapter-111-fix-tag-wrap-blowout)
+104. [Detail applied labels](#chapter-104-detail-applied-labels)
+105. [Fix blocked scan clicks](#chapter-105-fix-blocked-scan-clicks)
+106. [Fix blur detection threshold](#chapter-106-fix-blur-detection-threshold)
+107. [Fix calendar tag search layout](#chapter-107-fix-calendar-tag-search-layout)
+108. [Fix camera model order](#chapter-108-fix-camera-model-order)
+109. [Fix label data loss](#chapter-109-fix-label-data-loss)
+110. [Fix lightbox scale-to-fit](#chapter-110-fix-lightbox-scale-to-fit)
+111. [Fix mosaic navigation](#chapter-111-fix-mosaic-navigation)
 112. [Fix tag wrap blowout](#chapter-112-fix-tag-wrap-blowout)
-113. [Inbox autotag investigation](#chapter-113-inbox-autotag-investigation)
-114. [Inbox detail auto-advance](#chapter-114-inbox-detail-auto-advance)
-115. [Library mosaic save](#chapter-115-library-mosaic-save)
-116. [Lightbox tag fonts](#chapter-116-lightbox-tag-fonts)
-117. [Lightbox tag overlay](#chapter-117-lightbox-tag-overlay)
-118. [People autotag options](#chapter-118-people-autotag-options)
-119. [Persist collapsible sections](#chapter-119-persist-collapsible-sections)
+113. [Fix tag wrap blowout](#chapter-113-fix-tag-wrap-blowout)
+114. [Inbox autotag investigation](#chapter-114-inbox-autotag-investigation)
+115. [Inbox detail auto-advance](#chapter-115-inbox-detail-auto-advance)
+116. [Library mosaic save](#chapter-116-library-mosaic-save)
+117. [Lightbox tag fonts](#chapter-117-lightbox-tag-fonts)
+118. [Lightbox tag overlay](#chapter-118-lightbox-tag-overlay)
+119. [People autotag options](#chapter-119-people-autotag-options)
 120. [Persist collapsible sections](#chapter-120-persist-collapsible-sections)
-121. [Recent people like tags](#chapter-121-recent-people-like-tags)
-122. [Release 2026.07.10](#chapter-122-release-20260710)
-123. [Release 2026.07.12b](#chapter-123-release-20260712b)
-124. [Release 2026.07.14](#chapter-124-release-20260714)
+121. [Persist collapsible sections](#chapter-121-persist-collapsible-sections)
+122. [Recent people like tags](#chapter-122-recent-people-like-tags)
+123. [Release 2026.07.10](#chapter-123-release-20260710)
+124. [Release 2026.07.12b](#chapter-124-release-20260712b)
 125. [Release 2026.07.14](#chapter-125-release-20260714)
-126. [Review restore deletes](#chapter-126-review-restore-deletes)
-127. [Slim inbox delete refetch](#chapter-127-slim-inbox-delete-refetch)
-128. [Throttle inbox scan refetch](#chapter-128-throttle-inbox-scan-refetch)
-129. [Trash view and restore](#chapter-129-trash-view-and-restore)
+126. [Release 2026.07.14](#chapter-126-release-20260714)
+127. [Review restore deletes](#chapter-127-review-restore-deletes)
+128. [Slim inbox delete refetch](#chapter-128-slim-inbox-delete-refetch)
+129. [Throttle inbox scan refetch](#chapter-129-throttle-inbox-scan-refetch)
+130. [Trash view and restore](#chapter-130-trash-view-and-restore)
 
 ### Skipped Duplicates
 
 - `background_dup_index_659b1108` — Duplicate of `background_dup_index_8cf3240e`.
 - `calendar_tag_wrapping_a49a3fe3` — Superseded by `calendar_tag_wrapping_efb8630a`.
+- `co-locate_library_storage_6f564eda` — Duplicate of `co-locate_library_storage_34eee391`.
 - `fix_inbox_fullsize_scroll_a4badb8c` — Superseded — wrong split-view lightbox approach.
 - `restore_full-screen_lightbox_pan_dc4aeae3` — Superseded by `fix_lightbox_pan_and_delete` and `fix_zoom_scale-to-fit`.
 - `scale_zoom_to_viewport_9b4c2911` — Superseded by `fix_zoom_scale-to-fit_35b9a5d7`.
@@ -10393,9 +10395,153 @@ No change to the architecture cursor rule scope (book is design history, not liv
 
 ---
 
-<a id="chapter-88-blur-feature-documentation"></a>
+<a id="chapter-88-co-locate-library-storage"></a>
 
-## Chapter 88: Blur feature documentation
+## Chapter 88: Co-locate library storage
+
+> **Overview:** Phase 1: co-locate catalog under visible trash/ + imageOrganizer/, Docker-aware path handling, and Settings UI to move the catalog (APP_DATA_DIR) without editing env files — via a bootstrap pointer outside SQLite.
+
+# Phase 1: Co-locate library + Settings catalog path
+
+## Verification (live install — app stopped)
+
+| Fact | Value |
+|------|--------|
+| Host media | `/Users/alex/Media` (~47G) |
+| Host trash | `/Users/alex/Media/.trash` (~16G) — **no** `trash/` yet |
+| Host catalog | `/Users/alex/.imageOrganizer` (~342M) — **no** WAL files |
+| Free disk | ~119G same volume — rename trash; move catalog |
+| DB paths | Docker **`/media/...`** and **`/media/.trash`** |
+| Targets | `Media/trash`, `Media/imageOrganizer` do not exist yet |
+
+**Docker:** remounting a new disk often only changes `MEDIA_HOST_PATH`; DB stays `/media/...`. Do not rewrite to host paths while using compose.
+
+## Target layout (visible names)
+
+```
+{MEDIA_ROOT}/
+  inbox/
+  photos/
+  trash/                 ← was .trash
+  imageOrganizer/        ← default catalog (was ~/.imageOrganizer)
+    index.db
+    thumbs/
+    backups/
+```
+
+**Advanced override:** catalog may live elsewhere (e.g. fast SSD) while media stays on the big disk — default remains co-located.
+
+## Path resolution order
+
+Chicken-and-egg: SQLite cannot store the path to itself. Resolve `APP_DATA_DIR` / `MEDIA_ROOT` as:
+
+1. **Environment** (`MEDIA_ROOT`, `APP_DATA_DIR`) — wins when set (Docker/compose).
+2. Else **bootstrap file** (Settings-writable).
+3. Else **defaults**: `MEDIA_ROOT` default host path; `APP_DATA_DIR = MEDIA_ROOT / "imageOrganizer"`.
+
+Bootstrap location (stable, tiny, not the catalog):
+
+```
+~/.config/imageOrganizer/bootstrap.json
+```
+
+Example:
+
+```json
+{
+  "media_root": "/Users/alex/Media",
+  "app_data_dir": "/Volumes/SSD/imageOrganizer"
+}
+```
+
+- Omit `app_data_dir` → co-locate under `media_root/imageOrganizer`.
+- Docker: prefer env in compose; Settings can still write bootstrap for native runs, or write container paths only if those dirs are writable mounts (document: Docker users usually set catalog via compose/`APP_DATA_DIR`).
+
+```mermaid
+flowchart TD
+  start[Process start] --> env{APP_DATA_DIR env set?}
+  env -->|yes| useEnv[Use env paths]
+  env -->|no| boot{bootstrap.json exists?}
+  boot -->|yes| useBoot[Use bootstrap paths]
+  boot -->|no| useDef["Default MEDIA_ROOT/imageOrganizer"]
+```
+
+## Settings: Catalog location
+
+In [`Settings.tsx`](imageOrganizer/frontend/src/pages/Settings.tsx) under Paths:
+
+| Field | Meaning |
+|-------|---------|
+| Inbox / Archive / Trash | Existing (in SQLite `config`) |
+| **Catalog folder** | `APP_DATA_DIR` — where `index.db`, `thumbs`, `backups` live |
+
+Behavior when user saves a **new** catalog path:
+
+1. Refuse if scan/dedupe running.
+2. `POST /api/config/catalog-location` with `{ path }` (or extend PATCH config carefully).
+3. Backend: backup DB → copy/move `index.db` (+ `-wal`/`-shm` if any), `thumbs/`, `backups/`, legacy `mosaics/` to the new directory → write `bootstrap.json` → return `{ restart_required: true }` (or attempt reopen if safe; **default: require restart** for simplicity and Docker honesty).
+4. UI: show success + “Restart the app to use the new catalog location.”
+5. Leave a `MOVED.txt` in the old catalog dir pointing to the new path.
+
+Do **not** put `app_data_dir` only in SQLite — next cold start would not find the DB.
+
+Env still overrides bootstrap so compose remains authoritative in Docker.
+
+## Mistakes we must not make
+
+1. Config `INSERT OR IGNORE` won’t update `trash_path` — explicit UPDATE + path rewrite.
+2. Rewrite `/media/.trash` → `/media/trash` for this Docker install.
+3. Rename 16G trash (`mv`), don’t copy.
+4. App stopped before offline legacy move; checkpoint WAL if present.
+5. Never scan into `trash/` or `imageOrganizer/`.
+6. Rewrite `operations_log` trash paths or Restore breaks.
+7. Update compose/bootstrap before restart after relocating catalog.
+8. Boundary-safe prefix rewrite only.
+9. Settings catalog move while Docker: new path must be visible **inside** the container (mounted). If user types a host-only SSD path that isn’t mounted, fail with a clear error.
+
+## Phase 1 implementation
+
+### 1. Config + Docker defaults
+Visible `trash` / `imageOrganizer`; path resolve env → bootstrap → default; compose single media mount + `APP_DATA_DIR=/media/imageOrganizer`.
+
+### 2. Bootstrap + Settings catalog API/UI
+As above; show current resolved catalog path (read-only display of effective path + editable override).
+
+### 3. Unify scan with Settings
+Inbox/archive/trash from `get_config()` paths.
+
+### 4. Legacy upgrade (offline, this machine)
+1. Backup `index.db`.
+2. `mv .trash` → `trash`.
+3. `mv ~/.imageOrganizer` → `Media/imageOrganizer`.
+4. Rewrite DB `/media/.trash` → `/media/trash`; `config.trash_path`.
+5. Seed `~/.config/imageOrganizer/bootstrap.json` (optional if Docker env sets paths).
+6. Stub `MOVED.txt` at old home path; update `.env`/compose.
+7. Smoke test after start.
+
+### 5. CLI `migrate_library.py`
+Prefix rewrite + dry-run; document Docker remount vs native rewrite.
+
+### 6. Docs / UI copy
+ARCHITECTURE, README, `.env.example`, Trash copy, Settings help text for catalog-on-SSD, CHANGELOG.
+
+## Out of scope (Phase 2+)
+Full “Move library…” (copy entire media tree to a new disk) in Settings — catalog move is Phase 1; whole-library move remains later.
+Relative paths in DB.
+
+## Verify checklist
+
+1. Visible `Media/trash` and `Media/imageOrganizer`.
+2. No `/.trash/` left in `files.path`; Restore works.
+3. Settings → change catalog to another writable path → restart → app opens same library from new catalog; old dir has `MOVED.txt`.
+4. With `APP_DATA_DIR` set in env, Settings shows it as env-managed / override ignored or clearly labeled.
+5. Calendar/Inbox load after upgrade.
+
+---
+
+<a id="chapter-89-blur-feature-documentation"></a>
+
+## Chapter 89: Blur feature documentation
 
 > **Overview:** Document how blurry image detection works for users (README workflow) and developers (ARCHITECTURE algorithm, API, and UI), matching the current implementation including outlier detection and Settings threshold.
 
@@ -10515,9 +10661,9 @@ Add under **[Unreleased] → Changed** (one line):
 
 ---
 
-<a id="chapter-89-blurry-image-detection"></a>
+<a id="chapter-90-blurry-image-detection"></a>
 
-## Chapter 89: Blurry image detection
+## Chapter 90: Blurry image detection
 
 > **Overview:** Add a separate post-scan sharpness analysis pass (Laplacian variance on downscaled images), store scores in SQLite, and expose a dedicated Blurry nav page to browse and act on out-of-focus photos.
 
@@ -10677,9 +10823,9 @@ In [`Settings.tsx`](frontend/src/pages/Settings.tsx), add **Blur detection thres
 
 ---
 
-<a id="chapter-90-blurry-scroll-and-nav"></a>
+<a id="chapter-91-blurry-scroll-and-nav"></a>
 
-## Chapter 90: Blurry scroll and nav
+## Chapter 91: Blurry scroll and nav
 
 > **Overview:** Fix Blurry page detail/lightbox parity with Inbox by wiring PhotoDetail navigation props and applying the documented lightbox scroll/pan CSS fix globally in PhotoDetail.
 
@@ -10823,9 +10969,9 @@ On **Blurry** page with 3+ blurry photos:
 
 ---
 
-<a id="chapter-91-book-update-and-release"></a>
+<a id="chapter-92-book-update-and-release"></a>
 
-## Chapter 91: Book update and release
+## Chapter 92: Book update and release
 
 > **Overview:** Add post-2026.07.05b feature plans to book.json, rebuild DEVELOPMENT_BOOK.md, write CHANGELOG 2026.07.07 for all uncommitted work, bump versions, commit, tag, and push to origin.
 
@@ -10923,9 +11069,9 @@ Requires network + git_write permissions for push.
 
 ---
 
-<a id="chapter-92-browse-cameras-subset"></a>
+<a id="chapter-93-browse-cameras-subset"></a>
 
-## Chapter 92: Browse cameras subset
+## Chapter 93: Browse cameras subset
 
 > **Overview:** When Browse has tag/person (and camera) filters active, the Cameras sidebar will list only cameras present in that AND selection with counts in-set — same idea as Also tagged / People — and clicking a camera will AND it into the filter.
 
@@ -11026,9 +11172,9 @@ Legacy `/browse/camera/:name` already redirects into the query model — keep th
 
 ---
 
-<a id="chapter-93-browse-multi-tag-and"></a>
+<a id="chapter-94-browse-multi-tag-and"></a>
 
-## Chapter 93: Browse multi-tag AND
+## Chapter 94: Browse multi-tag AND
 
 > **Overview:** Define a Browse multi-tag feature: selecting a tag shows all co-occurring tags in that result set; selecting more tags narrows via AND intersection (Cars AND corvette), inspired by the Calendar year label bar.
 
@@ -11172,9 +11318,9 @@ Concept locked as above. Implementation waits until you approve (and confirm Bro
 
 ---
 
-<a id="chapter-94-browse-subset-people-fix"></a>
+<a id="chapter-95-browse-subset-people-fix"></a>
 
-## Chapter 94: Browse subset people fix
+## Chapter 95: Browse subset people fix
 
 > **Overview:** Fix the broken Also-tagged sidebar buttons, restyle Browse accents to Wimbledon purple, and when a Browse filter is active show only the subset of people who appear in that result set (with counts), clickable to AND into the intersection.
 
@@ -11287,9 +11433,9 @@ Legacy `/browse/person/:slug` redirects to `/browse/tags?person=:slug` (same pat
 
 ---
 
-<a id="chapter-95-calendar-day-pagination"></a>
+<a id="chapter-96-calendar-day-pagination"></a>
 
-## Chapter 95: Calendar day pagination
+## Chapter 96: Calendar day pagination
 
 > **Overview:** Add Prev/Next page navigation to the calendar day panel so days with more than 100 photos can be browsed fully. Backend already supports `page` and `page_size`; wire them through the API client and CalendarDayPanel.
 
@@ -11411,9 +11557,9 @@ Under `[Unreleased]` → **Added** in [`CHANGELOG.md`](imageOrganizer/CHANGELOG.
 
 ---
 
-<a id="chapter-96-calendar-global-untagged"></a>
+<a id="chapter-97-calendar-global-untagged"></a>
 
-## Chapter 96: Calendar global untagged
+## Chapter 97: Calendar global untagged
 
 > **Overview:** Add an All / Untagged control in the Calendar top filter bar (next to Archive and Media dropdowns), applying the existing `unlabeled=true` API filter globally across all visible months. Keep per-month Untagged chips for single-month filtering when global mode is off.
 
@@ -11523,9 +11669,9 @@ Under `[Unreleased]` → **Added**: Calendar global **Untagged** filter in top b
 
 ---
 
-<a id="chapter-97-calendar-tagging-bottom-left"></a>
+<a id="chapter-98-calendar-tagging-bottom-left"></a>
 
-## Chapter 97: Calendar tagging bottom-left
+## Chapter 98: Calendar tagging bottom-left
 
 > **Overview:** Move the calendar day tagging form (Date / Events / People / Tags) from the top of the right day panel to a fixed area below the month calendars on the left, while keeping the selection bar above the photo grid on the right.
 
@@ -11659,9 +11805,9 @@ Add CHANGELOG entry under `[Unreleased]` → **Changed**.
 
 ---
 
-<a id="chapter-98-calendar-untagged-edit-mode"></a>
+<a id="chapter-99-calendar-untagged-edit-mode"></a>
 
-## Chapter 98: Calendar untagged edit mode
+## Chapter 99: Calendar untagged edit mode
 
 > **Overview:** Fix Calendar untagged workflow: memoize the day filter to stop selection from clearing on every re-render (flash/exit), and while photos are selected in untagged mode, fetch the day as \"all\" so tagged photos stay visible until selection is cleared.
 
@@ -11781,9 +11927,9 @@ sequenceDiagram
 
 ---
 
-<a id="chapter-99-calendar-untagged-filter"></a>
+<a id="chapter-100-calendar-untagged-filter"></a>
 
-## Chapter 99: Calendar untagged filter
+## Chapter 100: Calendar untagged filter
 
 > **Overview:** Add a per-month **Untagged** chip on the calendar (same definition as Inbox: no tags, people, or events), respecting the existing Images/Videos media-type dropdown. Requires backend `unlabeled` support on calendar summary/day/labels endpoints and frontend filter wiring.
 
@@ -11898,9 +12044,9 @@ Under `[Unreleased]` → **Added**: Calendar month **Untagged** filter (no tags,
 
 ---
 
-<a id="chapter-100-cursor-book-tool-repo"></a>
+<a id="chapter-101-cursor-book-tool-repo"></a>
 
-## Chapter 100: Cursor book tool repo
+## Chapter 101: Cursor book tool repo
 
 > **Overview:** Extract the development book builder into a standalone repo with a config-driven script and a reusable Cursor skill; migrate imageOrganizer to a thin `book.yaml` + wrapper script.
 
@@ -12105,9 +12251,9 @@ Optional: tag `v1.0.0` on `cursor-book` after migration verified.
 
 ---
 
-<a id="chapter-101-database-datetime-backups"></a>
+<a id="chapter-102-database-datetime-backups"></a>
 
-## Chapter 101: Database datetime backups
+## Chapter 102: Database datetime backups
 
 > **Overview:** Add safe SQLite database backups as datetime-stamped copies in `{APP_DATA_DIR}/backups/`, exposed via a Settings button and a CLI script for manual or scheduled use.
 
@@ -12246,112 +12392,6 @@ Monkeypatch `BACKUPS_DIR` / `DB_PATH` to temp dirs (same pattern as existing mig
 
 ---
 
-<a id="chapter-102-detail-applied-labels"></a>
-
-## Chapter 102: Detail applied labels
-
-> **Overview:** Show currently applied events, people, and tags in PhotoDetail above the Caption field using the existing PhotoCardLabels component, and hide already-applied items from the pickers below to avoid duplicate chips.
-
-# Detail view: applied labels above caption
-
-## Problem
-
-In [`PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx), caption/rating/save come **before** Events/People/Tags pickers. Applied labels (e.g. "I9 Flag Football", "FFB Camp" in your screenshot) are only visible after scrolling past caption — easy to miss when reviewing photos.
-
-Current order:
-
-```
-preview → date → meta rows → Caption → Rating → Save → Events → People → Tags
-```
-
-## Approach
-
-Reuse [`PhotoCardLabels.tsx`](frontend/src/components/PhotoCardLabels.tsx) — it already renders **only applied** events, people, and tags as removable chips (same badges as the grid card footer).
-
-```mermaid
-flowchart TB
-  meta[Meta rows]
-  applied["PhotoCardLabels — applied only"]
-  caption[Caption + Rating + Save]
-  pickers["Event/Person/Tag pickers — unselected only"]
-  meta --> applied --> caption --> pickers
-```
-
-### 1. PhotoDetail layout
-
-In [`PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx), after meta rows and **before** the Caption `form-group`:
-
-```tsx
-{(currentFile.events?.length || currentFile.people?.length || currentFile.tags?.length) ? (
-  <div className="photo-detail-applied-labels">
-    <label className="photo-detail-applied-label">Applied</label>
-    <PhotoCardLabels file={currentFile} onChange={() => handleLabelsChange()} />
-  </div>
-) : null}
-```
-
-Import `PhotoCardLabels`. Section hidden when nothing is applied (no empty box).
-
-### 2. Avoid duplicate chips in pickers
-
-When the applied bar is visible, selected items would appear twice (summary above + highlighted in picker below). Add optional prop to each picker:
-
-| Component | Prop | Behavior |
-|-----------|------|----------|
-| [`EventPicker.tsx`](frontend/src/components/EventPicker.tsx) | `excludeSelected?: boolean` | Chip list maps `allEvents.filter(e => !excludeSelected \|\| !selected.has(e.id))` |
-| [`PersonPicker.tsx`](frontend/src/components/PersonPicker.tsx) | `excludeSelected?: boolean` | Same for people |
-| [`FileTagPicker.tsx`](frontend/src/components/FileTagPicker.tsx) | `excludeSelected?: boolean` | Exclude selected from `visibleTags` and recent-tags row |
-
-In PhotoDetail, pass `excludeSelected` to all three pickers (always `true` in detail view — when nothing applied, pickers behave as today).
-
-Removal stays on the applied bar (`PhotoCardLabels` × buttons); pickers are for **adding** only.
-
-### 3. CSS
-
-In [`index.css`](frontend/src/index.css):
-
-```css
-.photo-detail-applied-labels {
-  margin-top: 1rem;
-  margin-bottom: 0.25rem;
-}
-
-.photo-detail-applied-label {
-  display: block;
-  font-size: 0.875rem;
-  color: #aab0bc;
-  margin-bottom: 0.35rem;
-}
-```
-
-Reuse existing `.photo-card-labels` / `.badge-removable` styles (no card-specific assumptions).
-
-## Files to change
-
-| File | Change |
-|------|--------|
-| [`PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx) | Import PhotoCardLabels; applied section above caption; `excludeSelected` on pickers |
-| [`EventPicker.tsx`](frontend/src/components/EventPicker.tsx) | Optional `excludeSelected` prop |
-| [`PersonPicker.tsx`](frontend/src/components/PersonPicker.tsx) | Optional `excludeSelected` prop |
-| [`FileTagPicker.tsx`](frontend/src/components/FileTagPicker.tsx) | Optional `excludeSelected` prop |
-| [`index.css`](frontend/src/index.css) | `.photo-detail-applied-labels` styles |
-
-## Out of scope
-
-- Reordering caption/rating relative to pickers beyond this
-- Collapsing pickers into accordions
-- ARCHITECTURE/README updates (UI-only)
-
-## Verification
-
-1. Open archive photo with event + tag (your screenshot case) — applied chips appear **above Caption**
-2. Remove a tag via × on applied bar — chip disappears; tag reappears in Tags picker below
-3. Add tag via picker — chip moves to applied bar; hidden from picker list
-4. Photo with no labels — no applied section; pickers unchanged
-5. Grid card labels (`PhotoCardLabels` on PhotoGrid) unchanged
-
----
-
 <a id="chapter-103-detail-applied-labels"></a>
 
 ## Chapter 103: Detail applied labels
@@ -12458,9 +12498,115 @@ Reuse existing `.photo-card-labels` / `.badge-removable` styles (no card-specifi
 
 ---
 
-<a id="chapter-104-fix-blocked-scan-clicks"></a>
+<a id="chapter-104-detail-applied-labels"></a>
 
-## Chapter 104: Fix blocked scan clicks
+## Chapter 104: Detail applied labels
+
+> **Overview:** Show currently applied events, people, and tags in PhotoDetail above the Caption field using the existing PhotoCardLabels component, and hide already-applied items from the pickers below to avoid duplicate chips.
+
+# Detail view: applied labels above caption
+
+## Problem
+
+In [`PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx), caption/rating/save come **before** Events/People/Tags pickers. Applied labels (e.g. "I9 Flag Football", "FFB Camp" in your screenshot) are only visible after scrolling past caption — easy to miss when reviewing photos.
+
+Current order:
+
+```
+preview → date → meta rows → Caption → Rating → Save → Events → People → Tags
+```
+
+## Approach
+
+Reuse [`PhotoCardLabels.tsx`](frontend/src/components/PhotoCardLabels.tsx) — it already renders **only applied** events, people, and tags as removable chips (same badges as the grid card footer).
+
+```mermaid
+flowchart TB
+  meta[Meta rows]
+  applied["PhotoCardLabels — applied only"]
+  caption[Caption + Rating + Save]
+  pickers["Event/Person/Tag pickers — unselected only"]
+  meta --> applied --> caption --> pickers
+```
+
+### 1. PhotoDetail layout
+
+In [`PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx), after meta rows and **before** the Caption `form-group`:
+
+```tsx
+{(currentFile.events?.length || currentFile.people?.length || currentFile.tags?.length) ? (
+  <div className="photo-detail-applied-labels">
+    <label className="photo-detail-applied-label">Applied</label>
+    <PhotoCardLabels file={currentFile} onChange={() => handleLabelsChange()} />
+  </div>
+) : null}
+```
+
+Import `PhotoCardLabels`. Section hidden when nothing is applied (no empty box).
+
+### 2. Avoid duplicate chips in pickers
+
+When the applied bar is visible, selected items would appear twice (summary above + highlighted in picker below). Add optional prop to each picker:
+
+| Component | Prop | Behavior |
+|-----------|------|----------|
+| [`EventPicker.tsx`](frontend/src/components/EventPicker.tsx) | `excludeSelected?: boolean` | Chip list maps `allEvents.filter(e => !excludeSelected \|\| !selected.has(e.id))` |
+| [`PersonPicker.tsx`](frontend/src/components/PersonPicker.tsx) | `excludeSelected?: boolean` | Same for people |
+| [`FileTagPicker.tsx`](frontend/src/components/FileTagPicker.tsx) | `excludeSelected?: boolean` | Exclude selected from `visibleTags` and recent-tags row |
+
+In PhotoDetail, pass `excludeSelected` to all three pickers (always `true` in detail view — when nothing applied, pickers behave as today).
+
+Removal stays on the applied bar (`PhotoCardLabels` × buttons); pickers are for **adding** only.
+
+### 3. CSS
+
+In [`index.css`](frontend/src/index.css):
+
+```css
+.photo-detail-applied-labels {
+  margin-top: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.photo-detail-applied-label {
+  display: block;
+  font-size: 0.875rem;
+  color: #aab0bc;
+  margin-bottom: 0.35rem;
+}
+```
+
+Reuse existing `.photo-card-labels` / `.badge-removable` styles (no card-specific assumptions).
+
+## Files to change
+
+| File | Change |
+|------|--------|
+| [`PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx) | Import PhotoCardLabels; applied section above caption; `excludeSelected` on pickers |
+| [`EventPicker.tsx`](frontend/src/components/EventPicker.tsx) | Optional `excludeSelected` prop |
+| [`PersonPicker.tsx`](frontend/src/components/PersonPicker.tsx) | Optional `excludeSelected` prop |
+| [`FileTagPicker.tsx`](frontend/src/components/FileTagPicker.tsx) | Optional `excludeSelected` prop |
+| [`index.css`](frontend/src/index.css) | `.photo-detail-applied-labels` styles |
+
+## Out of scope
+
+- Reordering caption/rating relative to pickers beyond this
+- Collapsing pickers into accordions
+- ARCHITECTURE/README updates (UI-only)
+
+## Verification
+
+1. Open archive photo with event + tag (your screenshot case) — applied chips appear **above Caption**
+2. Remove a tag via × on applied bar — chip disappears; tag reappears in Tags picker below
+3. Add tag via picker — chip moves to applied bar; hidden from picker list
+4. Photo with no labels — no applied section; pickers unchanged
+5. Grid card labels (`PhotoCardLabels` on PhotoGrid) unchanged
+
+---
+
+<a id="chapter-105-fix-blocked-scan-clicks"></a>
+
+## Chapter 105: Fix blocked scan clicks
 
 > **Overview:** Scan clicks fail silently when another scan or blur analysis holds the mutex, or when scan_state.running is stuck true and disables the button. Fix by claiming/clearing scan state reliably and surfacing blocked/error state in the UI.
 
@@ -12530,9 +12676,9 @@ On Inbox, Calendar, Cameras (and Trash if it has Scan):
 
 ---
 
-<a id="chapter-105-fix-blur-detection-threshold"></a>
+<a id="chapter-106-fix-blur-detection-threshold"></a>
 
-## Chapter 105: Fix blur detection threshold
+## Chapter 106: Fix blur detection threshold
 
 > **Overview:** IMG_7483.JPG scores 130.5 (lowest in inbox by 4×) but is not flagged because blur uses `score < threshold` and your threshold is 25. Fix the inverted Settings copy, raise the default, and add relative outlier detection so obvious misses like this are caught.
 
@@ -12648,9 +12794,9 @@ No re-analysis needed — scores are already stored; classification changes appl
 
 ---
 
-<a id="chapter-106-fix-calendar-tag-search-layout"></a>
+<a id="chapter-107-fix-calendar-tag-search-layout"></a>
 
-## Chapter 106: Fix calendar tag search layout
+## Chapter 107: Fix calendar tag search layout
 
 > **Overview:** Single-character tag search matches many tags; the chip row expands horizontally because the calendar left column uses `width: max-content` and tag chip containers lack width constraints. Fix by constraining the tagging panel to the calendar column width and ensuring chip rows wrap.
 
@@ -12781,9 +12927,9 @@ Replace inline flex styles in [`FileTagPicker.tsx`](imageOrganizer/frontend/src/
 
 ---
 
-<a id="chapter-107-fix-camera-model-order"></a>
+<a id="chapter-108-fix-camera-model-order"></a>
 
-## Chapter 107: Fix camera model order
+## Chapter 108: Fix camera model order
 
 > **Overview:** Fix the backend startup crash by defining `InboxCameraOut` before `BrowseCooccurringOut` references it in models.py.
 
@@ -12813,9 +12959,9 @@ No API or frontend changes. After Docker reloads, backend should boot cleanly.
 
 ---
 
-<a id="chapter-108-fix-label-data-loss"></a>
+<a id="chapter-109-fix-label-data-loss"></a>
 
-## Chapter 108: Fix label data loss
+## Chapter 109: Fix label data loss
 
 > **Overview:** Tags, People, and Events show 0 photos because the trash-location database migration (`DROP TABLE files` with `PRAGMA foreign_keys=ON`) cascaded and deleted all rows in `file_tags`, `file_people`, and `file_events`. Cameras still work because they count from `files.camera` directly. Fix the migration for future runs and recover associations from a pre-upgrade DB backup if one exists.
 
@@ -12959,9 +13105,9 @@ Under **Changed** or a short note: if you already upgraded, restore from backup 
 
 ---
 
-<a id="chapter-109-fix-lightbox-scale-to-fit"></a>
+<a id="chapter-110-fix-lightbox-scale-to-fit"></a>
 
-## Chapter 109: Fix lightbox scale-to-fit
+## Chapter 110: Fix lightbox scale-to-fit
 
 > **Overview:** The lightbox is showing full-resolution images again because uncommitted local changes (zoom scroll/pan + tags overlay work) replaced scale-to-fit CSS with a scrollable stage at intrinsic image size. Release **2026.07.11a** still scales correctly; the regression is only in current uncommitted edits.
 
@@ -13075,9 +13221,9 @@ No backend changes.
 
 ---
 
-<a id="chapter-110-fix-mosaic-navigation"></a>
+<a id="chapter-111-fix-mosaic-navigation"></a>
 
-## Chapter 110: Fix mosaic navigation
+## Chapter 111: Fix mosaic navigation
 
 > **Overview:** Create mosaic appears to do nothing on Browse because PhotoDetail navigates to `/mosaic?source=…` and then immediately calls `onClose()`, which Browse implements as a second `navigate()` back to the current browse URL — the second navigation wins.
 
@@ -13150,139 +13296,6 @@ When the route changes to `/mosaic`, the parent page unmounts and the drawer dis
 4. **Refresh `/mosaic?source=123`** — source still loads via `GET /api/files/{id}`
 
 No backend or CSS changes needed.
-
----
-
-<a id="chapter-111-fix-tag-wrap-blowout"></a>
-
-## Chapter 111: Fix tag wrap blowout
-
-> **Overview:** The prior fix added flex-wrap and min-width on chip rows, but the grid column still sizes to the tag panel's max-content when 1-char search returns many tags. Lock the left column width to the calendar and prevent the tagging panel from contributing horizontal intrinsic size.
-
-# Fix calendar tag search layout (v2)
-
-## Why the first fix failed
-
-People chips wrap; tag search chips do not — both use `flex-wrap: wrap`. The difference is **count** (1-char search returns ~40+ tags), which exposes a **grid sizing** bug, not missing `flex-wrap`.
-
-Current structure in [`Calendar.tsx`](imageOrganizer/frontend/src/pages/Calendar.tsx):
-
-```tsx
-<div className="calendar-left-column">
-  <CalendarThreeMonthView ... />
-  <CalendarDayLabelPanel ... />  {/* .calendar-tagging-panel */}
-</div>
-```
-
-[`.calendar-left-column`](imageOrganizer/frontend/src/index.css) is `display: grid; grid-template-columns: minmax(0, max-content)`. **Both grid rows contribute max-content width to the column.** When tag chips render in one intrinsic row, the column (and page left cell) grows wider than the calendar-only layout.
-
-`min-width: 0` / `max-width: 100%` on the panel does not stop max-content participation in grid track sizing.
-
-```mermaid
-flowchart TD
-  calRow["Row 1: calendar-three-month max-content = W"]
-  tagRow["Row 2: tag chips max-content = 3000px"]
-  colWidth["Grid column width = max(W, 3000px)"]
-  calRow --> colWidth
-  tagRow --> colWidth
-```
-
-## Fix strategy
-
-**Lock column width to the calendar; clip tag content inside that width.**
-
-### 1. Restructure left column — [`Calendar.tsx`](imageOrganizer/frontend/src/pages/Calendar.tsx)
-
-Wrap calendar + tagging panel in a stack whose width is defined only by the calendar:
-
-```tsx
-<div className="calendar-left-column">
-  <div className="calendar-left-stack">
-    <CalendarThreeMonthView ... />
-    <CalendarDayLabelPanel context={labelContext} />
-  </div>
-</div>
-```
-
-### 2. Stack + panel CSS — [`index.css`](imageOrganizer/frontend/src/index.css)
-
-```css
-.calendar-left-column {
-  min-width: 0;
-  max-width: 100%;
-  overflow: hidden;
-}
-
-.calendar-left-stack {
-  display: grid;
-  grid-template-columns: 1fr;
-  width: max-content;
-  max-width: 100%;
-}
-
-/* Calendar row sets stack/column width */
-.calendar-left-stack > .calendar-three-month {
-  grid-column: 1;
-  width: max-content;
-}
-
-/* Tag panel: stretch to column width, do NOT expand it */
-.calendar-left-stack > .calendar-tagging-panel {
-  grid-column: 1;
-  width: 0;
-  min-width: 100%;
-  overflow-x: clip;
-  contain: inline-size;
-  /* keep existing panel styles (background, padding, sticky, etc.) */
-}
-
-.calendar-tagging-panel .single-file-label-editors,
-.calendar-tagging-panel .label-editor-tags {
-  min-width: 0;
-  max-width: 100%;
-}
-
-.tag-picker-chips {
-  width: 100%;
-  box-sizing: border-box;
-  /* existing flex-wrap, gap, min-width: 0 */
-}
-```
-
-Key mechanisms:
-- **`width: 0; min-width: 100%`** — grid item fills the column without adding max-content width to track sizing
-- **`contain: inline-size`** — descendants cannot affect external inline size
-- **`overflow-x: clip`** — chips wrap inside fixed width instead of expanding layout
-
-### 3. Tags section width — [`index.css`](imageOrganizer/frontend/src/index.css)
-
-Tags live in [`.label-editor-tags`](imageOrganizer/frontend/src/components/BulkLabelEditors.tsx) (not inside `CollapsibleSection`, unlike People). Add explicit containment:
-
-```css
-.label-editor-tags {
-  min-width: 0;
-  overflow-x: hidden;
-}
-```
-
-Scoped under `.calendar-tagging-panel` if preferred to avoid side effects elsewhere.
-
-### 4. Optional cleanup — [`BulkLabelEditors.tsx`](imageOrganizer/frontend/src/components/BulkLabelEditors.tsx)
-
-Replace people section inline flex (line ~298) with `className="tag-picker-chips"` for consistency (People already wraps; low risk).
-
-## Out of scope
-
-- Minimum 2-character search threshold
-- Changing page grid to equal columns (`1fr 1fr`)
-
-## Test plan
-
-1. Calendar → day with photos → select photo(s) → note initial left-column width (calendar + wrapped recent tags)
-2. Tag search **1 char** (`t`) → many chips appear **wrapped inside panel**; left column width **unchanged**; no horizontal page scroll
-3. Tag search **2 chars** (`ta`) → same width, wrapped
-4. People section still wraps; November month labels unchanged
-5. Inbox tag picker still works (stack CSS is calendar-scoped via `.calendar-left-stack`)
 
 ---
 
@@ -13419,9 +13432,142 @@ Replace people section inline flex (line ~298) with `className="tag-picker-chips
 
 ---
 
-<a id="chapter-113-inbox-autotag-investigation"></a>
+<a id="chapter-113-fix-tag-wrap-blowout"></a>
 
-## Chapter 113: Inbox autotag investigation
+## Chapter 113: Fix tag wrap blowout
+
+> **Overview:** The prior fix added flex-wrap and min-width on chip rows, but the grid column still sizes to the tag panel's max-content when 1-char search returns many tags. Lock the left column width to the calendar and prevent the tagging panel from contributing horizontal intrinsic size.
+
+# Fix calendar tag search layout (v2)
+
+## Why the first fix failed
+
+People chips wrap; tag search chips do not — both use `flex-wrap: wrap`. The difference is **count** (1-char search returns ~40+ tags), which exposes a **grid sizing** bug, not missing `flex-wrap`.
+
+Current structure in [`Calendar.tsx`](imageOrganizer/frontend/src/pages/Calendar.tsx):
+
+```tsx
+<div className="calendar-left-column">
+  <CalendarThreeMonthView ... />
+  <CalendarDayLabelPanel ... />  {/* .calendar-tagging-panel */}
+</div>
+```
+
+[`.calendar-left-column`](imageOrganizer/frontend/src/index.css) is `display: grid; grid-template-columns: minmax(0, max-content)`. **Both grid rows contribute max-content width to the column.** When tag chips render in one intrinsic row, the column (and page left cell) grows wider than the calendar-only layout.
+
+`min-width: 0` / `max-width: 100%` on the panel does not stop max-content participation in grid track sizing.
+
+```mermaid
+flowchart TD
+  calRow["Row 1: calendar-three-month max-content = W"]
+  tagRow["Row 2: tag chips max-content = 3000px"]
+  colWidth["Grid column width = max(W, 3000px)"]
+  calRow --> colWidth
+  tagRow --> colWidth
+```
+
+## Fix strategy
+
+**Lock column width to the calendar; clip tag content inside that width.**
+
+### 1. Restructure left column — [`Calendar.tsx`](imageOrganizer/frontend/src/pages/Calendar.tsx)
+
+Wrap calendar + tagging panel in a stack whose width is defined only by the calendar:
+
+```tsx
+<div className="calendar-left-column">
+  <div className="calendar-left-stack">
+    <CalendarThreeMonthView ... />
+    <CalendarDayLabelPanel context={labelContext} />
+  </div>
+</div>
+```
+
+### 2. Stack + panel CSS — [`index.css`](imageOrganizer/frontend/src/index.css)
+
+```css
+.calendar-left-column {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.calendar-left-stack {
+  display: grid;
+  grid-template-columns: 1fr;
+  width: max-content;
+  max-width: 100%;
+}
+
+/* Calendar row sets stack/column width */
+.calendar-left-stack > .calendar-three-month {
+  grid-column: 1;
+  width: max-content;
+}
+
+/* Tag panel: stretch to column width, do NOT expand it */
+.calendar-left-stack > .calendar-tagging-panel {
+  grid-column: 1;
+  width: 0;
+  min-width: 100%;
+  overflow-x: clip;
+  contain: inline-size;
+  /* keep existing panel styles (background, padding, sticky, etc.) */
+}
+
+.calendar-tagging-panel .single-file-label-editors,
+.calendar-tagging-panel .label-editor-tags {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.tag-picker-chips {
+  width: 100%;
+  box-sizing: border-box;
+  /* existing flex-wrap, gap, min-width: 0 */
+}
+```
+
+Key mechanisms:
+- **`width: 0; min-width: 100%`** — grid item fills the column without adding max-content width to track sizing
+- **`contain: inline-size`** — descendants cannot affect external inline size
+- **`overflow-x: clip`** — chips wrap inside fixed width instead of expanding layout
+
+### 3. Tags section width — [`index.css`](imageOrganizer/frontend/src/index.css)
+
+Tags live in [`.label-editor-tags`](imageOrganizer/frontend/src/components/BulkLabelEditors.tsx) (not inside `CollapsibleSection`, unlike People). Add explicit containment:
+
+```css
+.label-editor-tags {
+  min-width: 0;
+  overflow-x: hidden;
+}
+```
+
+Scoped under `.calendar-tagging-panel` if preferred to avoid side effects elsewhere.
+
+### 4. Optional cleanup — [`BulkLabelEditors.tsx`](imageOrganizer/frontend/src/components/BulkLabelEditors.tsx)
+
+Replace people section inline flex (line ~298) with `className="tag-picker-chips"` for consistency (People already wraps; low risk).
+
+## Out of scope
+
+- Minimum 2-character search threshold
+- Changing page grid to equal columns (`1fr 1fr`)
+
+## Test plan
+
+1. Calendar → day with photos → select photo(s) → note initial left-column width (calendar + wrapped recent tags)
+2. Tag search **1 char** (`t`) → many chips appear **wrapped inside panel**; left column width **unchanged**; no horizontal page scroll
+3. Tag search **2 chars** (`ta`) → same width, wrapped
+4. People section still wraps; November month labels unchanged
+5. Inbox tag picker still works (stack CSS is calendar-scoped via `.calendar-left-stack`)
+
+---
+
+<a id="chapter-114-inbox-autotag-investigation"></a>
+
+## Chapter 114: Inbox autotag investigation
 
 > **Overview:** Investigation of inbox tag recommendations: current gaps, available signals in the existing schema, approach comparison (heuristics vs phash vs ML), and a phased roadmap — no implementation in this phase.
 
@@ -13595,9 +13741,9 @@ Do **not** auto-apply without confirmation (consistent with app’s safe-apply p
 
 ---
 
-<a id="chapter-114-inbox-detail-auto-advance"></a>
+<a id="chapter-115-inbox-detail-auto-advance"></a>
 
-## Chapter 114: Inbox detail auto-advance
+## Chapter 115: Inbox detail auto-advance
 
 > **Overview:** When a photo in Inbox detail view leaves the filtered list (e.g. tagged while on Untagged filter), advance to the next remaining photo instead of closing the detail drawer.
 
@@ -13678,9 +13824,9 @@ Manual in Inbox with **Untagged** filter:
 
 ---
 
-<a id="chapter-115-library-mosaic-save"></a>
+<a id="chapter-116-library-mosaic-save"></a>
 
-## Chapter 115: Library mosaic save
+## Chapter 116: Library mosaic save
 
 > **Overview:** Save generated mosaics under `{archive}/mosaics/`, index them as archive photos, and auto-tag with mosaic so they appear in Browse/Calendar like any library photo.
 
@@ -13754,9 +13900,9 @@ In [`Mosaic.tsx`](frontend/src/pages/Mosaic.tsx), after success: invalidate `["f
 
 ---
 
-<a id="chapter-116-lightbox-tag-fonts"></a>
+<a id="chapter-117-lightbox-tag-fonts"></a>
 
-## Chapter 116: Lightbox tag fonts
+## Chapter 117: Lightbox tag fonts
 
 > **Overview:** Increase typography in the lightbox Tags & people panel only (T overlay), scoped to `.photo-lightbox-tags` so grid/inbox badges stay unchanged.
 
@@ -13825,9 +13971,9 @@ Optional small tweak: bump `.photo-lightbox-tags .badge-remove` to `1rem` so the
 
 ---
 
-<a id="chapter-117-lightbox-tag-overlay"></a>
+<a id="chapter-118-lightbox-tag-overlay"></a>
 
-## Chapter 117: Lightbox tag overlay
+## Chapter 118: Lightbox tag overlay
 
 > **Overview:** Add a toggleable tag-application overlay to the PhotoDetail fullscreen lightbox, shown/hidden with T/t, reusing the existing FileTagPicker search/recent pattern.
 
@@ -13945,9 +14091,9 @@ Add styles near existing `.photo-lightbox` rules:
 
 ---
 
-<a id="chapter-118-people-autotag-options"></a>
+<a id="chapter-119-people-autotag-options"></a>
 
-## Chapter 118: People autotag options
+## Chapter 119: People autotag options
 
 > **Overview:** TABLED — Compare four approaches for inbox people labeling: heuristic suggestions (no ML), face detection, face recognition against known people, and face clustering. Parked for later; no implementation until revisited.
 
@@ -14181,93 +14327,6 @@ No code in this phase — comparison only, per investigation scope.
 
 ---
 
-<a id="chapter-119-persist-collapsible-sections"></a>
-
-## Chapter 119: Persist collapsible sections
-
-> **Overview:** Persist expanded/collapsed state for label-editor sections so user toggles survive remounts (e.g. single ↔ bulk selection, re-renders after label apply). Fix centrally in `CollapsibleSection` with optional localStorage keys shared across editor contexts.
-
-# Persist expanded collapsible sections
-
-## Problem
-
-[`CollapsibleSection.tsx`](frontend/src/components/CollapsibleSection.tsx) stores open state in component-local state:
-
-```tsx
-const [open, setOpen] = useState(defaultOpen);
-```
-
-That state is **lost whenever the component remounts**. In Inbox this happens often:
-
-```mermaid
-flowchart TD
-  selectOne[1 photo selected] --> SingleEditors[SingleFileLabelEditors]
-  selectTwo[2+ photos selected] --> BulkEditors[BulkLabelEditors]
-  selectOne -->|add 2nd checkbox| BulkEditors
-  BulkEditors -->|back to 1 selected| SingleEditors
-  SingleEditors -->|fresh mount| collapsed[Events/People reset to collapsed]
-  BulkEditors -->|fresh mount| collapsed
-```
-
-Other remount triggers: selection cleared then re-selected, navigating away from editors panel, opening/closing detail drawer patterns.
-
-The screenshots match this: People expanded in single-select mode, then collapsed after selection/context changed.
-
-## Solution
-
-Add optional **`persistKey`** to `CollapsibleSection`. When set, read/write open state to `localStorage` (same namespace pattern as [`recentTags.ts`](frontend/src/utils/recentTags.ts): `imageOrganizer.*`).
-
-**Init logic:**
-1. If `persistKey` exists and localStorage has `"true"` / `"false"` → use stored value
-2. Else → use `defaultOpen` (preserves Review’s smart default for first visit)
-
-**On toggle:** write stored value to localStorage.
-
-### Shared keys between single and bulk editors
-
-Use the **same keys** in [`SingleFileLabelEditors.tsx`](frontend/src/components/SingleFileLabelEditors.tsx) and [`BulkLabelEditors.tsx`](frontend/src/components/BulkLabelEditors.tsx) so expanding People while labeling 1 photo stays expanded when a 2nd checkbox is added:
-
-| Section | persistKey |
-|---------|------------|
-| Inbox Events | `imageOrganizer.collapsible.inbox.events` |
-| Inbox People | `imageOrganizer.collapsible.inbox.people` |
-| Photo detail Events | `imageOrganizer.collapsible.photoDetail.events` |
-
-Optional (same component, low cost): Review preview + operations log keys if we want consistent behavior there too.
-
-## Files to change
-
-1. **[`frontend/src/components/CollapsibleSection.tsx`](frontend/src/components/CollapsibleSection.tsx)**
-   - Add `persistKey?: string` prop
-   - Lazy-init `open` from storage
-   - Persist on toggle (try/catch for private mode / quota)
-
-2. **[`frontend/src/components/SingleFileLabelEditors.tsx`](frontend/src/components/SingleFileLabelEditors.tsx)**
-   - Pass `persistKey` to Events and People sections
-
-3. **[`frontend/src/components/BulkLabelEditors.tsx`](frontend/src/components/BulkLabelEditors.tsx)**
-   - Same `persistKey` values as single-file editors
-
-4. **[`frontend/src/components/PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx)**
-   - Pass `persistKey` to Events collapsible section (survives photo-to-photo navigation within detail)
-
-No CSS changes needed.
-
-## Verification
-
-Manual in Inbox:
-1. Select 1 photo → expand **People** → select a 2nd photo → People stays expanded
-2. Collapse **Events** → apply a tag → Events stays collapsed
-3. Clear selection → re-select → expanded sections still expanded (localStorage)
-4. Photo detail: expand Events → next/prev photo → Events stays expanded
-
-## Out of scope
-
-- Reordering Inbox editors to Tags → People → Events (PhotoDetail only was requested earlier; Inbox order unchanged unless you want that next)
-- Collapsing Tags section (Tags remain always visible with search/recent in Inbox)
-
----
-
 <a id="chapter-120-persist-collapsible-sections"></a>
 
 ## Chapter 120: Persist collapsible sections
@@ -14355,9 +14414,96 @@ Manual in Inbox:
 
 ---
 
-<a id="chapter-121-recent-people-like-tags"></a>
+<a id="chapter-121-persist-collapsible-sections"></a>
 
-## Chapter 121: Recent people like tags
+## Chapter 121: Persist collapsible sections
+
+> **Overview:** Persist expanded/collapsed state for label-editor sections so user toggles survive remounts (e.g. single ↔ bulk selection, re-renders after label apply). Fix centrally in `CollapsibleSection` with optional localStorage keys shared across editor contexts.
+
+# Persist expanded collapsible sections
+
+## Problem
+
+[`CollapsibleSection.tsx`](frontend/src/components/CollapsibleSection.tsx) stores open state in component-local state:
+
+```tsx
+const [open, setOpen] = useState(defaultOpen);
+```
+
+That state is **lost whenever the component remounts**. In Inbox this happens often:
+
+```mermaid
+flowchart TD
+  selectOne[1 photo selected] --> SingleEditors[SingleFileLabelEditors]
+  selectTwo[2+ photos selected] --> BulkEditors[BulkLabelEditors]
+  selectOne -->|add 2nd checkbox| BulkEditors
+  BulkEditors -->|back to 1 selected| SingleEditors
+  SingleEditors -->|fresh mount| collapsed[Events/People reset to collapsed]
+  BulkEditors -->|fresh mount| collapsed
+```
+
+Other remount triggers: selection cleared then re-selected, navigating away from editors panel, opening/closing detail drawer patterns.
+
+The screenshots match this: People expanded in single-select mode, then collapsed after selection/context changed.
+
+## Solution
+
+Add optional **`persistKey`** to `CollapsibleSection`. When set, read/write open state to `localStorage` (same namespace pattern as [`recentTags.ts`](frontend/src/utils/recentTags.ts): `imageOrganizer.*`).
+
+**Init logic:**
+1. If `persistKey` exists and localStorage has `"true"` / `"false"` → use stored value
+2. Else → use `defaultOpen` (preserves Review’s smart default for first visit)
+
+**On toggle:** write stored value to localStorage.
+
+### Shared keys between single and bulk editors
+
+Use the **same keys** in [`SingleFileLabelEditors.tsx`](frontend/src/components/SingleFileLabelEditors.tsx) and [`BulkLabelEditors.tsx`](frontend/src/components/BulkLabelEditors.tsx) so expanding People while labeling 1 photo stays expanded when a 2nd checkbox is added:
+
+| Section | persistKey |
+|---------|------------|
+| Inbox Events | `imageOrganizer.collapsible.inbox.events` |
+| Inbox People | `imageOrganizer.collapsible.inbox.people` |
+| Photo detail Events | `imageOrganizer.collapsible.photoDetail.events` |
+
+Optional (same component, low cost): Review preview + operations log keys if we want consistent behavior there too.
+
+## Files to change
+
+1. **[`frontend/src/components/CollapsibleSection.tsx`](frontend/src/components/CollapsibleSection.tsx)**
+   - Add `persistKey?: string` prop
+   - Lazy-init `open` from storage
+   - Persist on toggle (try/catch for private mode / quota)
+
+2. **[`frontend/src/components/SingleFileLabelEditors.tsx`](frontend/src/components/SingleFileLabelEditors.tsx)**
+   - Pass `persistKey` to Events and People sections
+
+3. **[`frontend/src/components/BulkLabelEditors.tsx`](frontend/src/components/BulkLabelEditors.tsx)**
+   - Same `persistKey` values as single-file editors
+
+4. **[`frontend/src/components/PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx)**
+   - Pass `persistKey` to Events collapsible section (survives photo-to-photo navigation within detail)
+
+No CSS changes needed.
+
+## Verification
+
+Manual in Inbox:
+1. Select 1 photo → expand **People** → select a 2nd photo → People stays expanded
+2. Collapse **Events** → apply a tag → Events stays collapsed
+3. Clear selection → re-select → expanded sections still expanded (localStorage)
+4. Photo detail: expand Events → next/prev photo → Events stays expanded
+
+## Out of scope
+
+- Reordering Inbox editors to Tags → People → Events (PhotoDetail only was requested earlier; Inbox order unchanged unless you want that next)
+- Collapsing Tags section (Tags remain always visible with search/recent in Inbox)
+
+---
+
+<a id="chapter-122-recent-people-like-tags"></a>
+
+## Chapter 122: Recent people like tags
 
 > **Overview:** Add a localStorage-backed "Recently used" section for people pickers, mirroring the existing tag pattern in `FileTagPicker` and `BulkLabelEditors`.
 
@@ -14435,9 +14581,9 @@ Under `[Unreleased]` → **Added**: Recently used people chips in single and bul
 
 ---
 
-<a id="chapter-122-release-20260710"></a>
+<a id="chapter-123-release-20260710"></a>
 
-## Chapter 122: Release 2026.07.10
+## Chapter 123: Release 2026.07.10
 
 > **Overview:** Document the SQLite lock fix in the development book and CHANGELOG, bump version strings to 2026.07.10, regenerate DEVELOPMENT_BOOK.md, then commit, tag, and push the release.
 
@@ -14522,9 +14668,9 @@ flowchart LR
 
 ---
 
-<a id="chapter-123-release-20260712b"></a>
+<a id="chapter-124-release-20260712b"></a>
 
-## Chapter 123: Release 2026.07.12b
+## Chapter 124: Release 2026.07.12b
 
 > **Overview:** Document the month-selectable photo grid feature, bump version strings to 2026.07.12b, regenerate the development book, then commit and tag the release.
 
@@ -14616,9 +14762,9 @@ Branch is currently **3 commits ahead** of `origin/main` (2026.07.11e, 2026.07.1
 
 ---
 
-<a id="chapter-124-release-20260714"></a>
+<a id="chapter-125-release-20260714"></a>
 
-## Chapter 124: Release 2026.07.14
+## Chapter 125: Release 2026.07.14
 
 > **Overview:** Ship the Browse AND intersection work (tags, people, cameras) as release **2026.07.14**: finalize CHANGELOG/README/versions, register plans and rebuild the development book, then commit, tag, and push to origin.
 
@@ -14689,9 +14835,9 @@ Push is included so the release is on origin (branch is currently even with `ori
 
 ---
 
-<a id="chapter-125-release-20260714"></a>
+<a id="chapter-126-release-20260714"></a>
 
-## Chapter 125: Release 2026.07.14
+## Chapter 126: Release 2026.07.14
 
 > **Overview:** Phase 1 (now): fix calendar day 500 from unresolved camera Query default. Phase 2 (after confirm): docs, version bump, commit/tag/push 2026.07.14.
 
@@ -14755,9 +14901,9 @@ Commit, tag `2026.07.14`, push HEAD + tag to origin.
 
 ---
 
-<a id="chapter-126-review-restore-deletes"></a>
+<a id="chapter-127-review-restore-deletes"></a>
 
-## Chapter 126: Review restore deletes
+## Chapter 127: Review restore deletes
 
 > **Overview:** Add per-item and bulk Restore for delete decisions on the Review page, reusing the existing `cancelReviewDecisions` API and `PhotoDetail` delete-queue mode already used in Inbox.
 
@@ -14900,9 +15046,9 @@ Add under `[Unreleased]` → **Added** in [`CHANGELOG.md`](imageOrganizer/CHANGE
 
 ---
 
-<a id="chapter-127-slim-inbox-delete-refetch"></a>
+<a id="chapter-128-slim-inbox-delete-refetch"></a>
 
-## Chapter 127: Slim inbox delete refetch
+## Chapter 128: Slim inbox delete refetch
 
 > **Overview:** Mark-delete does not need the full invalidateAfterReviewChange burst. Narrow that helper so Inbox only refetches what a delete decision actually changes.
 
@@ -14956,9 +15102,9 @@ Mark delete in Inbox detail → logs show files + pending_delete count + review-
 
 ---
 
-<a id="chapter-128-throttle-inbox-scan-refetch"></a>
+<a id="chapter-129-throttle-inbox-scan-refetch"></a>
 
-## Chapter 128: Throttle inbox scan refetch
+## Chapter 129: Throttle inbox scan refetch
 
 > **Overview:** Stop reloading the full Inbox grid every few seconds during a scan. Keep lightweight status polling; refresh the grid once when the scan finishes (plus a much rarer mid-scan update if useful).
 
@@ -15022,9 +15168,9 @@ Same component handles trash: remove mid-scan trash list refetch; completion eff
 
 ---
 
-<a id="chapter-129-trash-view-and-restore"></a>
+<a id="chapter-130-trash-view-and-restore"></a>
 
-## Chapter 129: Trash view and restore
+## Chapter 130: Trash view and restore
 
 > **Overview:** Add a Trash page listing files in `.trash/`, with scan and restore back to the original location (from operations log). Requires soft-delete in apply (keep DB rows with location=trash) plus a small schema migration and new API endpoints.
 

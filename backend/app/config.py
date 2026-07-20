@@ -1,9 +1,10 @@
-import os
 from pathlib import Path
 from typing import Literal
 
-MEDIA_ROOT = Path(os.environ.get("MEDIA_ROOT", "/Users/alex/Media"))
-APP_DATA_DIR = Path(os.environ.get("APP_DATA_DIR", str(Path.home() / ".imageOrganizer")))
+from app.library_migrate import resolve_app_data_dir, resolve_media_root
+
+MEDIA_ROOT = resolve_media_root()
+APP_DATA_DIR = resolve_app_data_dir(MEDIA_ROOT)
 
 INBOX_PATH = MEDIA_ROOT / "inbox"
 ARCHIVE_PATH = MEDIA_ROOT / "photos"
@@ -57,3 +58,4 @@ def ensure_media_dirs() -> None:
 def ensure_app_dirs() -> None:
     APP_DATA_DIR.mkdir(parents=True, exist_ok=True)
     THUMBS_DIR.mkdir(parents=True, exist_ok=True)
+    BACKUPS_DIR.mkdir(parents=True, exist_ok=True)

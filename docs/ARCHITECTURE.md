@@ -8,7 +8,7 @@ Local-first web app for organizing photos and videos: inbox landing folder, cale
 
 - **Preview before write** — filesystem changes happen only when the user clicks Apply on the Review page.
 - **Trash, not delete** — removed files move to `.trash/` under the media root.
-- **Index separate from media** — SQLite and thumbnails live in `APP_DATA_DIR`; photos/videos stay on disk in user-controlled folders.
+- **Library root** — media (`inbox` / `photos` / `.trash`) and catalog (`.imageOrganizer/` with DB + thumbs) share one `MEDIA_ROOT` by default so the whole library can move to another drive. Override `APP_DATA_DIR` (env) to keep the catalog on a separate disk.
 - **Single machine** — no auth layer; intended for personal use on localhost or LAN.
 
 ## System context
@@ -17,15 +17,16 @@ Local-first web app for organizing photos and videos: inbox landing folder, cale
 flowchart TB
   User[User browser] --> Frontend["React Vite :5173"]
   Frontend -->|"/api proxy"| Backend["FastAPI :8000"]
-  Backend --> SQLite["SQLite ~/.imageOrganizer/index.db"]
-  Backend --> Thumbs["Thumbnails ~/.imageOrganizer/thumbs"]
-  Backend --> Media["Media volume /media"]
+  Backend --> SQLite["SQLite MEDIA/.imageOrganizer/index.db"]
+  Backend --> Thumbs["Thumbnails MEDIA/.imageOrganizer/thumbs"]
+  Backend --> Media["Media volume"]
   Media --> Inbox[inbox/]
   Media --> Archive[photos/]
   Media --> Trash[.trash/]
+  Media --> Catalog[.imageOrganizer/]
 ```
 
-In Docker, the frontend dev server proxies `/api` to the backend. Host paths are mounted via `docker-compose.yml` (`MEDIA_HOST_PATH`, `APP_DATA_HOST_PATH`).
+In Docker, the frontend dev server proxies `/api` to the backend. Host media is mounted via `docker-compose.yml` (`MEDIA_HOST_PATH` → `/media`); catalog defaults to `/media/.imageOrganizer`.
 
 ## Tech stack
 
@@ -130,7 +131,7 @@ API list responses enrich entities with counts and nested relations. `FileOut` i
 
 ## Filesystem layout
 
-Configured in `backend/app/config.py` (overridable via Settings UI → `config` table):
+Configured in `backend/app/config.py` (inbox/archive/trash also overridable via Settings → `config` table):
 
 | Path | Role |
 |------|------|
@@ -138,14 +139,15 @@ Configured in `backend/app/config.py` (overridable via Settings UI → `config` 
 | `{MEDIA_ROOT}/photos/` | Organized archive (date-based subfolders after Apply) |
 | `{MEDIA_ROOT}/photos/mosaics/` | Generated photomosaic JPEGs (indexed + tagged `mosaic`) |
 | `{MEDIA_ROOT}/.trash/` | Soft-deleted files |
-| `{APP_DATA_DIR}/index.db` | SQLite database |
-| `{APP_DATA_DIR}/backups/` | Timestamped database backups (`index-YYYY-MM-DD_HH-MM-SS.db`) |
-| `{APP_DATA_DIR}/thumbs/` | Cached JPEG thumbnails (keyed by file id + mtime) |
+| `{MEDIA_ROOT}/.imageOrganizer/` | Default catalog (co-located): `index.db`, `thumbs/`, `backups/` |
+| `{APP_DATA_DIR}/` | Catalog location (defaults to `{MEDIA_ROOT}/.imageOrganizer`; override via env or bootstrap) |
 
-Environment variables:
+Environment / bootstrap (resolve order: **env →** `~/.config/imageOrganizer/bootstrap.json` **→ defaults**):
 
-- `MEDIA_ROOT` — media tree root (default `/Users/alex/Media`, `/media` in Docker)
-- `APP_DATA_DIR` — app state (default `~/.imageOrganizer`, `/data` in Docker)
+- `MEDIA_ROOT` — library root (default `/Users/alex/Media`, `/media` in Docker)
+- `APP_DATA_DIR` — catalog (default `{MEDIA_ROOT}/.imageOrganizer`)
+
+**Migrate to another drive:** copy the whole `{MEDIA_ROOT}` tree, run `python backend/scripts/migrate_library.py --from OLD --to NEW` if stored paths change, then point `MEDIA_ROOT` / bootstrap at the new root (or use Settings → **Move library**). Docker installs that keep DB paths as `/media/...` often only need a new `MEDIA_HOST_PATH`.
 
 Supported media: common image formats (JPEG, PNG, HEIC, WebP, TIFF) and video (MP4, MOV, MKV, WebM, AVI).
 

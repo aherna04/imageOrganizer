@@ -1,7 +1,6 @@
 import threading
 from pathlib import Path
 
-from app.config import ARCHIVE_PATH, INBOX_PATH
 from app.db import get_config, get_conn
 from app.dedupe import start_dedupe_rebuild_background
 from app.metadata import (
@@ -106,10 +105,10 @@ def _location_for_scope(scope: str) -> str:
 
 def _scan_root(scope: str, cfg: dict[str, str]) -> Path:
     if scope == "inbox":
-        return INBOX_PATH
+        return Path(cfg["inbox_path"])
     if scope == "trash":
         return Path(cfg["trash_path"])
-    return ARCHIVE_PATH
+    return Path(cfg["archive_path"])
 
 
 def _upsert_file(conn, path: Path, location: str) -> None:

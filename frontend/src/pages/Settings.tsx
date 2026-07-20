@@ -16,6 +16,8 @@ function formatBackupTime(iso: string): string {
 export default function Settings() {
   const qc = useQueryClient();
   const [backupMessage, setBackupMessage] = useState<string | null>(null);
+  const [moveRoot, setMoveRoot] = useState("");
+  const [moveMessage, setMoveMessage] = useState<string | null>(null);
 
   const { data: config } = useQuery({
     queryKey: ["config"],
@@ -30,6 +32,12 @@ export default function Settings() {
   const { data: backupsData } = useQuery({
     queryKey: ["database-backups"],
     queryFn: api.listDatabaseBackups,
+  });
+
+  const { data: moveStatus } = useQuery({
+    queryKey: ["library-move-status"],
+    queryFn: api.moveLibraryStatus,
+    refetchInterval: (q) => (q.state.data?.running ? 1500 : false),
   });
 
   const [form, setForm] = useState<Record<string, string>>({});
@@ -55,10 +63,23 @@ export default function Settings() {
     },
   });
 
+  const moveLibrary = useMutation({
+    mutationFn: () => api.moveLibrary(moveRoot.trim()),
+    onSuccess: () => {
+      setMoveMessage(null);
+      qc.invalidateQueries({ queryKey: ["library-move-status"] });
+    },
+    onError: (err: Error) => {
+      setMoveMessage(err.message || "Library move failed");
+    },
+  });
+
   if (!config) return <div>Loading...</div>;
 
-  const val = (key: keyof typeof config) => form[key] ?? config[key];
+  const val = (key: keyof typeof config) =>
+    (form[key as string] as string | undefined) ?? String(config[key] ?? "");
   const backups = (backupsData?.items ?? []).slice(0, 10);
+  const moveBusy = moveLibrary.isPending || !!moveStatus?.running;
 
   return (
     <div>
@@ -182,51 +203,95 @@ export default function Settings() {
 
       <section className="settings-section">
         <h3 className="settings-section-title">Paths & patterns</h3>
-      <div className="settings-grid">
-        <div className="form-group">
-          <label>Inbox path</label>
-          <input
-            value={val("inbox_path")}
-            onChange={(e) => setForm({ ...form, inbox_path: e.target.value })}
-          />
+        <p className="settings-section-desc">
+          Library root: <code className="path">{config.media_root ?? "—"}</code>
+          <br />
+          Catalog (DB + thumbs): <code className="path">{config.app_data_dir ?? "—"}</code>
+        </p>
+        <div className="settings-grid">
+          <div className="form-group">
+            <label>Inbox path</label>
+            <input
+              value={val("inbox_path")}
+              onChange={(e) => setForm({ ...form, inbox_path: e.target.value })}
+            />
+          </div>
+          <div className="form-group">
+            <label>Archive path</label>
+            <input
+              value={val("archive_path")}
+              onChange={(e) => setForm({ ...form, archive_path: e.target.value })}
+            />
+          </div>
+          <div className="form-group">
+            <label>Trash path</label>
+            <input
+              value={val("trash_path")}
+              onChange={(e) => setForm({ ...form, trash_path: e.target.value })}
+            />
+          </div>
+          <div className="form-group">
+            <label>Date folder pattern</label>
+            <input
+              value={val("date_pattern")}
+              onChange={(e) => setForm({ ...form, date_pattern: e.target.value })}
+            />
+            <small style={{ color: "#8891a0" }}>Tokens: {"{YYYY}"} {"{MM}"} {"{DD}"}</small>
+          </div>
+          <div className="form-group">
+            <label>Rename pattern</label>
+            <input
+              value={val("rename_pattern")}
+              onChange={(e) => setForm({ ...form, rename_pattern: e.target.value })}
+            />
+            <small style={{ color: "#8891a0" }}>
+              Tokens: {"{YYYY}"} {"{MM}"} {"{DD}"} {"{original}"} {"{camera}"} {"{seq:4}"}
+            </small>
+          </div>
+          <button className="btn" onClick={() => save.mutate()} disabled={save.isPending}>
+            Save settings
+          </button>
         </div>
-        <div className="form-group">
-          <label>Archive path</label>
-          <input
-            value={val("archive_path")}
-            onChange={(e) => setForm({ ...form, archive_path: e.target.value })}
-          />
+      </section>
+
+      <section className="settings-section">
+        <h3 className="settings-section-title">Move library</h3>
+        <p className="settings-section-desc">
+          Copy the library (inbox, photos, trash, and catalog) to a new folder or drive, rewrite paths, then
+          restart the app. Prefer stopping other scans first. Large libraries take time.
+        </p>
+        <div className="settings-grid">
+          <div className="form-group">
+            <label>New media root</label>
+            <input
+              value={moveRoot}
+              onChange={(e) => setMoveRoot(e.target.value)}
+              placeholder="/Volumes/BigDisk/Media"
+              disabled={moveBusy}
+            />
+          </div>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            disabled={moveBusy || !moveRoot.trim()}
+            onClick={() => {
+              setMoveMessage(null);
+              moveLibrary.mutate();
+            }}
+          >
+            {moveBusy ? "Moving…" : "Move library"}
+          </button>
+          {(moveStatus?.message || moveMessage) && (
+            <p className="database-backup-message" style={{ color: moveStatus?.error ? "#f87171" : undefined }}>
+              {moveStatus?.error || moveStatus?.message || moveMessage}
+            </p>
+          )}
+          {moveStatus?.restart_required && (
+            <p className="settings-section-desc">Restart the backend (or Docker Compose) to use the new location.</p>
+          )}
         </div>
-        <div className="form-group">
-          <label>Trash path</label>
-          <input
-            value={val("trash_path")}
-            onChange={(e) => setForm({ ...form, trash_path: e.target.value })}
-          />
-        </div>
-        <div className="form-group">
-          <label>Date folder pattern</label>
-          <input
-            value={val("date_pattern")}
-            onChange={(e) => setForm({ ...form, date_pattern: e.target.value })}
-          />
-          <small style={{ color: "#8891a0" }}>Tokens: {"{YYYY}"} {"{MM}"} {"{DD}"}</small>
-        </div>
-        <div className="form-group">
-          <label>Rename pattern</label>
-          <input
-            value={val("rename_pattern")}
-            onChange={(e) => setForm({ ...form, rename_pattern: e.target.value })}
-          />
-          <small style={{ color: "#8891a0" }}>
-            Tokens: {"{YYYY}"} {"{MM}"} {"{DD}"} {"{original}"} {"{camera}"} {"{seq:4}"}
-          </small>
-        </div>
-        <button className="btn" onClick={() => save.mutate()} disabled={save.isPending}>
-          Save settings
-        </button>
-      </div>
       </section>
     </div>
   );
 }
+

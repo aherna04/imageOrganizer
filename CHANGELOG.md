@@ -4,6 +4,20 @@ Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
 ## [Unreleased]
 
+## [2026.07.19d] - 2026-07-19
+
+### Added
+
+- Library co-location: catalog defaults to `{MEDIA_ROOT}/.imageOrganizer/` (DB, thumbs, backups) so one media root can be copied to a new drive
+- `backend/scripts/migrate_library.py` — rewrite absolute path prefixes after a library copy
+- Settings → **Move library** — copy library to a new media root, rewrite paths, write bootstrap; restart required
+- Startup relocates legacy `~/.imageOrganizer` into `{MEDIA_ROOT}/.imageOrganizer` when the co-located catalog is empty
+
+### Changed
+
+- Inbox/archive scan uses Settings paths (`inbox_path` / `archive_path`), same as Apply
+- Docker Compose mounts a single media volume; `APP_DATA_DIR` defaults to `/media/.imageOrganizer` (override via env for a separate SSD)
+
 ## [2026.07.19c] - 2026-07-19
 
 ### Fixed

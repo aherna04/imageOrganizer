@@ -25,8 +25,8 @@ def main() -> int:
     parser.add_argument(
         "--db",
         type=Path,
-        default=Path.home() / ".imageOrganizer" / "index.db",
-        help="Path to index.db (default: ~/.imageOrganizer/index.db)",
+        default=Path.home() / "Media" / ".imageOrganizer" / "index.db",
+        help="Path to index.db (default: ~/Media/.imageOrganizer/index.db)",
     )
     args = parser.parse_args()
 

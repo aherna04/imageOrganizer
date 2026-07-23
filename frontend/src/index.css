@@ -1115,6 +1115,12 @@ button.calendar-month-column-title:focus-visible {
   padding: 1rem;
 }
 
+.duplicates-merge-hint {
+  margin: 0 0 1rem;
+  color: #8891a0;
+  font-size: 0.85rem;
+}
+
 .duplicate-group-header {
   display: flex;
   align-items: center;
@@ -1171,6 +1177,13 @@ button.calendar-month-column-title:focus-visible {
 .duplicate-file-size-largest {
   color: #86efac;
   font-weight: 600;
+}
+
+.duplicate-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-top: 0.35rem;
 }
 
 .duplicate-card-actions {

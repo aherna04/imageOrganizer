@@ -390,9 +390,14 @@ export const api = {
     );
   },
 
-  calendarMonths: (location = "archive", mediaType: CalendarMediaType = "all") => {
+  calendarMonths: (
+    location = "archive",
+    mediaType: CalendarMediaType = "all",
+    unlabeled = false,
+  ) => {
     const q = new URLSearchParams({ location });
     appendMediaType(q, mediaType);
+    if (unlabeled) q.set("unlabeled", "true");
     return request<{ months: CalendarMonthSummary[] }>(`/api/calendar/months?${q}`);
   },
 

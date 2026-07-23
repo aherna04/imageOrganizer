@@ -1,6 +1,6 @@
 {
   "title": "Image Organizer — Development Book",
-  "version": "2026.07.19e",
+  "version": "2026.07.23",
   "output": "docs/DEVELOPMENT_BOOK.md",
   "plans_dir": "~/.cursor/plans",
   "related_links": "[ARCHITECTURE.md](ARCHITECTURE.md) · [CHANGELOG.md](../CHANGELOG.md)",
@@ -36,7 +36,8 @@
         "calendar_year_tag_filter_354e78e9",
         "year_filter_photo_grid_68ead783",
         "month_photo_grid_3bcc9c99",
-        "fix_calendar_grid_selection_4d2466d2"
+        "fix_calendar_grid_selection_4d2466d2",
+        "calendar_untagged_months_3b2d6809"
       ]
     },
     {
@@ -117,7 +118,8 @@
         "fix_orphan_tag_counts_565594c4",
         "fix_sqlite_lock_errors_2e08c386",
         "fix_remaining_scan_locks_19d50a6c",
-        "unblock_calendar_during_dedupe_42d0e137"
+        "unblock_calendar_during_dedupe_42d0e137",
+        "show_dup_card_tags_eff4e889"
       ]
     },
     {
@@ -158,6 +160,12 @@
     },
     "cut_tag_refetch_storm_c31fe440": {
       "note": "Duplicate of `cut_tag_refetch_storm_8dda7fb5`."
+    },
+    "calendar_untagged_months_2356fccd": {
+      "note": "Duplicate of `calendar_untagged_months_3b2d6809`."
+    },
+    "show_dup_card_tags_0aa9e23a": {
+      "note": "Duplicate of `show_dup_card_tags_eff4e889`."
     }
   }
 }

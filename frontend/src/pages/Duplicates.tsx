@@ -89,6 +89,10 @@ export default function Duplicates() {
         </button>
       </div>
 
+      {groups.length > 0 && (
+        <p className="duplicates-merge-hint">Deleting merges tags onto the kept file.</p>
+      )}
+
       {groups.length === 0 && (
         <div className="empty-state">No duplicate groups found. Scan inbox or archive to detect duplicates.</div>
       )}
@@ -139,6 +143,7 @@ export default function Duplicates() {
                 const isMarked = groupMarks?.has(file.id) ?? false;
                 const isQueued = queuedDeleteIds.has(file.id);
                 const isLargest = group.files.length > 1 && file.size === largestSize;
+                const tags = file.tags ?? [];
                 const cardClass = [
                   "photo-card",
                   isKeeper && "duplicate-keeper",
@@ -170,6 +175,15 @@ export default function Duplicates() {
                       {formatFileSize(file.size)}
                       {isLargest && " · largest"}
                     </div>
+                    {tags.length > 0 && (
+                      <div className="duplicate-card-tags">
+                        {tags.map((t) => (
+                          <span key={t.id} className="badge tag-badge">
+                            {t.name}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                     <div className="duplicate-card-actions">
                       <button
                         className={`btn btn-secondary${isKeeper ? " duplicate-keeper-btn" : ""}`}

@@ -113,7 +113,7 @@ from app.scanner import combined_scan_status, scan_state, start_scan_background
 from app.blur_analysis import blur_analysis_state, start_blur_analysis_background
 from app.trash_restore import restore_from_trash
 
-app = FastAPI(title="Image Organizer", version="2026.07.19e")
+app = FastAPI(title="Image Organizer", version="2026.07.23")
 
 app.add_middleware(
     CORSMiddleware,
@@ -715,6 +715,7 @@ def api_fix_dates_from_filename(body: FixDatesFromFilenameIn):
 def api_calendar_months(
     location: str = Query("archive"),
     media_type: Literal["image", "video"] | None = None,
+    unlabeled: bool = Query(False),
 ):
     with get_conn() as conn:
         clauses = ["capture_day IS NOT NULL"]
@@ -723,6 +724,8 @@ def api_calendar_months(
             clauses.append("location = 'archive'")
         elif location == "inbox":
             clauses.append("location = 'inbox'")
+        if unlabeled:
+            clauses.append(_unlabeled_clause(""))
         append_media_type_filter(clauses, params, "filename", media_type)
         where = " AND ".join(clauses)
         rows = conn.execute(

@@ -73,8 +73,8 @@ export default function CalendarPage() {
 
   const { data: monthsData } = useQuery(
     calendarQueryOptions({
-      queryKey: ["calendar-months", location, mediaType],
-      queryFn: () => api.calendarMonths(location, mediaType),
+      queryKey: ["calendar-months", location, mediaType, globalUnlabeled],
+      queryFn: () => api.calendarMonths(location, mediaType, globalUnlabeled),
     }),
   );
 

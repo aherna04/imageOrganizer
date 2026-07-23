@@ -4,6 +4,13 @@ Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
 ## [Unreleased]
 
+## [2026.07.23] - 2026-07-23
+
+### Added
+
+- Calendar **Untagged** filter limits the month card list to months that have untagged photos (`/api/calendar/months?unlabeled=true`)
+- Duplicates cards show each file’s tags (read-only) and note that deleting merges tags onto the kept file
+
 ## [2026.07.19e] - 2026-07-19
 
 ### Fixed

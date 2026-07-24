@@ -1,14 +1,15 @@
 ---
 name: development-book
 description: >-
-  Add Cursor implementation plans to docs/DEVELOPMENT_BOOK.md for Image Organizer
-  using cursor-book. Use when the user asks to add a plan to the book, regenerate
-  the development book, collect plans, or update DEVELOPMENT_BOOK.md after completing a feature plan.
+  Add Cursor implementation plans to docs/DEVELOPMENT_BOOK.md and
+  docs/DEVELOPMENT_BOOK.html for Image Organizer using cursor-book. Use when
+  the user asks to add a plan to the book, regenerate the development book,
+  collect plans, or update DEVELOPMENT_BOOK.md after completing a feature plan.
 ---
 
 # Development Book (Image Organizer)
 
-Consolidates Cursor `.plan.md` files into [`docs/DEVELOPMENT_BOOK.md`](../../docs/DEVELOPMENT_BOOK.md) via [cursor-book](https://github.com/aherna04/cursor-book) (`tools/cursor-book/`). Config: [`book.json`](../../book.json) at repo root.
+Consolidates Cursor `.plan.md` files into [`docs/DEVELOPMENT_BOOK.md`](../../docs/DEVELOPMENT_BOOK.md) and sibling [`docs/DEVELOPMENT_BOOK.html`](../../docs/DEVELOPMENT_BOOK.html) via [cursor-book](https://github.com/aherna04/cursor-book) (`tools/cursor-book/`). Config: [`book.json`](../../book.json) at repo root.
 
 For generic workflow details, see `tools/cursor-book/skills/development-book/SKILL.md`.
 
@@ -25,6 +26,7 @@ For generic workflow details, see `tools/cursor-book/skills/development-book/SKI
 - [ ] Sync plan file to .cursor/plans/ (optional)
 - [ ] Regenerate the book
 - [ ] Verify chapter appears in TOC
+- [ ] Confirm HTML sibling was written
 ```
 
 ### 1. Find the plan stem
@@ -56,17 +58,20 @@ From repo root:
 python3 scripts/build_development_book.py
 ```
 
+Expect both `Wrote docs/DEVELOPMENT_BOOK.md` and `Wrote docs/DEVELOPMENT_BOOK.html`.
+
 Update `version` in `book.json` when cutting a release.
 
 ### 4. Verify
 
 ```bash
 grep -n "Plan Name Here" docs/DEVELOPMENT_BOOK.md | head -3
+ls docs/DEVELOPMENT_BOOK.html
 ```
 
 ## Do not
 
-- Edit `docs/DEVELOPMENT_BOOK.md` by hand — always regenerate
+- Edit `docs/DEVELOPMENT_BOOK.md` or `docs/DEVELOPMENT_BOOK.html` by hand — always regenerate
 - Commit `.cursor/plans/` (gitignored)
 
 ## Submodule

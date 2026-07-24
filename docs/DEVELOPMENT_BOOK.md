@@ -124,48 +124,82 @@ This book collects the Cursor agent implementation plans written while building 
 
 ### Appendix — Unlisted Plans
 
-92. [Blur feature documentation](#chapter-92-blur-feature-documentation)
-93. [Blurry image detection](#chapter-93-blurry-image-detection)
-94. [Blurry scroll and nav](#chapter-94-blurry-scroll-and-nav)
-95. [Book update and release](#chapter-95-book-update-and-release)
-96. [Browse cameras subset](#chapter-96-browse-cameras-subset)
-97. [Browse multi-tag AND](#chapter-97-browse-multi-tag-and)
-98. [Browse subset people fix](#chapter-98-browse-subset-people-fix)
-99. [Calendar day pagination](#chapter-99-calendar-day-pagination)
-100. [Calendar global untagged](#chapter-100-calendar-global-untagged)
-101. [Calendar tagging bottom-left](#chapter-101-calendar-tagging-bottom-left)
-102. [Calendar untagged edit mode](#chapter-102-calendar-untagged-edit-mode)
-103. [Calendar untagged filter](#chapter-103-calendar-untagged-filter)
-104. [Cursor book tool repo](#chapter-104-cursor-book-tool-repo)
-105. [Database datetime backups](#chapter-105-database-datetime-backups)
-106. [Detail applied labels](#chapter-106-detail-applied-labels)
-107. [Detail applied labels](#chapter-107-detail-applied-labels)
-108. [Fix blocked scan clicks](#chapter-108-fix-blocked-scan-clicks)
-109. [Fix blur detection threshold](#chapter-109-fix-blur-detection-threshold)
-110. [Fix calendar tag search layout](#chapter-110-fix-calendar-tag-search-layout)
-111. [Fix camera model order](#chapter-111-fix-camera-model-order)
-112. [Fix label data loss](#chapter-112-fix-label-data-loss)
-113. [Fix lightbox scale-to-fit](#chapter-113-fix-lightbox-scale-to-fit)
-114. [Fix mosaic navigation](#chapter-114-fix-mosaic-navigation)
-115. [Fix tag wrap blowout](#chapter-115-fix-tag-wrap-blowout)
-116. [Fix tag wrap blowout](#chapter-116-fix-tag-wrap-blowout)
-117. [Inbox autotag investigation](#chapter-117-inbox-autotag-investigation)
-118. [Inbox detail auto-advance](#chapter-118-inbox-detail-auto-advance)
-119. [Library mosaic save](#chapter-119-library-mosaic-save)
-120. [Lightbox tag fonts](#chapter-120-lightbox-tag-fonts)
-121. [Lightbox tag overlay](#chapter-121-lightbox-tag-overlay)
-122. [People autotag options](#chapter-122-people-autotag-options)
-123. [Persist collapsible sections](#chapter-123-persist-collapsible-sections)
-124. [Persist collapsible sections](#chapter-124-persist-collapsible-sections)
-125. [Recent people like tags](#chapter-125-recent-people-like-tags)
-126. [Release 2026.07.10](#chapter-126-release-20260710)
-127. [Release 2026.07.12b](#chapter-127-release-20260712b)
-128. [Release 2026.07.14](#chapter-128-release-20260714)
-129. [Release 2026.07.14](#chapter-129-release-20260714)
-130. [Review restore deletes](#chapter-130-review-restore-deletes)
-131. [Slim inbox delete refetch](#chapter-131-slim-inbox-delete-refetch)
-132. [Throttle inbox scan refetch](#chapter-132-throttle-inbox-scan-refetch)
-133. [Trash view and restore](#chapter-133-trash-view-and-restore)
+92. [Add major US hubs](#chapter-92-add-major-us-hubs)
+93. [Add major US hubs](#chapter-93-add-major-us-hubs)
+94. [Add Northeast regionals](#chapter-94-add-northeast-regionals)
+95. [Add Northeast regionals](#chapter-95-add-northeast-regionals)
+96. [Add plane type to results](#chapter-96-add-plane-type-to-results)
+97. [Add plane type to results](#chapter-97-add-plane-type-to-results)
+98. [Blur feature documentation](#chapter-98-blur-feature-documentation)
+99. [Blurry image detection](#chapter-99-blurry-image-detection)
+100. [Blurry scroll and nav](#chapter-100-blurry-scroll-and-nav)
+101. [Book update and release](#chapter-101-book-update-and-release)
+102. [Browse cameras subset](#chapter-102-browse-cameras-subset)
+103. [Browse multi-tag AND](#chapter-103-browse-multi-tag-and)
+104. [Browse subset people fix](#chapter-104-browse-subset-people-fix)
+105. [Calendar day pagination](#chapter-105-calendar-day-pagination)
+106. [Calendar global untagged](#chapter-106-calendar-global-untagged)
+107. [Calendar tagging bottom-left](#chapter-107-calendar-tagging-bottom-left)
+108. [Calendar untagged edit mode](#chapter-108-calendar-untagged-edit-mode)
+109. [Calendar untagged filter](#chapter-109-calendar-untagged-filter)
+110. [Clone datefare repo](#chapter-110-clone-datefare-repo)
+111. [Clone datefare repo](#chapter-111-clone-datefare-repo)
+112. [Connection airport icons](#chapter-112-connection-airport-icons)
+113. [Connection airport icons](#chapter-113-connection-airport-icons)
+114. [cursor-book development book](#chapter-114-cursor-book-development-book)
+115. [cursor-book development book](#chapter-115-cursor-book-development-book)
+116. [Cursor book tool repo](#chapter-116-cursor-book-tool-repo)
+117. [Database datetime backups](#chapter-117-database-datetime-backups)
+118. [Detail applied labels](#chapter-118-detail-applied-labels)
+119. [Detail applied labels](#chapter-119-detail-applied-labels)
+120. [Dockerize datefare app](#chapter-120-dockerize-datefare-app)
+121. [Dockerize datefare app](#chapter-121-dockerize-datefare-app)
+122. [Docs commit and PR](#chapter-122-docs-commit-and-pr)
+123. [Docs commit and PR](#chapter-123-docs-commit-and-pr)
+124. [Expand Plattsburgh regionals](#chapter-124-expand-plattsburgh-regionals)
+125. [Expand Plattsburgh regionals](#chapter-125-expand-plattsburgh-regionals)
+126. [Fix blocked scan clicks](#chapter-126-fix-blocked-scan-clicks)
+127. [Fix blur detection threshold](#chapter-127-fix-blur-detection-threshold)
+128. [Fix calendar tag search layout](#chapter-128-fix-calendar-tag-search-layout)
+129. [Fix camera model order](#chapter-129-fix-camera-model-order)
+130. [Fix fast-flights v3 API](#chapter-130-fix-fast-flights-v3-api)
+131. [Fix fast-flights v3 API](#chapter-131-fix-fast-flights-v3-api)
+132. [Fix label data loss](#chapter-132-fix-label-data-loss)
+133. [Fix lightbox scale-to-fit](#chapter-133-fix-lightbox-scale-to-fit)
+134. [Fix mosaic navigation](#chapter-134-fix-mosaic-navigation)
+135. [Fix tag wrap blowout](#chapter-135-fix-tag-wrap-blowout)
+136. [Fix tag wrap blowout](#chapter-136-fix-tag-wrap-blowout)
+137. [HTML book output](#chapter-137-html-book-output)
+138. [HTML book output](#chapter-138-html-book-output)
+139. [Inbox autotag investigation](#chapter-139-inbox-autotag-investigation)
+140. [Inbox detail auto-advance](#chapter-140-inbox-detail-auto-advance)
+141. [Library mosaic save](#chapter-141-library-mosaic-save)
+142. [Lightbox tag fonts](#chapter-142-lightbox-tag-fonts)
+143. [Lightbox tag overlay](#chapter-143-lightbox-tag-overlay)
+144. [People autotag options](#chapter-144-people-autotag-options)
+145. [Per-passenger price display](#chapter-145-per-passenger-price-display)
+146. [Per-passenger price display](#chapter-146-per-passenger-price-display)
+147. [Persist collapsible sections](#chapter-147-persist-collapsible-sections)
+148. [Persist collapsible sections](#chapter-148-persist-collapsible-sections)
+149. [Persist search form settings](#chapter-149-persist-search-form-settings)
+150. [Persist search form settings](#chapter-150-persist-search-form-settings)
+151. [Recent people like tags](#chapter-151-recent-people-like-tags)
+152. [Release 2026.07.10](#chapter-152-release-20260710)
+153. [Release 2026.07.12b](#chapter-153-release-20260712b)
+154. [Release 2026.07.14](#chapter-154-release-20260714)
+155. [Release 2026.07.14](#chapter-155-release-20260714)
+156. [Review restore deletes](#chapter-156-review-restore-deletes)
+157. [Show connections in results](#chapter-157-show-connections-in-results)
+158. [Show connections in results](#chapter-158-show-connections-in-results)
+159. [Slim inbox delete refetch](#chapter-159-slim-inbox-delete-refetch)
+160. [Sticky search form](#chapter-160-sticky-search-form)
+161. [Sticky search form](#chapter-161-sticky-search-form)
+162. [Throttle inbox scan refetch](#chapter-162-throttle-inbox-scan-refetch)
+163. [Trash view and restore](#chapter-163-trash-view-and-restore)
+164. [Update cursor-book submodule](#chapter-164-update-cursor-book-submodule)
+165. [Update cursor-book submodule](#chapter-165-update-cursor-book-submodule)
+166. [Widen content max-width](#chapter-166-widen-content-max-width)
+167. [Widen content max-width](#chapter-167-widen-content-max-width)
 
 ### Skipped Duplicates
 
@@ -10737,9 +10771,235 @@ Relative paths in DB.
 
 ---
 
-<a id="chapter-92-blur-feature-documentation"></a>
+<a id="chapter-92-add-major-us-hubs"></a>
 
-## Chapter 92: Blur feature documentation
+## Chapter 92: Add major US hubs
+
+> **Overview:** Expand the static AIRPORTS list in airportData.ts with missing major US commercial hubs (including FLL, MIA, MCO, DEN, SEA, etc.) so autocomplete can find them, without changing search UI logic.
+
+## Problem
+
+[`src/lib/utils/airportData.ts`](src/lib/utils/airportData.ts) is a hardcoded list. Autocomplete only matches that list, so hubs like **FLL** never appear. Coverage today is uneven (some metros + scattered US codes); many large hubs are missing (Miami, Fort Lauderdale, Orlando commercial, Denver, Seattle, Houston, Vegas, DC primary airports, etc.).
+
+## Approach
+
+Add missing **major US commercial hubs** to `AIRPORTS` only — same `Airport` shape (`code`, `name`, `city`, `country`, `lat`, `lng`, optional `metroCode`). No changes to [`AirportSearch.tsx`](src/components/search/AirportSearch.tsx) or filter logic.
+
+Keep all existing entries (including internationals). Do not set `output`/Docker-related files. Deduplicate by code before adding.
+
+## Hubs to add (not already present)
+
+Organized as metro/region comments matching the file style:
+
+- **South Florida**: MIA, FLL, PBI (alongside existing EYW)
+- **Central Florida**: MCO (real Orlando hub; existing `OMH` left as-is to avoid deleting data)
+- **Tampa Bay**: TPA (PIE already present)
+- **Other Florida**: JAX, RSW
+- **Washington DC**: IAD, DCA (BWI already present) — `metroCode: "WAS"`
+- **Houston**: IAH, HOU — `metroCode: "HOU"`
+- **Large hubs / airline hubs**: DEN, SEA, LAS, DTW, MSP, CLT, PHL, PDX, AUS, SAT, MSY, STL, MCI, RDU, PIT, HNL, ANC, MEM, SDF, BDL, OKC, ABQ, TUS, RNO, BOI, ELP, CHS, ORF, RIC, GEG, DSM
+
+Coordinates: rounded to 2 decimals, consistent with existing FAA-style entries.
+
+## Verification
+
+- Confirm FLL/MIA/MCO/DEN/etc. appear when typing those codes in the UI filter path (`AirportFinder.filterAirports`).
+- Existing tests in [`tests/airportFinder.test.ts`](tests/airportFinder.test.ts) (`no duplicate airport codes`, valid coords) should still pass; run `npm test` if Node is available in Docker, otherwise rely on the dataset uniqueness check during edit.
+
+## Out of scope
+
+- Live airports API
+- Cleaning miscategorized metros (e.g. SNA under SFO) or junk/non-hub rows
+- Removing or renaming existing odd codes (`OMH`, `PUB`, etc.)
+
+---
+
+<a id="chapter-93-add-major-us-hubs"></a>
+
+## Chapter 93: Add major US hubs
+
+> **Overview:** Expand the static AIRPORTS list in airportData.ts with missing major US commercial hubs (including FLL, MIA, MCO, DEN, SEA, etc.) so autocomplete can find them, without changing search UI logic.
+
+## Problem
+
+[`src/lib/utils/airportData.ts`](src/lib/utils/airportData.ts) is a hardcoded list. Autocomplete only matches that list, so hubs like **FLL** never appear. Coverage today is uneven (some metros + scattered US codes); many large hubs are missing (Miami, Fort Lauderdale, Orlando commercial, Denver, Seattle, Houston, Vegas, DC primary airports, etc.).
+
+## Approach
+
+Add missing **major US commercial hubs** to `AIRPORTS` only — same `Airport` shape (`code`, `name`, `city`, `country`, `lat`, `lng`, optional `metroCode`). No changes to [`AirportSearch.tsx`](src/components/search/AirportSearch.tsx) or filter logic.
+
+Keep all existing entries (including internationals). Do not set `output`/Docker-related files. Deduplicate by code before adding.
+
+## Hubs to add (not already present)
+
+Organized as metro/region comments matching the file style:
+
+- **South Florida**: MIA, FLL, PBI (alongside existing EYW)
+- **Central Florida**: MCO (real Orlando hub; existing `OMH` left as-is to avoid deleting data)
+- **Tampa Bay**: TPA (PIE already present)
+- **Other Florida**: JAX, RSW
+- **Washington DC**: IAD, DCA (BWI already present) — `metroCode: "WAS"`
+- **Houston**: IAH, HOU — `metroCode: "HOU"`
+- **Large hubs / airline hubs**: DEN, SEA, LAS, DTW, MSP, CLT, PHL, PDX, AUS, SAT, MSY, STL, MCI, RDU, PIT, HNL, ANC, MEM, SDF, BDL, OKC, ABQ, TUS, RNO, BOI, ELP, CHS, ORF, RIC, GEG, DSM
+
+Coordinates: rounded to 2 decimals, consistent with existing FAA-style entries.
+
+## Verification
+
+- Confirm FLL/MIA/MCO/DEN/etc. appear when typing those codes in the UI filter path (`AirportFinder.filterAirports`).
+- Existing tests in [`tests/airportFinder.test.ts`](tests/airportFinder.test.ts) (`no duplicate airport codes`, valid coords) should still pass; run `npm test` if Node is available in Docker, otherwise rely on the dataset uniqueness check during edit.
+
+## Out of scope
+
+- Live airports API
+- Cleaning miscategorized metros (e.g. SNA under SFO) or junk/non-hub rows
+- Removing or renaming existing odd codes (`OMH`, `PUB`, etc.)
+
+---
+
+<a id="chapter-94-add-northeast-regionals"></a>
+
+## Chapter 94: Add Northeast regionals
+
+> **Overview:** Add Northeast regional airports including BTV and PBG to the shared AIRPORTS list so both TO and FROM autocomplete can find them.
+
+## Context
+
+TO and FROM both use [`AirportSearch`](src/components/search/AirportSearch.tsx) → shared [`AIRPORTS`](src/lib/utils/airportData.ts). One list update covers both fields. **BTV** and **PBG** are currently missing.
+
+## Scope (default)
+
+Add a **Northeast regionals** block (not every US regional). Includes Burlington/Plattsburgh plus nearby commercial regionals:
+
+- **BTV** — Burlington International Airport (Burlington, VT)
+- **PBG** — Plattsburgh International Airport (Plattsburgh, NY)
+- **PWM** — Portland International Jetport (Portland, ME)
+- **MHT** — Manchester-Boston Regional Airport (Manchester, NH)
+- **BGR** — Bangor International Airport (Bangor, ME)
+- **SYR** — Syracuse Hancock International Airport (Syracuse, NY)
+- **ROC** — Greater Rochester International Airport (Rochester, NY)
+- **ALB** already present — skip
+- **BOS** / **BDL** / **BUF** already present — skip
+
+Same `Airport` shape; coords rounded to 2 decimals; no UI changes.
+
+## Change
+
+Append a `// Northeast regionals` section near the end of the US entries in [`src/lib/utils/airportData.ts`](src/lib/utils/airportData.ts), deduping by code.
+
+## Verify
+
+Confirm filter matches for `BTV`, `PBG`, `Burlington`, `Plattsburgh`; no duplicate codes.
+
+---
+
+<a id="chapter-95-add-northeast-regionals"></a>
+
+## Chapter 95: Add Northeast regionals
+
+> **Overview:** Add Northeast regional airports including BTV and PBG to the shared AIRPORTS list so both TO and FROM autocomplete can find them.
+
+## Context
+
+TO and FROM both use [`AirportSearch`](src/components/search/AirportSearch.tsx) → shared [`AIRPORTS`](src/lib/utils/airportData.ts). One list update covers both fields. **BTV** and **PBG** are currently missing.
+
+## Scope (default)
+
+Add a **Northeast regionals** block (not every US regional). Includes Burlington/Plattsburgh plus nearby commercial regionals:
+
+- **BTV** — Burlington International Airport (Burlington, VT)
+- **PBG** — Plattsburgh International Airport (Plattsburgh, NY)
+- **PWM** — Portland International Jetport (Portland, ME)
+- **MHT** — Manchester-Boston Regional Airport (Manchester, NH)
+- **BGR** — Bangor International Airport (Bangor, ME)
+- **SYR** — Syracuse Hancock International Airport (Syracuse, NY)
+- **ROC** — Greater Rochester International Airport (Rochester, NY)
+- **ALB** already present — skip
+- **BOS** / **BDL** / **BUF** already present — skip
+
+Same `Airport` shape; coords rounded to 2 decimals; no UI changes.
+
+## Change
+
+Append a `// Northeast regionals` section near the end of the US entries in [`src/lib/utils/airportData.ts`](src/lib/utils/airportData.ts), deduping by code.
+
+## Verify
+
+Confirm filter matches for `BTV`, `PBG`, `Burlington`, `Plattsburgh`; no duplicate codes.
+
+---
+
+<a id="chapter-96-add-plane-type-to-results"></a>
+
+## Chapter 96: Add plane type to results
+
+> **Overview:** Pipe aircraft type from fast-flights into FlightResult and show it in the All Options table (and best-price card).
+
+## Source
+
+fast-flights v3 `SingleFlight` already has `plane_type` (e.g. `"Boeing 737"`, `"Airbus A380"`). The Python bridge currently drops it.
+
+## Pipeline
+
+1. **[`scripts/google_flights_search.py`](scripts/google_flights_search.py)**  
+   Collect unique `plane_type` values from outbound legs. Emit:
+   - `planeTypes: string[]`
+   - `planeType: string` — unique types joined with `" · "` (empty if none)
+
+2. **[`googleFlights.ts`](src/lib/providers/googleFlights.ts)**  
+   Extend `RawOffer` with `planeType` / `planeTypes`. Include in existing `raw` payload (alongside `airlineName`).
+
+3. **[`FlightResult`](src/types/search.ts) + [`mapOffer`](src/components/search/SearchForm.tsx)**  
+   Add `planeType: string` and map from `offer.raw` / provider data (`""` if missing).
+
+## UI
+
+- **[`AlternativesList.tsx`](src/components/results/AlternativesList.tsx):** new **Aircraft** column after Connections; show `planeType` or `—` if empty. Adjust grid to six columns.
+- **[`CheapestHeroCard.tsx`](src/components/results/CheapestHeroCard.tsx):** append plane type next to stops/airline when present.
+
+## Deploy note
+
+Docker users need `docker compose up --build` so the updated Python script is in the image.
+
+---
+
+<a id="chapter-97-add-plane-type-to-results"></a>
+
+## Chapter 97: Add plane type to results
+
+> **Overview:** Pipe aircraft type from fast-flights into FlightResult and show it in the All Options table (and best-price card).
+
+## Source
+
+fast-flights v3 `SingleFlight` already has `plane_type` (e.g. `"Boeing 737"`, `"Airbus A380"`). The Python bridge currently drops it.
+
+## Pipeline
+
+1. **[`scripts/google_flights_search.py`](scripts/google_flights_search.py)**  
+   Collect unique `plane_type` values from outbound legs. Emit:
+   - `planeTypes: string[]`
+   - `planeType: string` — unique types joined with `" · "` (empty if none)
+
+2. **[`googleFlights.ts`](src/lib/providers/googleFlights.ts)**  
+   Extend `RawOffer` with `planeType` / `planeTypes`. Include in existing `raw` payload (alongside `airlineName`).
+
+3. **[`FlightResult`](src/types/search.ts) + [`mapOffer`](src/components/search/SearchForm.tsx)**  
+   Add `planeType: string` and map from `offer.raw` / provider data (`""` if missing).
+
+## UI
+
+- **[`AlternativesList.tsx`](src/components/results/AlternativesList.tsx):** new **Aircraft** column after Connections; show `planeType` or `—` if empty. Adjust grid to six columns.
+- **[`CheapestHeroCard.tsx`](src/components/results/CheapestHeroCard.tsx):** append plane type next to stops/airline when present.
+
+## Deploy note
+
+Docker users need `docker compose up --build` so the updated Python script is in the image.
+
+---
+
+<a id="chapter-98-blur-feature-documentation"></a>
+
+## Chapter 98: Blur feature documentation
 
 > **Overview:** Document how blurry image detection works for users (README workflow) and developers (ARCHITECTURE algorithm, API, and UI), matching the current implementation including outlier detection and Settings threshold.
 
@@ -10859,9 +11119,9 @@ Add under **[Unreleased] → Changed** (one line):
 
 ---
 
-<a id="chapter-93-blurry-image-detection"></a>
+<a id="chapter-99-blurry-image-detection"></a>
 
-## Chapter 93: Blurry image detection
+## Chapter 99: Blurry image detection
 
 > **Overview:** Add a separate post-scan sharpness analysis pass (Laplacian variance on downscaled images), store scores in SQLite, and expose a dedicated Blurry nav page to browse and act on out-of-focus photos.
 
@@ -11021,9 +11281,9 @@ In [`Settings.tsx`](frontend/src/pages/Settings.tsx), add **Blur detection thres
 
 ---
 
-<a id="chapter-94-blurry-scroll-and-nav"></a>
+<a id="chapter-100-blurry-scroll-and-nav"></a>
 
-## Chapter 94: Blurry scroll and nav
+## Chapter 100: Blurry scroll and nav
 
 > **Overview:** Fix Blurry page detail/lightbox parity with Inbox by wiring PhotoDetail navigation props and applying the documented lightbox scroll/pan CSS fix globally in PhotoDetail.
 
@@ -11167,9 +11427,9 @@ On **Blurry** page with 3+ blurry photos:
 
 ---
 
-<a id="chapter-95-book-update-and-release"></a>
+<a id="chapter-101-book-update-and-release"></a>
 
-## Chapter 95: Book update and release
+## Chapter 101: Book update and release
 
 > **Overview:** Add post-2026.07.05b feature plans to book.json, rebuild DEVELOPMENT_BOOK.md, write CHANGELOG 2026.07.07 for all uncommitted work, bump versions, commit, tag, and push to origin.
 
@@ -11267,9 +11527,9 @@ Requires network + git_write permissions for push.
 
 ---
 
-<a id="chapter-96-browse-cameras-subset"></a>
+<a id="chapter-102-browse-cameras-subset"></a>
 
-## Chapter 96: Browse cameras subset
+## Chapter 102: Browse cameras subset
 
 > **Overview:** When Browse has tag/person (and camera) filters active, the Cameras sidebar will list only cameras present in that AND selection with counts in-set — same idea as Also tagged / People — and clicking a camera will AND it into the filter.
 
@@ -11370,9 +11630,9 @@ Legacy `/browse/camera/:name` already redirects into the query model — keep th
 
 ---
 
-<a id="chapter-97-browse-multi-tag-and"></a>
+<a id="chapter-103-browse-multi-tag-and"></a>
 
-## Chapter 97: Browse multi-tag AND
+## Chapter 103: Browse multi-tag AND
 
 > **Overview:** Define a Browse multi-tag feature: selecting a tag shows all co-occurring tags in that result set; selecting more tags narrows via AND intersection (Cars AND corvette), inspired by the Calendar year label bar.
 
@@ -11516,9 +11776,9 @@ Concept locked as above. Implementation waits until you approve (and confirm Bro
 
 ---
 
-<a id="chapter-98-browse-subset-people-fix"></a>
+<a id="chapter-104-browse-subset-people-fix"></a>
 
-## Chapter 98: Browse subset people fix
+## Chapter 104: Browse subset people fix
 
 > **Overview:** Fix the broken Also-tagged sidebar buttons, restyle Browse accents to Wimbledon purple, and when a Browse filter is active show only the subset of people who appear in that result set (with counts), clickable to AND into the intersection.
 
@@ -11631,9 +11891,9 @@ Legacy `/browse/person/:slug` redirects to `/browse/tags?person=:slug` (same pat
 
 ---
 
-<a id="chapter-99-calendar-day-pagination"></a>
+<a id="chapter-105-calendar-day-pagination"></a>
 
-## Chapter 99: Calendar day pagination
+## Chapter 105: Calendar day pagination
 
 > **Overview:** Add Prev/Next page navigation to the calendar day panel so days with more than 100 photos can be browsed fully. Backend already supports `page` and `page_size`; wire them through the API client and CalendarDayPanel.
 
@@ -11755,9 +12015,9 @@ Under `[Unreleased]` → **Added** in [`CHANGELOG.md`](imageOrganizer/CHANGELOG.
 
 ---
 
-<a id="chapter-100-calendar-global-untagged"></a>
+<a id="chapter-106-calendar-global-untagged"></a>
 
-## Chapter 100: Calendar global untagged
+## Chapter 106: Calendar global untagged
 
 > **Overview:** Add an All / Untagged control in the Calendar top filter bar (next to Archive and Media dropdowns), applying the existing `unlabeled=true` API filter globally across all visible months. Keep per-month Untagged chips for single-month filtering when global mode is off.
 
@@ -11867,9 +12127,9 @@ Under `[Unreleased]` → **Added**: Calendar global **Untagged** filter in top b
 
 ---
 
-<a id="chapter-101-calendar-tagging-bottom-left"></a>
+<a id="chapter-107-calendar-tagging-bottom-left"></a>
 
-## Chapter 101: Calendar tagging bottom-left
+## Chapter 107: Calendar tagging bottom-left
 
 > **Overview:** Move the calendar day tagging form (Date / Events / People / Tags) from the top of the right day panel to a fixed area below the month calendars on the left, while keeping the selection bar above the photo grid on the right.
 
@@ -12003,9 +12263,9 @@ Add CHANGELOG entry under `[Unreleased]` → **Changed**.
 
 ---
 
-<a id="chapter-102-calendar-untagged-edit-mode"></a>
+<a id="chapter-108-calendar-untagged-edit-mode"></a>
 
-## Chapter 102: Calendar untagged edit mode
+## Chapter 108: Calendar untagged edit mode
 
 > **Overview:** Fix Calendar untagged workflow: memoize the day filter to stop selection from clearing on every re-render (flash/exit), and while photos are selected in untagged mode, fetch the day as \"all\" so tagged photos stay visible until selection is cleared.
 
@@ -12125,9 +12385,9 @@ sequenceDiagram
 
 ---
 
-<a id="chapter-103-calendar-untagged-filter"></a>
+<a id="chapter-109-calendar-untagged-filter"></a>
 
-## Chapter 103: Calendar untagged filter
+## Chapter 109: Calendar untagged filter
 
 > **Overview:** Add a per-month **Untagged** chip on the calendar (same definition as Inbox: no tags, people, or events), respecting the existing Images/Videos media-type dropdown. Requires backend `unlabeled` support on calendar summary/day/labels endpoints and frontend filter wiring.
 
@@ -12242,9 +12502,316 @@ Under `[Unreleased]` → **Added**: Calendar month **Untagged** filter (no tags,
 
 ---
 
-<a id="chapter-104-cursor-book-tool-repo"></a>
+<a id="chapter-110-clone-datefare-repo"></a>
 
-## Chapter 104: Cursor book tool repo
+## Chapter 110: Clone datefare repo
+
+> **Overview:** Clone https://github.com/noah-a-mays/datefare into /Users/alex/Documents/github/datefare and switch this agent workspace to that directory.
+
+## Steps
+
+1. Clone the repository into the requested path:
+   ```bash
+   git clone https://github.com/noah-a-mays/datefare /Users/alex/Documents/github/datefare
+   ```
+2. Move this agent’s workspace root to `/Users/alex/Documents/github/datefare` via `move_agent_to_root` so subsequent work runs in the new repo.
+
+## Notes
+
+- `/Users/alex/Documents/github/datefare` does not exist yet; clone will create it.
+- No further setup (deps, env, etc.) unless you ask after the clone.
+
+---
+
+<a id="chapter-111-clone-datefare-repo"></a>
+
+## Chapter 111: Clone datefare repo
+
+> **Overview:** Clone https://github.com/noah-a-mays/datefare into /Users/alex/Documents/github/datefare and switch this agent workspace to that directory.
+
+## Steps
+
+1. Clone the repository into the requested path:
+   ```bash
+   git clone https://github.com/noah-a-mays/datefare /Users/alex/Documents/github/datefare
+   ```
+2. Move this agent’s workspace root to `/Users/alex/Documents/github/datefare` via `move_agent_to_root` so subsequent work runs in the new repo.
+
+## Notes
+
+- `/Users/alex/Documents/github/datefare` does not exist yet; clone will create it.
+- No further setup (deps, env, etc.) unless you ask after the clone.
+
+---
+
+<a id="chapter-112-connection-airport-icons"></a>
+
+## Chapter 112: Connection airport icons
+
+> **Overview:** Show layover airports as Plane + IATA + Plane (hover for full name), keep Nonstop, and simplify per-person price to a quieter two-line layout with a person icon.
+
+# Connection airports + quieter price display
+
+## Connections display
+
+In [`AlternativesList.tsx`](src/components/results/AlternativesList.tsx) Connections column:
+
+- **Nonstop** (`stops === 0`): keep the text `Nonstop` (no plane icons).
+- **With stops**: remove `1 stop` / `N stops` text. Render:
+
+```
+[Plane] ATL [Plane]          // 1 connection
+[Plane] ATL [Plane] JFK [Plane]   // 2 connections
+```
+
+Pattern: plane, then for each layover airport `CODE`, then a trailing plane (N stops → N codes and N+1 planes).
+
+- Each airport code has `title` / `aria-label` with the full airport name (e.g. “Hartsfield-Jackson Atlanta International Airport”).
+
+Hero card ([`CheapestHeroCard`](src/components/results/CheapestHeroCard.tsx)): for stops > 0 show layover codes joined (e.g. `via ATL`) instead of `1 stop`; keep `Nonstop` when zero.
+
+## Connections data
+
+Layover codes are not on `FlightResult` today. Add them from fast-flights legs:
+
+1. **[`scripts/google_flights_search.py`](scripts/google_flights_search.py)** — for each outbound leg except the last, take arrival airport:
+
+```python
+connections = [
+  {"code": leg.to_airport.code, "name": leg.to_airport.name}
+  for leg in legs[:-1]
+]
+```
+
+Emit `connections` on each offer.
+
+2. **[`googleFlights.ts`](src/lib/providers/googleFlights.ts)** — put `connections` on `RawOffer` / `raw`.
+
+3. **[`FlightResult`](src/types/search.ts) + [`mapOffer`](src/components/search/SearchForm.tsx)** — add:
+
+```ts
+connections: { code: string; name: string }[];
+```
+
+If `stops > 0` but `connections` is empty, show `Plane` × (stops+1) without codes (edge case).
+
+## Price display (less busy)
+
+Replace inline `$2,805 ($701 per/person)` with a stacked cell in [`AlternativesList.tsx`](src/components/results/AlternativesList.tsx) (and match hero subtitle):
+
+```
+$2,805                          // large teal (existing weight)
+($701 per/[User icon])          // smaller, muted secondary text
+```
+
+- Update [`formatPrice.ts`](src/lib/utils/formatPrice.ts) or render JSX in the list instead of one long string.
+- Use Lucide `User` icon instead of the word “person”.
+- Only show the second line when `adults > 1`.
+
+## Deploy
+
+Rebuild Docker so the Python script update is included: `docker compose up --build`.
+
+---
+
+<a id="chapter-113-connection-airport-icons"></a>
+
+## Chapter 113: Connection airport icons
+
+> **Overview:** Show layover airports as Plane + IATA + Plane (with full name on hover), keep Nonstop text, and drop the “1 stop / 2 stops” labels.
+
+# Connection airports in results
+
+## Display
+
+In [`AlternativesList.tsx`](src/components/results/AlternativesList.tsx) Connections column:
+
+- **Nonstop** (`stops === 0`): keep the text `Nonstop` (no plane icons).
+- **With stops**: remove `1 stop` / `N stops` text. Render:
+
+```
+[Plane] ATL [Plane]          // 1 connection
+[Plane] ATL [Plane] JFK [Plane]   // 2 connections
+```
+
+Pattern: plane, then for each layover airport `CODE`, then a trailing plane (N stops → N codes and N+1 planes).
+
+- Each airport code has `title` / `aria-label` with the full airport name (e.g. “Hartsfield-Jackson Atlanta International Airport”).
+
+Hero card ([`CheapestHeroCard`](src/components/results/CheapestHeroCard.tsx)): for stops > 0 show layover codes joined (e.g. `via ATL`) instead of `1 stop`; keep `Nonstop` when zero.
+
+## Data (required)
+
+Layover codes are not on `FlightResult` today. Add them from fast-flights legs:
+
+1. **[`scripts/google_flights_search.py`](scripts/google_flights_search.py)** — for each outbound leg except the last, take arrival airport:
+
+```python
+connections = [
+  {"code": leg.to_airport.code, "name": leg.to_airport.name}
+  for leg in legs[:-1]
+]
+```
+
+Emit `connections` on each offer.
+
+2. **[`googleFlights.ts`](src/lib/providers/googleFlights.ts)** — put `connections` on `RawOffer` / `raw`.
+
+3. **[`FlightResult`](src/types/search.ts) + [`mapOffer`](src/components/search/SearchForm.tsx)** — add:
+
+```ts
+connections: { code: string; name: string }[];
+```
+
+If `connections` is empty but `stops > 0`, fall back to `stops` count of unknown placeholders is wrong — show only Nonstop / icon path when we have codes; if stops > 0 and no codes, show `Plane` × (stops+1) without codes (edge case). Prefer emitting connections from Python so this is rare.
+
+## Deploy
+
+Rebuild Docker so the Python script update is included: `docker compose up --build`.
+
+---
+
+<a id="chapter-114-cursor-book-development-book"></a>
+
+## Chapter 114: cursor-book development book
+
+> **Overview:** Add a cursor-book `book.json` that only includes this repo’s plans (via a local plans mirror), then generate `docs/DEVELOPMENT_BOOK.md` and `.html`.
+
+# Build the development book for cursor-book
+
+## Problem
+
+This repo is the book *tool*, but it has no `book.json` yet. Using `~/.cursor/plans` directly would pull in ~147 Image Organizer plans into the Appendix. Scope the input to cursor-book plans only.
+
+## Approach
+
+1. **Local plans mirror** at [`.cursor/plans/`](.cursor/plans/) containing only these stems (copied from `~/.cursor/plans/`):
+   - `plans_development_book_11a2f88a` — original book builder (precursor)
+   - `cursor_book_tool_repo_5221eefc` — extract standalone repo + skill
+   - `html_book_output_2dff9d25` — dual MD/HTML output (canonical)
+
+2. **Skip duplicate:** `html_book_output_c632072c` (same title/overview, empty todos; superseded by `…2dff9d25`)
+
+3. **Add** [`book.json`](book.json) at repo root:
+
+```json
+{
+  "title": "cursor-book — Development Book",
+  "version": "2026.07.23",
+  "output": "docs/DEVELOPMENT_BOOK.md",
+  "output_html": "docs/DEVELOPMENT_BOOK.html",
+  "plans_dir": ".cursor/plans",
+  "related_links": "[README.md](../README.md)",
+  "parts": [
+    {
+      "title": "Part I — Foundation",
+      "plans": ["plans_development_book_11a2f88a", "cursor_book_tool_repo_5221eefc"]
+    },
+    {
+      "title": "Part II — HTML Output",
+      "plans": ["html_book_output_2dff9d25"]
+    }
+  ],
+  "skip_plans": {
+    "html_book_output_c632072c": {
+      "note": "Superseded by html_book_output_2dff9d25."
+    }
+  }
+}
+```
+
+4. **Gitignore** `.cursor/plans/` (add [`.gitignore`](.gitignore) if missing) so the mirror is not committed; commit generated docs instead.
+
+5. **Build:**
+
+```bash
+python build_development_book.py --config book.json --repo-root .
+```
+
+Expect `docs/DEVELOPMENT_BOOK.md` and `docs/DEVELOPMENT_BOOK.html` with 3 chapters.
+
+6. **Docs:** One-line README note that this repo also maintains its own development book under `docs/`.
+
+## Out of scope
+
+- Committing/pushing (unless you ask after the build)
+- Changing the builder
+- Registering Image Organizer plans here
+
+---
+
+<a id="chapter-115-cursor-book-development-book"></a>
+
+## Chapter 115: cursor-book development book
+
+> **Overview:** Add a cursor-book `book.json` that only includes this repo’s plans (via a local plans mirror), then generate `docs/DEVELOPMENT_BOOK.md` and `.html`.
+
+# Build the development book for cursor-book
+
+## Problem
+
+This repo is the book *tool*, but it has no `book.json` yet. Using `~/.cursor/plans` directly would pull in ~147 Image Organizer plans into the Appendix. Scope the input to cursor-book plans only.
+
+## Approach
+
+1. **Local plans mirror** at [`.cursor/plans/`](.cursor/plans/) containing only these stems (copied from `~/.cursor/plans/`):
+   - `plans_development_book_11a2f88a` — original book builder (precursor)
+   - `cursor_book_tool_repo_5221eefc` — extract standalone repo + skill
+   - `html_book_output_2dff9d25` — dual MD/HTML output (canonical)
+
+2. **Skip duplicate:** `html_book_output_c632072c` (same title/overview, empty todos; superseded by `…2dff9d25`)
+
+3. **Add** [`book.json`](book.json) at repo root:
+
+```json
+{
+  "title": "cursor-book — Development Book",
+  "version": "2026.07.23",
+  "output": "docs/DEVELOPMENT_BOOK.md",
+  "output_html": "docs/DEVELOPMENT_BOOK.html",
+  "plans_dir": ".cursor/plans",
+  "related_links": "[README.md](../README.md)",
+  "parts": [
+    {
+      "title": "Part I — Foundation",
+      "plans": ["plans_development_book_11a2f88a", "cursor_book_tool_repo_5221eefc"]
+    },
+    {
+      "title": "Part II — HTML Output",
+      "plans": ["html_book_output_2dff9d25"]
+    }
+  ],
+  "skip_plans": {
+    "html_book_output_c632072c": {
+      "note": "Superseded by html_book_output_2dff9d25."
+    }
+  }
+}
+```
+
+4. **Gitignore** `.cursor/plans/` (add [`.gitignore`](.gitignore) if missing) so the mirror is not committed; commit generated docs instead.
+
+5. **Build:**
+
+```bash
+python build_development_book.py --config book.json --repo-root .
+```
+
+Expect `docs/DEVELOPMENT_BOOK.md` and `docs/DEVELOPMENT_BOOK.html` with 3 chapters.
+
+6. **Docs:** One-line README note that this repo also maintains its own development book under `docs/`.
+
+## Out of scope
+
+- Committing/pushing (unless you ask after the build)
+- Changing the builder
+- Registering Image Organizer plans here
+
+---
+
+<a id="chapter-116-cursor-book-tool-repo"></a>
+
+## Chapter 116: Cursor book tool repo
 
 > **Overview:** Extract the development book builder into a standalone repo with a config-driven script and a reusable Cursor skill; migrate imageOrganizer to a thin `book.yaml` + wrapper script.
 
@@ -12449,9 +13016,9 @@ Optional: tag `v1.0.0` on `cursor-book` after migration verified.
 
 ---
 
-<a id="chapter-105-database-datetime-backups"></a>
+<a id="chapter-117-database-datetime-backups"></a>
 
-## Chapter 105: Database datetime backups
+## Chapter 117: Database datetime backups
 
 > **Overview:** Add safe SQLite database backups as datetime-stamped copies in `{APP_DATA_DIR}/backups/`, exposed via a Settings button and a CLI script for manual or scheduled use.
 
@@ -12590,115 +13157,9 @@ Monkeypatch `BACKUPS_DIR` / `DB_PATH` to temp dirs (same pattern as existing mig
 
 ---
 
-<a id="chapter-106-detail-applied-labels"></a>
+<a id="chapter-118-detail-applied-labels"></a>
 
-## Chapter 106: Detail applied labels
-
-> **Overview:** Show currently applied events, people, and tags in PhotoDetail above the Caption field using the existing PhotoCardLabels component, and hide already-applied items from the pickers below to avoid duplicate chips.
-
-# Detail view: applied labels above caption
-
-## Problem
-
-In [`PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx), caption/rating/save come **before** Events/People/Tags pickers. Applied labels (e.g. "I9 Flag Football", "FFB Camp" in your screenshot) are only visible after scrolling past caption — easy to miss when reviewing photos.
-
-Current order:
-
-```
-preview → date → meta rows → Caption → Rating → Save → Events → People → Tags
-```
-
-## Approach
-
-Reuse [`PhotoCardLabels.tsx`](frontend/src/components/PhotoCardLabels.tsx) — it already renders **only applied** events, people, and tags as removable chips (same badges as the grid card footer).
-
-```mermaid
-flowchart TB
-  meta[Meta rows]
-  applied["PhotoCardLabels — applied only"]
-  caption[Caption + Rating + Save]
-  pickers["Event/Person/Tag pickers — unselected only"]
-  meta --> applied --> caption --> pickers
-```
-
-### 1. PhotoDetail layout
-
-In [`PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx), after meta rows and **before** the Caption `form-group`:
-
-```tsx
-{(currentFile.events?.length || currentFile.people?.length || currentFile.tags?.length) ? (
-  <div className="photo-detail-applied-labels">
-    <label className="photo-detail-applied-label">Applied</label>
-    <PhotoCardLabels file={currentFile} onChange={() => handleLabelsChange()} />
-  </div>
-) : null}
-```
-
-Import `PhotoCardLabels`. Section hidden when nothing is applied (no empty box).
-
-### 2. Avoid duplicate chips in pickers
-
-When the applied bar is visible, selected items would appear twice (summary above + highlighted in picker below). Add optional prop to each picker:
-
-| Component | Prop | Behavior |
-|-----------|------|----------|
-| [`EventPicker.tsx`](frontend/src/components/EventPicker.tsx) | `excludeSelected?: boolean` | Chip list maps `allEvents.filter(e => !excludeSelected \|\| !selected.has(e.id))` |
-| [`PersonPicker.tsx`](frontend/src/components/PersonPicker.tsx) | `excludeSelected?: boolean` | Same for people |
-| [`FileTagPicker.tsx`](frontend/src/components/FileTagPicker.tsx) | `excludeSelected?: boolean` | Exclude selected from `visibleTags` and recent-tags row |
-
-In PhotoDetail, pass `excludeSelected` to all three pickers (always `true` in detail view — when nothing applied, pickers behave as today).
-
-Removal stays on the applied bar (`PhotoCardLabels` × buttons); pickers are for **adding** only.
-
-### 3. CSS
-
-In [`index.css`](frontend/src/index.css):
-
-```css
-.photo-detail-applied-labels {
-  margin-top: 1rem;
-  margin-bottom: 0.25rem;
-}
-
-.photo-detail-applied-label {
-  display: block;
-  font-size: 0.875rem;
-  color: #aab0bc;
-  margin-bottom: 0.35rem;
-}
-```
-
-Reuse existing `.photo-card-labels` / `.badge-removable` styles (no card-specific assumptions).
-
-## Files to change
-
-| File | Change |
-|------|--------|
-| [`PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx) | Import PhotoCardLabels; applied section above caption; `excludeSelected` on pickers |
-| [`EventPicker.tsx`](frontend/src/components/EventPicker.tsx) | Optional `excludeSelected` prop |
-| [`PersonPicker.tsx`](frontend/src/components/PersonPicker.tsx) | Optional `excludeSelected` prop |
-| [`FileTagPicker.tsx`](frontend/src/components/FileTagPicker.tsx) | Optional `excludeSelected` prop |
-| [`index.css`](frontend/src/index.css) | `.photo-detail-applied-labels` styles |
-
-## Out of scope
-
-- Reordering caption/rating relative to pickers beyond this
-- Collapsing pickers into accordions
-- ARCHITECTURE/README updates (UI-only)
-
-## Verification
-
-1. Open archive photo with event + tag (your screenshot case) — applied chips appear **above Caption**
-2. Remove a tag via × on applied bar — chip disappears; tag reappears in Tags picker below
-3. Add tag via picker — chip moves to applied bar; hidden from picker list
-4. Photo with no labels — no applied section; pickers unchanged
-5. Grid card labels (`PhotoCardLabels` on PhotoGrid) unchanged
-
----
-
-<a id="chapter-107-detail-applied-labels"></a>
-
-## Chapter 107: Detail applied labels
+## Chapter 118: Detail applied labels
 
 > **Overview:** Show currently applied events, people, and tags in PhotoDetail above the Caption field using the existing PhotoCardLabels component, and hide already-applied items from the pickers below to avoid duplicate chips.
 
@@ -12802,9 +13263,445 @@ Reuse existing `.photo-card-labels` / `.badge-removable` styles (no card-specifi
 
 ---
 
-<a id="chapter-108-fix-blocked-scan-clicks"></a>
+<a id="chapter-119-detail-applied-labels"></a>
 
-## Chapter 108: Fix blocked scan clicks
+## Chapter 119: Detail applied labels
+
+> **Overview:** Show currently applied events, people, and tags in PhotoDetail above the Caption field using the existing PhotoCardLabels component, and hide already-applied items from the pickers below to avoid duplicate chips.
+
+# Detail view: applied labels above caption
+
+## Problem
+
+In [`PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx), caption/rating/save come **before** Events/People/Tags pickers. Applied labels (e.g. "I9 Flag Football", "FFB Camp" in your screenshot) are only visible after scrolling past caption — easy to miss when reviewing photos.
+
+Current order:
+
+```
+preview → date → meta rows → Caption → Rating → Save → Events → People → Tags
+```
+
+## Approach
+
+Reuse [`PhotoCardLabels.tsx`](frontend/src/components/PhotoCardLabels.tsx) — it already renders **only applied** events, people, and tags as removable chips (same badges as the grid card footer).
+
+```mermaid
+flowchart TB
+  meta[Meta rows]
+  applied["PhotoCardLabels — applied only"]
+  caption[Caption + Rating + Save]
+  pickers["Event/Person/Tag pickers — unselected only"]
+  meta --> applied --> caption --> pickers
+```
+
+### 1. PhotoDetail layout
+
+In [`PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx), after meta rows and **before** the Caption `form-group`:
+
+```tsx
+{(currentFile.events?.length || currentFile.people?.length || currentFile.tags?.length) ? (
+  <div className="photo-detail-applied-labels">
+    <label className="photo-detail-applied-label">Applied</label>
+    <PhotoCardLabels file={currentFile} onChange={() => handleLabelsChange()} />
+  </div>
+) : null}
+```
+
+Import `PhotoCardLabels`. Section hidden when nothing is applied (no empty box).
+
+### 2. Avoid duplicate chips in pickers
+
+When the applied bar is visible, selected items would appear twice (summary above + highlighted in picker below). Add optional prop to each picker:
+
+| Component | Prop | Behavior |
+|-----------|------|----------|
+| [`EventPicker.tsx`](frontend/src/components/EventPicker.tsx) | `excludeSelected?: boolean` | Chip list maps `allEvents.filter(e => !excludeSelected \|\| !selected.has(e.id))` |
+| [`PersonPicker.tsx`](frontend/src/components/PersonPicker.tsx) | `excludeSelected?: boolean` | Same for people |
+| [`FileTagPicker.tsx`](frontend/src/components/FileTagPicker.tsx) | `excludeSelected?: boolean` | Exclude selected from `visibleTags` and recent-tags row |
+
+In PhotoDetail, pass `excludeSelected` to all three pickers (always `true` in detail view — when nothing applied, pickers behave as today).
+
+Removal stays on the applied bar (`PhotoCardLabels` × buttons); pickers are for **adding** only.
+
+### 3. CSS
+
+In [`index.css`](frontend/src/index.css):
+
+```css
+.photo-detail-applied-labels {
+  margin-top: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.photo-detail-applied-label {
+  display: block;
+  font-size: 0.875rem;
+  color: #aab0bc;
+  margin-bottom: 0.35rem;
+}
+```
+
+Reuse existing `.photo-card-labels` / `.badge-removable` styles (no card-specific assumptions).
+
+## Files to change
+
+| File | Change |
+|------|--------|
+| [`PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx) | Import PhotoCardLabels; applied section above caption; `excludeSelected` on pickers |
+| [`EventPicker.tsx`](frontend/src/components/EventPicker.tsx) | Optional `excludeSelected` prop |
+| [`PersonPicker.tsx`](frontend/src/components/PersonPicker.tsx) | Optional `excludeSelected` prop |
+| [`FileTagPicker.tsx`](frontend/src/components/FileTagPicker.tsx) | Optional `excludeSelected` prop |
+| [`index.css`](frontend/src/index.css) | `.photo-detail-applied-labels` styles |
+
+## Out of scope
+
+- Reordering caption/rating relative to pickers beyond this
+- Collapsing pickers into accordions
+- ARCHITECTURE/README updates (UI-only)
+
+## Verification
+
+1. Open archive photo with event + tag (your screenshot case) — applied chips appear **above Caption**
+2. Remove a tag via × on applied bar — chip disappears; tag reappears in Tags picker below
+3. Add tag via picker — chip moves to applied bar; hidden from picker list
+4. Photo with no labels — no applied section; pickers unchanged
+5. Grid card labels (`PhotoCardLabels` on PhotoGrid) unchanged
+
+---
+
+<a id="chapter-120-dockerize-datefare-app"></a>
+
+## Chapter 120: Dockerize datefare app
+
+> **Overview:** Add a production multi-stage Dockerfile (Node + Python/fast-flights) and docker-compose so the app builds and runs with `docker compose up --build` on port 3000—no local Node required.
+
+# Build datefare in Docker
+
+## Approach
+
+Ship a **production** image via multi-stage Docker build, plus Compose for one-command local run. Enable Next.js `standalone` output so the runtime image stays small and includes only what `node server.js` needs, plus the Python flight-search bridge.
+
+## Files to add/change
+
+### 1. [`next.config.ts`](next.config.ts) — enable standalone
+
+```ts
+const nextConfig: NextConfig = {
+  output: "standalone",
+  turbopack: { root: import.meta.dirname },
+};
+```
+
+Required so the builder stage emits `.next/standalone` for the runtime image.
+
+### 2. [`requirements.txt`](requirements.txt) — Python deps
+
+```
+fast-flights
+typing-extensions
+```
+
+Matches README install; used in the runtime image venv.
+
+### 3. [`Dockerfile`](Dockerfile) — multi-stage
+
+- **deps**: `node:20-bookworm-slim`, `npm ci`
+- **builder**: copy sources + `npm run build`
+- **runner**: same Node base; install `python3` + `python3-venv`; create `/opt/venv` and `pip install -r requirements.txt`; copy:
+  - `.next/standalone` → `/app`
+  - `.next/static` → `/app/.next/static`
+  - `public` → `/app/public`
+  - `scripts/` → `/app/scripts` (needed by [`src/lib/providers/googleFlights.ts`](src/lib/providers/googleFlights.ts) which resolves `process.cwd()/scripts/google_flights_search.py`)
+- `ENV PYTHON=/opt/venv/bin/python`, `PORT=3000`, `HOSTNAME=0.0.0.0`
+- `CMD ["node", "server.js"]`
+
+### 4. [`docker-compose.yml`](docker-compose.yml)
+
+```yaml
+services:
+  web:
+    build: .
+    ports: ["3000:3000"]
+    environment:
+      PYTHON: /opt/venv/bin/python
+```
+
+### 5. [`.dockerignore`](.dockerignore)
+
+Ignore `node_modules`, `.next`, `.venv`, `.git`, `.env*`, tests, docs, `.firecrawl`, etc. so build context stays small.
+
+## Run (after implementation)
+
+```bash
+docker compose up --build
+```
+
+App at http://localhost:3000. Flight search works inside the container because Python + `fast-flights` ship in the image.
+
+## Out of scope
+
+- Dev hot-reload compose profile
+- README updates (unless you ask)
+- Amadeus credentials / env wiring (default provider is google-flights)
+
+---
+
+<a id="chapter-121-dockerize-datefare-app"></a>
+
+## Chapter 121: Dockerize datefare app
+
+> **Overview:** Add optional Docker/Compose packaging so the app can run in a container without changing the existing local Node + Python venv workflow.
+
+# Optional Docker run config (legacy-safe)
+
+## Constraint
+
+Docker is an **optional** run path only. Do **not** break or replace the existing local workflow:
+
+- `npm install` + `.venv` + `PYTHON=./.venv/bin/python npm run dev`
+- `npm run build` / `npm start` / `npm test`
+
+No changes to app runtime code, provider wiring, or [`next.config.ts`](next.config.ts). Prefer **additive** files only (`Dockerfile`, `docker-compose.yml`, `.dockerignore`, `requirements.txt`).
+
+## Approach
+
+Multi-stage image that installs Node deps, runs `next build`, then starts with **`npm start`** (same as local production). Include Python + `fast-flights` in the runtime image so the default google-flights provider works in-container.
+
+**Do not** set `output: "standalone"` — that would alter Next’s production output layout for all builds, including non-Docker paths.
+
+## Files to add (no existing behavior required to use them)
+
+### 1. [`requirements.txt`](requirements.txt)
+
+```
+fast-flights
+typing-extensions
+```
+
+Additive. Docker uses it for the image venv; local setup can keep using the README’s `pip install …` one-liner unchanged.
+
+### 2. [`Dockerfile`](Dockerfile) — multi-stage
+
+- **deps**: `node:20-bookworm-slim`, `npm ci`
+- **builder**: copy sources + `npm run build`
+- **runner**: Node base + `python3`/`python3-venv`; `/opt/venv` with `pip install -r requirements.txt`; copy `package.json`, `package-lock.json`, `node_modules`, `.next`, `public`, `scripts`, and config needed for `npm start`
+- `ENV PYTHON=/opt/venv/bin/python`, `PORT=3000`, `HOSTNAME=0.0.0.0`
+- `CMD ["npm", "start"]` — same entry as local production
+
+### 3. [`docker-compose.yml`](docker-compose.yml)
+
+Optional Compose service for convenience:
+
+```yaml
+services:
+  web:
+    build: .
+    ports: ["3000:3000"]
+    environment:
+      PYTHON: /opt/venv/bin/python
+```
+
+Not wired into npm scripts; not required for local/dev.
+
+### 4. [`.dockerignore`](.dockerignore)
+
+Ignore `node_modules`, `.next`, `.venv`, `.git`, `.env*`, `.firecrawl`, etc.
+
+## Optional run
+
+```bash
+docker compose up --build
+```
+
+Local legacy path remains:
+
+```bash
+python3 -m venv .venv && source .venv/bin/activate
+pip install fast-flights typing-extensions
+npm install
+PYTHON=./.venv/bin/python npm run dev
+```
+
+## Out of scope
+
+- Changing [`next.config.ts`](next.config.ts) or app source for Docker
+- Making Docker the default in README / npm scripts
+- Dev hot-reload compose profile
+- Amadeus env wiring
+
+---
+
+<a id="chapter-122-docs-commit-and-pr"></a>
+
+## Chapter 122: Docs commit and PR
+
+> **Overview:** Add brief README docs for Docker and recent UX features, then commit everything on a feature branch, push, and open a PR against main.
+
+# Document, commit, push, and open PR
+
+## Docs
+
+Update [`README.md`](README.md) with a short **Optional Docker** section (compose up / legacy npm path unchanged) and brief notes that the form persists settings and results show connections, aircraft, and per-person price. Keep it concise; no new markdown files beyond README.
+
+## Git
+
+1. Create branch e.g. `feature/flight-search-ux-docker`
+2. Stage all relevant changes (Docker files, airport data, UI, Python bridge, helpers) — exclude secrets / `.env*`
+3. Commit with a message summarizing why (Docker optional path + search UX: hubs, sticky form, connections, aircraft, per-person pricing, fast-flights v3)
+4. Push with `-u` and open PR via `gh pr create`
+
+## PR body
+
+- Summary bullets: optional Docker; airport coverage; sticky/wider form; results UX (airline names, connections, aircraft, per-person price); fast-flights v3 fix
+- Test plan: compose up, search FLL→BTV, check autocomplete/persistence/results columns
+
+## Note
+
+Execution needs Agent mode (git write + network). Approve this plan or switch to Agent to proceed.
+
+---
+
+<a id="chapter-123-docs-commit-and-pr"></a>
+
+## Chapter 123: Docs commit and PR
+
+> **Overview:** Add brief README docs for Docker and recent UX features, then commit everything on a feature branch, push, and open a PR against main.
+
+# Document, commit, push, and open PR
+
+## Docs
+
+Update [`README.md`](README.md) with a short **Optional Docker** section (compose up / legacy npm path unchanged) and brief notes that the form persists settings and results show connections, aircraft, and per-person price. Keep it concise; no new markdown files beyond README.
+
+## Git
+
+1. Create branch e.g. `feature/flight-search-ux-docker`
+2. Stage all relevant changes (Docker files, airport data, UI, Python bridge, helpers) — exclude secrets / `.env*`
+3. Commit with a message summarizing why (Docker optional path + search UX: hubs, sticky form, connections, aircraft, per-person pricing, fast-flights v3)
+4. Push with `-u` and open PR via `gh pr create`
+
+## PR body
+
+- Summary bullets: optional Docker; airport coverage; sticky/wider form; results UX (airline names, connections, aircraft, per-person price); fast-flights v3 fix
+- Test plan: compose up, search FLL→BTV, check autocomplete/persistence/results columns
+
+## Note
+
+Execution needs Agent mode (git write + network). Approve this plan or switch to Agent to proceed.
+
+---
+
+<a id="chapter-124-expand-plattsburgh-regionals"></a>
+
+## Chapter 124: Expand Plattsburgh regionals
+
+> **Overview:** Expand Northeast regionals near Plattsburgh/Burlington and make “platsburg”-style typos match via airport aliases, so TO/FROM autocomplete finds these cities.
+
+# Add Plattsburgh-area regionals + typo matching
+
+## Context
+
+[`airportData.ts`](src/lib/utils/airportData.ts) already has **PBG** (Plattsburgh) and **BTV** (Burlington) in the Northeast regionals block. Typing **“platsburg”** still fails because the city is spelled **Plattsburgh** and [`AirportFinder.filterAirports`](src/lib/utils/airportFinder.ts) only substring-matches `code` / `city` / `name`.
+
+## Changes
+
+### 1. Aliases on `Airport` + filter
+
+In [`airportData.ts`](src/lib/utils/airportData.ts):
+
+```ts
+aliases?: string[];
+```
+
+Set on PBG: `["Platsburg", "Plattsburg"]`.
+
+In [`airportFinder.ts`](src/lib/utils/airportFinder.ts) `filterAirports`, also match:
+
+```ts
+airport.aliases?.some((a) => a.toLowerCase().includes(term))
+```
+
+### 2. Add similar North Country / Adirondack / VT–NH regionals
+
+Append (skip if code already present):
+
+- **SLK** — Adirondack Regional (Saranac Lake)
+- **MSS** — Massena International
+- **OGS** — Ogdensburg International
+- **ART** — Watertown International
+- **LEB** — Lebanon Municipal (NH)
+- **RUT** — Rutland–Southern Vermont Regional
+
+Same shape/coords style as existing entries. TO/FROM both use this list via `AirportSearch`.
+
+### 3. Docker
+
+If using Compose, rebuild so the image picks up the data: `docker compose up --build`.
+
+## Out of scope
+
+- Full fuzzy search / nationwide regionals
+- Changing default form cities
+
+---
+
+<a id="chapter-125-expand-plattsburgh-regionals"></a>
+
+## Chapter 125: Expand Plattsburgh regionals
+
+> **Overview:** Expand Northeast regionals near Plattsburgh/Burlington and make “platsburg”-style typos match via airport aliases, so TO/FROM autocomplete finds these cities.
+
+# Add Plattsburgh-area regionals + typo matching
+
+## Context
+
+[`airportData.ts`](src/lib/utils/airportData.ts) already has **PBG** (Plattsburgh) and **BTV** (Burlington) in the Northeast regionals block. Typing **“platsburg”** still fails because the city is spelled **Plattsburgh** and [`AirportFinder.filterAirports`](src/lib/utils/airportFinder.ts) only substring-matches `code` / `city` / `name`.
+
+## Changes
+
+### 1. Aliases on `Airport` + filter
+
+In [`airportData.ts`](src/lib/utils/airportData.ts):
+
+```ts
+aliases?: string[];
+```
+
+Set on PBG: `["Platsburg", "Plattsburg"]`.
+
+In [`airportFinder.ts`](src/lib/utils/airportFinder.ts) `filterAirports`, also match:
+
+```ts
+airport.aliases?.some((a) => a.toLowerCase().includes(term))
+```
+
+### 2. Add similar North Country / Adirondack / VT–NH regionals
+
+Append (skip if code already present):
+
+- **SLK** — Adirondack Regional (Saranac Lake)
+- **MSS** — Massena International
+- **OGS** — Ogdensburg International
+- **ART** — Watertown International
+- **LEB** — Lebanon Municipal (NH)
+- **RUT** — Rutland–Southern Vermont Regional
+
+Same shape/coords style as existing entries. TO/FROM both use this list via `AirportSearch`.
+
+### 3. Docker
+
+If using Compose, rebuild so the image picks up the data: `docker compose up --build`.
+
+## Out of scope
+
+- Full fuzzy search / nationwide regionals
+- Changing default form cities
+
+---
+
+<a id="chapter-126-fix-blocked-scan-clicks"></a>
+
+## Chapter 126: Fix blocked scan clicks
 
 > **Overview:** Scan clicks fail silently when another scan or blur analysis holds the mutex, or when scan_state.running is stuck true and disables the button. Fix by claiming/clearing scan state reliably and surfacing blocked/error state in the UI.
 
@@ -12874,9 +13771,9 @@ On Inbox, Calendar, Cameras (and Trash if it has Scan):
 
 ---
 
-<a id="chapter-109-fix-blur-detection-threshold"></a>
+<a id="chapter-127-fix-blur-detection-threshold"></a>
 
-## Chapter 109: Fix blur detection threshold
+## Chapter 127: Fix blur detection threshold
 
 > **Overview:** IMG_7483.JPG scores 130.5 (lowest in inbox by 4×) but is not flagged because blur uses `score < threshold` and your threshold is 25. Fix the inverted Settings copy, raise the default, and add relative outlier detection so obvious misses like this are caught.
 
@@ -12992,9 +13889,9 @@ No re-analysis needed — scores are already stored; classification changes appl
 
 ---
 
-<a id="chapter-110-fix-calendar-tag-search-layout"></a>
+<a id="chapter-128-fix-calendar-tag-search-layout"></a>
 
-## Chapter 110: Fix calendar tag search layout
+## Chapter 128: Fix calendar tag search layout
 
 > **Overview:** Single-character tag search matches many tags; the chip row expands horizontally because the calendar left column uses `width: max-content` and tag chip containers lack width constraints. Fix by constraining the tagging panel to the calendar column width and ensuring chip rows wrap.
 
@@ -13125,9 +14022,9 @@ Replace inline flex styles in [`FileTagPicker.tsx`](imageOrganizer/frontend/src/
 
 ---
 
-<a id="chapter-111-fix-camera-model-order"></a>
+<a id="chapter-129-fix-camera-model-order"></a>
 
-## Chapter 111: Fix camera model order
+## Chapter 129: Fix camera model order
 
 > **Overview:** Fix the backend startup crash by defining `InboxCameraOut` before `BrowseCooccurringOut` references it in models.py.
 
@@ -13157,9 +14054,135 @@ No API or frontend changes. After Docker reloads, backend should boot cleanly.
 
 ---
 
-<a id="chapter-112-fix-label-data-loss"></a>
+<a id="chapter-130-fix-fast-flights-v3-api"></a>
 
-## Chapter 112: Fix label data loss
+## Chapter 130: Fix fast-flights v3 API
+
+> **Overview:** Update the Python Google Flights bridge to the fast-flights 3.x API (FlightQuery + create_query) so FLL→BTV searches stop failing on the FlightData import.
+
+# Fix fast-flights v3 import failure
+
+## Cause
+
+Docker installs current PyPI [`fast-flights`](https://pypi.org/project/fast-flights/) **3.0.2**. That package no longer exports `FlightData`. Public API is now:
+
+```python
+from fast_flights import FlightQuery, Passengers, create_query, get_flights
+
+query = create_query(flights=[FlightQuery(...), ...], trip=..., passengers=..., seat=..., currency=...)
+res = get_flights(query)  # ResultList[Flights]
+```
+
+[`scripts/google_flights_search.py`](scripts/google_flights_search.py) still does `from fast_flights import FlightData, Passengers, get_flights`, which produces the log error you saw.
+
+Live check in the container: v3 `create_query` + `get_flights` for FLL→BTV round-trip returns offers successfully.
+
+## Change (script only)
+
+Update [`scripts/google_flights_search.py`](scripts/google_flights_search.py):
+
+1. **Imports**: `FlightQuery`, `Passengers`, `create_query`, `get_flights` (and `FlightsNotFound` if useful for empty results).
+2. **Query build**: replace `FlightData` + kwargs `get_flights(...)` with `create_query(flights=[FlightQuery(...)], ...)` then `get_flights(query)`.
+3. **Drop** `fetch_mode` / `FAST_FLIGHTS_MODE` (removed in v3).
+4. **Map results**: iterate the `ResultList` of `Flights` objects (not `result.flights`):
+   - `price`: int → use directly
+   - `airline`: `airlines[0]` (or join)
+   - `stops`: `len(flights) - 1`
+   - `durationMinutes`: sum of leg `duration` ints
+   - `outboundDeparture` / `outboundArrival`: ISO from first/last leg `SimpleDatetime` (`date` + `time` tuples)
+   - Keep nominal `inboundDeparture` from `--return-date` (v3 round-trip results still only surface outbound legs; same limitation as before)
+
+Keep the JSON stdout contract unchanged so [`src/lib/providers/googleFlights.ts`](src/lib/providers/googleFlights.ts) needs no changes.
+
+Pin in [`requirements.txt`](requirements.txt):
+
+```
+fast-flights>=3,<4
+typing-extensions
+```
+
+## Deploy
+
+Rebuild the optional Docker image so the updated script is copied in:
+
+```bash
+docker compose up --build
+```
+
+(Local venv users: `pip install -r requirements.txt` and restart `npm run dev`.)
+
+## Verify
+
+Re-run a search FLL→BTV (or `docker compose exec web /opt/venv/bin/python scripts/google_flights_search.py --origin FLL --destination BTV --departure-date 2026-08-26 --return-date 2026-08-31 --trip round-trip`) and confirm `{"ok": true, "offers": [...]}` with no import error.
+
+---
+
+<a id="chapter-131-fix-fast-flights-v3-api"></a>
+
+## Chapter 131: Fix fast-flights v3 API
+
+> **Overview:** Update the Python Google Flights bridge to the fast-flights 3.x API (FlightQuery + create_query) so FLL→BTV searches stop failing on the FlightData import.
+
+# Fix fast-flights v3 import failure
+
+## Cause
+
+Docker installs current PyPI [`fast-flights`](https://pypi.org/project/fast-flights/) **3.0.2**. That package no longer exports `FlightData`. Public API is now:
+
+```python
+from fast_flights import FlightQuery, Passengers, create_query, get_flights
+
+query = create_query(flights=[FlightQuery(...), ...], trip=..., passengers=..., seat=..., currency=...)
+res = get_flights(query)  # ResultList[Flights]
+```
+
+[`scripts/google_flights_search.py`](scripts/google_flights_search.py) still does `from fast_flights import FlightData, Passengers, get_flights`, which produces the log error you saw.
+
+Live check in the container: v3 `create_query` + `get_flights` for FLL→BTV round-trip returns offers successfully.
+
+## Change (script only)
+
+Update [`scripts/google_flights_search.py`](scripts/google_flights_search.py):
+
+1. **Imports**: `FlightQuery`, `Passengers`, `create_query`, `get_flights` (and `FlightsNotFound` if useful for empty results).
+2. **Query build**: replace `FlightData` + kwargs `get_flights(...)` with `create_query(flights=[FlightQuery(...)], ...)` then `get_flights(query)`.
+3. **Drop** `fetch_mode` / `FAST_FLIGHTS_MODE` (removed in v3).
+4. **Map results**: iterate the `ResultList` of `Flights` objects (not `result.flights`):
+   - `price`: int → use directly
+   - `airline`: `airlines[0]` (or join)
+   - `stops`: `len(flights) - 1`
+   - `durationMinutes`: sum of leg `duration` ints
+   - `outboundDeparture` / `outboundArrival`: ISO from first/last leg `SimpleDatetime` (`date` + `time` tuples)
+   - Keep nominal `inboundDeparture` from `--return-date` (v3 round-trip results still only surface outbound legs; same limitation as before)
+
+Keep the JSON stdout contract unchanged so [`src/lib/providers/googleFlights.ts`](src/lib/providers/googleFlights.ts) needs no changes.
+
+Pin in [`requirements.txt`](requirements.txt):
+
+```
+fast-flights>=3,<4
+typing-extensions
+```
+
+## Deploy
+
+Rebuild the optional Docker image so the updated script is copied in:
+
+```bash
+docker compose up --build
+```
+
+(Local venv users: `pip install -r requirements.txt` and restart `npm run dev`.)
+
+## Verify
+
+Re-run a search FLL→BTV (or `docker compose exec web /opt/venv/bin/python scripts/google_flights_search.py --origin FLL --destination BTV --departure-date 2026-08-26 --return-date 2026-08-31 --trip round-trip`) and confirm `{"ok": true, "offers": [...]}` with no import error.
+
+---
+
+<a id="chapter-132-fix-label-data-loss"></a>
+
+## Chapter 132: Fix label data loss
 
 > **Overview:** Tags, People, and Events show 0 photos because the trash-location database migration (`DROP TABLE files` with `PRAGMA foreign_keys=ON`) cascaded and deleted all rows in `file_tags`, `file_people`, and `file_events`. Cameras still work because they count from `files.camera` directly. Fix the migration for future runs and recover associations from a pre-upgrade DB backup if one exists.
 
@@ -13303,9 +14326,9 @@ Under **Changed** or a short note: if you already upgraded, restore from backup 
 
 ---
 
-<a id="chapter-113-fix-lightbox-scale-to-fit"></a>
+<a id="chapter-133-fix-lightbox-scale-to-fit"></a>
 
-## Chapter 113: Fix lightbox scale-to-fit
+## Chapter 133: Fix lightbox scale-to-fit
 
 > **Overview:** The lightbox is showing full-resolution images again because uncommitted local changes (zoom scroll/pan + tags overlay work) replaced scale-to-fit CSS with a scrollable stage at intrinsic image size. Release **2026.07.11a** still scales correctly; the regression is only in current uncommitted edits.
 
@@ -13419,9 +14442,9 @@ No backend changes.
 
 ---
 
-<a id="chapter-114-fix-mosaic-navigation"></a>
+<a id="chapter-134-fix-mosaic-navigation"></a>
 
-## Chapter 114: Fix mosaic navigation
+## Chapter 134: Fix mosaic navigation
 
 > **Overview:** Create mosaic appears to do nothing on Browse because PhotoDetail navigates to `/mosaic?source=…` and then immediately calls `onClose()`, which Browse implements as a second `navigate()` back to the current browse URL — the second navigation wins.
 
@@ -13497,142 +14520,9 @@ No backend or CSS changes needed.
 
 ---
 
-<a id="chapter-115-fix-tag-wrap-blowout"></a>
+<a id="chapter-135-fix-tag-wrap-blowout"></a>
 
-## Chapter 115: Fix tag wrap blowout
-
-> **Overview:** The prior fix added flex-wrap and min-width on chip rows, but the grid column still sizes to the tag panel's max-content when 1-char search returns many tags. Lock the left column width to the calendar and prevent the tagging panel from contributing horizontal intrinsic size.
-
-# Fix calendar tag search layout (v2)
-
-## Why the first fix failed
-
-People chips wrap; tag search chips do not — both use `flex-wrap: wrap`. The difference is **count** (1-char search returns ~40+ tags), which exposes a **grid sizing** bug, not missing `flex-wrap`.
-
-Current structure in [`Calendar.tsx`](imageOrganizer/frontend/src/pages/Calendar.tsx):
-
-```tsx
-<div className="calendar-left-column">
-  <CalendarThreeMonthView ... />
-  <CalendarDayLabelPanel ... />  {/* .calendar-tagging-panel */}
-</div>
-```
-
-[`.calendar-left-column`](imageOrganizer/frontend/src/index.css) is `display: grid; grid-template-columns: minmax(0, max-content)`. **Both grid rows contribute max-content width to the column.** When tag chips render in one intrinsic row, the column (and page left cell) grows wider than the calendar-only layout.
-
-`min-width: 0` / `max-width: 100%` on the panel does not stop max-content participation in grid track sizing.
-
-```mermaid
-flowchart TD
-  calRow["Row 1: calendar-three-month max-content = W"]
-  tagRow["Row 2: tag chips max-content = 3000px"]
-  colWidth["Grid column width = max(W, 3000px)"]
-  calRow --> colWidth
-  tagRow --> colWidth
-```
-
-## Fix strategy
-
-**Lock column width to the calendar; clip tag content inside that width.**
-
-### 1. Restructure left column — [`Calendar.tsx`](imageOrganizer/frontend/src/pages/Calendar.tsx)
-
-Wrap calendar + tagging panel in a stack whose width is defined only by the calendar:
-
-```tsx
-<div className="calendar-left-column">
-  <div className="calendar-left-stack">
-    <CalendarThreeMonthView ... />
-    <CalendarDayLabelPanel context={labelContext} />
-  </div>
-</div>
-```
-
-### 2. Stack + panel CSS — [`index.css`](imageOrganizer/frontend/src/index.css)
-
-```css
-.calendar-left-column {
-  min-width: 0;
-  max-width: 100%;
-  overflow: hidden;
-}
-
-.calendar-left-stack {
-  display: grid;
-  grid-template-columns: 1fr;
-  width: max-content;
-  max-width: 100%;
-}
-
-/* Calendar row sets stack/column width */
-.calendar-left-stack > .calendar-three-month {
-  grid-column: 1;
-  width: max-content;
-}
-
-/* Tag panel: stretch to column width, do NOT expand it */
-.calendar-left-stack > .calendar-tagging-panel {
-  grid-column: 1;
-  width: 0;
-  min-width: 100%;
-  overflow-x: clip;
-  contain: inline-size;
-  /* keep existing panel styles (background, padding, sticky, etc.) */
-}
-
-.calendar-tagging-panel .single-file-label-editors,
-.calendar-tagging-panel .label-editor-tags {
-  min-width: 0;
-  max-width: 100%;
-}
-
-.tag-picker-chips {
-  width: 100%;
-  box-sizing: border-box;
-  /* existing flex-wrap, gap, min-width: 0 */
-}
-```
-
-Key mechanisms:
-- **`width: 0; min-width: 100%`** — grid item fills the column without adding max-content width to track sizing
-- **`contain: inline-size`** — descendants cannot affect external inline size
-- **`overflow-x: clip`** — chips wrap inside fixed width instead of expanding layout
-
-### 3. Tags section width — [`index.css`](imageOrganizer/frontend/src/index.css)
-
-Tags live in [`.label-editor-tags`](imageOrganizer/frontend/src/components/BulkLabelEditors.tsx) (not inside `CollapsibleSection`, unlike People). Add explicit containment:
-
-```css
-.label-editor-tags {
-  min-width: 0;
-  overflow-x: hidden;
-}
-```
-
-Scoped under `.calendar-tagging-panel` if preferred to avoid side effects elsewhere.
-
-### 4. Optional cleanup — [`BulkLabelEditors.tsx`](imageOrganizer/frontend/src/components/BulkLabelEditors.tsx)
-
-Replace people section inline flex (line ~298) with `className="tag-picker-chips"` for consistency (People already wraps; low risk).
-
-## Out of scope
-
-- Minimum 2-character search threshold
-- Changing page grid to equal columns (`1fr 1fr`)
-
-## Test plan
-
-1. Calendar → day with photos → select photo(s) → note initial left-column width (calendar + wrapped recent tags)
-2. Tag search **1 char** (`t`) → many chips appear **wrapped inside panel**; left column width **unchanged**; no horizontal page scroll
-3. Tag search **2 chars** (`ta`) → same width, wrapped
-4. People section still wraps; November month labels unchanged
-5. Inbox tag picker still works (stack CSS is calendar-scoped via `.calendar-left-stack`)
-
----
-
-<a id="chapter-116-fix-tag-wrap-blowout"></a>
-
-## Chapter 116: Fix tag wrap blowout
+## Chapter 135: Fix tag wrap blowout
 
 > **Overview:** The prior fix added flex-wrap and min-width on chip rows, but the grid column still sizes to the tag panel's max-content when 1-char search returns many tags. Lock the left column width to the calendar and prevent the tagging panel from contributing horizontal intrinsic size.
 
@@ -13763,9 +14653,254 @@ Replace people section inline flex (line ~298) with `className="tag-picker-chips
 
 ---
 
-<a id="chapter-117-inbox-autotag-investigation"></a>
+<a id="chapter-136-fix-tag-wrap-blowout"></a>
 
-## Chapter 117: Inbox autotag investigation
+## Chapter 136: Fix tag wrap blowout
+
+> **Overview:** The prior fix added flex-wrap and min-width on chip rows, but the grid column still sizes to the tag panel's max-content when 1-char search returns many tags. Lock the left column width to the calendar and prevent the tagging panel from contributing horizontal intrinsic size.
+
+# Fix calendar tag search layout (v2)
+
+## Why the first fix failed
+
+People chips wrap; tag search chips do not — both use `flex-wrap: wrap`. The difference is **count** (1-char search returns ~40+ tags), which exposes a **grid sizing** bug, not missing `flex-wrap`.
+
+Current structure in [`Calendar.tsx`](imageOrganizer/frontend/src/pages/Calendar.tsx):
+
+```tsx
+<div className="calendar-left-column">
+  <CalendarThreeMonthView ... />
+  <CalendarDayLabelPanel ... />  {/* .calendar-tagging-panel */}
+</div>
+```
+
+[`.calendar-left-column`](imageOrganizer/frontend/src/index.css) is `display: grid; grid-template-columns: minmax(0, max-content)`. **Both grid rows contribute max-content width to the column.** When tag chips render in one intrinsic row, the column (and page left cell) grows wider than the calendar-only layout.
+
+`min-width: 0` / `max-width: 100%` on the panel does not stop max-content participation in grid track sizing.
+
+```mermaid
+flowchart TD
+  calRow["Row 1: calendar-three-month max-content = W"]
+  tagRow["Row 2: tag chips max-content = 3000px"]
+  colWidth["Grid column width = max(W, 3000px)"]
+  calRow --> colWidth
+  tagRow --> colWidth
+```
+
+## Fix strategy
+
+**Lock column width to the calendar; clip tag content inside that width.**
+
+### 1. Restructure left column — [`Calendar.tsx`](imageOrganizer/frontend/src/pages/Calendar.tsx)
+
+Wrap calendar + tagging panel in a stack whose width is defined only by the calendar:
+
+```tsx
+<div className="calendar-left-column">
+  <div className="calendar-left-stack">
+    <CalendarThreeMonthView ... />
+    <CalendarDayLabelPanel context={labelContext} />
+  </div>
+</div>
+```
+
+### 2. Stack + panel CSS — [`index.css`](imageOrganizer/frontend/src/index.css)
+
+```css
+.calendar-left-column {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.calendar-left-stack {
+  display: grid;
+  grid-template-columns: 1fr;
+  width: max-content;
+  max-width: 100%;
+}
+
+/* Calendar row sets stack/column width */
+.calendar-left-stack > .calendar-three-month {
+  grid-column: 1;
+  width: max-content;
+}
+
+/* Tag panel: stretch to column width, do NOT expand it */
+.calendar-left-stack > .calendar-tagging-panel {
+  grid-column: 1;
+  width: 0;
+  min-width: 100%;
+  overflow-x: clip;
+  contain: inline-size;
+  /* keep existing panel styles (background, padding, sticky, etc.) */
+}
+
+.calendar-tagging-panel .single-file-label-editors,
+.calendar-tagging-panel .label-editor-tags {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.tag-picker-chips {
+  width: 100%;
+  box-sizing: border-box;
+  /* existing flex-wrap, gap, min-width: 0 */
+}
+```
+
+Key mechanisms:
+- **`width: 0; min-width: 100%`** — grid item fills the column without adding max-content width to track sizing
+- **`contain: inline-size`** — descendants cannot affect external inline size
+- **`overflow-x: clip`** — chips wrap inside fixed width instead of expanding layout
+
+### 3. Tags section width — [`index.css`](imageOrganizer/frontend/src/index.css)
+
+Tags live in [`.label-editor-tags`](imageOrganizer/frontend/src/components/BulkLabelEditors.tsx) (not inside `CollapsibleSection`, unlike People). Add explicit containment:
+
+```css
+.label-editor-tags {
+  min-width: 0;
+  overflow-x: hidden;
+}
+```
+
+Scoped under `.calendar-tagging-panel` if preferred to avoid side effects elsewhere.
+
+### 4. Optional cleanup — [`BulkLabelEditors.tsx`](imageOrganizer/frontend/src/components/BulkLabelEditors.tsx)
+
+Replace people section inline flex (line ~298) with `className="tag-picker-chips"` for consistency (People already wraps; low risk).
+
+## Out of scope
+
+- Minimum 2-character search threshold
+- Changing page grid to equal columns (`1fr 1fr`)
+
+## Test plan
+
+1. Calendar → day with photos → select photo(s) → note initial left-column width (calendar + wrapped recent tags)
+2. Tag search **1 char** (`t`) → many chips appear **wrapped inside panel**; left column width **unchanged**; no horizontal page scroll
+3. Tag search **2 chars** (`ta`) → same width, wrapped
+4. People section still wraps; November month labels unchanged
+5. Inbox tag picker still works (stack CSS is calendar-scoped via `.calendar-left-stack`)
+
+---
+
+<a id="chapter-137-html-book-output"></a>
+
+## Chapter 137: HTML book output
+
+> **Overview:** Extend the development-book builder so every markdown build also writes a sibling self-contained HTML file, keeping Python stdlib-only and updating docs/skill/schema to match.
+
+# Always build HTML alongside the markdown book
+
+## Approach
+
+After [`build_book()`](build_development_book.py) produces the markdown string, also convert it to a single self-contained HTML document and write it next to the `.md` by default.
+
+**Defaults (no consumer config change required):**
+- Markdown path unchanged (`output`, e.g. `docs/DEVELOPMENT_BOOK.md`)
+- HTML path = same path with `.html` (`docs/DEVELOPMENT_BOOK.html`)
+- Optional override: `output_html` in `book.json` and `--output-html` CLI flag
+- Stay **stdlib-only** (no new deps): small markdown→HTML converter for plan-book features (headings, paragraphs, lists, blockquotes, fenced code, inline code, bold/italic, links, existing `<a id>` anchors)
+
+```mermaid
+flowchart LR
+  bookJson[book.json] --> buildBook[build_book]
+  plans[plan.md files] --> buildBook
+  buildBook --> mdFile[".md write"]
+  buildBook --> mdToHtml[markdown_to_html]
+  mdToHtml --> htmlDoc[wrap HTML document]
+  htmlDoc --> htmlFile[".html write"]
+```
+
+## Code changes — [`build_development_book.py`](build_development_book.py)
+
+1. **Config**
+   - Add `output_html: str = ""` to `BookConfig`
+   - Load `output_html` in `load_config`
+   - Resolve path: `expand_path(config.output_html, …)` if set, else `output.with_suffix(".html")`
+
+2. **Markdown → HTML**
+   - Add `markdown_to_html(text: str) -> str` covering the subset used by generated books and typical plan bodies
+   - Add `render_html_document(body_html: str, title: str) -> str`: full page with `<!DOCTYPE html>`, charset, `<title>`, and minimal readable CSS (typography, code blocks, TOC spacing) — documentation-style, not a marketing layout
+
+3. **`main()`**
+   - After writing the `.md`, write the `.html`
+   - Print both paths (`Wrote …md` / `Wrote …html`)
+
+## Docs / skill / schema
+
+- [`book.schema.example.json`](book.schema.example.json): add optional `"output_html": "docs/DEVELOPMENT_BOOK.html"`
+- [`README.md`](README.md): note dual output; document `output_html`; update “Add a chapter” commit guidance to include the `.html`
+- [`skills/development-book/SKILL.md`](skills/development-book/SKILL.md): expect both files written and committed; do not hand-edit either
+
+## Out of scope
+
+- Multi-page chapter sites, PDF, external CSS/JS, or third-party markdown libraries
+- Changing the markdown book content or chapter ordering logic
+
+---
+
+<a id="chapter-138-html-book-output"></a>
+
+## Chapter 138: HTML book output
+
+> **Overview:** Extend the development-book builder so every markdown build also writes a sibling self-contained HTML file, keeping Python stdlib-only and updating docs/skill/schema to match.
+
+# Always build HTML alongside the markdown book
+
+## Approach
+
+After [`build_book()`](build_development_book.py) produces the markdown string, also convert it to a single self-contained HTML document and write it next to the `.md` by default.
+
+**Defaults (no consumer config change required):**
+- Markdown path unchanged (`output`, e.g. `docs/DEVELOPMENT_BOOK.md`)
+- HTML path = same path with `.html` (`docs/DEVELOPMENT_BOOK.html`)
+- Optional override: `output_html` in `book.json` and `--output-html` CLI flag
+- Stay **stdlib-only** (no new deps): small markdown→HTML converter for plan-book features (headings, paragraphs, lists, blockquotes, fenced code, inline code, bold/italic, links, existing `<a id>` anchors)
+
+```mermaid
+flowchart LR
+  bookJson[book.json] --> buildBook[build_book]
+  plans[plan.md files] --> buildBook
+  buildBook --> mdFile[".md write"]
+  buildBook --> mdToHtml[markdown_to_html]
+  mdToHtml --> htmlDoc[wrap HTML document]
+  htmlDoc --> htmlFile[".html write"]
+```
+
+## Code changes — [`build_development_book.py`](build_development_book.py)
+
+1. **Config**
+   - Add `output_html: str = ""` to `BookConfig`
+   - Load `output_html` in `load_config`
+   - Resolve path: `expand_path(config.output_html, …)` if set, else `output.with_suffix(".html")`
+
+2. **Markdown → HTML**
+   - Add `markdown_to_html(text: str) -> str` covering the subset used by generated books and typical plan bodies
+   - Add `render_html_document(body_html: str, title: str) -> str`: full page with `<!DOCTYPE html>`, charset, `<title>`, and minimal readable CSS (typography, code blocks, TOC spacing) — documentation-style, not a marketing layout
+
+3. **`main()`**
+   - After writing the `.md`, write the `.html`
+   - Print both paths (`Wrote …md` / `Wrote …html`)
+
+## Docs / skill / schema
+
+- [`book.schema.example.json`](book.schema.example.json): add optional `"output_html": "docs/DEVELOPMENT_BOOK.html"`
+- [`README.md`](README.md): note dual output; document `output_html`; update “Add a chapter” commit guidance to include the `.html`
+- [`skills/development-book/SKILL.md`](skills/development-book/SKILL.md): expect both files written and committed; do not hand-edit either
+
+## Out of scope
+
+- Multi-page chapter sites, PDF, external CSS/JS, or third-party markdown libraries
+- Changing the markdown book content or chapter ordering logic
+
+---
+
+<a id="chapter-139-inbox-autotag-investigation"></a>
+
+## Chapter 139: Inbox autotag investigation
 
 > **Overview:** Investigation of inbox tag recommendations: current gaps, available signals in the existing schema, approach comparison (heuristics vs phash vs ML), and a phased roadmap — no implementation in this phase.
 
@@ -13939,9 +15074,9 @@ Do **not** auto-apply without confirmation (consistent with app’s safe-apply p
 
 ---
 
-<a id="chapter-118-inbox-detail-auto-advance"></a>
+<a id="chapter-140-inbox-detail-auto-advance"></a>
 
-## Chapter 118: Inbox detail auto-advance
+## Chapter 140: Inbox detail auto-advance
 
 > **Overview:** When a photo in Inbox detail view leaves the filtered list (e.g. tagged while on Untagged filter), advance to the next remaining photo instead of closing the detail drawer.
 
@@ -14022,9 +15157,9 @@ Manual in Inbox with **Untagged** filter:
 
 ---
 
-<a id="chapter-119-library-mosaic-save"></a>
+<a id="chapter-141-library-mosaic-save"></a>
 
-## Chapter 119: Library mosaic save
+## Chapter 141: Library mosaic save
 
 > **Overview:** Save generated mosaics under `{archive}/mosaics/`, index them as archive photos, and auto-tag with mosaic so they appear in Browse/Calendar like any library photo.
 
@@ -14098,9 +15233,9 @@ In [`Mosaic.tsx`](frontend/src/pages/Mosaic.tsx), after success: invalidate `["f
 
 ---
 
-<a id="chapter-120-lightbox-tag-fonts"></a>
+<a id="chapter-142-lightbox-tag-fonts"></a>
 
-## Chapter 120: Lightbox tag fonts
+## Chapter 142: Lightbox tag fonts
 
 > **Overview:** Increase typography in the lightbox Tags & people panel only (T overlay), scoped to `.photo-lightbox-tags` so grid/inbox badges stay unchanged.
 
@@ -14169,9 +15304,9 @@ Optional small tweak: bump `.photo-lightbox-tags .badge-remove` to `1rem` so the
 
 ---
 
-<a id="chapter-121-lightbox-tag-overlay"></a>
+<a id="chapter-143-lightbox-tag-overlay"></a>
 
-## Chapter 121: Lightbox tag overlay
+## Chapter 143: Lightbox tag overlay
 
 > **Overview:** Add a toggleable tag-application overlay to the PhotoDetail fullscreen lightbox, shown/hidden with T/t, reusing the existing FileTagPicker search/recent pattern.
 
@@ -14289,9 +15424,9 @@ Add styles near existing `.photo-lightbox` rules:
 
 ---
 
-<a id="chapter-122-people-autotag-options"></a>
+<a id="chapter-144-people-autotag-options"></a>
 
-## Chapter 122: People autotag options
+## Chapter 144: People autotag options
 
 > **Overview:** TABLED — Compare four approaches for inbox people labeling: heuristic suggestions (no ML), face detection, face recognition against known people, and face clustering. Parked for later; no implementation until revisited.
 
@@ -14525,9 +15660,87 @@ No code in this phase — comparison only, per investigation scope.
 
 ---
 
-<a id="chapter-123-persist-collapsible-sections"></a>
+<a id="chapter-145-per-passenger-price-display"></a>
 
-## Chapter 123: Persist collapsible sections
+## Chapter 145: Per-passenger price display
+
+> **Overview:** Show trip total with a per-person breakdown like `$2,000 ($500 per/person)` using the search’s adult count.
+
+# Per-passenger price label
+
+## Assumption
+
+Provider `price` / `totalPrice` is the **trip total for the searched passenger count**. Per-person = `Math.round(price / adults)`. (Matches Google Flights when searching with N adults.)
+
+## Data
+
+[`FlightResult`](src/types/search.ts) has no adult count today. In [`mapOffer`](src/components/search/SearchForm.tsx):
+
+1. Add `adults: number` to `FlightResult`.
+2. Pass `adults: form.adults` into `mapOffer` (or close over `form.adults` when mapping stream/complete results).
+
+## UI
+
+Shared format helper (inline or small util):
+
+```ts
+function formatPrice(total: number, adults: number): string {
+  const totalLabel = `$${total.toLocaleString()}`;
+  if (adults <= 1) return totalLabel;
+  const per = Math.round(total / adults);
+  return `${totalLabel} ($${per.toLocaleString()} per/person)`;
+}
+```
+
+- [`AlternativesList.tsx`](src/components/results/AlternativesList.tsx) — price cell uses this format
+- [`CheapestHeroCard.tsx`](src/components/results/CheapestHeroCard.tsx) — hero price uses the same (per/person as smaller secondary text under the big total when adults > 1)
+
+Sorting stays by total `price`.
+
+---
+
+<a id="chapter-146-per-passenger-price-display"></a>
+
+## Chapter 146: Per-passenger price display
+
+> **Overview:** Show trip total with a per-person breakdown like `$2,000 ($500 per/person)` using the search’s adult count.
+
+# Per-passenger price label
+
+## Assumption
+
+Provider `price` / `totalPrice` is the **trip total for the searched passenger count**. Per-person = `Math.round(price / adults)`. (Matches Google Flights when searching with N adults.)
+
+## Data
+
+[`FlightResult`](src/types/search.ts) has no adult count today. In [`mapOffer`](src/components/search/SearchForm.tsx):
+
+1. Add `adults: number` to `FlightResult`.
+2. Pass `adults: form.adults` into `mapOffer` (or close over `form.adults` when mapping stream/complete results).
+
+## UI
+
+Shared format helper (inline or small util):
+
+```ts
+function formatPrice(total: number, adults: number): string {
+  const totalLabel = `$${total.toLocaleString()}`;
+  if (adults <= 1) return totalLabel;
+  const per = Math.round(total / adults);
+  return `${totalLabel} ($${per.toLocaleString()} per/person)`;
+}
+```
+
+- [`AlternativesList.tsx`](src/components/results/AlternativesList.tsx) — price cell uses this format
+- [`CheapestHeroCard.tsx`](src/components/results/CheapestHeroCard.tsx) — hero price uses the same (per/person as smaller secondary text under the big total when adults > 1)
+
+Sorting stays by total `price`.
+
+---
+
+<a id="chapter-147-persist-collapsible-sections"></a>
+
+## Chapter 147: Persist collapsible sections
 
 > **Overview:** Persist expanded/collapsed state for label-editor sections so user toggles survive remounts (e.g. single ↔ bulk selection, re-renders after label apply). Fix centrally in `CollapsibleSection` with optional localStorage keys shared across editor contexts.
 
@@ -14612,9 +15825,9 @@ Manual in Inbox:
 
 ---
 
-<a id="chapter-124-persist-collapsible-sections"></a>
+<a id="chapter-148-persist-collapsible-sections"></a>
 
-## Chapter 124: Persist collapsible sections
+## Chapter 148: Persist collapsible sections
 
 > **Overview:** Persist expanded/collapsed state for label-editor sections so user toggles survive remounts (e.g. single ↔ bulk selection, re-renders after label apply). Fix centrally in `CollapsibleSection` with optional localStorage keys shared across editor contexts.
 
@@ -14699,9 +15912,81 @@ Manual in Inbox:
 
 ---
 
-<a id="chapter-125-recent-people-like-tags"></a>
+<a id="chapter-149-persist-search-form-settings"></a>
 
-## Chapter 125: Recent people like tags
+## Chapter 149: Persist search form settings
+
+> **Overview:** Save SearchForm fields to localStorage on change and restore them on load so a browser refresh keeps the last origin, destination, dates, stay days, and adults.
+
+# Persist last search settings across refresh
+
+## Problem
+
+[`SearchForm.tsx`](src/components/search/SearchForm.tsx) always initializes from hardcoded `DEFAULT_VALUES` (`MCO`/`LAX`, etc.). Refresh loses whatever the user last entered.
+
+## Approach
+
+Persist the form’s `SearchRequest` fields in **`localStorage`** (client-only). Both TO and FROM already share this form state, so one store covers all fields.
+
+### 1. Storage helper — [`src/lib/utils/searchFormStorage.ts`](src/lib/utils/searchFormStorage.ts)
+
+- Key: `datefare:lastSearch`
+- `loadSearchForm(): SearchRequest | null` — parse JSON; return null if missing/invalid
+- `saveSearchForm(form: SearchRequest): void` — write JSON
+- Validate loosely on load: require 3-letter origin/destination strings, ISO dates `YYYY-MM-DD`, positive ints for stay/adults, known `tripType`. Fall back to null (use defaults) if invalid.
+
+### 2. Wire into [`SearchForm.tsx`](src/components/search/SearchForm.tsx)
+
+- Keep `useState(DEFAULT_VALUES)` for SSR-safe first paint (avoid hydration mismatch).
+- `useEffect` on mount: `loadSearchForm()` → if present, `setForm(saved)`.
+- Persist on every field update inside `updateField` (and thus all inputs), so refresh mid-edit still restores last typed values.
+- Do **not** persist search results / progress from `SearchProvider`.
+
+## Verify
+
+Change From/To (e.g. FLL→BTV), refresh → fields still show FLL/BTV and other last-edited values.
+
+---
+
+<a id="chapter-150-persist-search-form-settings"></a>
+
+## Chapter 150: Persist search form settings
+
+> **Overview:** Save SearchForm fields to localStorage on change and restore them on load so a browser refresh keeps the last origin, destination, dates, stay days, and adults.
+
+# Persist last search settings across refresh
+
+## Problem
+
+[`SearchForm.tsx`](src/components/search/SearchForm.tsx) always initializes from hardcoded `DEFAULT_VALUES` (`MCO`/`LAX`, etc.). Refresh loses whatever the user last entered.
+
+## Approach
+
+Persist the form’s `SearchRequest` fields in **`localStorage`** (client-only). Both TO and FROM already share this form state, so one store covers all fields.
+
+### 1. Storage helper — [`src/lib/utils/searchFormStorage.ts`](src/lib/utils/searchFormStorage.ts)
+
+- Key: `datefare:lastSearch`
+- `loadSearchForm(): SearchRequest | null` — parse JSON; return null if missing/invalid
+- `saveSearchForm(form: SearchRequest): void` — write JSON
+- Validate loosely on load: require 3-letter origin/destination strings, ISO dates `YYYY-MM-DD`, positive ints for stay/adults, known `tripType`. Fall back to null (use defaults) if invalid.
+
+### 2. Wire into [`SearchForm.tsx`](src/components/search/SearchForm.tsx)
+
+- Keep `useState(DEFAULT_VALUES)` for SSR-safe first paint (avoid hydration mismatch).
+- `useEffect` on mount: `loadSearchForm()` → if present, `setForm(saved)`.
+- Persist on every field update inside `updateField` (and thus all inputs), so refresh mid-edit still restores last typed values.
+- Do **not** persist search results / progress from `SearchProvider`.
+
+## Verify
+
+Change From/To (e.g. FLL→BTV), refresh → fields still show FLL/BTV and other last-edited values.
+
+---
+
+<a id="chapter-151-recent-people-like-tags"></a>
+
+## Chapter 151: Recent people like tags
 
 > **Overview:** Add a localStorage-backed "Recently used" section for people pickers, mirroring the existing tag pattern in `FileTagPicker` and `BulkLabelEditors`.
 
@@ -14779,9 +16064,9 @@ Under `[Unreleased]` → **Added**: Recently used people chips in single and bul
 
 ---
 
-<a id="chapter-126-release-20260710"></a>
+<a id="chapter-152-release-20260710"></a>
 
-## Chapter 126: Release 2026.07.10
+## Chapter 152: Release 2026.07.10
 
 > **Overview:** Document the SQLite lock fix in the development book and CHANGELOG, bump version strings to 2026.07.10, regenerate DEVELOPMENT_BOOK.md, then commit, tag, and push the release.
 
@@ -14866,9 +16151,9 @@ flowchart LR
 
 ---
 
-<a id="chapter-127-release-20260712b"></a>
+<a id="chapter-153-release-20260712b"></a>
 
-## Chapter 127: Release 2026.07.12b
+## Chapter 153: Release 2026.07.12b
 
 > **Overview:** Document the month-selectable photo grid feature, bump version strings to 2026.07.12b, regenerate the development book, then commit and tag the release.
 
@@ -14960,9 +16245,9 @@ Branch is currently **3 commits ahead** of `origin/main` (2026.07.11e, 2026.07.1
 
 ---
 
-<a id="chapter-128-release-20260714"></a>
+<a id="chapter-154-release-20260714"></a>
 
-## Chapter 128: Release 2026.07.14
+## Chapter 154: Release 2026.07.14
 
 > **Overview:** Ship the Browse AND intersection work (tags, people, cameras) as release **2026.07.14**: finalize CHANGELOG/README/versions, register plans and rebuild the development book, then commit, tag, and push to origin.
 
@@ -15033,9 +16318,9 @@ Push is included so the release is on origin (branch is currently even with `ori
 
 ---
 
-<a id="chapter-129-release-20260714"></a>
+<a id="chapter-155-release-20260714"></a>
 
-## Chapter 129: Release 2026.07.14
+## Chapter 155: Release 2026.07.14
 
 > **Overview:** Phase 1 (now): fix calendar day 500 from unresolved camera Query default. Phase 2 (after confirm): docs, version bump, commit/tag/push 2026.07.14.
 
@@ -15099,9 +16384,9 @@ Commit, tag `2026.07.14`, push HEAD + tag to origin.
 
 ---
 
-<a id="chapter-130-review-restore-deletes"></a>
+<a id="chapter-156-review-restore-deletes"></a>
 
-## Chapter 130: Review restore deletes
+## Chapter 156: Review restore deletes
 
 > **Overview:** Add per-item and bulk Restore for delete decisions on the Review page, reusing the existing `cancelReviewDecisions` API and `PhotoDetail` delete-queue mode already used in Inbox.
 
@@ -15244,9 +16529,71 @@ Add under `[Unreleased]` → **Added** in [`CHANGELOG.md`](imageOrganizer/CHANGE
 
 ---
 
-<a id="chapter-131-slim-inbox-delete-refetch"></a>
+<a id="chapter-157-show-connections-in-results"></a>
 
-## Chapter 131: Slim inbox delete refetch
+## Chapter 157: Show connections in results
+
+> **Overview:** Surface stop count on each flight result and show one airport icon per connection in the All Options table.
+
+# Add connection count to results
+
+## Data
+
+[`ProviderOffer`](src/lib/providers/types.ts) already has `stops`. [`FlightResult`](src/types/search.ts) does not — [`mapOffer`](src/components/search/SearchForm.tsx) drops it.
+
+1. Add `stops: number` to `FlightResult`.
+2. In `mapOffer`, set `stops: offer.stops`.
+
+## UI — [`AlternativesList.tsx`](src/components/results/AlternativesList.tsx)
+
+Add a **Connections** column (between Duration and Airline):
+
+- Label: `Nonstop` when `stops === 0`, else `1 stop` / `N stops`
+- Render **one Lucide `Plane` icon per stop** in a row (connection = stop). Nonstop: no icons.
+- Widen grid from `grid-cols-[1fr_1.5fr_1fr_auto]` to five columns, e.g. `grid-cols-[1fr_1.5fr_1fr_1fr_auto]`
+
+Also show stops on [`CheapestHeroCard`](src/components/results/CheapestHeroCard.tsx) next to nights/airline (text only, same Nonstop/N stops wording).
+
+## Note
+
+Layover airport codes are not in the current provider payload — icons are generic plane markers, one per stop count.
+
+---
+
+<a id="chapter-158-show-connections-in-results"></a>
+
+## Chapter 158: Show connections in results
+
+> **Overview:** Surface stop count on each flight result and show one airport icon per connection in the All Options table.
+
+# Add connection count to results
+
+## Data
+
+[`ProviderOffer`](src/lib/providers/types.ts) already has `stops`. [`FlightResult`](src/types/search.ts) does not — [`mapOffer`](src/components/search/SearchForm.tsx) drops it.
+
+1. Add `stops: number` to `FlightResult`.
+2. In `mapOffer`, set `stops: offer.stops`.
+
+## UI — [`AlternativesList.tsx`](src/components/results/AlternativesList.tsx)
+
+Add a **Connections** column (between Duration and Airline):
+
+- Label: `Nonstop` when `stops === 0`, else `1 stop` / `N stops`
+- Render **one Lucide `Plane` icon per stop** in a row (connection = stop). Nonstop: no icons.
+- Widen grid from `grid-cols-[1fr_1.5fr_1fr_auto]` to five columns, e.g. `grid-cols-[1fr_1.5fr_1fr_1fr_auto]`
+
+Also show stops on [`CheapestHeroCard`](src/components/results/CheapestHeroCard.tsx) next to nights/airline (text only, same Nonstop/N stops wording).
+
+## Note
+
+Layover airport codes are not in the current provider payload — icons are generic plane markers, one per stop count.
+
+---
+
+<a id="chapter-159-slim-inbox-delete-refetch"></a>
+
+## Chapter 159: Slim inbox delete refetch
 
 > **Overview:** Mark-delete does not need the full invalidateAfterReviewChange burst. Narrow that helper so Inbox only refetches what a delete decision actually changes.
 
@@ -15300,9 +16647,79 @@ Mark delete in Inbox detail → logs show files + pending_delete count + review-
 
 ---
 
-<a id="chapter-132-throttle-inbox-scan-refetch"></a>
+<a id="chapter-160-sticky-search-form"></a>
 
-## Chapter 132: Throttle inbox scan refetch
+## Chapter 160: Sticky search form
+
+> **Overview:** Make the search form card stick below the header while scrolling so results move underneath and the form stays on screen.
+
+## Goal
+
+Keep the search form visible while scrolling results. Header is already `sticky top-0` ([`Header.tsx`](src/components/layout/Header.tsx), `h-16`). Form should stick just below it.
+
+## Change
+
+Update [`SearchWidget.tsx`](src/components/search/SearchWidget.tsx):
+
+```tsx
+<div className="sticky top-16 z-40 -mt-24 mx-auto max-w-4xl px-4 sm:px-6">
+  <div className="rounded-2xl border ... bg-[var(--bg-surface)] ... backdrop-blur-xl ...">
+    {children}
+  </div>
+</div>
+```
+
+- `sticky top-16` — pins under the 64px header
+- `z-40` — above results (`ResultsSection`), below header (`z-50`)
+- Keep existing card styles and `-mt-24` hero overlap
+- No layout rewrite of [`page.tsx`](src/app/page.tsx); results continue to scroll in normal document flow
+
+Airport autocomplete (`z-50` inside the form) remains usable in the sticky stacking context.
+
+## Verify
+
+Run a search with many results, scroll down — form stays under the nav; price list scrolls.
+
+---
+
+<a id="chapter-161-sticky-search-form"></a>
+
+## Chapter 161: Sticky search form
+
+> **Overview:** Make the search form card stick below the header while scrolling so results move underneath and the form stays on screen.
+
+## Goal
+
+Keep the search form visible while scrolling results. Header is already `sticky top-0` ([`Header.tsx`](src/components/layout/Header.tsx), `h-16`). Form should stick just below it.
+
+## Change
+
+Update [`SearchWidget.tsx`](src/components/search/SearchWidget.tsx):
+
+```tsx
+<div className="sticky top-16 z-40 -mt-24 mx-auto max-w-4xl px-4 sm:px-6">
+  <div className="rounded-2xl border ... bg-[var(--bg-surface)] ... backdrop-blur-xl ...">
+    {children}
+  </div>
+</div>
+```
+
+- `sticky top-16` — pins under the 64px header
+- `z-40` — above results (`ResultsSection`), below header (`z-50`)
+- Keep existing card styles and `-mt-24` hero overlap
+- No layout rewrite of [`page.tsx`](src/app/page.tsx); results continue to scroll in normal document flow
+
+Airport autocomplete (`z-50` inside the form) remains usable in the sticky stacking context.
+
+## Verify
+
+Run a search with many results, scroll down — form stays under the nav; price list scrolls.
+
+---
+
+<a id="chapter-162-throttle-inbox-scan-refetch"></a>
+
+## Chapter 162: Throttle inbox scan refetch
 
 > **Overview:** Stop reloading the full Inbox grid every few seconds during a scan. Keep lightweight status polling; refresh the grid once when the scan finishes (plus a much rarer mid-scan update if useful).
 
@@ -15366,9 +16783,9 @@ Same component handles trash: remove mid-scan trash list refetch; completion eff
 
 ---
 
-<a id="chapter-133-trash-view-and-restore"></a>
+<a id="chapter-163-trash-view-and-restore"></a>
 
-## Chapter 133: Trash view and restore
+## Chapter 163: Trash view and restore
 
 > **Overview:** Add a Trash page listing files in `.trash/`, with scan and restore back to the original location (from operations log). Requires soft-delete in apply (keep DB rows with location=trash) plus a small schema migration and new API endpoints.
 
@@ -15500,5 +16917,147 @@ Minimal — reuse `.page-header`, `.photo-grid`, toolbar pattern from [`Blurry.t
 - Permanent delete from trash
 - Restore to user-chosen folder
 - Trash auto-scan on page load (manual Scan button is enough for v1)
+
+---
+
+<a id="chapter-164-update-cursor-book-submodule"></a>
+
+## Chapter 164: Update cursor-book submodule
+
+> **Overview:** Bump imageOrganizer’s `tools/cursor-book` submodule to cursor-book v1.0.0 (HTML sibling output), regenerate the development book so `docs/DEVELOPMENT_BOOK.html` is committed, and sync the local skill for dual output.
+
+# Pull cursor-book update for the next book
+
+## What’s new upstream
+
+[`tools/cursor-book`](imageOrganizer/tools/cursor-book) is pinned at `36026cf`. Remote `main` / tag **`v1.0.0`** is at `7a276ef`:
+
+- Builder always writes a sibling **HTML** book next to the markdown (`output` → `.html`, or optional `output_html`)
+- Skill/README updated for dual commit (`DEVELOPMENT_BOOK.md` + `.html`)
+
+An untracked [`docs/DEVELOPMENT_BOOK.html`](imageOrganizer/docs/DEVELOPMENT_BOOK.html) already exists locally from a prior run; it is not in git yet.
+
+## Steps
+
+1. **Bump submodule** to `v1.0.0` (or `origin/main` — same commit):
+
+```bash
+cd tools/cursor-book && git fetch origin && git checkout v1.0.0
+cd ../.. && git add tools/cursor-book
+```
+
+2. **Optional config** — set `"output_html": "docs/DEVELOPMENT_BOOK.html"` in [`book.json`](imageOrganizer/book.json) to match the schema example (default already derives this from `output`).
+
+3. **Rebuild** via [`scripts/build_development_book.py`](imageOrganizer/scripts/build_development_book.py); expect both:
+
+   - `Wrote …/docs/DEVELOPMENT_BOOK.md`
+   - `Wrote …/docs/DEVELOPMENT_BOOK.html`
+
+4. **Sync consumer skill** — update [`.cursor/skills/development-book/SKILL.md`](imageOrganizer/.cursor/skills/development-book/SKILL.md) to mention committing both `.md` and `.html` (align with `tools/cursor-book/skills/development-book/SKILL.md`).
+
+5. **Commit** submodule pointer + regenerated books + skill (no app version bump / release unless you ask later — this is tooling for the next book).
+
+## Out of scope
+
+- Cutting `2026.07.23a` / a new app release
+- Changing ARCHITECTURE primary link away from the markdown book
+
+---
+
+<a id="chapter-165-update-cursor-book-submodule"></a>
+
+## Chapter 165: Update cursor-book submodule
+
+> **Overview:** Bump imageOrganizer’s `tools/cursor-book` submodule to cursor-book v1.0.0 (HTML sibling output), regenerate the development book so `docs/DEVELOPMENT_BOOK.html` is committed, and sync the local skill for dual output.
+
+# Pull cursor-book update for the next book
+
+## What’s new upstream
+
+[`tools/cursor-book`](imageOrganizer/tools/cursor-book) is pinned at `36026cf`. Remote `main` / tag **`v1.0.0`** is at `7a276ef`:
+
+- Builder always writes a sibling **HTML** book next to the markdown (`output` → `.html`, or optional `output_html`)
+- Skill/README updated for dual commit (`DEVELOPMENT_BOOK.md` + `.html`)
+
+An untracked [`docs/DEVELOPMENT_BOOK.html`](imageOrganizer/docs/DEVELOPMENT_BOOK.html) already exists locally from a prior run; it is not in git yet.
+
+## Steps
+
+1. **Bump submodule** to `v1.0.0` (or `origin/main` — same commit):
+
+```bash
+cd tools/cursor-book && git fetch origin && git checkout v1.0.0
+cd ../.. && git add tools/cursor-book
+```
+
+2. **Optional config** — set `"output_html": "docs/DEVELOPMENT_BOOK.html"` in [`book.json`](imageOrganizer/book.json) to match the schema example (default already derives this from `output`).
+
+3. **Rebuild** via [`scripts/build_development_book.py`](imageOrganizer/scripts/build_development_book.py); expect both:
+
+   - `Wrote …/docs/DEVELOPMENT_BOOK.md`
+   - `Wrote …/docs/DEVELOPMENT_BOOK.html`
+
+4. **Sync consumer skill** — update [`.cursor/skills/development-book/SKILL.md`](imageOrganizer/.cursor/skills/development-book/SKILL.md) to mention committing both `.md` and `.html` (align with `tools/cursor-book/skills/development-book/SKILL.md`).
+
+5. **Commit** submodule pointer + regenerated books + skill (no app version bump / release unless you ask later — this is tooling for the next book).
+
+## Out of scope
+
+- Cutting `2026.07.23a` / a new app release
+- Changing ARCHITECTURE primary link away from the markdown book
+
+---
+
+<a id="chapter-166-widen-content-max-width"></a>
+
+## Chapter 166: Widen content max-width
+
+> **Overview:** Widen the search form and results column from max-w-4xl to max-w-6xl so large screens use more horizontal space, matching the header width.
+
+# Widen view for larger screens
+
+## Current
+
+Form and results use `max-w-4xl` (896px). Header already uses `max-w-6xl` (1152px), so the main column is narrower than the nav.
+
+## Change
+
+Bump form + results to **`max-w-6xl`** (aligned with header):
+
+- [`SearchWidget.tsx`](src/components/search/SearchWidget.tsx): `max-w-4xl` → `max-w-6xl`
+- [`ResultsSection.tsx`](src/components/results/ResultsSection.tsx): `max-w-4xl` → `max-w-6xl`
+
+Leave hero copy at `max-w-4xl` for readable line length.
+
+## Verify
+
+On a wide viewport, form and “All Options” table span roughly the same width as the Datefare header.
+
+---
+
+<a id="chapter-167-widen-content-max-width"></a>
+
+## Chapter 167: Widen content max-width
+
+> **Overview:** Widen the search form and results column from max-w-4xl to max-w-6xl so large screens use more horizontal space, matching the header width.
+
+# Widen view for larger screens
+
+## Current
+
+Form and results use `max-w-4xl` (896px). Header already uses `max-w-6xl` (1152px), so the main column is narrower than the nav.
+
+## Change
+
+Bump form + results to **`max-w-6xl`** (aligned with header):
+
+- [`SearchWidget.tsx`](src/components/search/SearchWidget.tsx): `max-w-4xl` → `max-w-6xl`
+- [`ResultsSection.tsx`](src/components/results/ResultsSection.tsx): `max-w-4xl` → `max-w-6xl`
+
+Leave hero copy at `max-w-4xl` for readable line length.
+
+## Verify
+
+On a wide viewport, form and “All Options” table span roughly the same width as the Datefare header.
 
 ---

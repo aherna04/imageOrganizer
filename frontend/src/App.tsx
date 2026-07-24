@@ -1,5 +1,8 @@
 import { NavLink, Route, Routes, useLocation } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import pkg from "../package.json";
+import { api } from "./api/client";
+import ViewSkin from "./components/ViewSkin";
 import Home from "./pages/Home";
 import Inbox from "./pages/Inbox";
 import CalendarPage from "./pages/Calendar";
@@ -18,9 +21,24 @@ import Settings from "./pages/Settings";
 export default function App() {
   const { pathname } = useLocation();
   const isHome = pathname === "/";
+  const { data: config } = useQuery({ queryKey: ["config"], queryFn: api.getConfig });
+  const skinStyle =
+    !isHome && config?.view_skin_style && config.view_skin_style !== "off"
+      ? config.view_skin_style
+      : null;
+  const skinMotion = skinStyle ? config?.view_skin_motion || "scroll" : null;
 
   return (
-    <div className={`app-shell${isHome ? " app-shell--home" : ""}`}>
+    <div
+      className={[
+        "app-shell",
+        isHome ? "app-shell--home" : "",
+        skinStyle ? `app-shell--skin-${skinStyle}` : "",
+        skinMotion ? `app-shell--skin-${skinMotion}` : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
+    >
       {!isHome && (
         <nav className="sidebar">
           <div className="sidebar-brand">
@@ -71,27 +89,30 @@ export default function App() {
         </nav>
       )}
       <main className="main">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/inbox" element={<Inbox />} />
-          <Route path="/calendar" element={<CalendarPage />} />
-          <Route path="/calendar/:year/:month" element={<CalendarPage />} />
-          <Route path="/calendar/:year/:month/:day" element={<CalendarPage />} />
-          <Route path="/events" element={<EventsPage />} />
-          <Route path="/events/:slug" element={<EventsPage />} />
-          <Route path="/people" element={<PeoplePage />} />
-          <Route path="/tags" element={<TagsPage />} />
-          <Route path="/cameras" element={<CamerasPage />} />
-          <Route path="/browse" element={<BrowsePage />} />
-          <Route path="/browse/tags" element={<BrowsePage />} />
-          <Route path="/browse/:kind/:slug" element={<BrowsePage />} />
-          <Route path="/mosaic" element={<Mosaic />} />
-          <Route path="/duplicates" element={<Duplicates />} />
-          <Route path="/blurry" element={<Blurry />} />
-          <Route path="/trash" element={<Trash />} />
-          <Route path="/review" element={<Review />} />
-          <Route path="/settings" element={<Settings />} />
-        </Routes>
+        <ViewSkin />
+        <div className="main-foreground">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/inbox" element={<Inbox />} />
+            <Route path="/calendar" element={<CalendarPage />} />
+            <Route path="/calendar/:year/:month" element={<CalendarPage />} />
+            <Route path="/calendar/:year/:month/:day" element={<CalendarPage />} />
+            <Route path="/events" element={<EventsPage />} />
+            <Route path="/events/:slug" element={<EventsPage />} />
+            <Route path="/people" element={<PeoplePage />} />
+            <Route path="/tags" element={<TagsPage />} />
+            <Route path="/cameras" element={<CamerasPage />} />
+            <Route path="/browse" element={<BrowsePage />} />
+            <Route path="/browse/tags" element={<BrowsePage />} />
+            <Route path="/browse/:kind/:slug" element={<BrowsePage />} />
+            <Route path="/mosaic" element={<Mosaic />} />
+            <Route path="/duplicates" element={<Duplicates />} />
+            <Route path="/blurry" element={<Blurry />} />
+            <Route path="/trash" element={<Trash />} />
+            <Route path="/review" element={<Review />} />
+            <Route path="/settings" element={<Settings />} />
+          </Routes>
+        </div>
       </main>
     </div>
   );

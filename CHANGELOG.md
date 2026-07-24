@@ -4,6 +4,19 @@ Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
 ## [Unreleased]
 
+## [2026.07.24] - 2026-07-24
+
+### Added
+
+- **Home** at `/` — full-bleed landscapes (configurable tag) hero, no sidebar; primary nav into Calendar, Inbox, Tags, People, Events
+- **View skins** — optional faded background on chrome-only pages (soft / glass / vignette); Settings for background tag, style, scroll vs fixed motion, and image interval (default 28s)
+- People / Tags / Cameras catalog pages use Events-style card grids; person/tag Edit, Merge, and Delete moved to Browse when a single label is selected
+
+### Fixed
+
+- Browse tag/person views no longer show files that are queued for delete or already in trash
+- Tags / People / Events photo counts match Browse (active library only; trash and pending deletes excluded)
+
 ## [2026.07.23] - 2026-07-23
 
 ### Added

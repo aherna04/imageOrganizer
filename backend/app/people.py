@@ -1,5 +1,6 @@
 import sqlite3
 
+from app.inbox_filters import ACTIVE_LIBRARY_FILE_ON
 from app.metadata import slugify
 
 
@@ -14,12 +15,13 @@ def _unique_slug(conn: sqlite3.Connection, table: str, base_slug: str) -> str:
 
 def list_people(conn: sqlite3.Connection) -> list[dict]:
     rows = conn.execute(
-        """
+        f"""
         SELECT p.*,
             COUNT(DISTINCT f.id) AS photo_count
         FROM people p
         LEFT JOIN file_people fp ON fp.person_id = p.id
         LEFT JOIN files f ON f.id = fp.file_id
+          AND {ACTIVE_LIBRARY_FILE_ON.strip()}
         GROUP BY p.id
         ORDER BY p.name
         """
@@ -29,12 +31,13 @@ def list_people(conn: sqlite3.Connection) -> list[dict]:
 
 def get_person(conn: sqlite3.Connection, person_id: int) -> dict | None:
     row = conn.execute(
-        """
+        f"""
         SELECT p.*,
             COUNT(DISTINCT f.id) AS photo_count
         FROM people p
         LEFT JOIN file_people fp ON fp.person_id = p.id
         LEFT JOIN files f ON f.id = fp.file_id
+          AND {ACTIVE_LIBRARY_FILE_ON.strip()}
         WHERE p.id = ?
         GROUP BY p.id
         """,

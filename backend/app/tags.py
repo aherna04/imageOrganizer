@@ -1,5 +1,6 @@
 import sqlite3
 
+from app.inbox_filters import ACTIVE_LIBRARY_FILE_ON
 from app.metadata import slugify
 
 
@@ -13,12 +14,13 @@ def _unique_slug(conn: sqlite3.Connection, table: str, base_slug: str) -> str:
 
 
 def _photo_count_sql() -> str:
-    return """
+    return f"""
         SELECT t.*,
             COUNT(DISTINCT f.id) AS photo_count
         FROM tags t
         LEFT JOIN file_tags ft ON ft.tag_id = t.id
         LEFT JOIN files f ON f.id = ft.file_id
+          AND {ACTIVE_LIBRARY_FILE_ON.strip()}
     """
 
 

@@ -1,6 +1,6 @@
 {
   "title": "Image Organizer — Development Book",
-  "version": "2026.07.23",
+  "version": "2026.07.24",
   "output": "docs/DEVELOPMENT_BOOK.md",
   "output_html": "docs/DEVELOPMENT_BOOK.html",
   "plans_dir": "~/.cursor/plans",
@@ -99,7 +99,15 @@
         "library_mosaic_save_eb20dbfd",
         "lightbox_tag_fonts_47cf67f1",
         "subtle_delete_icon_0844dd84",
-        "cut_tag_refetch_storm_8dda7fb5"
+        "cut_tag_refetch_storm_8dda7fb5",
+        "home_landscapes_landing_d4a1d942",
+        "home_tag_and_view_skin_fec8e024",
+        "fix_skin_scroll_brightness_500738da",
+        "skin_scroll_with_fade_56bb8170",
+        "skin_rotate_interval_fade_5ff815a3",
+        "pills_for_labels_manage_d9182094",
+        "browse_hide_deleted_files_ab2717c8",
+        "align_label_photo_counts_7a5bd48e"
       ]
     },
     {
@@ -167,6 +175,30 @@
     },
     "show_dup_card_tags_0aa9e23a": {
       "note": "Duplicate of `show_dup_card_tags_eff4e889`."
+    },
+    "home_landscapes_landing_68c71a56": {
+      "note": "Duplicate of `home_landscapes_landing_d4a1d942`."
+    },
+    "home_tag_and_view_skin_b5851c33": {
+      "note": "Duplicate of `home_tag_and_view_skin_fec8e024`."
+    },
+    "fix_skin_scroll_brightness_d9e1951b": {
+      "note": "Duplicate of `fix_skin_scroll_brightness_500738da`."
+    },
+    "skin_scroll_with_fade_a1afcdb0": {
+      "note": "Duplicate of `skin_scroll_with_fade_56bb8170`."
+    },
+    "skin_rotate_interval_fade_211b523b": {
+      "note": "Duplicate of `skin_rotate_interval_fade_5ff815a3`."
+    },
+    "pills_for_labels_manage_2d102669": {
+      "note": "Duplicate of `pills_for_labels_manage_d9182094`."
+    },
+    "browse_hide_deleted_files_73e8a0c0": {
+      "note": "Duplicate of `browse_hide_deleted_files_ab2717c8`."
+    },
+    "align_label_photo_counts_a4c92ffe": {
+      "note": "Duplicate of `align_label_photo_counts_7a5bd48e`."
     }
   }
 }

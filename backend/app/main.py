@@ -113,7 +113,7 @@ from app.scanner import combined_scan_status, scan_state, start_scan_background
 from app.blur_analysis import blur_analysis_state, start_blur_analysis_background
 from app.trash_restore import restore_from_trash
 
-app = FastAPI(title="Image Organizer", version="2026.07.23")
+app = FastAPI(title="Image Organizer", version="2026.07.24")
 
 app.add_middleware(
     CORSMiddleware,
@@ -545,6 +545,10 @@ def api_list_files(
             append_inbox_pending_delete_filter(clauses)
         else:
             append_inbox_visible_filter(clauses, location)
+    else:
+        # Browse / unscoped lists: active library only, hide queued review decisions
+        clauses.append("f.location IN ('inbox', 'archive')")
+        clauses.append(NOT_QUEUED_F.strip())
     if capture_day:
         clauses.append("f.capture_day = ?")
         params.append(capture_day)
@@ -1123,6 +1127,9 @@ def _browse_cooccurring(
     if location:
         clauses.append("f.location = ?")
         params.append(location)
+    else:
+        clauses.append("f.location IN ('inbox', 'archive')")
+        clauses.append(NOT_QUEUED_F.strip())
     for pid in person_ids:
         clauses.append("f.id IN (SELECT file_id FROM file_people WHERE person_id = ?)")
         params.append(pid)

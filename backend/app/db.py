@@ -145,6 +145,10 @@ def default_config() -> dict[str, str]:
         "rename_pattern": DEFAULT_RENAME_PATTERN,
         "photo_sort_order": "desc",
         "blur_threshold": str(BLUR_THRESHOLD_DEFAULT),
+        "home_background_tag": "landscapes",
+        "view_skin_style": "soft",
+        "view_skin_motion": "scroll",
+        "view_skin_interval_sec": "28",
     }
 
 

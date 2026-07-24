@@ -14,6 +14,15 @@ f.id NOT IN (
 )
 """
 
+# Join predicate so catalog photo_counts match Browse (inbox+archive, not queued).
+ACTIVE_LIBRARY_FILE_ON = """
+f.location IN ('inbox', 'archive')
+AND f.id NOT IN (
+    SELECT file_id FROM review_decisions
+    WHERE applied = 0
+)
+"""
+
 PENDING_DELETE_INCLUSION = """
 id IN (
     SELECT file_id FROM review_decisions

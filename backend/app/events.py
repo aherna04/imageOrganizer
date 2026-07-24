@@ -1,12 +1,13 @@
 import sqlite3
 from datetime import date
 
+from app.inbox_filters import ACTIVE_LIBRARY_FILE_ON
 from app.metadata import slugify
 
 
 def list_events(conn: sqlite3.Connection) -> list[dict]:
     rows = conn.execute(
-        """
+        f"""
         SELECT e.*,
             COUNT(f.id) AS photo_count,
             MIN(f.capture_day) AS date_span_start,
@@ -14,6 +15,7 @@ def list_events(conn: sqlite3.Connection) -> list[dict]:
         FROM events e
         LEFT JOIN file_events fe ON fe.event_id = e.id
         LEFT JOIN files f ON f.id = fe.file_id
+          AND {ACTIVE_LIBRARY_FILE_ON.strip()}
         GROUP BY e.id
         ORDER BY e.name
         """
@@ -23,7 +25,7 @@ def list_events(conn: sqlite3.Connection) -> list[dict]:
 
 def get_event(conn: sqlite3.Connection, event_id: int) -> dict | None:
     row = conn.execute(
-        """
+        f"""
         SELECT e.*,
             COUNT(f.id) AS photo_count,
             MIN(f.capture_day) AS date_span_start,
@@ -31,6 +33,7 @@ def get_event(conn: sqlite3.Connection, event_id: int) -> dict | None:
         FROM events e
         LEFT JOIN file_events fe ON fe.event_id = e.id
         LEFT JOIN files f ON f.id = fe.file_id
+          AND {ACTIVE_LIBRARY_FILE_ON.strip()}
         WHERE e.id = ?
         GROUP BY e.id
         """,

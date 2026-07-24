@@ -2,6 +2,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { MediaFile, Person, Tag, api } from "../api/client";
+import BrowseLabelManage from "../components/BrowseLabelManage";
 import BulkEventAssignBar from "../components/BulkEventAssignBar";
 import BulkLabelEditors from "../components/BulkLabelEditors";
 import PhotoGridWithAlerts from "../components/PhotoGridWithAlerts";
@@ -96,6 +97,23 @@ export default function BrowsePage() {
 
   const selectedTagIds = useMemo(() => selectedTags.map((t) => t.id), [selectedTags]);
   const selectedPersonIds = useMemo(() => selectedPeople.map((p) => p.id), [selectedPeople]);
+
+  const manageLabel = useMemo(() => {
+    if (selectedCameraNames.length > 0) return null;
+    if (selectedPeople.length === 1 && selectedTags.length === 0 && selectedPersonSlugs.length === 1) {
+      return { kind: "person" as const, entity: selectedPeople[0] };
+    }
+    if (selectedTags.length === 1 && selectedPeople.length === 0 && selectedTagSlugs.length === 1) {
+      return { kind: "tag" as const, entity: selectedTags[0] };
+    }
+    return null;
+  }, [
+    selectedCameraNames.length,
+    selectedPeople,
+    selectedTags,
+    selectedPersonSlugs.length,
+    selectedTagSlugs.length,
+  ]);
 
   const hasSelection =
     selectedTagSlugs.length > 0 ||
@@ -441,6 +459,15 @@ export default function BrowsePage() {
                   <span className="badge browse-results-count">
                     {photos?.total ?? 0} photos
                   </span>
+                  {manageLabel && (
+                    <BrowseLabelManage
+                      key={`${manageLabel.kind}-${manageLabel.entity.id}`}
+                      kind={manageLabel.kind}
+                      entity={manageLabel.entity}
+                      people={people}
+                      tags={tags}
+                    />
+                  )}
                   {labelMode ? (
                     <button type="button" className="btn btn-secondary" onClick={exitLabelMode}>
                       Done labeling

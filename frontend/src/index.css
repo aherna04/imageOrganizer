@@ -83,6 +83,21 @@ button {
   min-height: 0;
   padding: 1.5rem 2rem;
   overflow-y: auto;
+  position: relative;
+  display: grid;
+  grid-template: 1fr / 1fr;
+}
+
+.view-skin,
+.main-foreground {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.main-foreground {
+  position: relative;
+  z-index: 1;
+  min-height: 100%;
 }
 
 .app-shell--home {
@@ -93,6 +108,10 @@ button {
   padding: 0;
   overflow: hidden;
   height: 100vh;
+}
+
+.app-shell--home .main-foreground {
+  height: 100%;
 }
 
 .page-header {
@@ -1062,6 +1081,41 @@ button.calendar-month-column-title:focus-visible {
   height: 4px;
   border-radius: 2px;
   margin-bottom: 0.75rem;
+}
+
+.label-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.label-card {
+  display: block;
+  background: #161922;
+  border: 1px solid #2a2f3a;
+  border-radius: 12px;
+  padding: 1rem;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.15s ease;
+}
+
+.label-card:hover {
+  border-color: #6366f1;
+}
+
+.label-card-title {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.25;
+  word-break: break-word;
+}
+
+.label-card-meta {
+  color: #8891a0;
+  font-size: 0.875rem;
 }
 
 .event-date-span {
@@ -2437,6 +2491,23 @@ button.calendar-month-column-title:focus-visible {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.browse-label-manage {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.browse-label-manage-form {
+  gap: 0.5rem;
+}
+
+.browse-label-manage-hint {
+  color: #8891a0;
+  font-size: 0.875rem;
 }
 
 .browse-results-header h3 {
@@ -2724,5 +2795,143 @@ button.calendar-month-column-title:focus-visible {
   .home-content,
   .home-nav {
     animation: none;
+  }
+}
+
+/* —— Experimental view skins —— */
+.view-skin {
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+  height: 100%;
+}
+
+/* Scroll with page: top hero band that moves away */
+.app-shell--skin-scroll .view-skin {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+}
+
+/* Stay fixed: pin to visible main pane */
+.app-shell--skin-fixed .view-skin {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100%;
+}
+
+.view-skin-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 3.5s ease-in-out;
+}
+
+.view-skin-image.is-active {
+  opacity: 1;
+}
+
+.view-skin-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Soft fade — bottom settles to solid page bg */
+.app-shell--skin-soft .view-skin-image.is-active {
+  opacity: 0.42;
+}
+
+.app-shell--skin-soft .view-skin-overlay {
+  background: linear-gradient(
+    180deg,
+    rgba(15, 17, 23, 0.35) 0%,
+    rgba(15, 17, 23, 0.55) 40%,
+    rgba(15, 17, 23, 0.88) 72%,
+    #0f1117 100%
+  );
+}
+
+/* Glass panels */
+.app-shell--skin-glass .view-skin-image.is-active {
+  opacity: 0.52;
+}
+
+.app-shell--skin-glass .view-skin-overlay {
+  background: linear-gradient(
+    180deg,
+    rgba(15, 17, 23, 0.25) 0%,
+    rgba(15, 17, 23, 0.45) 40%,
+    rgba(15, 17, 23, 0.85) 72%,
+    #0f1117 100%
+  );
+}
+
+.app-shell--skin-glass .settings-section,
+.app-shell--skin-glass .storage-stat-card,
+.app-shell--skin-glass .review-queue-panel,
+.app-shell--skin-glass .people-form-card,
+.app-shell--skin-glass .people-list-row,
+.app-shell--skin-glass .event-card,
+.app-shell--skin-glass .label-card,
+.app-shell--skin-glass .mosaic-empty-state,
+.app-shell--skin-glass .mosaic-controls {
+  background: rgba(22, 25, 34, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 12px;
+}
+
+.app-shell--skin-glass .settings-section,
+.app-shell--skin-glass .mosaic-controls,
+.app-shell--skin-glass .mosaic-empty-state {
+  padding: 1rem 1.1rem;
+}
+
+.app-shell--skin-glass .page-header,
+.app-shell--skin-glass .page-intro {
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.45);
+}
+
+/* Vignette */
+.app-shell--skin-vignette .view-skin-image.is-active {
+  opacity: 0.58;
+}
+
+.app-shell--skin-vignette .view-skin-overlay {
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 35%, rgba(15, 17, 23, 0.08) 0%, rgba(15, 17, 23, 0.45) 55%, transparent 75%),
+    linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.22) 0%,
+      rgba(15, 17, 23, 0.35) 40%,
+      rgba(15, 17, 23, 0.88) 72%,
+      #0f1117 100%
+    );
+}
+
+/* Hide skin when photo thumbnails / media surfaces are present */
+.app-shell:has(.photo-grid) .view-skin,
+.app-shell:has(.duplicate-compare-grid) .view-skin,
+.app-shell:has(.mosaic-result-image) .view-skin,
+.app-shell:has(.mosaic-source-fixed) .view-skin {
+  opacity: 0;
+  visibility: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .view-skin,
+  .view-skin-image {
+    transition: none;
   }
 }

@@ -45,7 +45,7 @@ export default function CamerasPage() {
       }
     }
     wasScanning.current = status?.running ?? false;
-  }, [status?.running, refetch, qc]);
+  }, [status?.running, status?.scope, refetch, qc]);
 
   const scanArchive = useMutation({
     mutationFn: api.scanArchive,
@@ -91,7 +91,7 @@ export default function CamerasPage() {
         </div>
       </div>
 
-      <p style={{ color: "#8891a0", marginBottom: "1rem" }}>
+      <p className="page-intro">
         Cameras detected from photo EXIF during scan. Scan archive to backfill camera data for existing
         photos, or scan inbox for new imports.
       </p>
@@ -112,19 +112,16 @@ export default function CamerasPage() {
       ) : filteredCameras.length === 0 ? (
         <p className="label-search-empty">No cameras match — try another term</p>
       ) : (
-        <div className="people-list">
+        <div className="label-cards">
           {filteredCameras.map((camera) => (
-            <div key={camera.name} className="people-list-row">
-              <div className="people-list-info">
-                <Link
-                  to={`/browse/camera/${encodeURIComponent(camera.name)}`}
-                  className="people-list-name-link"
-                >
-                  <strong>{camera.name}</strong>
-                </Link>
-                <span className="people-list-count">{cameraCountLabel(camera)}</span>
-              </div>
-            </div>
+            <Link
+              key={camera.name}
+              to={`/browse/camera/${encodeURIComponent(camera.name)}`}
+              className="label-card"
+            >
+              <h3 className="label-card-title">{camera.name}</h3>
+              <div className="label-card-meta">{cameraCountLabel(camera)}</div>
+            </Link>
           ))}
         </div>
       )}

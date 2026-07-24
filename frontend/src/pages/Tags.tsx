@@ -1,18 +1,13 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Tag, api } from "../api/client";
+import { api } from "../api/client";
 import LabelSearchInput from "../components/LabelSearchInput";
 import { filterByNameQuery } from "../utils/filterLabelsByQuery";
 
 export default function TagsPage() {
-  const qc = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState("");
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [editName, setEditName] = useState("");
-  const [mergingId, setMergingId] = useState<number | null>(null);
-  const [mergeTargetId, setMergeTargetId] = useState("");
   const [search, setSearch] = useState("");
 
   const { data: tags = [], refetch } = useQuery({
@@ -29,79 +24,7 @@ export default function TagsPage() {
     },
   });
 
-  const update = useMutation({
-    mutationFn: ({ id, newName }: { id: number; newName: string }) =>
-      api.updateTag(id, { name: newName }),
-    onSuccess: () => {
-      setEditingId(null);
-      qc.invalidateQueries({ queryKey: ["tags"] });
-      qc.invalidateQueries({ queryKey: ["files"] });
-    },
-  });
-
-  const remove = useMutation({
-    mutationFn: (id: number) => api.deleteTag(id),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["tags"] });
-      qc.invalidateQueries({ queryKey: ["files"] });
-    },
-  });
-
-  const merge = useMutation({
-    mutationFn: ({ sourceId, targetId }: { sourceId: number; targetId: number }) =>
-      api.mergeTags(sourceId, targetId),
-    onSuccess: () => {
-      setMergingId(null);
-      setMergeTargetId("");
-      qc.invalidateQueries({ queryKey: ["tags"] });
-      qc.invalidateQueries({ queryKey: ["files"] });
-    },
-  });
-
-  const startEdit = (tag: Tag) => {
-    setEditingId(tag.id);
-    setEditName(tag.name);
-    setMergingId(null);
-  };
-
-  const startMerge = (tag: Tag) => {
-    setMergingId(tag.id);
-    setMergeTargetId("");
-    setEditingId(null);
-  };
-
-  const handleDelete = (tag: Tag) => {
-    const msg =
-      tag.photo_count > 0
-        ? `Delete "${tag.name}"? This removes it from ${tag.photo_count} photo(s).`
-        : `Delete "${tag.name}"?`;
-    if (window.confirm(msg)) {
-      remove.mutate(tag.id);
-    }
-  };
-
-  const handleMerge = (source: Tag) => {
-    const target = tags.find((t) => t.id === Number(mergeTargetId));
-    if (!target) return;
-    const msg = `Merge "${source.name}" into "${target.name}"? All photo tags move to the target.`;
-    if (window.confirm(msg)) {
-      merge.mutate({ sourceId: source.id, targetId: target.id });
-    }
-  };
-
-  const alwaysInclude = useMemo(() => {
-    const names = new Set<string>();
-    const editing = editingId != null ? tags.find((t) => t.id === editingId) : null;
-    const merging = mergingId != null ? tags.find((t) => t.id === mergingId) : null;
-    if (editing) names.add(editing.name);
-    if (merging) names.add(merging.name);
-    return names.size > 0 ? names : undefined;
-  }, [tags, editingId, mergingId]);
-
-  const filteredTags = useMemo(
-    () => filterByNameQuery(tags, search, alwaysInclude),
-    [tags, search, alwaysInclude],
-  );
+  const filteredTags = useMemo(() => filterByNameQuery(tags, search), [tags, search]);
 
   return (
     <div>
@@ -112,8 +35,8 @@ export default function TagsPage() {
         </button>
       </div>
 
-      <p style={{ color: "#8891a0", marginBottom: "1rem" }}>
-        Manage tags on photos (Cars, house project, etc.). Merge duplicates or delete unused entries.
+      <p className="page-intro">
+        Browse tags on photos. Open a tag to edit, merge, or delete from the label view.
       </p>
 
       {showForm && (
@@ -140,90 +63,18 @@ export default function TagsPage() {
       )}
 
       {tags.length === 0 ? (
-        <div className="empty-state">
-          No tags yet. Create one or tag photos from Inbox or Calendar.
-        </div>
+        <div className="empty-state">No tags yet. Create one or tag photos from Inbox or Calendar.</div>
       ) : filteredTags.length === 0 ? (
         <p className="label-search-empty">No tags match — try another term</p>
       ) : (
-      <div className="people-list">
-        {filteredTags.map((tag) => (
-          <div key={tag.id} className="people-list-row">
-            {editingId === tag.id ? (
-              <div className="people-edit-inline">
-                <input
-                  value={editName}
-                  onChange={(e) => setEditName(e.target.value)}
-                  className="people-edit-input"
-                />
-                <button
-                  className="btn"
-                  disabled={!editName.trim() || update.isPending}
-                  onClick={() => update.mutate({ id: tag.id, newName: editName.trim() })}
-                >
-                  Save
-                </button>
-                <button className="btn btn-secondary" onClick={() => setEditingId(null)}>
-                  Cancel
-                </button>
-              </div>
-            ) : mergingId === tag.id ? (
-              <div className="people-merge-inline">
-                <span>Merge into:</span>
-                <select
-                  value={mergeTargetId}
-                  onChange={(e) => setMergeTargetId(e.target.value)}
-                  className="bulk-event-select"
-                >
-                  <option value="">Select tag...</option>
-                  {tags
-                    .filter((t) => t.id !== tag.id)
-                    .map((t) => (
-                      <option key={t.id} value={t.id}>
-                        {t.name}
-                      </option>
-                    ))}
-                </select>
-                <button
-                  className="btn"
-                  disabled={!mergeTargetId || merge.isPending}
-                  onClick={() => handleMerge(tag)}
-                >
-                  Merge
-                </button>
-                <button className="btn btn-secondary" onClick={() => setMergingId(null)}>
-                  Cancel
-                </button>
-              </div>
-            ) : (
-              <>
-                <div className="people-list-info">
-                  <Link to={`/browse/tag/${tag.slug}`} className="people-list-name-link">
-                    <strong>{tag.name}</strong>
-                  </Link>
-                  <span className="people-list-count">{tag.photo_count} photos</span>
-                </div>
-                <div className="people-list-actions">
-                  <button type="button" className="btn btn-secondary" onClick={() => startEdit(tag)}>
-                    Edit
-                  </button>
-                  <button type="button" className="btn btn-secondary" onClick={() => startMerge(tag)}>
-                    Merge
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-danger"
-                    onClick={() => handleDelete(tag)}
-                    disabled={remove.isPending}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        ))}
-      </div>
+        <div className="label-cards">
+          {filteredTags.map((tag) => (
+            <Link key={tag.id} to={`/browse/tag/${tag.slug}`} className="label-card">
+              <h3 className="label-card-title">{tag.name}</h3>
+              <div className="label-card-meta">{tag.photo_count} photos</div>
+            </Link>
+          ))}
+        </div>
       )}
     </div>
   );

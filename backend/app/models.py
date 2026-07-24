@@ -12,6 +12,10 @@ class ConfigOut(BaseModel):
     rename_pattern: str
     photo_sort_order: Literal["asc", "desc"] = "desc"
     blur_threshold: str = "150"
+    home_background_tag: str = "landscapes"
+    view_skin_style: Literal["off", "soft", "glass", "vignette"] = "soft"
+    view_skin_motion: Literal["scroll", "fixed"] = "scroll"
+    view_skin_interval_sec: str = "28"
     media_root: str | None = None
     app_data_dir: str | None = None
 
@@ -24,6 +28,10 @@ class ConfigUpdate(BaseModel):
     rename_pattern: str | None = None
     photo_sort_order: Literal["asc", "desc"] | None = None
     blur_threshold: str | None = None
+    home_background_tag: str | None = None
+    view_skin_style: Literal["off", "soft", "glass", "vignette"] | None = None
+    view_skin_motion: Literal["scroll", "fixed"] | None = None
+    view_skin_interval_sec: str | None = None
 
 
 class LibraryMoveRequest(BaseModel):

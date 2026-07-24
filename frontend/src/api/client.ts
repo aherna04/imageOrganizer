@@ -67,6 +67,10 @@ export interface Config {
   rename_pattern: string;
   photo_sort_order: "asc" | "desc";
   blur_threshold: string;
+  home_background_tag: string;
+  view_skin_style: "off" | "soft" | "glass" | "vignette";
+  view_skin_motion: "scroll" | "fixed";
+  view_skin_interval_sec: string;
   media_root?: string | null;
   app_data_dir?: string | null;
 }

@@ -234,11 +234,18 @@ Implementation: [`metadata.py`](../backend/app/metadata.py) (`compute_blur_score
 
 ### 7. Labeling (events, people, tags)
 
-- **Events** — assign photos to trips (`file_events`); bulk bars on Inbox/Calendar.
-- **People** — tag who appears in a photo (`file_people`).
+- **Events** — assign photos to trips (`file_events`); bulk bars on Inbox/Calendar; list is an Events-style card grid with edit on detail.
+- **People / Tags / Cameras** — catalog pages use the same card (“pill”) grid as Events. Cards link into Browse. Person/tag **Edit / Merge / Delete** live on Browse when exactly one person or tag is selected (not on the catalog list). Cameras remain view-only.
 - **Tags** — generic categories on photos (`file_tags`); Browse supports multi-label **AND** filtering (`/browse/tags?tag=…&person=…&camera=…`) with co-occurring tags, a **people subset**, and a **cameras subset** for the current selection (`GET /api/browse/cooccurring`). Calendar year/month chips remain single-label (multi-chip follow-up).
+- **Catalog photo counts** (Tags / People / Events list APIs) count only active library files (`location IN ('inbox','archive')`, excluding unapplied review decisions), matching Browse grids.
 
 Event-level tags (`event_tags`) label the event record itself and do not imply all event photos carry that tag.
+
+### 7b. Home and view skins
+
+- **`/` (Home)** — full-bleed hero with no sidebar; rotates originals from the configured background tag (default slug `landscapes`). Primary nav: Calendar, Inbox, Tags, People, Events.
+- **View skin** — optional faded hero behind chrome-only pages (People, Tags, Settings, empty Review, etc.). Hidden via CSS when a photo grid / duplicate compare / mosaic result is present. Styles: soft / glass / vignette / off. Motion: scroll-with-page (default) or stay fixed. Interval for skin crossfade is configurable (default 28s); Home rotation stays independent (10s).
+- Config keys: `home_background_tag`, `view_skin_style`, `view_skin_motion`, `view_skin_interval_sec` (Settings → Display).
 
 ### 8. Calendar browse
 
@@ -290,20 +297,24 @@ Grouped by domain. See `/docs` for parameters and schemas.
 
 | Route | Page |
 |-------|------|
+| `/` | Home landing (no sidebar); landscapes/tag hero + primary nav |
 | `/inbox` | Scan inbox; bulk assign events, people, tags |
 | `/calendar`, `/calendar/:y/:m/:d` | Multi-month view, year-filter photo grid, or month photo grid (`?view=month`); day panel with bulk assign and pagination; optional `?tag_id=` / `?person_id=` / `?event_id=` / `?unlabeled=1` |
 | `/events`, `/events/:slug` | Event list and detail |
-| `/people` | People CRUD, merge, delete |
-| `/tags` | Tags CRUD, merge, delete |
-| `/browse`, `/browse/tags`, `/browse/:kind/:slug` | Filter by tag/person/camera AND intersection (`/browse/tags?tag=` / `?person=` / `?camera=`; co-occurring tags, people, and cameras subset in sidebar) |
+| `/people` | People catalog (card grid); create; manage on Browse |
+| `/tags` | Tags catalog (card grid + search); create; manage on Browse |
+| `/cameras` | Cameras catalog (card grid + search); scan archive |
+| `/browse`, `/browse/tags`, `/browse/:kind/:slug` | Filter by tag/person/camera AND intersection (`/browse/tags?tag=` / `?person=` / `?camera=`; co-occurring tags, people, and cameras subset in sidebar); Edit/Merge/Delete when a single person or tag is selected |
 | `/mosaic` | Photomosaic from source photo + filtered tile pool |
 | `/duplicates` | Duplicate review |
 | `/blurry` | Analyze sharpness; review blurry photos; mark for delete |
 | `/trash` | Browse `.trash/` (paginated); scan and restore deleted photos |
 | `/review` | Decision queue, restore deletes, and Apply |
-| `/settings` | Paths, rename patterns, blur threshold |
+| `/settings` | Paths, rename patterns, blur threshold, Home/skin display options |
 
-Version is shown in the sidebar (from `frontend/package.json`).
+Version is shown in the sidebar (from `frontend/package.json`). Sidebar brand links to Home.
+
+Unscoped `GET /api/files` (no `location`) returns only inbox/archive files that are not in the unapplied review queue — same visibility as Browse tag grids. Pass `location=trash` (or inbox/archive) for those scopes.
 
 ## Versioning
 

@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { MediaFile, api } from "../api/client";
+import { api } from "../api/client";
+import { useBackgroundTagPhotos } from "../hooks/useBackgroundTagPhotos";
 
 const NAV_LINKS = [
   { to: "/calendar", label: "Calendar" },
@@ -13,34 +13,8 @@ const NAV_LINKS = [
 
 const ROTATE_MS = 10000;
 
-function shuffleIds(items: MediaFile[]): number[] {
-  const ids = items.map((f) => f.id);
-  for (let i = ids.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [ids[i], ids[j]] = [ids[j], ids[i]];
-  }
-  return ids;
-}
-
 export default function Home() {
-  const { data: tags } = useQuery({ queryKey: ["tags"], queryFn: api.listTags });
-  const landscapesId = tags?.find((t) => t.slug === "landscapes")?.id;
-
-  const { data: photoPage } = useQuery({
-    queryKey: ["home-landscapes", landscapesId],
-    queryFn: () => api.listFiles({ tag_id: landscapesId!, page_size: 24 }),
-    enabled: landscapesId != null,
-  });
-
-  const items = photoPage?.items ?? [];
-  const itemKey = items.map((f) => f.id).join(",");
-
-  const order = useMemo(() => {
-    if (items.length === 0) return [] as number[];
-    return shuffleIds(items);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- reshuffle only when the id set changes
-  }, [itemKey]);
-
+  const { order, itemKey } = useBackgroundTagPhotos();
   const [index, setIndex] = useState(0);
   const [reduceMotion, setReduceMotion] = useState(false);
 

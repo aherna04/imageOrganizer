@@ -24,6 +24,11 @@ export default function Settings() {
     queryFn: api.getConfig,
   });
 
+  const { data: tags } = useQuery({
+    queryKey: ["tags"],
+    queryFn: api.listTags,
+  });
+
   const { data: storage } = useQuery({
     queryKey: ["storage-stats"],
     queryFn: api.getStorageStats,
@@ -48,6 +53,7 @@ export default function Settings() {
       qc.invalidateQueries({ queryKey: ["config"] });
       qc.invalidateQueries({ queryKey: ["files"] });
       qc.invalidateQueries({ queryKey: ["calendar-day"] });
+      qc.invalidateQueries({ queryKey: ["background-tag-photos"] });
     },
   });
 
@@ -197,6 +203,74 @@ export default function Settings() {
               <option value="desc">Newest first</option>
               <option value="asc">Oldest first</option>
             </select>
+          </div>
+          <div className="form-group">
+            <label>Home / skin background tag</label>
+            <select
+              value={val("home_background_tag")}
+              onChange={(e) => setForm({ ...form, home_background_tag: e.target.value })}
+            >
+              {!tags?.some((t) => t.slug === val("home_background_tag")) && (
+                <option value={val("home_background_tag")}>{val("home_background_tag")}</option>
+              )}
+              {(tags ?? [])
+                .slice()
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map((t) => (
+                  <option key={t.id} value={t.slug}>
+                    {t.name} ({t.photo_count})
+                  </option>
+                ))}
+            </select>
+            <small style={{ color: "#8891a0" }}>
+              Used for the Home hero and experimental view skins. Default: landscapes.
+            </small>
+          </div>
+          <div className="form-group">
+            <label>View skin style</label>
+            <select
+              value={val("view_skin_style")}
+              onChange={(e) => setForm({ ...form, view_skin_style: e.target.value })}
+            >
+              <option value="off">Off</option>
+              <option value="soft">Soft fade</option>
+              <option value="glass">Glass panels</option>
+              <option value="vignette">Vignette</option>
+            </select>
+            <small style={{ color: "#8891a0" }}>
+              Faded hero behind chrome-only views; hides automatically when photo thumbnails appear.
+            </small>
+          </div>
+          <div className="form-group">
+            <label>Background motion</label>
+            <select
+              value={val("view_skin_motion")}
+              onChange={(e) => setForm({ ...form, view_skin_motion: e.target.value })}
+              disabled={val("view_skin_style") === "off"}
+            >
+              <option value="scroll">Scroll with page</option>
+              <option value="fixed">Stay fixed</option>
+            </select>
+            <small style={{ color: "#8891a0" }}>
+              Scroll fades the hero into the solid background; Stay fixed pins it in the main pane.
+            </small>
+          </div>
+          <div className="form-group">
+            <label>Background image interval</label>
+            <select
+              value={val("view_skin_interval_sec")}
+              onChange={(e) => setForm({ ...form, view_skin_interval_sec: e.target.value })}
+              disabled={val("view_skin_style") === "off"}
+            >
+              <option value="15">15 seconds</option>
+              <option value="28">28 seconds (default)</option>
+              <option value="45">45 seconds</option>
+              <option value="60">60 seconds</option>
+              <option value="0">Don't rotate</option>
+            </select>
+            <small style={{ color: "#8891a0" }}>
+              How often the view-skin background image changes. Does not affect the Home page.
+            </small>
           </div>
         </div>
       </section>

@@ -26,28 +26,32 @@ export default function SingleFileLabelEditors({
   return (
     <div className="single-file-label-editors">
       <CaptureDateEditor files={[file]} onChange={onDateChange} compact />
-      <CollapsibleSection
-        title="Events"
-        count={eventCount || undefined}
-        defaultOpen={false}
-        persistKey="imageOrganizer.collapsible.inbox.events"
-      >
-        <EventPicker fileId={file.id} fileEvents={file.events ?? []} onChange={onLabelsChange} hideLabel />
-      </CollapsibleSection>
-      <CollapsibleSection
-        title="People"
-        count={peopleCount || undefined}
-        defaultOpen={false}
-        persistKey="imageOrganizer.collapsible.inbox.people"
-      >
-        <PersonPicker fileId={file.id} filePeople={file.people ?? []} onChange={onLabelsChange} hideLabel />
-      </CollapsibleSection>
-      <FileTagPicker
-        fileId={file.id}
-        fileTags={file.tags ?? []}
-        onChange={onLabelsChange}
-        showTagSearch={showTagSearch}
-      />
+      <div className="label-editor-columns">
+        <CollapsibleSection
+          title="Events"
+          count={eventCount || undefined}
+          defaultOpen={false}
+          persistKey="imageOrganizer.collapsible.inbox.events"
+        >
+          <EventPicker fileId={file.id} fileEvents={file.events ?? []} onChange={onLabelsChange} hideLabel />
+        </CollapsibleSection>
+        <CollapsibleSection
+          title="People"
+          count={peopleCount || undefined}
+          defaultOpen={false}
+          persistKey="imageOrganizer.collapsible.inbox.people"
+        >
+          <PersonPicker fileId={file.id} filePeople={file.people ?? []} onChange={onLabelsChange} hideLabel />
+        </CollapsibleSection>
+        <div className="label-editor-tags">
+          <FileTagPicker
+            fileId={file.id}
+            fileTags={file.tags ?? []}
+            onChange={onLabelsChange}
+            showTagSearch={showTagSearch}
+          />
+        </div>
+      </div>
     </div>
   );
 }

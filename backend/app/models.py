@@ -101,6 +101,7 @@ class FileOut(BaseModel):
     location: Literal["inbox", "archive", "trash"]
     media_type: Literal["image", "video"] = "image"
     size: int
+    mtime: float
     capture_date: str | None
     capture_day: str | None
     camera: str | None
@@ -115,6 +116,10 @@ class FileOut(BaseModel):
     events: list["EventOut"] = []
     people: list["PersonOut"] = []
     tags: list["TagOut"] = []
+
+
+class RotateRequest(BaseModel):
+    direction: Literal["left", "right"]
 
 
 class FileListOut(BaseModel):

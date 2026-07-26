@@ -51,6 +51,7 @@ Full interactive API spec: `http://localhost:8000/docs` when the backend is runn
 | `config.py` | Paths, supported extensions, env vars |
 | `scanner.py` | Background scan of inbox/archive into `files`; releases before duplicate rebuild |
 | `metadata.py` | EXIF/ffprobe extraction, thumbnails |
+| `image_rotate.py` | 90° left/right pixel rotate; preserves EXIF, normalizes Orientation |
 | `organizer.py` | Date-folder and rename preview/apply |
 | `dedupe.py` | Exact (SHA256) and perceptual (pHash) duplicate groups for inbox/archive only; background rebuild after scan (offline pHash) |
 | `blur_analysis.py` | Background sharpness analysis job + status |
@@ -281,7 +282,7 @@ Grouped by domain. See `/docs` for parameters and schemas.
 | Mosaic | `POST /api/mosaic/preview`, `POST /api/mosaic/generate`, `GET /api/mosaic/output/{filename}` |
 | Scan | `POST /api/scan/inbox`, `/archive`, `/trash`, `GET /api/scan/status` |
 | Blur analysis | `POST /api/blur-analysis/inbox`, `/archive`, `/all`, `GET /api/blur-analysis/status` |
-| Files | `GET /api/files` (filters: location, `capture_day`, `capture_year`, `capture_month`, event, repeated `person_id` AND, repeated `tag_id` AND, repeated `camera` AND, blurry), thumbnails, original, metadata |
+| Files | `GET /api/files` (filters: location, `capture_day`, `capture_year`, `capture_month`, event, repeated `person_id` AND, repeated `tag_id` AND, repeated `camera` AND, blurry), thumbnails, original, metadata, `POST /api/files/{id}/rotate` (image-only 90° left/right; preserves EXIF) |
 | File relations | `PATCH /api/files/{id}/events`, `/people`, `/tags` |
 | Calendar | `GET /api/calendar/months`, `/summary`, `/labels`, `/year-labels`, `/events`, `/day` (paginated; `page`, `page_size`) |
 | Events | CRUD, files list, assign-ids, assign-range |

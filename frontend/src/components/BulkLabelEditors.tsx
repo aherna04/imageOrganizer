@@ -366,31 +366,52 @@ export default function BulkLabelEditors({
   return (
     <div className="single-file-label-editors">
       <CaptureDateEditor files={selectedFiles} onChange={onDateChange} compact />
-      <CollapsibleSection
-        title="Events"
-        count={assignedEventCount || undefined}
-        defaultOpen={false}
-        persistKey="imageOrganizer.collapsible.inbox.events"
-      >
-        {eventsSection}
-      </CollapsibleSection>
-      <CollapsibleSection
-        title="People"
-        count={assignedPeopleCount || undefined}
-        defaultOpen={false}
-        persistKey="imageOrganizer.collapsible.inbox.people"
-      >
-        {peopleSection}
-      </CollapsibleSection>
-      <div className="label-editor-tags">
-        <label style={{ fontSize: "0.875rem", color: "#aab0bc" }}>Tags</label>
-        {showTagSearch && <LabelSearchInput value={tagSearchQuery} onChange={setTagSearchQuery} />}
-        {searchFirst && <p className="label-search-hint">Search to add more tags</p>}
-        {!tagSearchActive && recentTags.length > 0 && (
-          <div className="recent-tags">
-            <span className="recent-tags-label">Recently used</span>
-            <div className="recent-tags-chips">
-              {recentTags.map((tag) => {
+      <div className="label-editor-columns">
+        <CollapsibleSection
+          title="Events"
+          count={assignedEventCount || undefined}
+          defaultOpen={false}
+          persistKey="imageOrganizer.collapsible.inbox.events"
+        >
+          {eventsSection}
+        </CollapsibleSection>
+        <CollapsibleSection
+          title="People"
+          count={assignedPeopleCount || undefined}
+          defaultOpen={false}
+          persistKey="imageOrganizer.collapsible.inbox.people"
+        >
+          {peopleSection}
+        </CollapsibleSection>
+        <div className="label-editor-tags">
+          <label style={{ fontSize: "0.875rem", color: "#aab0bc" }}>Tags</label>
+          {showTagSearch && <LabelSearchInput value={tagSearchQuery} onChange={setTagSearchQuery} />}
+          {searchFirst && <p className="label-search-hint">Search to add more tags</p>}
+          {!tagSearchActive && recentTags.length > 0 && (
+            <div className="recent-tags">
+              <span className="recent-tags-label">Recently used</span>
+              <div className="recent-tags-chips">
+                {recentTags.map((tag) => {
+                  const cov = tagCoverage(tag.id);
+                  return (
+                    <button
+                      key={tag.id}
+                      type="button"
+                      className={chipClass("badge tag-badge", cov)}
+                      onClick={() => toggleTag(tag.id, cov)}
+                    >
+                      {tag.name}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+          {showTagSearch && tagSearchActive && visibleTags.length === 0 ? (
+            <p className="label-search-empty">No tags match — try another term</p>
+          ) : (
+            <div className="tag-picker-chips" style={{ marginTop: "0.35rem" }}>
+              {visibleTags.map((tag) => {
                 const cov = tagCoverage(tag.id);
                 return (
                   <button
@@ -403,61 +424,42 @@ export default function BulkLabelEditors({
                   </button>
                 );
               })}
+              {!showNewTag ? (
+                <button type="button" className="badge tag-badge tag-badge-add" onClick={() => setShowNewTag(true)}>
+                  + Add tag
+                </button>
+              ) : (
+                <div className="tag-picker-new">
+                  <input
+                    type="text"
+                    placeholder="Tag name"
+                    value={newTagName}
+                    onChange={(e) => setNewTagName(e.target.value)}
+                    className="tag-picker-input"
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    disabled={!newTagName.trim() || createTag.isPending}
+                    onClick={() => createTag.mutate()}
+                  >
+                    Add
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => {
+                      setShowNewTag(false);
+                      setNewTagName("");
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
             </div>
-          </div>
-        )}
-        {showTagSearch && tagSearchActive && visibleTags.length === 0 ? (
-          <p className="label-search-empty">No tags match — try another term</p>
-        ) : (
-          <div className="tag-picker-chips" style={{ marginTop: "0.35rem" }}>
-            {visibleTags.map((tag) => {
-              const cov = tagCoverage(tag.id);
-              return (
-                <button
-                  key={tag.id}
-                  type="button"
-                  className={chipClass("badge tag-badge", cov)}
-                  onClick={() => toggleTag(tag.id, cov)}
-                >
-                  {tag.name}
-                </button>
-              );
-            })}
-            {!showNewTag ? (
-              <button type="button" className="badge tag-badge tag-badge-add" onClick={() => setShowNewTag(true)}>
-                + Add tag
-              </button>
-            ) : (
-              <div className="tag-picker-new">
-                <input
-                  type="text"
-                  placeholder="Tag name"
-                  value={newTagName}
-                  onChange={(e) => setNewTagName(e.target.value)}
-                  className="tag-picker-input"
-                />
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  disabled={!newTagName.trim() || createTag.isPending}
-                  onClick={() => createTag.mutate()}
-                >
-                  Add
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => {
-                    setShowNewTag(false);
-                    setNewTagName("");
-                  }}
-                >
-                  Cancel
-                </button>
-              </div>
-            )}
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

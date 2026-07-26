@@ -4,6 +4,21 @@ Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
 ## [Unreleased]
 
+## [2026.07.26] - 2026-07-26
+
+### Added
+
+- Photo detail **Rotate left / Rotate right** (90°) — rewrites image pixels on disk, preserves EXIF dates/camera/GPS and catalog labels
+
+### Changed
+
+- Events, People, and Tags editors use responsive columns in wide views; lightbox Tags and People share a compact two-column panel to leave more room for photos
+- Home tagline: “start where you left off”
+
+### Fixed
+
+- Photo detail filename sits on its own left-aligned line below action buttons (no longer squeezed beside rotate/mosaic)
+
 ## [2026.07.24] - 2026-07-24
 
 ### Added

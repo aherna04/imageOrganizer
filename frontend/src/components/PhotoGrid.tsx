@@ -124,7 +124,7 @@ export default function PhotoGrid({
                   : undefined
               }
             >
-              <img src={api.thumbUrl(file.id)} alt={file.filename} loading="lazy" />
+              <img src={api.thumbUrl(file.id, file.mtime)} alt={file.filename} loading="lazy" />
               {(hasDateWarning || isDuplicate || isBlurry) && (
                 <div className="photo-alert-badges">
                   {hasDateWarning && (

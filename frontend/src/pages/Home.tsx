@@ -70,7 +70,7 @@ export default function Home() {
         <header className="home-hero">
           <p className="home-eyebrow">Your photo library</p>
           <h1 className="home-brand">Image Organizer</h1>
-          <p className="home-tagline">Browse by day, tag, and people — start wherever you left off.</p>
+          <p className="home-tagline">Browse by day, tag, and people — start where you left off.</p>
         </header>
 
         <nav className="home-nav" aria-label="Primary">

@@ -36,6 +36,7 @@ export interface MediaFile {
   location: "inbox" | "archive" | "trash";
   media_type: "image" | "video";
   size: number;
+  mtime: number;
   capture_date: string | null;
   capture_day: string | null;
   camera: string | null;
@@ -360,8 +361,16 @@ export const api = {
 
   getFile: (id: number) => request<MediaFile>(`/api/files/${id}`),
 
-  thumbUrl: (id: number) => `/api/files/${id}/thumbnail`,
-  originalUrl: (id: number) => `/api/files/${id}/original`,
+  thumbUrl: (id: number, mtime?: number) =>
+    mtime != null ? `/api/files/${id}/thumbnail?v=${encodeURIComponent(String(mtime))}` : `/api/files/${id}/thumbnail`,
+  originalUrl: (id: number, mtime?: number) =>
+    mtime != null ? `/api/files/${id}/original?v=${encodeURIComponent(String(mtime))}` : `/api/files/${id}/original`,
+
+  rotateFile: (id: number, direction: "left" | "right") =>
+    request<MediaFile>(`/api/files/${id}/rotate`, {
+      method: "POST",
+      body: JSON.stringify({ direction }),
+    }),
 
   getMetadata: (id: number) => request<Metadata>(`/api/files/${id}/metadata`),
   updateMetadata: (id: number, data: Partial<Metadata>) =>

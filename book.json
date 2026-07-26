@@ -1,6 +1,6 @@
 {
   "title": "Image Organizer — Development Book",
-  "version": "2026.07.24",
+  "version": "2026.07.26",
   "output": "docs/DEVELOPMENT_BOOK.md",
   "output_html": "docs/DEVELOPMENT_BOOK.html",
   "plans_dir": "~/.cursor/plans",
@@ -107,7 +107,11 @@
         "skin_rotate_interval_fade_5ff815a3",
         "pills_for_labels_manage_d9182094",
         "browse_hide_deleted_files_ab2717c8",
-        "align_label_photo_counts_7a5bd48e"
+        "align_label_photo_counts_7a5bd48e",
+        "home_tagline_tweak_bab0cd82",
+        "label_editor_columns_dd3228ea",
+        "image_rotate_90_5a7038ea",
+        "filename_below_buttons_be596bf6"
       ]
     },
     {
@@ -199,6 +203,18 @@
     },
     "align_label_photo_counts_a4c92ffe": {
       "note": "Duplicate of `align_label_photo_counts_7a5bd48e`."
+    },
+    "home_tagline_tweak_c49a8f68": {
+      "note": "Duplicate of `home_tagline_tweak_bab0cd82`."
+    },
+    "label_editor_columns_84de2d91": {
+      "note": "Duplicate of `label_editor_columns_dd3228ea`."
+    },
+    "image_rotate_90_858a561c": {
+      "note": "Duplicate of `image_rotate_90_5a7038ea`."
+    },
+    "filename_below_buttons_576d13c3": {
+      "note": "Duplicate of `filename_below_buttons_be596bf6`."
     }
   }
 }

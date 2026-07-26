@@ -85,6 +85,7 @@ from app.models import (
     ReviewDecisionsCancelOut,
     ReviewQueueOut,
     ReviewQueueReleaseIn,
+    RotateRequest,
     ScanStatusOut,
     BlurAnalysisStatusOut,
     StorageStatsOut,
@@ -113,7 +114,7 @@ from app.scanner import combined_scan_status, scan_state, start_scan_background
 from app.blur_analysis import blur_analysis_state, start_blur_analysis_background
 from app.trash_restore import restore_from_trash
 
-app = FastAPI(title="Image Organizer", version="2026.07.24")
+app = FastAPI(title="Image Organizer", version="2026.07.26")
 
 app.add_middleware(
     CORSMiddleware,
@@ -634,6 +635,61 @@ def api_file_original(file_id: int):
         if not path.exists():
             raise HTTPException(404, "File not found on disk")
         return FileResponse(path, media_type=mime_type_for_path(path), filename=row["filename"])
+
+
+@app.post("/api/files/{file_id}/rotate", response_model=FileOut)
+def api_rotate_file(file_id: int, body: RotateRequest):
+    from app.image_rotate import RotateError, rotate_image_file
+    from app.metadata import compute_blur_score, compute_phash, compute_sha256
+
+    with get_conn() as conn:
+        row = conn.execute("SELECT * FROM files WHERE id = ?", (file_id,)).fetchone()
+        if not row:
+            raise HTTPException(404, "File not found")
+        path = Path(row["path"])
+        if media_type_for_suffix(path.suffix) != "image":
+            raise HTTPException(400, "Only images can be rotated")
+        if not path.exists():
+            raise HTTPException(404, "File not found on disk")
+        try:
+            width, height = rotate_image_file(path, body.direction)
+        except RotateError as exc:
+            raise HTTPException(400, str(exc)) from exc
+        except Exception as exc:
+            raise HTTPException(500, f"Rotate failed: {exc}") from exc
+
+        stat = path.stat()
+        sha256 = compute_sha256(path)
+        phash = compute_phash(path)
+        blur_score = compute_blur_score(path)
+        conn.execute(
+            """
+            UPDATE files SET
+                mtime = ?,
+                size = ?,
+                width = ?,
+                height = ?,
+                sha256 = ?,
+                phash = ?,
+                blur_score = ?,
+                updated_at = datetime('now')
+            WHERE id = ?
+            """,
+            (
+                stat.st_mtime,
+                stat.st_size,
+                width,
+                height,
+                sha256,
+                phash,
+                blur_score,
+                file_id,
+            ),
+        )
+        conn.commit()
+        row = conn.execute("SELECT * FROM files WHERE id = ?", (file_id,)).fetchone()
+        cfg = get_config(conn)
+        return _file_out(conn, row, cfg)
 
 
 @app.get("/api/files/{file_id}/metadata", response_model=MetadataOut)

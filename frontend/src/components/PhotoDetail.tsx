@@ -59,6 +59,7 @@ export default function PhotoDetail({
   const [lightboxTagsOpen, setLightboxTagsOpen] = useState(false);
   const [acting, setActing] = useState(false);
   const [actingSlow, setActingSlow] = useState(false);
+  const [mediaEpoch, setMediaEpoch] = useState<number | null>(null);
   const drawerVideoRef = useRef<HTMLVideoElement>(null);
   const actingRef = useRef(false);
 
@@ -70,7 +71,10 @@ export default function PhotoDetail({
   useEffect(() => {
     setCaption("");
     setRating("");
+    setMediaEpoch(null);
   }, [file.id]);
+
+  const thumbMtime = mediaEpoch ?? currentFile.mtime;
 
   const canNavigate = files != null && files.length > 1 && onChangeFile != null;
   const fileIndex = canNavigate ? files.findIndex((f) => f.id === file.id) : -1;
@@ -231,6 +235,18 @@ export default function PhotoDetail({
     onSuccess: () => refetch(),
   });
 
+  const rotateFile = useMutation({
+    mutationFn: (direction: "left" | "right") => api.rotateFile(file.id, direction),
+    onSuccess: (updated) => {
+      setMediaEpoch(updated.mtime);
+      qc.invalidateQueries({ queryKey: ["files"] });
+      qc.invalidateQueries({ queryKey: ["metadata", file.id] });
+      void refetch();
+      onChangeFile?.(updated);
+      onDateChange?.(updated.id);
+    },
+  });
+
   const closeLightbox = (e?: React.MouseEvent) => {
     e?.stopPropagation();
     setLightboxOpen(false);
@@ -281,43 +297,59 @@ export default function PhotoDetail({
         {file.media_type === "video" ? (
           lightboxOpen ? (
             <img
-              src={api.thumbUrl(file.id)}
+              src={api.thumbUrl(file.id, thumbMtime)}
               alt={file.filename}
               className="photo-detail-preview"
             />
           ) : (
             <video
               ref={drawerVideoRef}
-              src={api.originalUrl(file.id)}
+              src={api.originalUrl(file.id, thumbMtime)}
               controls
-              poster={api.thumbUrl(file.id)}
+              poster={api.thumbUrl(file.id, thumbMtime)}
               className="photo-detail-preview"
               onClick={openLightbox}
             />
           )
         ) : (
           <img
-            src={api.thumbUrl(file.id)}
+            src={api.thumbUrl(file.id, thumbMtime)}
             alt={file.filename}
             className="photo-detail-preview"
             onClick={openLightbox}
           />
         )}
         <div className="photo-detail-title-row">
-          <h3>{file.filename}</h3>
-          {actingSlow && (
-            <span style={{ color: "#8891a0", fontSize: "0.875rem" }}>Saving…</span>
-          )}
           <div className="photo-detail-title-actions">
             {!trashMode && !deleteQueueMode && file.media_type === "image" && (
-              <button
-                type="button"
-                className="btn btn-secondary"
-                title="Build a photomosaic from this photo"
-                onClick={() => navigate(mosaicSourcePath(file.id))}
-              >
-                Create mosaic
-              </button>
+              <>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  title="Rotate 90° left"
+                  disabled={rotateFile.isPending}
+                  onClick={() => rotateFile.mutate("left")}
+                >
+                  Rotate left
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  title="Rotate 90° right"
+                  disabled={rotateFile.isPending}
+                  onClick={() => rotateFile.mutate("right")}
+                >
+                  Rotate right
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  title="Build a photomosaic from this photo"
+                  onClick={() => navigate(mosaicSourcePath(file.id))}
+                >
+                  Create mosaic
+                </button>
+              </>
             )}
             {trashMode ? (
               <button
@@ -338,7 +370,11 @@ export default function PhotoDetail({
                 Restore
               </button>
             ) : null}
+            {actingSlow && (
+              <span style={{ color: "#8891a0", fontSize: "0.875rem" }}>Saving…</span>
+            )}
           </div>
+          <h3>{file.filename}</h3>
         </div>
         {(currentFile.events?.length || currentFile.people?.length || currentFile.tags?.length) ? (
           <div className="photo-detail-applied-labels">
@@ -446,7 +482,7 @@ export default function PhotoDetail({
         >
           {file.media_type === "video" ? (
             <video
-              src={api.originalUrl(file.id)}
+              src={api.originalUrl(file.id, thumbMtime)}
               controls
               autoPlay
               className="photo-lightbox-media"
@@ -454,7 +490,7 @@ export default function PhotoDetail({
             />
           ) : (
             <img
-              src={api.originalUrl(file.id)}
+              src={api.originalUrl(file.id, thumbMtime)}
               alt={file.filename}
               className="photo-lightbox-media"
               onClick={closeLightbox}
@@ -466,66 +502,68 @@ export default function PhotoDetail({
                 <span>Tags &amp; people</span>
                 <span className="photo-lightbox-tags-hint">T to hide</span>
               </div>
-              <div className="photo-lightbox-tags-section">
-                <label className="photo-lightbox-tags-section-label">Tags</label>
-                {currentFile.tags && currentFile.tags.length > 0 && (
-                  <div className="photo-lightbox-tags-applied">
-                    {currentFile.tags.map((tag) => (
-                      <span key={tag.id} className="badge badge-removable tag-badge">
-                        {tag.name}
-                        <button
-                          type="button"
-                          className="badge-remove"
-                          aria-label={`Remove tag ${tag.name}`}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            void removeLightboxTag(tag.id);
-                          }}
-                        >
-                          ×
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                )}
-                <FileTagPicker
-                  fileId={currentFile.id}
-                  fileTags={currentFile.tags ?? []}
-                  onChange={() => handleLabelsChange(currentFile.id)}
-                  excludeSelected
-                  showTagSearch
-                  hideLabel
-                />
-              </div>
-              <div className="photo-lightbox-tags-section">
-                <label className="photo-lightbox-tags-section-label">People</label>
-                {currentFile.people && currentFile.people.length > 0 && (
-                  <div className="photo-lightbox-tags-applied">
-                    {currentFile.people.map((person) => (
-                      <span key={person.id} className="badge badge-removable person-badge">
-                        {personLabel(person, allPeople)}
-                        <button
-                          type="button"
-                          className="badge-remove"
-                          aria-label={`Remove ${personLabel(person, allPeople)}`}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            void removeLightboxPerson(person.id);
-                          }}
-                        >
-                          ×
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                )}
-                <PersonPicker
-                  fileId={currentFile.id}
-                  filePeople={currentFile.people ?? []}
-                  onChange={() => handleLabelsChange(currentFile.id)}
-                  excludeSelected
-                  hideLabel
-                />
+              <div className="photo-lightbox-tags-body">
+                <div className="photo-lightbox-tags-section">
+                  <label className="photo-lightbox-tags-section-label">Tags</label>
+                  {currentFile.tags && currentFile.tags.length > 0 && (
+                    <div className="photo-lightbox-tags-applied">
+                      {currentFile.tags.map((tag) => (
+                        <span key={tag.id} className="badge badge-removable tag-badge">
+                          {tag.name}
+                          <button
+                            type="button"
+                            className="badge-remove"
+                            aria-label={`Remove tag ${tag.name}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              void removeLightboxTag(tag.id);
+                            }}
+                          >
+                            ×
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  <FileTagPicker
+                    fileId={currentFile.id}
+                    fileTags={currentFile.tags ?? []}
+                    onChange={() => handleLabelsChange(currentFile.id)}
+                    excludeSelected
+                    showTagSearch
+                    hideLabel
+                  />
+                </div>
+                <div className="photo-lightbox-tags-section">
+                  <label className="photo-lightbox-tags-section-label">People</label>
+                  {currentFile.people && currentFile.people.length > 0 && (
+                    <div className="photo-lightbox-tags-applied">
+                      {currentFile.people.map((person) => (
+                        <span key={person.id} className="badge badge-removable person-badge">
+                          {personLabel(person, allPeople)}
+                          <button
+                            type="button"
+                            className="badge-remove"
+                            aria-label={`Remove ${personLabel(person, allPeople)}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              void removeLightboxPerson(person.id);
+                            }}
+                          >
+                            ×
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  <PersonPicker
+                    fileId={currentFile.id}
+                    filePeople={currentFile.people ?? []}
+                    onChange={() => handleLabelsChange(currentFile.id)}
+                    excludeSelected
+                    hideLabel
+                  />
+                </div>
               </div>
             </div>
           )}

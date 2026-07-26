@@ -1,6 +1,6 @@
 {
   "title": "Image Organizer — Development Book",
-  "version": "2026.07.26",
+  "version": "2026.07.26a",
   "output": "docs/DEVELOPMENT_BOOK.md",
   "output_html": "docs/DEVELOPMENT_BOOK.html",
   "plans_dir": "~/.cursor/plans",
@@ -111,7 +111,8 @@
         "home_tagline_tweak_bab0cd82",
         "label_editor_columns_dd3228ea",
         "image_rotate_90_5a7038ea",
-        "filename_below_buttons_be596bf6"
+        "filename_below_buttons_be596bf6",
+        "view_skin_full_bleed_873d1e67"
       ]
     },
     {
@@ -215,6 +216,9 @@
     },
     "filename_below_buttons_576d13c3": {
       "note": "Duplicate of `filename_below_buttons_be596bf6`."
+    },
+    "view_skin_full_bleed_be76e4f4": {
+      "note": "Duplicate of `view_skin_full_bleed_873d1e67`."
     }
   }
 }

@@ -2830,6 +2830,16 @@ button.calendar-month-column-title:focus-visible {
 }
 
 /* —— Experimental view skins —— */
+.app-shell--skin-scroll .main,
+.app-shell--skin-fixed .main {
+  padding: 0;
+}
+
+.app-shell--skin-scroll .main-foreground,
+.app-shell--skin-fixed .main-foreground {
+  padding: 1.5rem 2rem;
+}
+
 .view-skin {
   z-index: 0;
   overflow: hidden;

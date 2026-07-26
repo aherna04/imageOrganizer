@@ -4,6 +4,12 @@ Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
 ## [Unreleased]
 
+## [2026.07.26a] - 2026-07-26
+
+### Fixed
+
+- View-skin backgrounds full-bleed to the left rail and top of the main pane (no black padded frame)
+
 ## [2026.07.26] - 2026-07-26
 
 ### Added

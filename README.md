@@ -1,6 +1,6 @@
 # Image Organizer
 
-**Version:** 2026.07.26 — see [CHANGELOG.md](CHANGELOG.md)
+**Version:** 2026.07.26a — see [CHANGELOG.md](CHANGELOG.md)
 
 Architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 

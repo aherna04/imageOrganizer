@@ -4,6 +4,12 @@ Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
 ## [Unreleased]
 
+## [2026.07.27] - 2026-07-27
+
+### Fixed
+
+- Sticky page controls (Inbox filters, etc.) no longer paint a background frame over view-skins
+
 ## [2026.07.26b] - 2026-07-26
 
 ### Added

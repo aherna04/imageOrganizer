@@ -1,6 +1,6 @@
 # Image Organizer — Development Book
 
-*Release 2026.07.26b · collected Cursor implementation plans*
+*Release 2026.07.27 · collected Cursor implementation plans*
 
 Related: [ARCHITECTURE.md](ARCHITECTURE.md) · [CHANGELOG.md](../CHANGELOG.md)
 
@@ -194,51 +194,55 @@ This book collects the Cursor agent implementation plans written while building 
 159. [HTML book output](#chapter-159-html-book-output)
 160. [Inbox autotag investigation](#chapter-160-inbox-autotag-investigation)
 161. [Inbox detail auto-advance](#chapter-161-inbox-detail-auto-advance)
-162. [Incremental update backup](#chapter-162-incremental-update-backup)
-163. [Incremental update backup](#chapter-163-incremental-update-backup)
-164. [Kitchen Ledger recipe app](#chapter-164-kitchen-ledger-recipe-app)
-165. [Library disks side-by-side](#chapter-165-library-disks-side-by-side)
-166. [Library disks side-by-side](#chapter-166-library-disks-side-by-side)
-167. [Library migrate backup](#chapter-167-library-migrate-backup)
-168. [Library migrate backup](#chapter-168-library-migrate-backup)
-169. [Library mosaic save](#chapter-169-library-mosaic-save)
-170. [Lightbox tag fonts](#chapter-170-lightbox-tag-fonts)
-171. [Lightbox tag overlay](#chapter-171-lightbox-tag-overlay)
-172. [Link inbox image as hero](#chapter-172-link-inbox-image-as-hero)
-173. [Link inbox image as hero](#chapter-173-link-inbox-image-as-hero)
-174. [Migrate disk health](#chapter-174-migrate-disk-health)
-175. [Migrate disk health](#chapter-175-migrate-disk-health)
-176. [People autotag options](#chapter-176-people-autotag-options)
-177. [Per-passenger price display](#chapter-177-per-passenger-price-display)
-178. [Per-passenger price display](#chapter-178-per-passenger-price-display)
-179. [Persist collapsible sections](#chapter-179-persist-collapsible-sections)
-180. [Persist collapsible sections](#chapter-180-persist-collapsible-sections)
-181. [Persist search form settings](#chapter-181-persist-search-form-settings)
-182. [Persist search form settings](#chapter-182-persist-search-form-settings)
-183. [Recent people like tags](#chapter-183-recent-people-like-tags)
-184. [Recipe hero dish photo](#chapter-184-recipe-hero-dish-photo)
-185. [Relayout library backup UI](#chapter-185-relayout-library-backup-ui)
-186. [Relayout library backup UI](#chapter-186-relayout-library-backup-ui)
-187. [Release 2026.07.10](#chapter-187-release-20260710)
-188. [Release 2026.07.12b](#chapter-188-release-20260712b)
-189. [Release 2026.07.14](#chapter-189-release-20260714)
-190. [Release 2026.07.14](#chapter-190-release-20260714)
-191. [Review restore deletes](#chapter-191-review-restore-deletes)
-192. [Separate Kitchen Ledger agent](#chapter-192-separate-kitchen-ledger-agent)
-193. [Separate Kitchen Ledger agent](#chapter-193-separate-kitchen-ledger-agent)
-194. [Settings three-column disks](#chapter-194-settings-three-column-disks)
-195. [Settings three-column disks](#chapter-195-settings-three-column-disks)
-196. [Show connections in results](#chapter-196-show-connections-in-results)
-197. [Show connections in results](#chapter-197-show-connections-in-results)
-198. [Slim inbox delete refetch](#chapter-198-slim-inbox-delete-refetch)
-199. [Sticky search form](#chapter-199-sticky-search-form)
-200. [Sticky search form](#chapter-200-sticky-search-form)
-201. [Throttle inbox scan refetch](#chapter-201-throttle-inbox-scan-refetch)
-202. [Trash view and restore](#chapter-202-trash-view-and-restore)
-203. [Update cursor-book submodule](#chapter-203-update-cursor-book-submodule)
-204. [Update cursor-book submodule](#chapter-204-update-cursor-book-submodule)
-205. [Widen content max-width](#chapter-205-widen-content-max-width)
-206. [Widen content max-width](#chapter-206-widen-content-max-width)
+162. [Inbox sticky chrome fix](#chapter-162-inbox-sticky-chrome-fix)
+163. [Inbox sticky chrome fix](#chapter-163-inbox-sticky-chrome-fix)
+164. [Incremental update backup](#chapter-164-incremental-update-backup)
+165. [Incremental update backup](#chapter-165-incremental-update-backup)
+166. [Kitchen Ledger recipe app](#chapter-166-kitchen-ledger-recipe-app)
+167. [Library disks side-by-side](#chapter-167-library-disks-side-by-side)
+168. [Library disks side-by-side](#chapter-168-library-disks-side-by-side)
+169. [Library migrate backup](#chapter-169-library-migrate-backup)
+170. [Library migrate backup](#chapter-170-library-migrate-backup)
+171. [Library mosaic save](#chapter-171-library-mosaic-save)
+172. [Lightbox tag fonts](#chapter-172-lightbox-tag-fonts)
+173. [Lightbox tag overlay](#chapter-173-lightbox-tag-overlay)
+174. [Link inbox image as hero](#chapter-174-link-inbox-image-as-hero)
+175. [Link inbox image as hero](#chapter-175-link-inbox-image-as-hero)
+176. [Migrate disk health](#chapter-176-migrate-disk-health)
+177. [Migrate disk health](#chapter-177-migrate-disk-health)
+178. [People autotag options](#chapter-178-people-autotag-options)
+179. [Per-passenger price display](#chapter-179-per-passenger-price-display)
+180. [Per-passenger price display](#chapter-180-per-passenger-price-display)
+181. [Persist collapsible sections](#chapter-181-persist-collapsible-sections)
+182. [Persist collapsible sections](#chapter-182-persist-collapsible-sections)
+183. [Persist search form settings](#chapter-183-persist-search-form-settings)
+184. [Persist search form settings](#chapter-184-persist-search-form-settings)
+185. [Recent people like tags](#chapter-185-recent-people-like-tags)
+186. [Recipe hero dish photo](#chapter-186-recipe-hero-dish-photo)
+187. [Relayout library backup UI](#chapter-187-relayout-library-backup-ui)
+188. [Relayout library backup UI](#chapter-188-relayout-library-backup-ui)
+189. [Release 2026.07.10](#chapter-189-release-20260710)
+190. [Release 2026.07.12b](#chapter-190-release-20260712b)
+191. [Release 2026.07.14](#chapter-191-release-20260714)
+192. [Release 2026.07.14](#chapter-192-release-20260714)
+193. [Remove sticky control frame](#chapter-193-remove-sticky-control-frame)
+194. [Remove sticky control frame](#chapter-194-remove-sticky-control-frame)
+195. [Review restore deletes](#chapter-195-review-restore-deletes)
+196. [Separate Kitchen Ledger agent](#chapter-196-separate-kitchen-ledger-agent)
+197. [Separate Kitchen Ledger agent](#chapter-197-separate-kitchen-ledger-agent)
+198. [Settings three-column disks](#chapter-198-settings-three-column-disks)
+199. [Settings three-column disks](#chapter-199-settings-three-column-disks)
+200. [Show connections in results](#chapter-200-show-connections-in-results)
+201. [Show connections in results](#chapter-201-show-connections-in-results)
+202. [Slim inbox delete refetch](#chapter-202-slim-inbox-delete-refetch)
+203. [Sticky search form](#chapter-203-sticky-search-form)
+204. [Sticky search form](#chapter-204-sticky-search-form)
+205. [Throttle inbox scan refetch](#chapter-205-throttle-inbox-scan-refetch)
+206. [Trash view and restore](#chapter-206-trash-view-and-restore)
+207. [Update cursor-book submodule](#chapter-207-update-cursor-book-submodule)
+208. [Update cursor-book submodule](#chapter-208-update-cursor-book-submodule)
+209. [Widen content max-width](#chapter-209-widen-content-max-width)
+210. [Widen content max-width](#chapter-210-widen-content-max-width)
 
 ### Skipped Duplicates
 
@@ -16461,9 +16465,95 @@ Manual in Inbox with **Untagged** filter:
 
 ---
 
-<a id="chapter-162-incremental-update-backup"></a>
+<a id="chapter-162-inbox-sticky-chrome-fix"></a>
 
-## Chapter 162: Incremental update backup
+## Chapter 162: Inbox sticky chrome fix
+
+> **Overview:** Remove the awkward full-width opaque black strip behind Inbox filter buttons by restyling `.page-sticky-controls` to a Review-like frosted strip so the view-skin shows through.
+
+# Soften Inbox sticky control bar
+
+## Cause
+
+Inbox wraps All / Untagged / Delete queue in [`.page-sticky-controls`](frontend/src/index.css), which uses solid `background: #0f1117`, a hard bottom border, and a heavy box-shadow. With a view-skin visible (empty or sparse Inbox), that reads as a full-width black frame. Review uses [`.review-queue-panel`](frontend/src/index.css) — bordered, rounded, not a flush opaque strip — which is why it feels better.
+
+```1461:1473:frontend/src/index.css
+.page-sticky-controls,
+.inbox-sticky-controls {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #0f1117;
+  ...
+  border-bottom: 1px solid #2a2f3a;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+```
+
+## Fix (CSS only)
+
+In [`frontend/src/index.css`](frontend/src/index.css), restyle `.page-sticky-controls` / `.inbox-sticky-controls`:
+
+- Background: `rgba(15, 17, 23, 0.72)` (not solid `#0f1117`)
+- `backdrop-filter: blur(10px)` (+ `-webkit-backdrop-filter`) so content behind stays readable when scrolling
+- Soften separator: lighter border and smaller shadow (or drop the heavy shadow) so it does not read as a black slab
+- Keep sticky positioning, padding, and z-index — no markup changes in [`Inbox.tsx`](frontend/src/pages/Inbox.tsx)
+
+Same class is shared by Trash, Blurry, and Calendar photo panels; they get the same lighter chrome (intentional consistency).
+
+## Docs
+
+- [`CHANGELOG.md`](CHANGELOG.md) Unreleased **Fixed**: sticky page controls no longer draw an opaque black bar over view-skins
+- No ARCHITECTURE update (styling only)
+
+---
+
+<a id="chapter-163-inbox-sticky-chrome-fix"></a>
+
+## Chapter 163: Inbox sticky chrome fix
+
+> **Overview:** Remove the awkward full-width opaque black strip behind Inbox filter buttons by restyling `.page-sticky-controls` to a Review-like frosted strip so the view-skin shows through.
+
+# Soften Inbox sticky control bar
+
+## Cause
+
+Inbox wraps All / Untagged / Delete queue in [`.page-sticky-controls`](frontend/src/index.css), which uses solid `background: #0f1117`, a hard bottom border, and a heavy box-shadow. With a view-skin visible (empty or sparse Inbox), that reads as a full-width black frame. Review uses [`.review-queue-panel`](frontend/src/index.css) — bordered, rounded, not a flush opaque strip — which is why it feels better.
+
+```1461:1473:frontend/src/index.css
+.page-sticky-controls,
+.inbox-sticky-controls {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #0f1117;
+  ...
+  border-bottom: 1px solid #2a2f3a;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+```
+
+## Fix (CSS only)
+
+In [`frontend/src/index.css`](frontend/src/index.css), restyle `.page-sticky-controls` / `.inbox-sticky-controls`:
+
+- Background: `rgba(15, 17, 23, 0.72)` (not solid `#0f1117`)
+- `backdrop-filter: blur(10px)` (+ `-webkit-backdrop-filter`) so content behind stays readable when scrolling
+- Soften separator: lighter border and smaller shadow (or drop the heavy shadow) so it does not read as a black slab
+- Keep sticky positioning, padding, and z-index — no markup changes in [`Inbox.tsx`](frontend/src/pages/Inbox.tsx)
+
+Same class is shared by Trash, Blurry, and Calendar photo panels; they get the same lighter chrome (intentional consistency).
+
+## Docs
+
+- [`CHANGELOG.md`](CHANGELOG.md) Unreleased **Fixed**: sticky page controls no longer draw an opaque black bar over view-skins
+- No ARCHITECTURE update (styling only)
+
+---
+
+<a id="chapter-164-incremental-update-backup"></a>
+
+## Chapter 164: Incremental update backup
 
 > **Overview:** Add Settings “Update backup” that incrementally copies new/changed media and catalog from the live library (`/media`) to the backup mount (`/media-backup`), without path rewrite or restart—matching the user’s post-cutover .env (live on 2TB, backup on old Media).
 
@@ -16519,9 +16609,9 @@ README: short “Update backup” note after Docker cutover. ARCHITECTURE: new e
 
 ---
 
-<a id="chapter-163-incremental-update-backup"></a>
+<a id="chapter-165-incremental-update-backup"></a>
 
-## Chapter 163: Incremental update backup
+## Chapter 165: Incremental update backup
 
 > **Overview:** Add Settings “Update backup” that incrementally copies new/changed media and catalog from the live library (`/media`) to the backup mount (`/media-backup`), without path rewrite or restart—matching the user’s post-cutover .env (live on 2TB, backup on old Media).
 
@@ -16577,9 +16667,9 @@ README: short “Update backup” note after Docker cutover. ARCHITECTURE: new e
 
 ---
 
-<a id="chapter-164-kitchen-ledger-recipe-app"></a>
+<a id="chapter-166-kitchen-ledger-recipe-app"></a>
 
-## Chapter 164: Kitchen Ledger recipe app
+## Chapter 166: Kitchen Ledger recipe app
 
 > **Overview:** Create a new "Kitchen Ledger" repo mirroring the Image Organizer architecture (FastAPI + SQLite + React/Vite + Docker) to index scanned handwritten recipes from a folder, OCR-assist ingredient/direction transcription on scan, and organize recipes with multi-tag AND filtering and search.
 
@@ -16671,53 +16761,9 @@ for tid in tag_ids:
 
 ---
 
-<a id="chapter-165-library-disks-side-by-side"></a>
+<a id="chapter-167-library-disks-side-by-side"></a>
 
-## Chapter 165: Library disks side-by-side
-
-> **Overview:** Add bottom page padding so the advanced migrate control isn’t flush with the viewport, and put Update backup beside the advanced cutover block in a responsive two-column layout.
-
-## Fixes
-
-1. **Bottom padding** — Settings content hugs the viewport. Add page-level bottom padding (e.g. `3rem`) on a wrapper or the last settings section so “One-time full copy / cutover” has breathing room when scrolled to the end.
-2. **Side-by-side** — Use the empty horizontal space: Update backup and advanced migrate sit in two columns on wide screens; stack on narrow.
-
-## Layout
-
-In [`frontend/src/pages/Settings.tsx`](frontend/src/pages/Settings.tsx) under **Library disks**:
-
-```
-[ title + desc + disk free + warnings ]   full width
-[ Update backup          |  Advanced details ]   .settings-library-columns
-```
-
-- Left: existing Update backup block (primary CTA).
-- Right: `<details class="settings-advanced">` (same content as now).
-- Remove the border-bottom that assumed a vertical stack under `.settings-library-primary` (or keep a subtle column separator via CSS gap only).
-
-Native migrate block unchanged (single column).
-
-## CSS ([`frontend/src/index.css`](frontend/src/index.css))
-
-- `.settings-page { padding-bottom: 3rem; }` on the root Settings `<div>` (add class).
-- `.settings-library-columns { display: grid; gap: 1.5rem; grid-template-columns: 1fr; }` and `@media (min-width: 900px) { grid-template-columns: 1fr 1fr; }`.
-- Drop or relax `.settings-library-primary` bottom border when inside the grid.
-- Ensure `.settings-advanced` summary/content wraps cleanly in a column (no max-width conflict with `.settings-grid`).
-
-## Docs
-
-One CHANGELOG Unreleased Changed line.
-
-## Out of scope
-
-- Redesigning Paths & patterns
-- Fixing identical media/backup free-space numbers
-
----
-
-<a id="chapter-166-library-disks-side-by-side"></a>
-
-## Chapter 166: Library disks side-by-side
+## Chapter 167: Library disks side-by-side
 
 > **Overview:** Add bottom page padding so the advanced migrate control isn’t flush with the viewport, and put Update backup beside the advanced cutover block in a responsive two-column layout.
 
@@ -16759,9 +16805,53 @@ One CHANGELOG Unreleased Changed line.
 
 ---
 
-<a id="chapter-167-library-migrate-backup"></a>
+<a id="chapter-168-library-disks-side-by-side"></a>
 
-## Chapter 167: Library migrate backup
+## Chapter 168: Library disks side-by-side
+
+> **Overview:** Add bottom page padding so the advanced migrate control isn’t flush with the viewport, and put Update backup beside the advanced cutover block in a responsive two-column layout.
+
+## Fixes
+
+1. **Bottom padding** — Settings content hugs the viewport. Add page-level bottom padding (e.g. `3rem`) on a wrapper or the last settings section so “One-time full copy / cutover” has breathing room when scrolled to the end.
+2. **Side-by-side** — Use the empty horizontal space: Update backup and advanced migrate sit in two columns on wide screens; stack on narrow.
+
+## Layout
+
+In [`frontend/src/pages/Settings.tsx`](frontend/src/pages/Settings.tsx) under **Library disks**:
+
+```
+[ title + desc + disk free + warnings ]   full width
+[ Update backup          |  Advanced details ]   .settings-library-columns
+```
+
+- Left: existing Update backup block (primary CTA).
+- Right: `<details class="settings-advanced">` (same content as now).
+- Remove the border-bottom that assumed a vertical stack under `.settings-library-primary` (or keep a subtle column separator via CSS gap only).
+
+Native migrate block unchanged (single column).
+
+## CSS ([`frontend/src/index.css`](frontend/src/index.css))
+
+- `.settings-page { padding-bottom: 3rem; }` on the root Settings `<div>` (add class).
+- `.settings-library-columns { display: grid; gap: 1.5rem; grid-template-columns: 1fr; }` and `@media (min-width: 900px) { grid-template-columns: 1fr 1fr; }`.
+- Drop or relax `.settings-library-primary` bottom border when inside the grid.
+- Ensure `.settings-advanced` summary/content wraps cleanly in a column (no max-width conflict with `.settings-grid`).
+
+## Docs
+
+One CHANGELOG Unreleased Changed line.
+
+## Out of scope
+
+- Redesigning Paths & patterns
+- Fixing identical media/backup free-space numbers
+
+---
+
+<a id="chapter-169-library-migrate-backup"></a>
+
+## Chapter 169: Library migrate backup
 
 > **Overview:** Evolve the existing Settings “Move library” copy-and-repoint job into a clearer “Copy library to new drive” migration tool with progress, post-copy verification, optional rewrite-only mode, and Docker guidance—leaving the original root intact as a backup.
 
@@ -16849,9 +16939,9 @@ Add [`backend/tests/test_library_migrate.py`](backend/tests/test_library_migrate
 
 ---
 
-<a id="chapter-168-library-migrate-backup"></a>
+<a id="chapter-170-library-migrate-backup"></a>
 
-## Chapter 168: Library migrate backup
+## Chapter 170: Library migrate backup
 
 > **Overview:** Evolve the existing Settings “Move library” copy-and-repoint job into a clearer “Copy library to new drive” migration tool with progress, post-copy verification, optional rewrite-only mode, and Docker guidance—leaving the original root intact as a backup.
 
@@ -16939,9 +17029,9 @@ Add [`backend/tests/test_library_migrate.py`](backend/tests/test_library_migrate
 
 ---
 
-<a id="chapter-169-library-mosaic-save"></a>
+<a id="chapter-171-library-mosaic-save"></a>
 
-## Chapter 169: Library mosaic save
+## Chapter 171: Library mosaic save
 
 > **Overview:** Save generated mosaics under `{archive}/mosaics/`, index them as archive photos, and auto-tag with mosaic so they appear in Browse/Calendar like any library photo.
 
@@ -17015,9 +17105,9 @@ In [`Mosaic.tsx`](frontend/src/pages/Mosaic.tsx), after success: invalidate `["f
 
 ---
 
-<a id="chapter-170-lightbox-tag-fonts"></a>
+<a id="chapter-172-lightbox-tag-fonts"></a>
 
-## Chapter 170: Lightbox tag fonts
+## Chapter 172: Lightbox tag fonts
 
 > **Overview:** Increase typography in the lightbox Tags & people panel only (T overlay), scoped to `.photo-lightbox-tags` so grid/inbox badges stay unchanged.
 
@@ -17086,9 +17176,9 @@ Optional small tweak: bump `.photo-lightbox-tags .badge-remove` to `1rem` so the
 
 ---
 
-<a id="chapter-171-lightbox-tag-overlay"></a>
+<a id="chapter-173-lightbox-tag-overlay"></a>
 
-## Chapter 171: Lightbox tag overlay
+## Chapter 173: Lightbox tag overlay
 
 > **Overview:** Add a toggleable tag-application overlay to the PhotoDetail fullscreen lightbox, shown/hidden with T/t, reusing the existing FileTagPicker search/recent pattern.
 
@@ -17206,9 +17296,9 @@ Add styles near existing `.photo-lightbox` rules:
 
 ---
 
-<a id="chapter-172-link-inbox-image-as-hero"></a>
+<a id="chapter-174-link-inbox-image-as-hero"></a>
 
-## Chapter 172: Link inbox image as hero
+## Chapter 174: Link inbox image as hero
 
 > **Overview:** Inbox is a review queue on disk and in the UI. Scan indexes only; Mark reviewed moves scans to recipes/; Link as hero to… moves dish photos to hero/ and removes the orphan draft.
 
@@ -17274,9 +17364,9 @@ Leave it in **inbox**, Scan if needed, then **Link as hero to…** → Banana Br
 
 ---
 
-<a id="chapter-173-link-inbox-image-as-hero"></a>
+<a id="chapter-175-link-inbox-image-as-hero"></a>
 
-## Chapter 173: Link inbox image as hero
+## Chapter 175: Link inbox image as hero
 
 > **Overview:** Explain the current stem-match workflow, then add a manual "Use as hero for…" action so an Inbox draft (misplaced dish photo) can be attached as another recipe's hero and removed as a standalone draft.
 
@@ -17327,77 +17417,9 @@ The feature above makes step 1–2 a one-click UI action instead.
 
 ---
 
-<a id="chapter-174-migrate-disk-health"></a>
+<a id="chapter-176-migrate-disk-health"></a>
 
-## Chapter 174: Migrate disk health
-
-> **Overview:** Surface Docker/destination disk health in Settings and tighten library-copy preflight so users see low space or a non-mounted destination before a bad copy fills the container overlay again.
-
-## Problem
-
-A library copy to a path that is **writable but not bind-mounted** fills the container’s overlayfs (we saw ~48GB on `imageorganizer-backend-1`), which fills Docker Desktop’s VM disk (`Docker.raw`) and breaks Compose with `no space left on device`. Users cannot see Docker Desktop disk from the app today; [`GET /api/storage/stats`](backend/app/storage_stats.py) only reports catalog DB sizes.
-
-## Approach
-
-Add **filesystem free-space probes** plus a **Docker destination allowlist** on migrate preflight. Show the results in Settings so the user can fix mount/env or free Docker disk before copying.
-
-```mermaid
-flowchart TD
-  settings["Settings Copy library"] --> config["GET /api/config + disk health"]
-  config --> ready{"backup_media_ready and free space OK?"}
-  ready -->|no| block["Disable copy + fix steps"]
-  ready -->|yes| post["POST /api/library/move"]
-  post --> preflight["Preflight: allowlist dest + statvfs"]
-  preflight -->|fail| err["Clear error in move status"]
-  preflight -->|ok| copy["Copy to /media-backup only"]
-```
-
-## Backend
-
-Extend migrate helpers in [`backend/app/library_migrate.py`](backend/app/library_migrate.py):
-
-- `disk_usage(path) -> {total_bytes, free_bytes, used_bytes}` via `os.statvfs`
-- When `paths_from_env`: also probe `/` as `container_root` (Docker VM rootfs the overlay sits on)
-- Expose on config (or a small `GET /api/storage/disk` used by Settings):
-  - `media_disk` for `MEDIA_ROOT`
-  - `backup_disk` for `BACKUP_MEDIA_ROOT` when present
-  - `container_root_disk` when `paths_from_env`
-  - keep existing `backup_media_ready`
-
-Tighten `_preflight`:
-
-1. **Docker allowlist:** if `paths_from_env`, require `new_media_root` resolve equal to `backup_media_root()` (or under it). Reject host-style paths (`/Volumes/...`) and any other path that would create dirs on overlay.
-2. **Free space:** estimate library size (reuse `_count_library_files` / existing totals) and require dest `free_bytes` ≥ estimate (small margin, e.g. 5%). Clear error text if not.
-3. **Container root warning threshold:** if `paths_from_env` and `/` free &lt; ~2GB (or free/total &lt; 5%), set `container_disk_low: true` on config so UI can warn even before copy (does not replace allowlist).
-
-Wire fields through [`ConfigOut`](backend/app/models.py) / `_config_out()` in [`main.py`](backend/app/main.py) (prefer extending config to avoid a second round-trip; keep payloads numeric + ready flags only).
-
-Tests in [`backend/tests/test_library_migrate.py`](backend/tests/test_library_migrate.py): allowlist rejection when env paths; free-space failure stub via monkeypatched `statvfs`; `disk_usage` smoke.
-
-## Frontend
-
-In [`frontend/src/pages/Settings.tsx`](frontend/src/pages/Settings.tsx) under **Copy library to new drive**:
-
-- Show free space for media and backup mounts (human sizes).
-- If `container_disk_low`: warn — free Docker Desktop disk / recreate backend if a prior copy filled the container; link to the existing recreate instructions.
-- Keep blocking when `!backup_media_ready`; also block when backup free space &lt; catalog estimate if we already have storage stats / disk fields.
-- When Docker, lock destination input to `/media-backup` (or read-only prefill) so users cannot type a host path that looks writable after `mkdir`.
-
-## Docs
-
-Short notes in README migrate section + ARCHITECTURE (disk fields on config; Docker dest must be `/media-backup`) and CHANGELOG Unreleased.
-
-## Out of scope
-
-- Reading Docker Desktop’s allocated disk limit from the host
-- Auto-pruning images/containers from the API
-- Auto-editing `.env` / recreating Compose
-
----
-
-<a id="chapter-175-migrate-disk-health"></a>
-
-## Chapter 175: Migrate disk health
+## Chapter 176: Migrate disk health
 
 > **Overview:** Surface Docker/destination disk health in Settings and tighten library-copy preflight so users see low space or a non-mounted destination before a bad copy fills the container overlay again.
 
@@ -17463,9 +17485,77 @@ Short notes in README migrate section + ARCHITECTURE (disk fields on config; Doc
 
 ---
 
-<a id="chapter-176-people-autotag-options"></a>
+<a id="chapter-177-migrate-disk-health"></a>
 
-## Chapter 176: People autotag options
+## Chapter 177: Migrate disk health
+
+> **Overview:** Surface Docker/destination disk health in Settings and tighten library-copy preflight so users see low space or a non-mounted destination before a bad copy fills the container overlay again.
+
+## Problem
+
+A library copy to a path that is **writable but not bind-mounted** fills the container’s overlayfs (we saw ~48GB on `imageorganizer-backend-1`), which fills Docker Desktop’s VM disk (`Docker.raw`) and breaks Compose with `no space left on device`. Users cannot see Docker Desktop disk from the app today; [`GET /api/storage/stats`](backend/app/storage_stats.py) only reports catalog DB sizes.
+
+## Approach
+
+Add **filesystem free-space probes** plus a **Docker destination allowlist** on migrate preflight. Show the results in Settings so the user can fix mount/env or free Docker disk before copying.
+
+```mermaid
+flowchart TD
+  settings["Settings Copy library"] --> config["GET /api/config + disk health"]
+  config --> ready{"backup_media_ready and free space OK?"}
+  ready -->|no| block["Disable copy + fix steps"]
+  ready -->|yes| post["POST /api/library/move"]
+  post --> preflight["Preflight: allowlist dest + statvfs"]
+  preflight -->|fail| err["Clear error in move status"]
+  preflight -->|ok| copy["Copy to /media-backup only"]
+```
+
+## Backend
+
+Extend migrate helpers in [`backend/app/library_migrate.py`](backend/app/library_migrate.py):
+
+- `disk_usage(path) -> {total_bytes, free_bytes, used_bytes}` via `os.statvfs`
+- When `paths_from_env`: also probe `/` as `container_root` (Docker VM rootfs the overlay sits on)
+- Expose on config (or a small `GET /api/storage/disk` used by Settings):
+  - `media_disk` for `MEDIA_ROOT`
+  - `backup_disk` for `BACKUP_MEDIA_ROOT` when present
+  - `container_root_disk` when `paths_from_env`
+  - keep existing `backup_media_ready`
+
+Tighten `_preflight`:
+
+1. **Docker allowlist:** if `paths_from_env`, require `new_media_root` resolve equal to `backup_media_root()` (or under it). Reject host-style paths (`/Volumes/...`) and any other path that would create dirs on overlay.
+2. **Free space:** estimate library size (reuse `_count_library_files` / existing totals) and require dest `free_bytes` ≥ estimate (small margin, e.g. 5%). Clear error text if not.
+3. **Container root warning threshold:** if `paths_from_env` and `/` free &lt; ~2GB (or free/total &lt; 5%), set `container_disk_low: true` on config so UI can warn even before copy (does not replace allowlist).
+
+Wire fields through [`ConfigOut`](backend/app/models.py) / `_config_out()` in [`main.py`](backend/app/main.py) (prefer extending config to avoid a second round-trip; keep payloads numeric + ready flags only).
+
+Tests in [`backend/tests/test_library_migrate.py`](backend/tests/test_library_migrate.py): allowlist rejection when env paths; free-space failure stub via monkeypatched `statvfs`; `disk_usage` smoke.
+
+## Frontend
+
+In [`frontend/src/pages/Settings.tsx`](frontend/src/pages/Settings.tsx) under **Copy library to new drive**:
+
+- Show free space for media and backup mounts (human sizes).
+- If `container_disk_low`: warn — free Docker Desktop disk / recreate backend if a prior copy filled the container; link to the existing recreate instructions.
+- Keep blocking when `!backup_media_ready`; also block when backup free space &lt; catalog estimate if we already have storage stats / disk fields.
+- When Docker, lock destination input to `/media-backup` (or read-only prefill) so users cannot type a host path that looks writable after `mkdir`.
+
+## Docs
+
+Short notes in README migrate section + ARCHITECTURE (disk fields on config; Docker dest must be `/media-backup`) and CHANGELOG Unreleased.
+
+## Out of scope
+
+- Reading Docker Desktop’s allocated disk limit from the host
+- Auto-pruning images/containers from the API
+- Auto-editing `.env` / recreating Compose
+
+---
+
+<a id="chapter-178-people-autotag-options"></a>
+
+## Chapter 178: People autotag options
 
 > **Overview:** TABLED — Compare four approaches for inbox people labeling: heuristic suggestions (no ML), face detection, face recognition against known people, and face clustering. Parked for later; no implementation until revisited.
 
@@ -17699,48 +17789,9 @@ No code in this phase — comparison only, per investigation scope.
 
 ---
 
-<a id="chapter-177-per-passenger-price-display"></a>
+<a id="chapter-179-per-passenger-price-display"></a>
 
-## Chapter 177: Per-passenger price display
-
-> **Overview:** Show trip total with a per-person breakdown like `$2,000 ($500 per/person)` using the search’s adult count.
-
-# Per-passenger price label
-
-## Assumption
-
-Provider `price` / `totalPrice` is the **trip total for the searched passenger count**. Per-person = `Math.round(price / adults)`. (Matches Google Flights when searching with N adults.)
-
-## Data
-
-[`FlightResult`](src/types/search.ts) has no adult count today. In [`mapOffer`](src/components/search/SearchForm.tsx):
-
-1. Add `adults: number` to `FlightResult`.
-2. Pass `adults: form.adults` into `mapOffer` (or close over `form.adults` when mapping stream/complete results).
-
-## UI
-
-Shared format helper (inline or small util):
-
-```ts
-function formatPrice(total: number, adults: number): string {
-  const totalLabel = `$${total.toLocaleString()}`;
-  if (adults <= 1) return totalLabel;
-  const per = Math.round(total / adults);
-  return `${totalLabel} ($${per.toLocaleString()} per/person)`;
-}
-```
-
-- [`AlternativesList.tsx`](src/components/results/AlternativesList.tsx) — price cell uses this format
-- [`CheapestHeroCard.tsx`](src/components/results/CheapestHeroCard.tsx) — hero price uses the same (per/person as smaller secondary text under the big total when adults > 1)
-
-Sorting stays by total `price`.
-
----
-
-<a id="chapter-178-per-passenger-price-display"></a>
-
-## Chapter 178: Per-passenger price display
+## Chapter 179: Per-passenger price display
 
 > **Overview:** Show trip total with a per-person breakdown like `$2,000 ($500 per/person)` using the search’s adult count.
 
@@ -17777,9 +17828,48 @@ Sorting stays by total `price`.
 
 ---
 
-<a id="chapter-179-persist-collapsible-sections"></a>
+<a id="chapter-180-per-passenger-price-display"></a>
 
-## Chapter 179: Persist collapsible sections
+## Chapter 180: Per-passenger price display
+
+> **Overview:** Show trip total with a per-person breakdown like `$2,000 ($500 per/person)` using the search’s adult count.
+
+# Per-passenger price label
+
+## Assumption
+
+Provider `price` / `totalPrice` is the **trip total for the searched passenger count**. Per-person = `Math.round(price / adults)`. (Matches Google Flights when searching with N adults.)
+
+## Data
+
+[`FlightResult`](src/types/search.ts) has no adult count today. In [`mapOffer`](src/components/search/SearchForm.tsx):
+
+1. Add `adults: number` to `FlightResult`.
+2. Pass `adults: form.adults` into `mapOffer` (or close over `form.adults` when mapping stream/complete results).
+
+## UI
+
+Shared format helper (inline or small util):
+
+```ts
+function formatPrice(total: number, adults: number): string {
+  const totalLabel = `$${total.toLocaleString()}`;
+  if (adults <= 1) return totalLabel;
+  const per = Math.round(total / adults);
+  return `${totalLabel} ($${per.toLocaleString()} per/person)`;
+}
+```
+
+- [`AlternativesList.tsx`](src/components/results/AlternativesList.tsx) — price cell uses this format
+- [`CheapestHeroCard.tsx`](src/components/results/CheapestHeroCard.tsx) — hero price uses the same (per/person as smaller secondary text under the big total when adults > 1)
+
+Sorting stays by total `price`.
+
+---
+
+<a id="chapter-181-persist-collapsible-sections"></a>
+
+## Chapter 181: Persist collapsible sections
 
 > **Overview:** Persist expanded/collapsed state for label-editor sections so user toggles survive remounts (e.g. single ↔ bulk selection, re-renders after label apply). Fix centrally in `CollapsibleSection` with optional localStorage keys shared across editor contexts.
 
@@ -17864,9 +17954,9 @@ Manual in Inbox:
 
 ---
 
-<a id="chapter-180-persist-collapsible-sections"></a>
+<a id="chapter-182-persist-collapsible-sections"></a>
 
-## Chapter 180: Persist collapsible sections
+## Chapter 182: Persist collapsible sections
 
 > **Overview:** Persist expanded/collapsed state for label-editor sections so user toggles survive remounts (e.g. single ↔ bulk selection, re-renders after label apply). Fix centrally in `CollapsibleSection` with optional localStorage keys shared across editor contexts.
 
@@ -17951,45 +18041,9 @@ Manual in Inbox:
 
 ---
 
-<a id="chapter-181-persist-search-form-settings"></a>
+<a id="chapter-183-persist-search-form-settings"></a>
 
-## Chapter 181: Persist search form settings
-
-> **Overview:** Save SearchForm fields to localStorage on change and restore them on load so a browser refresh keeps the last origin, destination, dates, stay days, and adults.
-
-# Persist last search settings across refresh
-
-## Problem
-
-[`SearchForm.tsx`](src/components/search/SearchForm.tsx) always initializes from hardcoded `DEFAULT_VALUES` (`MCO`/`LAX`, etc.). Refresh loses whatever the user last entered.
-
-## Approach
-
-Persist the form’s `SearchRequest` fields in **`localStorage`** (client-only). Both TO and FROM already share this form state, so one store covers all fields.
-
-### 1. Storage helper — [`src/lib/utils/searchFormStorage.ts`](src/lib/utils/searchFormStorage.ts)
-
-- Key: `datefare:lastSearch`
-- `loadSearchForm(): SearchRequest | null` — parse JSON; return null if missing/invalid
-- `saveSearchForm(form: SearchRequest): void` — write JSON
-- Validate loosely on load: require 3-letter origin/destination strings, ISO dates `YYYY-MM-DD`, positive ints for stay/adults, known `tripType`. Fall back to null (use defaults) if invalid.
-
-### 2. Wire into [`SearchForm.tsx`](src/components/search/SearchForm.tsx)
-
-- Keep `useState(DEFAULT_VALUES)` for SSR-safe first paint (avoid hydration mismatch).
-- `useEffect` on mount: `loadSearchForm()` → if present, `setForm(saved)`.
-- Persist on every field update inside `updateField` (and thus all inputs), so refresh mid-edit still restores last typed values.
-- Do **not** persist search results / progress from `SearchProvider`.
-
-## Verify
-
-Change From/To (e.g. FLL→BTV), refresh → fields still show FLL/BTV and other last-edited values.
-
----
-
-<a id="chapter-182-persist-search-form-settings"></a>
-
-## Chapter 182: Persist search form settings
+## Chapter 183: Persist search form settings
 
 > **Overview:** Save SearchForm fields to localStorage on change and restore them on load so a browser refresh keeps the last origin, destination, dates, stay days, and adults.
 
@@ -18023,9 +18077,45 @@ Change From/To (e.g. FLL→BTV), refresh → fields still show FLL/BTV and other
 
 ---
 
-<a id="chapter-183-recent-people-like-tags"></a>
+<a id="chapter-184-persist-search-form-settings"></a>
 
-## Chapter 183: Recent people like tags
+## Chapter 184: Persist search form settings
+
+> **Overview:** Save SearchForm fields to localStorage on change and restore them on load so a browser refresh keeps the last origin, destination, dates, stay days, and adults.
+
+# Persist last search settings across refresh
+
+## Problem
+
+[`SearchForm.tsx`](src/components/search/SearchForm.tsx) always initializes from hardcoded `DEFAULT_VALUES` (`MCO`/`LAX`, etc.). Refresh loses whatever the user last entered.
+
+## Approach
+
+Persist the form’s `SearchRequest` fields in **`localStorage`** (client-only). Both TO and FROM already share this form state, so one store covers all fields.
+
+### 1. Storage helper — [`src/lib/utils/searchFormStorage.ts`](src/lib/utils/searchFormStorage.ts)
+
+- Key: `datefare:lastSearch`
+- `loadSearchForm(): SearchRequest | null` — parse JSON; return null if missing/invalid
+- `saveSearchForm(form: SearchRequest): void` — write JSON
+- Validate loosely on load: require 3-letter origin/destination strings, ISO dates `YYYY-MM-DD`, positive ints for stay/adults, known `tripType`. Fall back to null (use defaults) if invalid.
+
+### 2. Wire into [`SearchForm.tsx`](src/components/search/SearchForm.tsx)
+
+- Keep `useState(DEFAULT_VALUES)` for SSR-safe first paint (avoid hydration mismatch).
+- `useEffect` on mount: `loadSearchForm()` → if present, `setForm(saved)`.
+- Persist on every field update inside `updateField` (and thus all inputs), so refresh mid-edit still restores last typed values.
+- Do **not** persist search results / progress from `SearchProvider`.
+
+## Verify
+
+Change From/To (e.g. FLL→BTV), refresh → fields still show FLL/BTV and other last-edited values.
+
+---
+
+<a id="chapter-185-recent-people-like-tags"></a>
+
+## Chapter 185: Recent people like tags
 
 > **Overview:** Add a localStorage-backed "Recently used" section for people pickers, mirroring the existing tag pattern in `FileTagPicker` and `BulkLabelEditors`.
 
@@ -18103,9 +18193,9 @@ Under `[Unreleased]` → **Added**: Recently used people chips in single and bul
 
 ---
 
-<a id="chapter-184-recipe-hero-dish-photo"></a>
+<a id="chapter-186-recipe-hero-dish-photo"></a>
 
-## Chapter 184: Recipe hero dish photo
+## Chapter 186: Recipe hero dish photo
 
 > **Overview:** Add an optional "hero" dish photo per recipe, dropped into a new hero/ folder and matched to recipes by filename stem during scan. Show it big on the recipe detail page and use it as the card thumbnail (falling back to the scan when absent).
 
@@ -18159,65 +18249,9 @@ Rebuild the backend (schema migration), drop `hero/banana_bread.jpg`, run Scan, 
 
 ---
 
-<a id="chapter-185-relayout-library-backup-ui"></a>
+<a id="chapter-187-relayout-library-backup-ui"></a>
 
-## Chapter 185: Relayout library backup UI
-
-> **Overview:** Reorganize Settings so routine “Update backup” is primary after cutover, fold one-time “Copy and switch” into a secondary/advanced block, show disk free once, and scope progress/status to the job that was started.
-
-# Relayout library / backup Settings
-
-## Problems (from the screenshot)
-
-- After cutover, **Copy and switch** still looks like the main action and shows “Copy to: `/Users/alex/Media`” (the backup), which reads backwards.
-- Cutover Docker steps and rewrite checkboxes stay visible when the user only wants incremental updates.
-- The same “Backup updated…” status appears under **both** sections (shared `moveStatus`).
-- Disk free is buried under migrate copy.
-
-## Layout (Docker, `paths_from_env`)
-
-Single parent section **Library disks** in [`frontend/src/pages/Settings.tsx`](frontend/src/pages/Settings.tsx):
-
-1. **Shared header** — one disk-free line + `container_disk_low` / mount-not-ready warnings.
-2. **Update backup** (first when `backup_media_ready`) — From → To host paths, short description, primary button, progress/status **only for sync jobs**.
-3. **Migrate to a new drive** — wrapped in `<details>` (closed by default when backup is ready; open when mount missing). Contains cutover blurb, destination summary, checkboxes, Copy and switch, progress/status **only for migrate jobs**.
-
-Native (non-Docker): keep a single **Migrate to a new drive** block with Destination folder (no Update backup unless we later expose backup env).
-
-## Status scoping
-
-Track local `libraryJob: "move" | "sync" | null`:
-
-- Set on mutate click; clear when `!moveStatus?.running && moveStatus?.done` after a short display, or when the other job starts.
-- Render progress/message only in the matching subsection (`libraryJob === "sync"` vs `"move"`).
-
-No backend change required.
-
-## Copy tweaks
-
-- Update backup title stays; From/To use `media_host_path` / `backup_media_host_path`.
-- Migrate details summary: “One-time full copy / cutover (advanced)”.
-- Soften cutover step (3) to allow keeping `BACKUP_MEDIA_HOST_PATH` on the old disk for Update backup (matches current .env).
-
-## CSS
-
-Light rules in [`frontend/src/index.css`](frontend/src/index.css) for `.settings-library-disks`, `.settings-job-status`, and `<details class="settings-advanced">` (spacing only; match existing settings typography).
-
-## Docs
-
-CHANGELOG Unreleased Changed: Settings library disks relayout. No ARCHITECTURE change (UI only).
-
-## Out of scope
-
-- Fixing identical media/backup free-space numbers (statvfs / mount reporting)
-- Backend job-type field on status API
-- Removing Copy and switch entirely
-
----
-
-<a id="chapter-186-relayout-library-backup-ui"></a>
-
-## Chapter 186: Relayout library backup UI
+## Chapter 187: Relayout library backup UI
 
 > **Overview:** Reorganize Settings so routine “Update backup” is primary after cutover, fold one-time “Copy and switch” into a secondary/advanced block, show disk free once, and scope progress/status to the job that was started.
 
@@ -18271,9 +18305,65 @@ CHANGELOG Unreleased Changed: Settings library disks relayout. No ARCHITECTURE c
 
 ---
 
-<a id="chapter-187-release-20260710"></a>
+<a id="chapter-188-relayout-library-backup-ui"></a>
 
-## Chapter 187: Release 2026.07.10
+## Chapter 188: Relayout library backup UI
+
+> **Overview:** Reorganize Settings so routine “Update backup” is primary after cutover, fold one-time “Copy and switch” into a secondary/advanced block, show disk free once, and scope progress/status to the job that was started.
+
+# Relayout library / backup Settings
+
+## Problems (from the screenshot)
+
+- After cutover, **Copy and switch** still looks like the main action and shows “Copy to: `/Users/alex/Media`” (the backup), which reads backwards.
+- Cutover Docker steps and rewrite checkboxes stay visible when the user only wants incremental updates.
+- The same “Backup updated…” status appears under **both** sections (shared `moveStatus`).
+- Disk free is buried under migrate copy.
+
+## Layout (Docker, `paths_from_env`)
+
+Single parent section **Library disks** in [`frontend/src/pages/Settings.tsx`](frontend/src/pages/Settings.tsx):
+
+1. **Shared header** — one disk-free line + `container_disk_low` / mount-not-ready warnings.
+2. **Update backup** (first when `backup_media_ready`) — From → To host paths, short description, primary button, progress/status **only for sync jobs**.
+3. **Migrate to a new drive** — wrapped in `<details>` (closed by default when backup is ready; open when mount missing). Contains cutover blurb, destination summary, checkboxes, Copy and switch, progress/status **only for migrate jobs**.
+
+Native (non-Docker): keep a single **Migrate to a new drive** block with Destination folder (no Update backup unless we later expose backup env).
+
+## Status scoping
+
+Track local `libraryJob: "move" | "sync" | null`:
+
+- Set on mutate click; clear when `!moveStatus?.running && moveStatus?.done` after a short display, or when the other job starts.
+- Render progress/message only in the matching subsection (`libraryJob === "sync"` vs `"move"`).
+
+No backend change required.
+
+## Copy tweaks
+
+- Update backup title stays; From/To use `media_host_path` / `backup_media_host_path`.
+- Migrate details summary: “One-time full copy / cutover (advanced)”.
+- Soften cutover step (3) to allow keeping `BACKUP_MEDIA_HOST_PATH` on the old disk for Update backup (matches current .env).
+
+## CSS
+
+Light rules in [`frontend/src/index.css`](frontend/src/index.css) for `.settings-library-disks`, `.settings-job-status`, and `<details class="settings-advanced">` (spacing only; match existing settings typography).
+
+## Docs
+
+CHANGELOG Unreleased Changed: Settings library disks relayout. No ARCHITECTURE change (UI only).
+
+## Out of scope
+
+- Fixing identical media/backup free-space numbers (statvfs / mount reporting)
+- Backend job-type field on status API
+- Removing Copy and switch entirely
+
+---
+
+<a id="chapter-189-release-20260710"></a>
+
+## Chapter 189: Release 2026.07.10
 
 > **Overview:** Document the SQLite lock fix in the development book and CHANGELOG, bump version strings to 2026.07.10, regenerate DEVELOPMENT_BOOK.md, then commit, tag, and push the release.
 
@@ -18358,9 +18448,9 @@ flowchart LR
 
 ---
 
-<a id="chapter-188-release-20260712b"></a>
+<a id="chapter-190-release-20260712b"></a>
 
-## Chapter 188: Release 2026.07.12b
+## Chapter 190: Release 2026.07.12b
 
 > **Overview:** Document the month-selectable photo grid feature, bump version strings to 2026.07.12b, regenerate the development book, then commit and tag the release.
 
@@ -18452,9 +18542,9 @@ Branch is currently **3 commits ahead** of `origin/main` (2026.07.11e, 2026.07.1
 
 ---
 
-<a id="chapter-189-release-20260714"></a>
+<a id="chapter-191-release-20260714"></a>
 
-## Chapter 189: Release 2026.07.14
+## Chapter 191: Release 2026.07.14
 
 > **Overview:** Ship the Browse AND intersection work (tags, people, cameras) as release **2026.07.14**: finalize CHANGELOG/README/versions, register plans and rebuild the development book, then commit, tag, and push to origin.
 
@@ -18525,9 +18615,9 @@ Push is included so the release is on origin (branch is currently even with `ori
 
 ---
 
-<a id="chapter-190-release-20260714"></a>
+<a id="chapter-192-release-20260714"></a>
 
-## Chapter 190: Release 2026.07.14
+## Chapter 192: Release 2026.07.14
 
 > **Overview:** Phase 1 (now): fix calendar day 500 from unresolved camera Query default. Phase 2 (after confirm): docs, version bump, commit/tag/push 2026.07.14.
 
@@ -18591,9 +18681,69 @@ Commit, tag `2026.07.14`, push HEAD + tag to origin.
 
 ---
 
-<a id="chapter-191-review-restore-deletes"></a>
+<a id="chapter-193-remove-sticky-control-frame"></a>
 
-## Chapter 191: Review restore deletes
+## Chapter 193: Remove sticky control frame
+
+> **Overview:** The frosted sticky bar still reads as a black slab. Remove its background, border, and shadow so Inbox filter buttons sit directly on the page/skin like Review chrome, with no full-width frame.
+
+## Problem
+
+The prior soften (`rgba(15,17,23,0.72)` + blur + border/shadow) still draws a full-width dark rectangle behind All / Untagged / Delete queue. Screenshots show a hard top edge and empty dark space around the buttons.
+
+## Approach
+
+In [`frontend/src/index.css`](frontend/src/index.css), make `.page-sticky-controls` / `.inbox-sticky-controls` chrome-less:
+
+- `background: transparent`
+- Remove `backdrop-filter` / `-webkit-backdrop-filter`
+- Remove `border-bottom` and `box-shadow`
+- Keep `position: sticky`, `z-index`, padding/margins, and overflow
+
+Filter buttons already use `.btn-secondary` fills; nested panels (alerts, label editors) keep their own backgrounds. Same shared class update covers Trash, Blurry, and Calendar sticky strips (intentional).
+
+No markup changes in [`Inbox.tsx`](frontend/src/pages/Inbox.tsx).
+
+## Docs
+
+- Update [`CHANGELOG.md`](CHANGELOG.md) Unreleased Fixed bullet to say sticky controls no longer paint a background frame (replace the frosted-chrome wording if present)
+- No ARCHITECTURE change
+
+---
+
+<a id="chapter-194-remove-sticky-control-frame"></a>
+
+## Chapter 194: Remove sticky control frame
+
+> **Overview:** The frosted sticky bar still reads as a black slab. Remove its background, border, and shadow so Inbox filter buttons sit directly on the page/skin like Review chrome, with no full-width frame.
+
+## Problem
+
+The prior soften (`rgba(15,17,23,0.72)` + blur + border/shadow) still draws a full-width dark rectangle behind All / Untagged / Delete queue. Screenshots show a hard top edge and empty dark space around the buttons.
+
+## Approach
+
+In [`frontend/src/index.css`](frontend/src/index.css), make `.page-sticky-controls` / `.inbox-sticky-controls` chrome-less:
+
+- `background: transparent`
+- Remove `backdrop-filter` / `-webkit-backdrop-filter`
+- Remove `border-bottom` and `box-shadow`
+- Keep `position: sticky`, `z-index`, padding/margins, and overflow
+
+Filter buttons already use `.btn-secondary` fills; nested panels (alerts, label editors) keep their own backgrounds. Same shared class update covers Trash, Blurry, and Calendar sticky strips (intentional).
+
+No markup changes in [`Inbox.tsx`](frontend/src/pages/Inbox.tsx).
+
+## Docs
+
+- Update [`CHANGELOG.md`](CHANGELOG.md) Unreleased Fixed bullet to say sticky controls no longer paint a background frame (replace the frosted-chrome wording if present)
+- No ARCHITECTURE change
+
+---
+
+<a id="chapter-195-review-restore-deletes"></a>
+
+## Chapter 195: Review restore deletes
 
 > **Overview:** Add per-item and bulk Restore for delete decisions on the Review page, reusing the existing `cancelReviewDecisions` API and `PhotoDetail` delete-queue mode already used in Inbox.
 
@@ -18736,54 +18886,9 @@ Add under `[Unreleased]` → **Added** in [`CHANGELOG.md`](imageOrganizer/CHANGE
 
 ---
 
-<a id="chapter-192-separate-kitchen-ledger-agent"></a>
+<a id="chapter-196-separate-kitchen-ledger-agent"></a>
 
-## Chapter 192: Separate Kitchen Ledger agent
-
-> **Overview:** Kitchen Ledger is already a separate git repo on disk. It appears under imageorganizer in Cursor only because this agent chat never successfully switched its workspace root. Fix by moving this agent to `/Users/alex/Documents/github/kitchenLedger`.
-
-## Why it shows under imageorganizer
-
-Cursor’s **Repositories** sidebar groups agent chats by the **workspace root** they started in (or currently own)—not by where files live on disk.
-
-| Layer | Reality |
-|-------|---------|
-| Disk / git | Sibling at [`/Users/alex/Documents/github/kitchenLedger`](/Users/alex/Documents/github/kitchenLedger), remote `https://github.com/aherna04/kitchenLedger` |
-| This agent | Still rooted in [`/Users/alex/Documents/github/imageOrganizer`](/Users/alex/Documents/github/imageOrganizer) |
-
-This chat began in Image Organizer. Early `move_agent_to_root` attempts failed (empty repo / no `origin`). Work continued by writing to the sibling path, so the agent stayed listed under **imageorganizer**.
-
-Nothing is wrong with the Kitchen Ledger codebase layout—only the Cursor agent association.
-
-## Separate it
-
-Call Cursor’s `move_agent_to_root` with:
-
-`rootPath = /Users/alex/Documents/github/kitchenLedger`
-
-That should:
-
-- Retarget this conversation’s workspace to Kitchen Ledger
-- Make new terminals default to that repo
-- Move/show this agent under a **kitchenLedger** (or similarly named) entry in Repositories instead of nested under imageorganizer
-
-`origin/main` now exists, so the earlier move failure mode should no longer apply.
-
-## After the move
-
-- Confirm the sidebar groups this chat with Kitchen Ledger, not Image Organizer
-- Confirm the editor/workspace root is `kitchenLedger`
-- No code, git, or Docker changes required
-
-## If the move UI still looks odd
-
-You can also drag the agent into a new folder via the Repositories “New Folder” control in the sidebar—that only reorganizes the agent list; the `move_agent_to_root` step is what actually changes the workspace.
-
----
-
-<a id="chapter-193-separate-kitchen-ledger-agent"></a>
-
-## Chapter 193: Separate Kitchen Ledger agent
+## Chapter 196: Separate Kitchen Ledger agent
 
 > **Overview:** Kitchen Ledger is already a separate git repo on disk. It appears under imageorganizer in Cursor only because this agent chat never successfully switched its workspace root. Fix by moving this agent to `/Users/alex/Documents/github/kitchenLedger`.
 
@@ -18826,9 +18931,54 @@ You can also drag the agent into a new folder via the Repositories “New Folder
 
 ---
 
-<a id="chapter-194-settings-three-column-disks"></a>
+<a id="chapter-197-separate-kitchen-ledger-agent"></a>
 
-## Chapter 194: Settings three-column disks
+## Chapter 197: Separate Kitchen Ledger agent
+
+> **Overview:** Kitchen Ledger is already a separate git repo on disk. It appears under imageorganizer in Cursor only because this agent chat never successfully switched its workspace root. Fix by moving this agent to `/Users/alex/Documents/github/kitchenLedger`.
+
+## Why it shows under imageorganizer
+
+Cursor’s **Repositories** sidebar groups agent chats by the **workspace root** they started in (or currently own)—not by where files live on disk.
+
+| Layer | Reality |
+|-------|---------|
+| Disk / git | Sibling at [`/Users/alex/Documents/github/kitchenLedger`](/Users/alex/Documents/github/kitchenLedger), remote `https://github.com/aherna04/kitchenLedger` |
+| This agent | Still rooted in [`/Users/alex/Documents/github/imageOrganizer`](/Users/alex/Documents/github/imageOrganizer) |
+
+This chat began in Image Organizer. Early `move_agent_to_root` attempts failed (empty repo / no `origin`). Work continued by writing to the sibling path, so the agent stayed listed under **imageorganizer**.
+
+Nothing is wrong with the Kitchen Ledger codebase layout—only the Cursor agent association.
+
+## Separate it
+
+Call Cursor’s `move_agent_to_root` with:
+
+`rootPath = /Users/alex/Documents/github/kitchenLedger`
+
+That should:
+
+- Retarget this conversation’s workspace to Kitchen Ledger
+- Make new terminals default to that repo
+- Move/show this agent under a **kitchenLedger** (or similarly named) entry in Repositories instead of nested under imageorganizer
+
+`origin/main` now exists, so the earlier move failure mode should no longer apply.
+
+## After the move
+
+- Confirm the sidebar groups this chat with Kitchen Ledger, not Image Organizer
+- Confirm the editor/workspace root is `kitchenLedger`
+- No code, git, or Docker changes required
+
+## If the move UI still looks odd
+
+You can also drag the agent into a new folder via the Repositories “New Folder” control in the sidebar—that only reorganizes the agent list; the `move_agent_to_root` step is what actually changes the workspace.
+
+---
+
+<a id="chapter-198-settings-three-column-disks"></a>
+
+## Chapter 198: Settings three-column disks
 
 > **Overview:** Postpone Docker free-space reporting. Restructure Settings so Paths & patterns, Update backup, and advanced cutover sit in one responsive three-column row matching the mockup—using horizontal space instead of stacking Paths above Library disks.
 
@@ -18893,9 +19043,9 @@ CHANGELOG Unreleased Changed: Settings disk management three-column layout.
 
 ---
 
-<a id="chapter-195-settings-three-column-disks"></a>
+<a id="chapter-199-settings-three-column-disks"></a>
 
-## Chapter 195: Settings three-column disks
+## Chapter 199: Settings three-column disks
 
 > **Overview:** Postpone Docker free-space reporting. Restructure Settings so Paths & patterns, Update backup, and advanced cutover sit in one responsive three-column row matching the mockup—using horizontal space instead of stacking Paths above Library disks.
 
@@ -18960,40 +19110,9 @@ CHANGELOG Unreleased Changed: Settings disk management three-column layout.
 
 ---
 
-<a id="chapter-196-show-connections-in-results"></a>
+<a id="chapter-200-show-connections-in-results"></a>
 
-## Chapter 196: Show connections in results
-
-> **Overview:** Surface stop count on each flight result and show one airport icon per connection in the All Options table.
-
-# Add connection count to results
-
-## Data
-
-[`ProviderOffer`](src/lib/providers/types.ts) already has `stops`. [`FlightResult`](src/types/search.ts) does not — [`mapOffer`](src/components/search/SearchForm.tsx) drops it.
-
-1. Add `stops: number` to `FlightResult`.
-2. In `mapOffer`, set `stops: offer.stops`.
-
-## UI — [`AlternativesList.tsx`](src/components/results/AlternativesList.tsx)
-
-Add a **Connections** column (between Duration and Airline):
-
-- Label: `Nonstop` when `stops === 0`, else `1 stop` / `N stops`
-- Render **one Lucide `Plane` icon per stop** in a row (connection = stop). Nonstop: no icons.
-- Widen grid from `grid-cols-[1fr_1.5fr_1fr_auto]` to five columns, e.g. `grid-cols-[1fr_1.5fr_1fr_1fr_auto]`
-
-Also show stops on [`CheapestHeroCard`](src/components/results/CheapestHeroCard.tsx) next to nights/airline (text only, same Nonstop/N stops wording).
-
-## Note
-
-Layover airport codes are not in the current provider payload — icons are generic plane markers, one per stop count.
-
----
-
-<a id="chapter-197-show-connections-in-results"></a>
-
-## Chapter 197: Show connections in results
+## Chapter 200: Show connections in results
 
 > **Overview:** Surface stop count on each flight result and show one airport icon per connection in the All Options table.
 
@@ -19022,9 +19141,40 @@ Layover airport codes are not in the current provider payload — icons are gene
 
 ---
 
-<a id="chapter-198-slim-inbox-delete-refetch"></a>
+<a id="chapter-201-show-connections-in-results"></a>
 
-## Chapter 198: Slim inbox delete refetch
+## Chapter 201: Show connections in results
+
+> **Overview:** Surface stop count on each flight result and show one airport icon per connection in the All Options table.
+
+# Add connection count to results
+
+## Data
+
+[`ProviderOffer`](src/lib/providers/types.ts) already has `stops`. [`FlightResult`](src/types/search.ts) does not — [`mapOffer`](src/components/search/SearchForm.tsx) drops it.
+
+1. Add `stops: number` to `FlightResult`.
+2. In `mapOffer`, set `stops: offer.stops`.
+
+## UI — [`AlternativesList.tsx`](src/components/results/AlternativesList.tsx)
+
+Add a **Connections** column (between Duration and Airline):
+
+- Label: `Nonstop` when `stops === 0`, else `1 stop` / `N stops`
+- Render **one Lucide `Plane` icon per stop** in a row (connection = stop). Nonstop: no icons.
+- Widen grid from `grid-cols-[1fr_1.5fr_1fr_auto]` to five columns, e.g. `grid-cols-[1fr_1.5fr_1fr_1fr_auto]`
+
+Also show stops on [`CheapestHeroCard`](src/components/results/CheapestHeroCard.tsx) next to nights/airline (text only, same Nonstop/N stops wording).
+
+## Note
+
+Layover airport codes are not in the current provider payload — icons are generic plane markers, one per stop count.
+
+---
+
+<a id="chapter-202-slim-inbox-delete-refetch"></a>
+
+## Chapter 202: Slim inbox delete refetch
 
 > **Overview:** Mark-delete does not need the full invalidateAfterReviewChange burst. Narrow that helper so Inbox only refetches what a delete decision actually changes.
 
@@ -19078,44 +19228,9 @@ Mark delete in Inbox detail → logs show files + pending_delete count + review-
 
 ---
 
-<a id="chapter-199-sticky-search-form"></a>
+<a id="chapter-203-sticky-search-form"></a>
 
-## Chapter 199: Sticky search form
-
-> **Overview:** Make the search form card stick below the header while scrolling so results move underneath and the form stays on screen.
-
-## Goal
-
-Keep the search form visible while scrolling results. Header is already `sticky top-0` ([`Header.tsx`](src/components/layout/Header.tsx), `h-16`). Form should stick just below it.
-
-## Change
-
-Update [`SearchWidget.tsx`](src/components/search/SearchWidget.tsx):
-
-```tsx
-<div className="sticky top-16 z-40 -mt-24 mx-auto max-w-4xl px-4 sm:px-6">
-  <div className="rounded-2xl border ... bg-[var(--bg-surface)] ... backdrop-blur-xl ...">
-    {children}
-  </div>
-</div>
-```
-
-- `sticky top-16` — pins under the 64px header
-- `z-40` — above results (`ResultsSection`), below header (`z-50`)
-- Keep existing card styles and `-mt-24` hero overlap
-- No layout rewrite of [`page.tsx`](src/app/page.tsx); results continue to scroll in normal document flow
-
-Airport autocomplete (`z-50` inside the form) remains usable in the sticky stacking context.
-
-## Verify
-
-Run a search with many results, scroll down — form stays under the nav; price list scrolls.
-
----
-
-<a id="chapter-200-sticky-search-form"></a>
-
-## Chapter 200: Sticky search form
+## Chapter 203: Sticky search form
 
 > **Overview:** Make the search form card stick below the header while scrolling so results move underneath and the form stays on screen.
 
@@ -19148,9 +19263,44 @@ Run a search with many results, scroll down — form stays under the nav; price 
 
 ---
 
-<a id="chapter-201-throttle-inbox-scan-refetch"></a>
+<a id="chapter-204-sticky-search-form"></a>
 
-## Chapter 201: Throttle inbox scan refetch
+## Chapter 204: Sticky search form
+
+> **Overview:** Make the search form card stick below the header while scrolling so results move underneath and the form stays on screen.
+
+## Goal
+
+Keep the search form visible while scrolling results. Header is already `sticky top-0` ([`Header.tsx`](src/components/layout/Header.tsx), `h-16`). Form should stick just below it.
+
+## Change
+
+Update [`SearchWidget.tsx`](src/components/search/SearchWidget.tsx):
+
+```tsx
+<div className="sticky top-16 z-40 -mt-24 mx-auto max-w-4xl px-4 sm:px-6">
+  <div className="rounded-2xl border ... bg-[var(--bg-surface)] ... backdrop-blur-xl ...">
+    {children}
+  </div>
+</div>
+```
+
+- `sticky top-16` — pins under the 64px header
+- `z-40` — above results (`ResultsSection`), below header (`z-50`)
+- Keep existing card styles and `-mt-24` hero overlap
+- No layout rewrite of [`page.tsx`](src/app/page.tsx); results continue to scroll in normal document flow
+
+Airport autocomplete (`z-50` inside the form) remains usable in the sticky stacking context.
+
+## Verify
+
+Run a search with many results, scroll down — form stays under the nav; price list scrolls.
+
+---
+
+<a id="chapter-205-throttle-inbox-scan-refetch"></a>
+
+## Chapter 205: Throttle inbox scan refetch
 
 > **Overview:** Stop reloading the full Inbox grid every few seconds during a scan. Keep lightweight status polling; refresh the grid once when the scan finishes (plus a much rarer mid-scan update if useful).
 
@@ -19214,9 +19364,9 @@ Same component handles trash: remove mid-scan trash list refetch; completion eff
 
 ---
 
-<a id="chapter-202-trash-view-and-restore"></a>
+<a id="chapter-206-trash-view-and-restore"></a>
 
-## Chapter 202: Trash view and restore
+## Chapter 206: Trash view and restore
 
 > **Overview:** Add a Trash page listing files in `.trash/`, with scan and restore back to the original location (from operations log). Requires soft-delete in apply (keep DB rows with location=trash) plus a small schema migration and new API endpoints.
 
@@ -19351,53 +19501,9 @@ Minimal — reuse `.page-header`, `.photo-grid`, toolbar pattern from [`Blurry.t
 
 ---
 
-<a id="chapter-203-update-cursor-book-submodule"></a>
+<a id="chapter-207-update-cursor-book-submodule"></a>
 
-## Chapter 203: Update cursor-book submodule
-
-> **Overview:** Bump imageOrganizer’s `tools/cursor-book` submodule to cursor-book v1.0.0 (HTML sibling output), regenerate the development book so `docs/DEVELOPMENT_BOOK.html` is committed, and sync the local skill for dual output.
-
-# Pull cursor-book update for the next book
-
-## What’s new upstream
-
-[`tools/cursor-book`](imageOrganizer/tools/cursor-book) is pinned at `36026cf`. Remote `main` / tag **`v1.0.0`** is at `7a276ef`:
-
-- Builder always writes a sibling **HTML** book next to the markdown (`output` → `.html`, or optional `output_html`)
-- Skill/README updated for dual commit (`DEVELOPMENT_BOOK.md` + `.html`)
-
-An untracked [`docs/DEVELOPMENT_BOOK.html`](imageOrganizer/docs/DEVELOPMENT_BOOK.html) already exists locally from a prior run; it is not in git yet.
-
-## Steps
-
-1. **Bump submodule** to `v1.0.0` (or `origin/main` — same commit):
-
-```bash
-cd tools/cursor-book && git fetch origin && git checkout v1.0.0
-cd ../.. && git add tools/cursor-book
-```
-
-2. **Optional config** — set `"output_html": "docs/DEVELOPMENT_BOOK.html"` in [`book.json`](imageOrganizer/book.json) to match the schema example (default already derives this from `output`).
-
-3. **Rebuild** via [`scripts/build_development_book.py`](imageOrganizer/scripts/build_development_book.py); expect both:
-
-   - `Wrote …/docs/DEVELOPMENT_BOOK.md`
-   - `Wrote …/docs/DEVELOPMENT_BOOK.html`
-
-4. **Sync consumer skill** — update [`.cursor/skills/development-book/SKILL.md`](imageOrganizer/.cursor/skills/development-book/SKILL.md) to mention committing both `.md` and `.html` (align with `tools/cursor-book/skills/development-book/SKILL.md`).
-
-5. **Commit** submodule pointer + regenerated books + skill (no app version bump / release unless you ask later — this is tooling for the next book).
-
-## Out of scope
-
-- Cutting `2026.07.23a` / a new app release
-- Changing ARCHITECTURE primary link away from the markdown book
-
----
-
-<a id="chapter-204-update-cursor-book-submodule"></a>
-
-## Chapter 204: Update cursor-book submodule
+## Chapter 207: Update cursor-book submodule
 
 > **Overview:** Bump imageOrganizer’s `tools/cursor-book` submodule to cursor-book v1.0.0 (HTML sibling output), regenerate the development book so `docs/DEVELOPMENT_BOOK.html` is committed, and sync the local skill for dual output.
 
@@ -19439,9 +19545,53 @@ cd ../.. && git add tools/cursor-book
 
 ---
 
-<a id="chapter-205-widen-content-max-width"></a>
+<a id="chapter-208-update-cursor-book-submodule"></a>
 
-## Chapter 205: Widen content max-width
+## Chapter 208: Update cursor-book submodule
+
+> **Overview:** Bump imageOrganizer’s `tools/cursor-book` submodule to cursor-book v1.0.0 (HTML sibling output), regenerate the development book so `docs/DEVELOPMENT_BOOK.html` is committed, and sync the local skill for dual output.
+
+# Pull cursor-book update for the next book
+
+## What’s new upstream
+
+[`tools/cursor-book`](imageOrganizer/tools/cursor-book) is pinned at `36026cf`. Remote `main` / tag **`v1.0.0`** is at `7a276ef`:
+
+- Builder always writes a sibling **HTML** book next to the markdown (`output` → `.html`, or optional `output_html`)
+- Skill/README updated for dual commit (`DEVELOPMENT_BOOK.md` + `.html`)
+
+An untracked [`docs/DEVELOPMENT_BOOK.html`](imageOrganizer/docs/DEVELOPMENT_BOOK.html) already exists locally from a prior run; it is not in git yet.
+
+## Steps
+
+1. **Bump submodule** to `v1.0.0` (or `origin/main` — same commit):
+
+```bash
+cd tools/cursor-book && git fetch origin && git checkout v1.0.0
+cd ../.. && git add tools/cursor-book
+```
+
+2. **Optional config** — set `"output_html": "docs/DEVELOPMENT_BOOK.html"` in [`book.json`](imageOrganizer/book.json) to match the schema example (default already derives this from `output`).
+
+3. **Rebuild** via [`scripts/build_development_book.py`](imageOrganizer/scripts/build_development_book.py); expect both:
+
+   - `Wrote …/docs/DEVELOPMENT_BOOK.md`
+   - `Wrote …/docs/DEVELOPMENT_BOOK.html`
+
+4. **Sync consumer skill** — update [`.cursor/skills/development-book/SKILL.md`](imageOrganizer/.cursor/skills/development-book/SKILL.md) to mention committing both `.md` and `.html` (align with `tools/cursor-book/skills/development-book/SKILL.md`).
+
+5. **Commit** submodule pointer + regenerated books + skill (no app version bump / release unless you ask later — this is tooling for the next book).
+
+## Out of scope
+
+- Cutting `2026.07.23a` / a new app release
+- Changing ARCHITECTURE primary link away from the markdown book
+
+---
+
+<a id="chapter-209-widen-content-max-width"></a>
+
+## Chapter 209: Widen content max-width
 
 > **Overview:** Widen the search form and results column from max-w-4xl to max-w-6xl so large screens use more horizontal space, matching the header width.
 
@@ -19466,9 +19616,9 @@ On a wide viewport, form and “All Options” table span roughly the same width
 
 ---
 
-<a id="chapter-206-widen-content-max-width"></a>
+<a id="chapter-210-widen-content-max-width"></a>
 
-## Chapter 206: Widen content max-width
+## Chapter 210: Widen content max-width
 
 > **Overview:** Widen the search form and results column from max-w-4xl to max-w-6xl so large screens use more horizontal space, matching the header width.
 

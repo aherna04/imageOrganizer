@@ -25,3 +25,9 @@ Thumbs.db
 # Env
 .env
 .env.local
+
+# Docker Compose placeholder when BACKUP_MEDIA_HOST_PATH is unset
+.docker-unused-backup/
+
+# Pytest temp dirs accidentally created under backend/
+backend/pytest-of-*/

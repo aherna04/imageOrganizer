@@ -75,7 +75,7 @@ li { margin: 0.25rem 0; }
 </head>
 <body>
 <h1>Image Organizer — Development Book</h1>
-<p><em>Release 2026.07.26a · collected Cursor implementation plans</em></p>
+<p><em>Release 2026.07.26b · collected Cursor implementation plans</em></p>
 <p>Related: <a href="ARCHITECTURE.md">ARCHITECTURE.md</a> · <a href="../CHANGELOG.md">CHANGELOG.md</a></p>
 <h2>Introduction</h2>
 <p>This book collects the Cursor agent implementation plans written while building Image Organizer. Each chapter records design intent, scope, and verification steps for a feature or fix. It is a development history — not end-user documentation. For current system design, see <a href="ARCHITECTURE.md">ARCHITECTURE.md</a>. For shipped changes by release, see <a href="../CHANGELOG.md">CHANGELOG.md</a>.</p>
@@ -227,73 +227,88 @@ li { margin: 0.25rem 0; }
 <li><a href="#chapter-122-calendar-tagging-bottom-left">Calendar tagging bottom-left</a></li>
 <li><a href="#chapter-123-calendar-untagged-edit-mode">Calendar untagged edit mode</a></li>
 <li><a href="#chapter-124-calendar-untagged-filter">Calendar untagged filter</a></li>
-<li><a href="#chapter-125-clone-datefare-repo">Clone datefare repo</a></li>
-<li><a href="#chapter-126-clone-datefare-repo">Clone datefare repo</a></li>
-<li><a href="#chapter-127-connection-airport-icons">Connection airport icons</a></li>
-<li><a href="#chapter-128-connection-airport-icons">Connection airport icons</a></li>
-<li><a href="#chapter-129-cursor-book-development-book">cursor-book development book</a></li>
-<li><a href="#chapter-130-cursor-book-development-book">cursor-book development book</a></li>
-<li><a href="#chapter-131-cursor-book-tool-repo">Cursor book tool repo</a></li>
-<li><a href="#chapter-132-database-datetime-backups">Database datetime backups</a></li>
-<li><a href="#chapter-133-detail-applied-labels">Detail applied labels</a></li>
-<li><a href="#chapter-134-detail-applied-labels">Detail applied labels</a></li>
-<li><a href="#chapter-135-dockerize-datefare-app">Dockerize datefare app</a></li>
-<li><a href="#chapter-136-dockerize-datefare-app">Dockerize datefare app</a></li>
-<li><a href="#chapter-137-docs-commit-and-pr">Docs commit and PR</a></li>
-<li><a href="#chapter-138-docs-commit-and-pr">Docs commit and PR</a></li>
-<li><a href="#chapter-139-document-and-commit-foundation">Document and commit foundation</a></li>
-<li><a href="#chapter-140-document-and-commit-foundation">Document and commit foundation</a></li>
-<li><a href="#chapter-141-expand-plattsburgh-regionals">Expand Plattsburgh regionals</a></li>
-<li><a href="#chapter-142-expand-plattsburgh-regionals">Expand Plattsburgh regionals</a></li>
-<li><a href="#chapter-143-fix-blocked-scan-clicks">Fix blocked scan clicks</a></li>
-<li><a href="#chapter-144-fix-blur-detection-threshold">Fix blur detection threshold</a></li>
-<li><a href="#chapter-145-fix-calendar-tag-search-layout">Fix calendar tag search layout</a></li>
-<li><a href="#chapter-146-fix-camera-model-order">Fix camera model order</a></li>
-<li><a href="#chapter-147-fix-fast-flights-v3-api">Fix fast-flights v3 API</a></li>
-<li><a href="#chapter-148-fix-fast-flights-v3-api">Fix fast-flights v3 API</a></li>
-<li><a href="#chapter-149-fix-label-data-loss">Fix label data loss</a></li>
-<li><a href="#chapter-150-fix-lightbox-scale-to-fit">Fix lightbox scale-to-fit</a></li>
-<li><a href="#chapter-151-fix-mosaic-navigation">Fix mosaic navigation</a></li>
-<li><a href="#chapter-152-fix-tag-wrap-blowout">Fix tag wrap blowout</a></li>
-<li><a href="#chapter-153-fix-tag-wrap-blowout">Fix tag wrap blowout</a></li>
-<li><a href="#chapter-154-html-book-output">HTML book output</a></li>
-<li><a href="#chapter-155-html-book-output">HTML book output</a></li>
-<li><a href="#chapter-156-inbox-autotag-investigation">Inbox autotag investigation</a></li>
-<li><a href="#chapter-157-inbox-detail-auto-advance">Inbox detail auto-advance</a></li>
-<li><a href="#chapter-158-kitchen-ledger-recipe-app">Kitchen Ledger recipe app</a></li>
-<li><a href="#chapter-159-library-mosaic-save">Library mosaic save</a></li>
-<li><a href="#chapter-160-lightbox-tag-fonts">Lightbox tag fonts</a></li>
-<li><a href="#chapter-161-lightbox-tag-overlay">Lightbox tag overlay</a></li>
-<li><a href="#chapter-162-link-inbox-image-as-hero">Link inbox image as hero</a></li>
-<li><a href="#chapter-163-link-inbox-image-as-hero">Link inbox image as hero</a></li>
-<li><a href="#chapter-164-people-autotag-options">People autotag options</a></li>
-<li><a href="#chapter-165-per-passenger-price-display">Per-passenger price display</a></li>
-<li><a href="#chapter-166-per-passenger-price-display">Per-passenger price display</a></li>
-<li><a href="#chapter-167-persist-collapsible-sections">Persist collapsible sections</a></li>
-<li><a href="#chapter-168-persist-collapsible-sections">Persist collapsible sections</a></li>
-<li><a href="#chapter-169-persist-search-form-settings">Persist search form settings</a></li>
-<li><a href="#chapter-170-persist-search-form-settings">Persist search form settings</a></li>
-<li><a href="#chapter-171-recent-people-like-tags">Recent people like tags</a></li>
-<li><a href="#chapter-172-recipe-hero-dish-photo">Recipe hero dish photo</a></li>
-<li><a href="#chapter-173-release-20260710">Release 2026.07.10</a></li>
-<li><a href="#chapter-174-release-20260712b">Release 2026.07.12b</a></li>
-<li><a href="#chapter-175-release-20260714">Release 2026.07.14</a></li>
-<li><a href="#chapter-176-release-20260714">Release 2026.07.14</a></li>
-<li><a href="#chapter-177-review-restore-deletes">Review restore deletes</a></li>
-<li><a href="#chapter-178-separate-kitchen-ledger-agent">Separate Kitchen Ledger agent</a></li>
-<li><a href="#chapter-179-separate-kitchen-ledger-agent">Separate Kitchen Ledger agent</a></li>
-<li><a href="#chapter-180-show-connections-in-results">Show connections in results</a></li>
-<li><a href="#chapter-181-show-connections-in-results">Show connections in results</a></li>
-<li><a href="#chapter-182-slim-inbox-delete-refetch">Slim inbox delete refetch</a></li>
-<li><a href="#chapter-183-sticky-search-form">Sticky search form</a></li>
-<li><a href="#chapter-184-sticky-search-form">Sticky search form</a></li>
-<li><a href="#chapter-185-throttle-inbox-scan-refetch">Throttle inbox scan refetch</a></li>
-<li><a href="#chapter-186-trash-view-and-restore">Trash view and restore</a></li>
-<li><a href="#chapter-187-update-cursor-book-submodule">Update cursor-book submodule</a></li>
-<li><a href="#chapter-188-update-cursor-book-submodule">Update cursor-book submodule</a></li>
-<li><a href="#chapter-189-view-skin-full-bleed">View skin full bleed</a></li>
-<li><a href="#chapter-190-widen-content-max-width">Widen content max-width</a></li>
-<li><a href="#chapter-191-widen-content-max-width">Widen content max-width</a></li>
+<li><a href="#chapter-125-clarify-migrate-destination-ux">Clarify migrate destination UX</a></li>
+<li><a href="#chapter-126-clarify-migrate-destination-ux">Clarify migrate destination UX</a></li>
+<li><a href="#chapter-127-clone-datefare-repo">Clone datefare repo</a></li>
+<li><a href="#chapter-128-clone-datefare-repo">Clone datefare repo</a></li>
+<li><a href="#chapter-129-connection-airport-icons">Connection airport icons</a></li>
+<li><a href="#chapter-130-connection-airport-icons">Connection airport icons</a></li>
+<li><a href="#chapter-131-cursor-book-development-book">cursor-book development book</a></li>
+<li><a href="#chapter-132-cursor-book-development-book">cursor-book development book</a></li>
+<li><a href="#chapter-133-cursor-book-tool-repo">Cursor book tool repo</a></li>
+<li><a href="#chapter-134-database-datetime-backups">Database datetime backups</a></li>
+<li><a href="#chapter-135-detail-applied-labels">Detail applied labels</a></li>
+<li><a href="#chapter-136-detail-applied-labels">Detail applied labels</a></li>
+<li><a href="#chapter-137-docker-backup-media-mount">Docker backup media mount</a></li>
+<li><a href="#chapter-138-docker-backup-media-mount">Docker backup media mount</a></li>
+<li><a href="#chapter-139-dockerize-datefare-app">Dockerize datefare app</a></li>
+<li><a href="#chapter-140-dockerize-datefare-app">Dockerize datefare app</a></li>
+<li><a href="#chapter-141-docs-commit-and-pr">Docs commit and PR</a></li>
+<li><a href="#chapter-142-docs-commit-and-pr">Docs commit and PR</a></li>
+<li><a href="#chapter-143-document-and-commit-foundation">Document and commit foundation</a></li>
+<li><a href="#chapter-144-document-and-commit-foundation">Document and commit foundation</a></li>
+<li><a href="#chapter-145-expand-plattsburgh-regionals">Expand Plattsburgh regionals</a></li>
+<li><a href="#chapter-146-expand-plattsburgh-regionals">Expand Plattsburgh regionals</a></li>
+<li><a href="#chapter-147-fix-blocked-scan-clicks">Fix blocked scan clicks</a></li>
+<li><a href="#chapter-148-fix-blur-detection-threshold">Fix blur detection threshold</a></li>
+<li><a href="#chapter-149-fix-calendar-tag-search-layout">Fix calendar tag search layout</a></li>
+<li><a href="#chapter-150-fix-camera-model-order">Fix camera model order</a></li>
+<li><a href="#chapter-151-fix-fast-flights-v3-api">Fix fast-flights v3 API</a></li>
+<li><a href="#chapter-152-fix-fast-flights-v3-api">Fix fast-flights v3 API</a></li>
+<li><a href="#chapter-153-fix-label-data-loss">Fix label data loss</a></li>
+<li><a href="#chapter-154-fix-lightbox-scale-to-fit">Fix lightbox scale-to-fit</a></li>
+<li><a href="#chapter-155-fix-mosaic-navigation">Fix mosaic navigation</a></li>
+<li><a href="#chapter-156-fix-tag-wrap-blowout">Fix tag wrap blowout</a></li>
+<li><a href="#chapter-157-fix-tag-wrap-blowout">Fix tag wrap blowout</a></li>
+<li><a href="#chapter-158-html-book-output">HTML book output</a></li>
+<li><a href="#chapter-159-html-book-output">HTML book output</a></li>
+<li><a href="#chapter-160-inbox-autotag-investigation">Inbox autotag investigation</a></li>
+<li><a href="#chapter-161-inbox-detail-auto-advance">Inbox detail auto-advance</a></li>
+<li><a href="#chapter-162-incremental-update-backup">Incremental update backup</a></li>
+<li><a href="#chapter-163-incremental-update-backup">Incremental update backup</a></li>
+<li><a href="#chapter-164-kitchen-ledger-recipe-app">Kitchen Ledger recipe app</a></li>
+<li><a href="#chapter-165-library-disks-side-by-side">Library disks side-by-side</a></li>
+<li><a href="#chapter-166-library-disks-side-by-side">Library disks side-by-side</a></li>
+<li><a href="#chapter-167-library-migrate-backup">Library migrate backup</a></li>
+<li><a href="#chapter-168-library-migrate-backup">Library migrate backup</a></li>
+<li><a href="#chapter-169-library-mosaic-save">Library mosaic save</a></li>
+<li><a href="#chapter-170-lightbox-tag-fonts">Lightbox tag fonts</a></li>
+<li><a href="#chapter-171-lightbox-tag-overlay">Lightbox tag overlay</a></li>
+<li><a href="#chapter-172-link-inbox-image-as-hero">Link inbox image as hero</a></li>
+<li><a href="#chapter-173-link-inbox-image-as-hero">Link inbox image as hero</a></li>
+<li><a href="#chapter-174-migrate-disk-health">Migrate disk health</a></li>
+<li><a href="#chapter-175-migrate-disk-health">Migrate disk health</a></li>
+<li><a href="#chapter-176-people-autotag-options">People autotag options</a></li>
+<li><a href="#chapter-177-per-passenger-price-display">Per-passenger price display</a></li>
+<li><a href="#chapter-178-per-passenger-price-display">Per-passenger price display</a></li>
+<li><a href="#chapter-179-persist-collapsible-sections">Persist collapsible sections</a></li>
+<li><a href="#chapter-180-persist-collapsible-sections">Persist collapsible sections</a></li>
+<li><a href="#chapter-181-persist-search-form-settings">Persist search form settings</a></li>
+<li><a href="#chapter-182-persist-search-form-settings">Persist search form settings</a></li>
+<li><a href="#chapter-183-recent-people-like-tags">Recent people like tags</a></li>
+<li><a href="#chapter-184-recipe-hero-dish-photo">Recipe hero dish photo</a></li>
+<li><a href="#chapter-185-relayout-library-backup-ui">Relayout library backup UI</a></li>
+<li><a href="#chapter-186-relayout-library-backup-ui">Relayout library backup UI</a></li>
+<li><a href="#chapter-187-release-20260710">Release 2026.07.10</a></li>
+<li><a href="#chapter-188-release-20260712b">Release 2026.07.12b</a></li>
+<li><a href="#chapter-189-release-20260714">Release 2026.07.14</a></li>
+<li><a href="#chapter-190-release-20260714">Release 2026.07.14</a></li>
+<li><a href="#chapter-191-review-restore-deletes">Review restore deletes</a></li>
+<li><a href="#chapter-192-separate-kitchen-ledger-agent">Separate Kitchen Ledger agent</a></li>
+<li><a href="#chapter-193-separate-kitchen-ledger-agent">Separate Kitchen Ledger agent</a></li>
+<li><a href="#chapter-194-settings-three-column-disks">Settings three-column disks</a></li>
+<li><a href="#chapter-195-settings-three-column-disks">Settings three-column disks</a></li>
+<li><a href="#chapter-196-show-connections-in-results">Show connections in results</a></li>
+<li><a href="#chapter-197-show-connections-in-results">Show connections in results</a></li>
+<li><a href="#chapter-198-slim-inbox-delete-refetch">Slim inbox delete refetch</a></li>
+<li><a href="#chapter-199-sticky-search-form">Sticky search form</a></li>
+<li><a href="#chapter-200-sticky-search-form">Sticky search form</a></li>
+<li><a href="#chapter-201-throttle-inbox-scan-refetch">Throttle inbox scan refetch</a></li>
+<li><a href="#chapter-202-trash-view-and-restore">Trash view and restore</a></li>
+<li><a href="#chapter-203-update-cursor-book-submodule">Update cursor-book submodule</a></li>
+<li><a href="#chapter-204-update-cursor-book-submodule">Update cursor-book submodule</a></li>
+<li><a href="#chapter-205-widen-content-max-width">Widen content max-width</a></li>
+<li><a href="#chapter-206-widen-content-max-width">Widen content max-width</a></li>
 </ol>
 <h3>Skipped Duplicates</h3>
 <ul>
@@ -319,6 +334,7 @@ li { margin: 0.25rem 0; }
 <li><code>skin_rotate_interval_fade_211b523b</code> — Duplicate of <code>skin_rotate_interval_fade_5ff815a3</code>.</li>
 <li><code>skin_scroll_with_fade_a1afcdb0</code> — Duplicate of <code>skin_scroll_with_fade_56bb8170</code>.</li>
 <li><code>unblock_calendar_during_dedupe_ac15c4af</code> — Duplicate of <code>unblock_calendar_during_dedupe_42d0e137</code>.</li>
+<li><code>view_skin_full_bleed_be76e4f4</code> — Duplicate of <code>view_skin_full_bleed_873d1e67</code>.</li>
 </ul>
 <hr>
 <h1>Part I — Foundation</h1>
@@ -10121,9 +10137,111 @@ Under `[Unreleased]` → **Added**: Calendar month **Untagged** filter (no tags,
 
 ---
 
-&lt;a id=&quot;chapter-125-clone-datefare-repo&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-125-clarify-migrate-destination-ux&quot;&gt;&lt;/a&gt;
 
-## Chapter 125: Clone datefare repo
+## Chapter 125: Clarify migrate destination UX
+
+&gt; **Overview:** Settings is technically correct (`/media-backup` is the in-container destination), but the “New media root” label reads like a .env path. Clarify Docker copy UX so the host path is primary and `/media-backup` is explained as the container mount.
+
+# Clarify Docker migrate destination UX
+
+## Short answer
+
+**Settings is correct:** the copy target must be **`/media-backup`**, not `/Volumes/2TB_M2/...`.
+
+| What you set in `.env` | What the app uses inside Docker |
+|---|---|
+| `BACKUP_MEDIA_HOST_PATH=/Volumes/2TB_M2/ImageOrganizer/media` | Mounted at **`/media-backup`** |
+| `MEDIA_HOST_PATH=/Users/alex/Media` (today) | Mounted at **`/media`** |
+
+There is no `NEW_MEDIA_ROOT` in `.env`. The “new drive” is configured only as `BACKUP_MEDIA_HOST_PATH`. After a successful copy you **rename roles**: set `MEDIA_HOST_PATH` to that Volumes path and clear `BACKUP_MEDIA_HOST_PATH`.
+
+Typing the Volumes path into Settings would again try to write a path the container cannot see (or would fill Docker overlay) — that is why the field is locked to `/media-backup`.
+
+## UX problem
+
+The label **“New media root”** + value **`/media-backup`** next to **“Backup mount host: /Volumes/…”** looks like a mismatch. Users think in host / `.env` terms; the backend thinks in container paths.
+
+## Change (frontend-first)
+
+In [`frontend/src/pages/Settings.tsx`](frontend/src/pages/Settings.tsx), when `paths_from_env`:
+
+1. **Remove** the editable/readonly “New media root” input for Docker.
+2. **Show a destination summary** instead, e.g.:
+   - **Copy to:** `/Volumes/2TB_M2/ImageOrganizer/media` (from `backup_media_host_path`)
+   - **Inside Docker:** `/media-backup` (fixed mount; used by the API)
+   - **From:** current library `/media`
+3. Keep posting `moveRoot = backup_media_root` (`/media-backup`) under the hood — behavior unchanged.
+4. Tighten the yellow Docker blurb to short steps that match `.env` names only (`BACKUP_MEDIA_HOST_PATH` → copy → swap into `MEDIA_HOST_PATH`).
+5. Native (non-Docker): keep an editable field, rename label to **“Destination folder”** (clearer than “New media root”).
+
+Optional small compose/config nicety (same task if quick): pass `MEDIA_HOST_PATH` into the backend env (like backup) and show “From host: …” for symmetry — not required for the copy to work.
+
+## Docs
+
+One-line README note that Settings shows the host path but copies via `/media-backup`. CHANGELOG Unreleased under Changed.
+
+## Out of scope
+
+- Changing mount layout or allowing host paths in the API
+- Auto-editing `.env`
+
+---
+
+&lt;a id=&quot;chapter-126-clarify-migrate-destination-ux&quot;&gt;&lt;/a&gt;
+
+## Chapter 126: Clarify migrate destination UX
+
+&gt; **Overview:** Settings is technically correct (`/media-backup` is the in-container destination), but the “New media root” label reads like a .env path. Clarify Docker copy UX so the host path is primary and `/media-backup` is explained as the container mount.
+
+# Clarify Docker migrate destination UX
+
+## Short answer
+
+**Settings is correct:** the copy target must be **`/media-backup`**, not `/Volumes/2TB_M2/...`.
+
+| What you set in `.env` | What the app uses inside Docker |
+|---|---|
+| `BACKUP_MEDIA_HOST_PATH=/Volumes/2TB_M2/ImageOrganizer/media` | Mounted at **`/media-backup`** |
+| `MEDIA_HOST_PATH=/Users/alex/Media` (today) | Mounted at **`/media`** |
+
+There is no `NEW_MEDIA_ROOT` in `.env`. The “new drive” is configured only as `BACKUP_MEDIA_HOST_PATH`. After a successful copy you **rename roles**: set `MEDIA_HOST_PATH` to that Volumes path and clear `BACKUP_MEDIA_HOST_PATH`.
+
+Typing the Volumes path into Settings would again try to write a path the container cannot see (or would fill Docker overlay) — that is why the field is locked to `/media-backup`.
+
+## UX problem
+
+The label **“New media root”** + value **`/media-backup`** next to **“Backup mount host: /Volumes/…”** looks like a mismatch. Users think in host / `.env` terms; the backend thinks in container paths.
+
+## Change (frontend-first)
+
+In [`frontend/src/pages/Settings.tsx`](frontend/src/pages/Settings.tsx), when `paths_from_env`:
+
+1. **Remove** the editable/readonly “New media root” input for Docker.
+2. **Show a destination summary** instead, e.g.:
+   - **Copy to:** `/Volumes/2TB_M2/ImageOrganizer/media` (from `backup_media_host_path`)
+   - **Inside Docker:** `/media-backup` (fixed mount; used by the API)
+   - **From:** current library `/media`
+3. Keep posting `moveRoot = backup_media_root` (`/media-backup`) under the hood — behavior unchanged.
+4. Tighten the yellow Docker blurb to short steps that match `.env` names only (`BACKUP_MEDIA_HOST_PATH` → copy → swap into `MEDIA_HOST_PATH`).
+5. Native (non-Docker): keep an editable field, rename label to **“Destination folder”** (clearer than “New media root”).
+
+Optional small compose/config nicety (same task if quick): pass `MEDIA_HOST_PATH` into the backend env (like backup) and show “From host: …” for symmetry — not required for the copy to work.
+
+## Docs
+
+One-line README note that Settings shows the host path but copies via `/media-backup`. CHANGELOG Unreleased under Changed.
+
+## Out of scope
+
+- Changing mount layout or allowing host paths in the API
+- Auto-editing `.env`
+
+---
+
+&lt;a id=&quot;chapter-127-clone-datefare-repo&quot;&gt;&lt;/a&gt;
+
+## Chapter 127: Clone datefare repo
 
 &gt; **Overview:** Clone https://github.com/noah-a-mays/datefare into /Users/alex/Documents/github/datefare and switch this agent workspace to that directory.
 
@@ -10142,9 +10260,9 @@ Under `[Unreleased]` → **Added**: Calendar month **Untagged** filter (no tags,
 
 ---
 
-&lt;a id=&quot;chapter-126-clone-datefare-repo&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-128-clone-datefare-repo&quot;&gt;&lt;/a&gt;
 
-## Chapter 126: Clone datefare repo
+## Chapter 128: Clone datefare repo
 
 &gt; **Overview:** Clone https://github.com/noah-a-mays/datefare into /Users/alex/Documents/github/datefare and switch this agent workspace to that directory.
 
@@ -10163,9 +10281,9 @@ Under `[Unreleased]` → **Added**: Calendar month **Untagged** filter (no tags,
 
 ---
 
-&lt;a id=&quot;chapter-127-connection-airport-icons&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-129-connection-airport-icons&quot;&gt;&lt;/a&gt;
 
-## Chapter 127: Connection airport icons
+## Chapter 129: Connection airport icons
 
 &gt; **Overview:** Show layover airports as Plane + IATA + Plane (hover for full name), keep Nonstop, and simplify per-person price to a quieter two-line layout with a person icon.
 
@@ -10220,9 +10338,9 @@ Rebuild Docker so the Python script update is included: `docker compose up --bui
 
 ---
 
-&lt;a id=&quot;chapter-128-connection-airport-icons&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-130-connection-airport-icons&quot;&gt;&lt;/a&gt;
 
-## Chapter 128: Connection airport icons
+## Chapter 130: Connection airport icons
 
 &gt; **Overview:** Show layover airports as Plane + IATA + Plane (with full name on hover), keep Nonstop text, and drop the “1 stop / 2 stops” labels.
 
@@ -10267,52 +10385,9 @@ Rebuild Docker so the Python script update is included: `docker compose up --bui
 
 ---
 
-&lt;a id=&quot;chapter-129-cursor-book-development-book&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-131-cursor-book-development-book&quot;&gt;&lt;/a&gt;
 
-## Chapter 129: cursor-book development book
-
-&gt; **Overview:** Add a cursor-book `book.json` that only includes this repo’s plans (via a local plans mirror), then generate `docs/DEVELOPMENT_BOOK.md` and `.html`.
-
-# Build the development book for cursor-book
-
-## Problem
-
-This repo is the book *tool*, but it has no `book.json` yet. Using `~/.cursor/plans` directly would pull in ~147 Image Organizer plans into the Appendix. Scope the input to cursor-book plans only.
-
-## Approach
-
-1. **Local plans mirror** at [`.cursor/plans/`](.cursor/plans/) containing only these stems (copied from `~/.cursor/plans/`):
-   - `plans_development_book_11a2f88a` — original book builder (precursor)
-   - `cursor_book_tool_repo_5221eefc` — extract standalone repo + skill
-   - `html_book_output_2dff9d25` — dual MD/HTML output (canonical)
-
-2. **Skip duplicate:** `html_book_output_c632072c` (same title/overview, empty todos; superseded by `…2dff9d25`)
-
-3. **Add** [`book.json`](book.json) at repo root:
-</code></pre>
-<p>{ &quot;title&quot;: &quot;cursor-book — Development Book&quot;, &quot;version&quot;: &quot;2026.07.23&quot;, &quot;output&quot;: &quot;docs/DEVELOPMENT_BOOK.md&quot;, &quot;output_html&quot;: &quot;docs/DEVELOPMENT_BOOK.html&quot;, &quot;plans_dir&quot;: &quot;.cursor/plans&quot;, &quot;related_links&quot;: &quot;<a href="../README.md">README.md</a>&quot;, &quot;parts&quot;: [ { &quot;title&quot;: &quot;Part I — Foundation&quot;, &quot;plans&quot;: [&quot;plans_development_book_11a2f88a&quot;, &quot;cursor_book_tool_repo_5221eefc&quot;] }, { &quot;title&quot;: &quot;Part II — HTML Output&quot;, &quot;plans&quot;: [&quot;html_book_output_2dff9d25&quot;] } ], &quot;skip_plans&quot;: { &quot;html_book_output_c632072c&quot;: { &quot;note&quot;: &quot;Superseded by html_book_output_2dff9d25.&quot; } } }</p>
-<pre><code>
-4. **Gitignore** `.cursor/plans/` (add [`.gitignore`](.gitignore) if missing) so the mirror is not committed; commit generated docs instead.
-
-5. **Build:**
-</code></pre>
-<p>python build_development_book.py --config book.json --repo-root .</p>
-<pre><code>
-Expect `docs/DEVELOPMENT_BOOK.md` and `docs/DEVELOPMENT_BOOK.html` with 3 chapters.
-
-6. **Docs:** One-line README note that this repo also maintains its own development book under `docs/`.
-
-## Out of scope
-
-- Committing/pushing (unless you ask after the build)
-- Changing the builder
-- Registering Image Organizer plans here
-
----
-
-&lt;a id=&quot;chapter-130-cursor-book-development-book&quot;&gt;&lt;/a&gt;
-
-## Chapter 130: cursor-book development book
+## Chapter 131: cursor-book development book
 
 &gt; **Overview:** Add a cursor-book `book.json` that only includes this repo’s plans (via a local plans mirror), then generate `docs/DEVELOPMENT_BOOK.md` and `.html`.
 
@@ -10353,9 +10428,52 @@ Expect `docs/DEVELOPMENT_BOOK.md` and `docs/DEVELOPMENT_BOOK.html` with 3 chapte
 
 ---
 
-&lt;a id=&quot;chapter-131-cursor-book-tool-repo&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-132-cursor-book-development-book&quot;&gt;&lt;/a&gt;
 
-## Chapter 131: Cursor book tool repo
+## Chapter 132: cursor-book development book
+
+&gt; **Overview:** Add a cursor-book `book.json` that only includes this repo’s plans (via a local plans mirror), then generate `docs/DEVELOPMENT_BOOK.md` and `.html`.
+
+# Build the development book for cursor-book
+
+## Problem
+
+This repo is the book *tool*, but it has no `book.json` yet. Using `~/.cursor/plans` directly would pull in ~147 Image Organizer plans into the Appendix. Scope the input to cursor-book plans only.
+
+## Approach
+
+1. **Local plans mirror** at [`.cursor/plans/`](.cursor/plans/) containing only these stems (copied from `~/.cursor/plans/`):
+   - `plans_development_book_11a2f88a` — original book builder (precursor)
+   - `cursor_book_tool_repo_5221eefc` — extract standalone repo + skill
+   - `html_book_output_2dff9d25` — dual MD/HTML output (canonical)
+
+2. **Skip duplicate:** `html_book_output_c632072c` (same title/overview, empty todos; superseded by `…2dff9d25`)
+
+3. **Add** [`book.json`](book.json) at repo root:
+</code></pre>
+<p>{ &quot;title&quot;: &quot;cursor-book — Development Book&quot;, &quot;version&quot;: &quot;2026.07.23&quot;, &quot;output&quot;: &quot;docs/DEVELOPMENT_BOOK.md&quot;, &quot;output_html&quot;: &quot;docs/DEVELOPMENT_BOOK.html&quot;, &quot;plans_dir&quot;: &quot;.cursor/plans&quot;, &quot;related_links&quot;: &quot;<a href="../README.md">README.md</a>&quot;, &quot;parts&quot;: [ { &quot;title&quot;: &quot;Part I — Foundation&quot;, &quot;plans&quot;: [&quot;plans_development_book_11a2f88a&quot;, &quot;cursor_book_tool_repo_5221eefc&quot;] }, { &quot;title&quot;: &quot;Part II — HTML Output&quot;, &quot;plans&quot;: [&quot;html_book_output_2dff9d25&quot;] } ], &quot;skip_plans&quot;: { &quot;html_book_output_c632072c&quot;: { &quot;note&quot;: &quot;Superseded by html_book_output_2dff9d25.&quot; } } }</p>
+<pre><code>
+4. **Gitignore** `.cursor/plans/` (add [`.gitignore`](.gitignore) if missing) so the mirror is not committed; commit generated docs instead.
+
+5. **Build:**
+</code></pre>
+<p>python build_development_book.py --config book.json --repo-root .</p>
+<pre><code>
+Expect `docs/DEVELOPMENT_BOOK.md` and `docs/DEVELOPMENT_BOOK.html` with 3 chapters.
+
+6. **Docs:** One-line README note that this repo also maintains its own development book under `docs/`.
+
+## Out of scope
+
+- Committing/pushing (unless you ask after the build)
+- Changing the builder
+- Registering Image Organizer plans here
+
+---
+
+&lt;a id=&quot;chapter-133-cursor-book-tool-repo&quot;&gt;&lt;/a&gt;
+
+## Chapter 133: Cursor book tool repo
 
 &gt; **Overview:** Extract the development book builder into a standalone repo with a config-driven script and a reusable Cursor skill; migrate imageOrganizer to a thin `book.yaml` + wrapper script.
 
@@ -10499,9 +10617,9 @@ Optional: tag `v1.0.0` on `cursor-book` after migration verified.
 
 ---
 
-&lt;a id=&quot;chapter-132-database-datetime-backups&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-134-database-datetime-backups&quot;&gt;&lt;/a&gt;
 
-## Chapter 132: Database datetime backups
+## Chapter 134: Database datetime backups
 
 &gt; **Overview:** Add safe SQLite database backups as datetime-stamped copies in `{APP_DATA_DIR}/backups/`, exposed via a Settings button and a CLI script for manual or scheduled use.
 
@@ -10605,88 +10723,9 @@ Monkeypatch `BACKUPS_DIR` / `DB_PATH` to temp dirs (same pattern as existing mig
 
 ---
 
-&lt;a id=&quot;chapter-133-detail-applied-labels&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-135-detail-applied-labels&quot;&gt;&lt;/a&gt;
 
-## Chapter 133: Detail applied labels
-
-&gt; **Overview:** Show currently applied events, people, and tags in PhotoDetail above the Caption field using the existing PhotoCardLabels component, and hide already-applied items from the pickers below to avoid duplicate chips.
-
-# Detail view: applied labels above caption
-
-## Problem
-
-In [`PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx), caption/rating/save come **before** Events/People/Tags pickers. Applied labels (e.g. &quot;I9 Flag Football&quot;, &quot;FFB Camp&quot; in your screenshot) are only visible after scrolling past caption — easy to miss when reviewing photos.
-
-Current order:
-</code></pre>
-<p>preview → date → meta rows → Caption → Rating → Save → Events → People → Tags</p>
-<pre><code>
-## Approach
-
-Reuse [`PhotoCardLabels.tsx`](frontend/src/components/PhotoCardLabels.tsx) — it already renders **only applied** events, people, and tags as removable chips (same badges as the grid card footer).
-</code></pre>
-<p>flowchart TB meta[Meta rows] applied[&quot;PhotoCardLabels — applied only&quot;] caption[Caption + Rating + Save] pickers[&quot;Event/Person/Tag pickers — unselected only&quot;] meta --&gt; applied --&gt; caption --&gt; pickers</p>
-<pre><code>
-### 1. PhotoDetail layout
-
-In [`PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx), after meta rows and **before** the Caption `form-group`:
-</code></pre>
-<p>{(currentFile.events?.length || currentFile.people?.length || currentFile.tags?.length) ? ( &lt;div className=&quot;photo-detail-applied-labels&quot;&gt; &lt;label className=&quot;photo-detail-applied-label&quot;&gt;Applied&lt;/label&gt; &lt;PhotoCardLabels file={currentFile} onChange={() =&gt; handleLabelsChange()} /&gt; &lt;/div&gt; ) : null}</p>
-<pre><code>
-Import `PhotoCardLabels`. Section hidden when nothing is applied (no empty box).
-
-### 2. Avoid duplicate chips in pickers
-
-When the applied bar is visible, selected items would appear twice (summary above + highlighted in picker below). Add optional prop to each picker:
-
-| Component | Prop | Behavior |
-|-----------|------|----------|
-| [`EventPicker.tsx`](frontend/src/components/EventPicker.tsx) | `excludeSelected?: boolean` | Chip list maps `allEvents.filter(e =&gt; !excludeSelected \|\| !selected.has(e.id))` |
-| [`PersonPicker.tsx`](frontend/src/components/PersonPicker.tsx) | `excludeSelected?: boolean` | Same for people |
-| [`FileTagPicker.tsx`](frontend/src/components/FileTagPicker.tsx) | `excludeSelected?: boolean` | Exclude selected from `visibleTags` and recent-tags row |
-
-In PhotoDetail, pass `excludeSelected` to all three pickers (always `true` in detail view — when nothing applied, pickers behave as today).
-
-Removal stays on the applied bar (`PhotoCardLabels` × buttons); pickers are for **adding** only.
-
-### 3. CSS
-
-In [`index.css`](frontend/src/index.css):
-</code></pre>
-<p>.photo-detail-applied-labels { margin-top: 1rem; margin-bottom: 0.25rem; }</p>
-<p>.photo-detail-applied-label { display: block; font-size: 0.875rem; color: #aab0bc; margin-bottom: 0.35rem; }</p>
-<pre><code>
-Reuse existing `.photo-card-labels` / `.badge-removable` styles (no card-specific assumptions).
-
-## Files to change
-
-| File | Change |
-|------|--------|
-| [`PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx) | Import PhotoCardLabels; applied section above caption; `excludeSelected` on pickers |
-| [`EventPicker.tsx`](frontend/src/components/EventPicker.tsx) | Optional `excludeSelected` prop |
-| [`PersonPicker.tsx`](frontend/src/components/PersonPicker.tsx) | Optional `excludeSelected` prop |
-| [`FileTagPicker.tsx`](frontend/src/components/FileTagPicker.tsx) | Optional `excludeSelected` prop |
-| [`index.css`](frontend/src/index.css) | `.photo-detail-applied-labels` styles |
-
-## Out of scope
-
-- Reordering caption/rating relative to pickers beyond this
-- Collapsing pickers into accordions
-- ARCHITECTURE/README updates (UI-only)
-
-## Verification
-
-1. Open archive photo with event + tag (your screenshot case) — applied chips appear **above Caption**
-2. Remove a tag via × on applied bar — chip disappears; tag reappears in Tags picker below
-3. Add tag via picker — chip moves to applied bar; hidden from picker list
-4. Photo with no labels — no applied section; pickers unchanged
-5. Grid card labels (`PhotoCardLabels` on PhotoGrid) unchanged
-
----
-
-&lt;a id=&quot;chapter-134-detail-applied-labels&quot;&gt;&lt;/a&gt;
-
-## Chapter 134: Detail applied labels
+## Chapter 135: Detail applied labels
 
 &gt; **Overview:** Show currently applied events, people, and tags in PhotoDetail above the Caption field using the existing PhotoCardLabels component, and hide already-applied items from the pickers below to avoid duplicate chips.
 
@@ -10763,9 +10802,224 @@ Reuse existing `.photo-card-labels` / `.badge-removable` styles (no card-specifi
 
 ---
 
-&lt;a id=&quot;chapter-135-dockerize-datefare-app&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-136-detail-applied-labels&quot;&gt;&lt;/a&gt;
 
-## Chapter 135: Dockerize datefare app
+## Chapter 136: Detail applied labels
+
+&gt; **Overview:** Show currently applied events, people, and tags in PhotoDetail above the Caption field using the existing PhotoCardLabels component, and hide already-applied items from the pickers below to avoid duplicate chips.
+
+# Detail view: applied labels above caption
+
+## Problem
+
+In [`PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx), caption/rating/save come **before** Events/People/Tags pickers. Applied labels (e.g. &quot;I9 Flag Football&quot;, &quot;FFB Camp&quot; in your screenshot) are only visible after scrolling past caption — easy to miss when reviewing photos.
+
+Current order:
+</code></pre>
+<p>preview → date → meta rows → Caption → Rating → Save → Events → People → Tags</p>
+<pre><code>
+## Approach
+
+Reuse [`PhotoCardLabels.tsx`](frontend/src/components/PhotoCardLabels.tsx) — it already renders **only applied** events, people, and tags as removable chips (same badges as the grid card footer).
+</code></pre>
+<p>flowchart TB meta[Meta rows] applied[&quot;PhotoCardLabels — applied only&quot;] caption[Caption + Rating + Save] pickers[&quot;Event/Person/Tag pickers — unselected only&quot;] meta --&gt; applied --&gt; caption --&gt; pickers</p>
+<pre><code>
+### 1. PhotoDetail layout
+
+In [`PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx), after meta rows and **before** the Caption `form-group`:
+</code></pre>
+<p>{(currentFile.events?.length || currentFile.people?.length || currentFile.tags?.length) ? ( &lt;div className=&quot;photo-detail-applied-labels&quot;&gt; &lt;label className=&quot;photo-detail-applied-label&quot;&gt;Applied&lt;/label&gt; &lt;PhotoCardLabels file={currentFile} onChange={() =&gt; handleLabelsChange()} /&gt; &lt;/div&gt; ) : null}</p>
+<pre><code>
+Import `PhotoCardLabels`. Section hidden when nothing is applied (no empty box).
+
+### 2. Avoid duplicate chips in pickers
+
+When the applied bar is visible, selected items would appear twice (summary above + highlighted in picker below). Add optional prop to each picker:
+
+| Component | Prop | Behavior |
+|-----------|------|----------|
+| [`EventPicker.tsx`](frontend/src/components/EventPicker.tsx) | `excludeSelected?: boolean` | Chip list maps `allEvents.filter(e =&gt; !excludeSelected \|\| !selected.has(e.id))` |
+| [`PersonPicker.tsx`](frontend/src/components/PersonPicker.tsx) | `excludeSelected?: boolean` | Same for people |
+| [`FileTagPicker.tsx`](frontend/src/components/FileTagPicker.tsx) | `excludeSelected?: boolean` | Exclude selected from `visibleTags` and recent-tags row |
+
+In PhotoDetail, pass `excludeSelected` to all three pickers (always `true` in detail view — when nothing applied, pickers behave as today).
+
+Removal stays on the applied bar (`PhotoCardLabels` × buttons); pickers are for **adding** only.
+
+### 3. CSS
+
+In [`index.css`](frontend/src/index.css):
+</code></pre>
+<p>.photo-detail-applied-labels { margin-top: 1rem; margin-bottom: 0.25rem; }</p>
+<p>.photo-detail-applied-label { display: block; font-size: 0.875rem; color: #aab0bc; margin-bottom: 0.35rem; }</p>
+<pre><code>
+Reuse existing `.photo-card-labels` / `.badge-removable` styles (no card-specific assumptions).
+
+## Files to change
+
+| File | Change |
+|------|--------|
+| [`PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx) | Import PhotoCardLabels; applied section above caption; `excludeSelected` on pickers |
+| [`EventPicker.tsx`](frontend/src/components/EventPicker.tsx) | Optional `excludeSelected` prop |
+| [`PersonPicker.tsx`](frontend/src/components/PersonPicker.tsx) | Optional `excludeSelected` prop |
+| [`FileTagPicker.tsx`](frontend/src/components/FileTagPicker.tsx) | Optional `excludeSelected` prop |
+| [`index.css`](frontend/src/index.css) | `.photo-detail-applied-labels` styles |
+
+## Out of scope
+
+- Reordering caption/rating relative to pickers beyond this
+- Collapsing pickers into accordions
+- ARCHITECTURE/README updates (UI-only)
+
+## Verification
+
+1. Open archive photo with event + tag (your screenshot case) — applied chips appear **above Caption**
+2. Remove a tag via × on applied bar — chip disappears; tag reappears in Tags picker below
+3. Add tag via picker — chip moves to applied bar; hidden from picker list
+4. Photo with no labels — no applied section; pickers unchanged
+5. Grid card labels (`PhotoCardLabels` on PhotoGrid) unchanged
+
+---
+
+&lt;a id=&quot;chapter-137-docker-backup-media-mount&quot;&gt;&lt;/a&gt;
+
+## Chapter 137: Docker backup media mount
+
+&gt; **Overview:** Add an optional Docker bind mount for the migrate destination (`BACKUP_MEDIA_HOST_PATH` → `/media-backup`), and teach the copy/switch flow to use container paths without rewriting `/media` prefixes so cutover is “swap MEDIA_HOST_PATH and recreate.”
+
+# Docker backup target for library copy
+
+Yes — that makes sense. The backend only sees what Compose mounts. A host path like `/Volumes/2TB_M2/...` is invisible inside the container unless bind-mounted, which is why preflight reported “not writable.”
+
+## Intended Docker workflow
+</code></pre>
+<p>flowchart LR hostOld[&quot;MEDIA_HOST_PATH old disk&quot;] --&gt; media[&quot;/media&quot;] hostNew[&quot;BACKUP_MEDIA_HOST_PATH new disk&quot;] --&gt; backup[&quot;/media-backup&quot;] media --&gt;|&quot;copy files&quot;| backup cutover[&quot;Set MEDIA_HOST_PATH to former BACKUP path; recreate&quot;] --&gt; media</p>
+<pre><code>
+1. Set `BACKUP_MEDIA_HOST_PATH` in `.env` to the new drive folder.
+2. Recreate backend so `/media-backup` is mounted.
+3. In Settings, copy **`/media` → `/media-backup`** (container paths).
+4. **Do not rewrite** SQLite paths when cutting over this way — they stay `/media/...`.
+5. Point `MEDIA_HOST_PATH` at the new host folder (same value you used for backup), remove or clear `BACKUP_MEDIA_HOST_PATH`, recreate. New disk is now `/media`; original disk remains as backup.
+
+This matches existing docs: Docker often only changes `MEDIA_HOST_PATH`; DB stays `/media/...`.
+
+## Compose / env
+
+Update [`.env.example`](.env.example) and [`.env`](.env) (document only in example; user fills real path):
+</code></pre>
+<h1>Optional: second disk for Settings → Copy library (mounted at /media-backup)</h1>
+<h1>BACKUP_MEDIA_HOST_PATH=/Volumes/2TB_M2/ImageOrganizer/media</h1>
+<pre><code>
+Update [`docker-compose.yml`](docker-compose.yml):
+</code></pre>
+<p>volumes: - ${MEDIA_HOST_PATH:-/Users/alex/Media}:/media - ${BACKUP_MEDIA_HOST_PATH:-./.docker-unused-backup}:/media-backup</p>
+<pre><code>
+Use a repo-local placeholder default when unset so Compose always starts; Settings will treat backup as unavailable if the mount is the placeholder or not writable. Prefer documenting “set `BACKUP_MEDIA_HOST_PATH` then `docker compose up -d --force-recreate backend`.”
+
+Pass through for UI/status (optional env):
+</code></pre>
+<p>environment: MEDIA_ROOT: ${MEDIA_ROOT:-/media} APP_DATA_DIR: ${APP_DATA_DIR:-/media/.imageOrganizer} BACKUP_MEDIA_ROOT: /media-backup BACKUP_MEDIA_HOST_PATH: ${BACKUP_MEDIA_HOST_PATH:-}</p>
+<pre><code>
+## Backend / Settings behavior
+
+- Extend `GET /api/config` (or move status) with:
+  - `backup_media_root` (e.g. `/media-backup`) when configured
+  - `backup_media_host_path` (host string for display)
+  - `backup_media_ready` (dir exists + writable probe)
+- Settings **Copy library to new drive** when `paths_from_env`:
+  - Prefill destination with `/media-backup`
+  - Show host mapping: “Host: /Volumes/2TB_M2/…”
+  - Disable copy with a clear message if backup mount missing/unwritable
+  - Success copy for Docker cutover: **`preserve_media_paths` / skip rewrite** when source is `MEDIA_ROOT` (`/media`) and dest is `BACKUP_MEDIA_ROOT` (`/media-backup`), so the new catalog still references `/media/...`
+  - Success text: set `MEDIA_HOST_PATH` to the backup host path, clear `BACKUP_MEDIA_HOST_PATH`, recreate containers; original `MEDIA_HOST_PATH` disk is the backup
+- Still allow explicit rewrite when someone truly wants paths changed (checkbox or advanced); default Docker migrate = no rewrite
+
+Implement skip-rewrite as a request flag `rewrite_paths: false` defaulting to `true` for native, and `false` when Settings detects Docker backup-mount cutover — or a single `docker_cutover: true` from the UI.
+
+## Docs
+
+- [`.env.example`](.env.example), [`README.md`](README.md) migrate section, [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md): document the two-mount migrate + `MEDIA_HOST_PATH` swap.
+- [`CHANGELOG.md`](CHANGELOG.md) Unreleased note.
+
+## Out of scope
+
+- Auto-editing `.env` from the app
+- Auto-recreate Compose from the API
+- Changing how primary `MEDIA_HOST_PATH` works day-to-day
+
+---
+
+&lt;a id=&quot;chapter-138-docker-backup-media-mount&quot;&gt;&lt;/a&gt;
+
+## Chapter 138: Docker backup media mount
+
+&gt; **Overview:** Add an optional Docker bind mount for the migrate destination (`BACKUP_MEDIA_HOST_PATH` → `/media-backup`), and teach the copy/switch flow to use container paths without rewriting `/media` prefixes so cutover is “swap MEDIA_HOST_PATH and recreate.”
+
+# Docker backup target for library copy
+
+Yes — that makes sense. The backend only sees what Compose mounts. A host path like `/Volumes/2TB_M2/...` is invisible inside the container unless bind-mounted, which is why preflight reported “not writable.”
+
+## Intended Docker workflow
+</code></pre>
+<p>flowchart LR hostOld[&quot;MEDIA_HOST_PATH old disk&quot;] --&gt; media[&quot;/media&quot;] hostNew[&quot;BACKUP_MEDIA_HOST_PATH new disk&quot;] --&gt; backup[&quot;/media-backup&quot;] media --&gt;|&quot;copy files&quot;| backup cutover[&quot;Set MEDIA_HOST_PATH to former BACKUP path; recreate&quot;] --&gt; media</p>
+<pre><code>
+1. Set `BACKUP_MEDIA_HOST_PATH` in `.env` to the new drive folder.
+2. Recreate backend so `/media-backup` is mounted.
+3. In Settings, copy **`/media` → `/media-backup`** (container paths).
+4. **Do not rewrite** SQLite paths when cutting over this way — they stay `/media/...`.
+5. Point `MEDIA_HOST_PATH` at the new host folder (same value you used for backup), remove or clear `BACKUP_MEDIA_HOST_PATH`, recreate. New disk is now `/media`; original disk remains as backup.
+
+This matches existing docs: Docker often only changes `MEDIA_HOST_PATH`; DB stays `/media/...`.
+
+## Compose / env
+
+Update [`.env.example`](.env.example) and [`.env`](.env) (document only in example; user fills real path):
+</code></pre>
+<h1>Optional: second disk for Settings → Copy library (mounted at /media-backup)</h1>
+<h1>BACKUP_MEDIA_HOST_PATH=/Volumes/2TB_M2/ImageOrganizer/media</h1>
+<pre><code>
+Update [`docker-compose.yml`](docker-compose.yml):
+</code></pre>
+<p>volumes: - ${MEDIA_HOST_PATH:-/Users/alex/Media}:/media - ${BACKUP_MEDIA_HOST_PATH:-./.docker-unused-backup}:/media-backup</p>
+<pre><code>
+Use a repo-local placeholder default when unset so Compose always starts; Settings will treat backup as unavailable if the mount is the placeholder or not writable. Prefer documenting “set `BACKUP_MEDIA_HOST_PATH` then `docker compose up -d --force-recreate backend`.”
+
+Pass through for UI/status (optional env):
+</code></pre>
+<p>environment: MEDIA_ROOT: ${MEDIA_ROOT:-/media} APP_DATA_DIR: ${APP_DATA_DIR:-/media/.imageOrganizer} BACKUP_MEDIA_ROOT: /media-backup BACKUP_MEDIA_HOST_PATH: ${BACKUP_MEDIA_HOST_PATH:-}</p>
+<pre><code>
+## Backend / Settings behavior
+
+- Extend `GET /api/config` (or move status) with:
+  - `backup_media_root` (e.g. `/media-backup`) when configured
+  - `backup_media_host_path` (host string for display)
+  - `backup_media_ready` (dir exists + writable probe)
+- Settings **Copy library to new drive** when `paths_from_env`:
+  - Prefill destination with `/media-backup`
+  - Show host mapping: “Host: /Volumes/2TB_M2/…”
+  - Disable copy with a clear message if backup mount missing/unwritable
+  - Success copy for Docker cutover: **`preserve_media_paths` / skip rewrite** when source is `MEDIA_ROOT` (`/media`) and dest is `BACKUP_MEDIA_ROOT` (`/media-backup`), so the new catalog still references `/media/...`
+  - Success text: set `MEDIA_HOST_PATH` to the backup host path, clear `BACKUP_MEDIA_HOST_PATH`, recreate containers; original `MEDIA_HOST_PATH` disk is the backup
+- Still allow explicit rewrite when someone truly wants paths changed (checkbox or advanced); default Docker migrate = no rewrite
+
+Implement skip-rewrite as a request flag `rewrite_paths: false` defaulting to `true` for native, and `false` when Settings detects Docker backup-mount cutover — or a single `docker_cutover: true` from the UI.
+
+## Docs
+
+- [`.env.example`](.env.example), [`README.md`](README.md) migrate section, [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md): document the two-mount migrate + `MEDIA_HOST_PATH` swap.
+- [`CHANGELOG.md`](CHANGELOG.md) Unreleased note.
+
+## Out of scope
+
+- Auto-editing `.env` from the app
+- Auto-recreate Compose from the API
+- Changing how primary `MEDIA_HOST_PATH` works day-to-day
+
+---
+
+&lt;a id=&quot;chapter-139-dockerize-datefare-app&quot;&gt;&lt;/a&gt;
+
+## Chapter 139: Dockerize datefare app
 
 &gt; **Overview:** Add a production multi-stage Dockerfile (Node + Python/fast-flights) and docker-compose so the app builds and runs with `docker compose up --build` on port 3000—no local Node required.
 
@@ -10823,9 +11077,9 @@ App at http://localhost:3000. Flight search works inside the container because P
 
 ---
 
-&lt;a id=&quot;chapter-136-dockerize-datefare-app&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-140-dockerize-datefare-app&quot;&gt;&lt;/a&gt;
 
-## Chapter 136: Dockerize datefare app
+## Chapter 140: Dockerize datefare app
 
 &gt; **Overview:** Add optional Docker/Compose packaging so the app can run in a container without changing the existing local Node + Python venv workflow.
 
@@ -10891,39 +11145,9 @@ Local legacy path remains:
 
 ---
 
-&lt;a id=&quot;chapter-137-docs-commit-and-pr&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-141-docs-commit-and-pr&quot;&gt;&lt;/a&gt;
 
-## Chapter 137: Docs commit and PR
-
-&gt; **Overview:** Add brief README docs for Docker and recent UX features, then commit everything on a feature branch, push, and open a PR against main.
-
-# Document, commit, push, and open PR
-
-## Docs
-
-Update [`README.md`](README.md) with a short **Optional Docker** section (compose up / legacy npm path unchanged) and brief notes that the form persists settings and results show connections, aircraft, and per-person price. Keep it concise; no new markdown files beyond README.
-
-## Git
-
-1. Create branch e.g. `feature/flight-search-ux-docker`
-2. Stage all relevant changes (Docker files, airport data, UI, Python bridge, helpers) — exclude secrets / `.env*`
-3. Commit with a message summarizing why (Docker optional path + search UX: hubs, sticky form, connections, aircraft, per-person pricing, fast-flights v3)
-4. Push with `-u` and open PR via `gh pr create`
-
-## PR body
-
-- Summary bullets: optional Docker; airport coverage; sticky/wider form; results UX (airline names, connections, aircraft, per-person price); fast-flights v3 fix
-- Test plan: compose up, search FLL→BTV, check autocomplete/persistence/results columns
-
-## Note
-
-Execution needs Agent mode (git write + network). Approve this plan or switch to Agent to proceed.
-
----
-
-&lt;a id=&quot;chapter-138-docs-commit-and-pr&quot;&gt;&lt;/a&gt;
-
-## Chapter 138: Docs commit and PR
+## Chapter 141: Docs commit and PR
 
 &gt; **Overview:** Add brief README docs for Docker and recent UX features, then commit everything on a feature branch, push, and open a PR against main.
 
@@ -10951,9 +11175,39 @@ Execution needs Agent mode (git write + network). Approve this plan or switch to
 
 ---
 
-&lt;a id=&quot;chapter-139-document-and-commit-foundation&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-142-docs-commit-and-pr&quot;&gt;&lt;/a&gt;
 
-## Chapter 139: Document and commit foundation
+## Chapter 142: Docs commit and PR
+
+&gt; **Overview:** Add brief README docs for Docker and recent UX features, then commit everything on a feature branch, push, and open a PR against main.
+
+# Document, commit, push, and open PR
+
+## Docs
+
+Update [`README.md`](README.md) with a short **Optional Docker** section (compose up / legacy npm path unchanged) and brief notes that the form persists settings and results show connections, aircraft, and per-person price. Keep it concise; no new markdown files beyond README.
+
+## Git
+
+1. Create branch e.g. `feature/flight-search-ux-docker`
+2. Stage all relevant changes (Docker files, airport data, UI, Python bridge, helpers) — exclude secrets / `.env*`
+3. Commit with a message summarizing why (Docker optional path + search UX: hubs, sticky form, connections, aircraft, per-person pricing, fast-flights v3)
+4. Push with `-u` and open PR via `gh pr create`
+
+## PR body
+
+- Summary bullets: optional Docker; airport coverage; sticky/wider form; results UX (airline names, connections, aircraft, per-person price); fast-flights v3 fix
+- Test plan: compose up, search FLL→BTV, check autocomplete/persistence/results columns
+
+## Note
+
+Execution needs Agent mode (git write + network). Approve this plan or switch to Agent to proceed.
+
+---
+
+&lt;a id=&quot;chapter-143-document-and-commit-foundation&quot;&gt;&lt;/a&gt;
+
+## Chapter 143: Document and commit foundation
 
 &gt; **Overview:** Polish Kitchen Ledger docs to match the running Docker foundation, then create a single git commit of the full app scaffold on main.
 
@@ -10986,9 +11240,9 @@ Do **not** commit `.env`, `.venv`, or media under `/Users/alex/KitchenLedger`. D
 
 ---
 
-&lt;a id=&quot;chapter-140-document-and-commit-foundation&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-144-document-and-commit-foundation&quot;&gt;&lt;/a&gt;
 
-## Chapter 140: Document and commit foundation
+## Chapter 144: Document and commit foundation
 
 &gt; **Overview:** Polish Kitchen Ledger docs to match the running Docker foundation, then create a single git commit of the full app scaffold on main.
 
@@ -11021,9 +11275,9 @@ Do **not** commit `.env`, `.venv`, or media under `/Users/alex/KitchenLedger`. D
 
 ---
 
-&lt;a id=&quot;chapter-141-expand-plattsburgh-regionals&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-145-expand-plattsburgh-regionals&quot;&gt;&lt;/a&gt;
 
-## Chapter 141: Expand Plattsburgh regionals
+## Chapter 145: Expand Plattsburgh regionals
 
 &gt; **Overview:** Expand Northeast regionals near Plattsburgh/Burlington and make “platsburg”-style typos match via airport aliases, so TO/FROM autocomplete finds these cities.
 
@@ -11071,9 +11325,9 @@ If using Compose, rebuild so the image picks up the data: `docker compose up --b
 
 ---
 
-&lt;a id=&quot;chapter-142-expand-plattsburgh-regionals&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-146-expand-plattsburgh-regionals&quot;&gt;&lt;/a&gt;
 
-## Chapter 142: Expand Plattsburgh regionals
+## Chapter 146: Expand Plattsburgh regionals
 
 &gt; **Overview:** Expand Northeast regionals near Plattsburgh/Burlington and make “platsburg”-style typos match via airport aliases, so TO/FROM autocomplete finds these cities.
 
@@ -11121,9 +11375,9 @@ If using Compose, rebuild so the image picks up the data: `docker compose up --b
 
 ---
 
-&lt;a id=&quot;chapter-143-fix-blocked-scan-clicks&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-147-fix-blocked-scan-clicks&quot;&gt;&lt;/a&gt;
 
-## Chapter 143: Fix blocked scan clicks
+## Chapter 147: Fix blocked scan clicks
 
 &gt; **Overview:** Scan clicks fail silently when another scan or blur analysis holds the mutex, or when scan_state.running is stuck true and disables the button. Fix by claiming/clearing scan state reliably and surfacing blocked/error state in the UI.
 
@@ -11182,8 +11436,8 @@ Scans are also mutually exclusive with blur analysis:
 <li>Happy path: scan still completes and refreshes the grid.</li>
 </ol>
 <hr>
-<a id="chapter-144-fix-blur-detection-threshold"></a>
-<h2>Chapter 144: Fix blur detection threshold</h2>
+<a id="chapter-148-fix-blur-detection-threshold"></a>
+<h2>Chapter 148: Fix blur detection threshold</h2>
 <blockquote>
 <p><strong>Overview:</strong> IMG_7483.JPG scores 130.5 (lowest in inbox by 4×) but is not flagged because blur uses <code>score &lt; threshold</code> and your threshold is 25. Fix the inverted Settings copy, raise the default, and add relative outlier detection so obvious misses like this are caught.</p>
 </blockquote>
@@ -11255,8 +11509,8 @@ def is_blurry_score(score: float | None, threshold: float, p10: float | None) -&
 <li>At default threshold 150 on a fresh install, IMG_7483 flagged by absolute rule alone</li>
 </ol>
 <hr>
-<a id="chapter-145-fix-calendar-tag-search-layout"></a>
-<h2>Chapter 145: Fix calendar tag search layout</h2>
+<a id="chapter-149-fix-calendar-tag-search-layout"></a>
+<h2>Chapter 149: Fix calendar tag search layout</h2>
 <blockquote>
 <p><strong>Overview:</strong> Single-character tag search matches many tags; the chip row expands horizontally because the calendar left column uses <code>width: max-content</code> and tag chip containers lack width constraints. Fix by constraining the tagging panel to the calendar column width and ensuring chip rows wrap.</p>
 </blockquote>
@@ -11356,8 +11610,8 @@ def is_blurry_score(score: float | None, threshold: float, p10: float | None) -&
 <li>Photo grid on the right stays aligned; no page-level horizontal scroll</li>
 </ol>
 <hr>
-<a id="chapter-146-fix-camera-model-order"></a>
-<h2>Chapter 146: Fix camera model order</h2>
+<a id="chapter-150-fix-camera-model-order"></a>
+<h2>Chapter 150: Fix camera model order</h2>
 <blockquote>
 <p><strong>Overview:</strong> Fix the backend startup crash by defining <code>InboxCameraOut</code> before <code>BrowseCooccurringOut</code> references it in models.py.</p>
 </blockquote>
@@ -11377,8 +11631,8 @@ def is_blurry_score(score: float | None, threshold: float, p10: float | None) -&
 </ol>
 <p>No API or frontend changes. After Docker reloads, backend should boot cleanly.</p>
 <hr>
-<a id="chapter-147-fix-fast-flights-v3-api"></a>
-<h2>Chapter 147: Fix fast-flights v3 API</h2>
+<a id="chapter-151-fix-fast-flights-v3-api"></a>
+<h2>Chapter 151: Fix fast-flights v3 API</h2>
 <blockquote>
 <p><strong>Overview:</strong> Update the Python Google Flights bridge to the fast-flights 3.x API (FlightQuery + create_query) so FLL→BTV searches stop failing on the FlightData import.</p>
 </blockquote>
@@ -11411,8 +11665,8 @@ typing-extensions</code></pre>
 <h2>Verify</h2>
 <p>Re-run a search FLL→BTV (or <code>docker compose exec web /opt/venv/bin/python scripts/google_flights_search.py --origin FLL --destination BTV --departure-date 2026-08-26 --return-date 2026-08-31 --trip round-trip</code>) and confirm <code>{&quot;ok&quot;: true, &quot;offers&quot;: [...]}</code> with no import error.</p>
 <hr>
-<a id="chapter-148-fix-fast-flights-v3-api"></a>
-<h2>Chapter 148: Fix fast-flights v3 API</h2>
+<a id="chapter-152-fix-fast-flights-v3-api"></a>
+<h2>Chapter 152: Fix fast-flights v3 API</h2>
 <blockquote>
 <p><strong>Overview:</strong> Update the Python Google Flights bridge to the fast-flights 3.x API (FlightQuery + create_query) so FLL→BTV searches stop failing on the FlightData import.</p>
 </blockquote>
@@ -11445,8 +11699,8 @@ typing-extensions</code></pre>
 <h2>Verify</h2>
 <p>Re-run a search FLL→BTV (or <code>docker compose exec web /opt/venv/bin/python scripts/google_flights_search.py --origin FLL --destination BTV --departure-date 2026-08-26 --return-date 2026-08-31 --trip round-trip</code>) and confirm <code>{&quot;ok&quot;: true, &quot;offers&quot;: [...]}</code> with no import error.</p>
 <hr>
-<a id="chapter-149-fix-label-data-loss"></a>
-<h2>Chapter 149: Fix label data loss</h2>
+<a id="chapter-153-fix-label-data-loss"></a>
+<h2>Chapter 153: Fix label data loss</h2>
 <blockquote>
 <p><strong>Overview:</strong> Tags, People, and Events show 0 photos because the trash-location database migration (<code>DROP TABLE files</code> with <code>PRAGMA foreign_keys=ON</code>) cascaded and deleted all rows in <code>file_tags</code>, <code>file_people</code>, and <code>file_events</code>. Cameras still work because they count from <code>files.camera</code> directly. Fix the migration for future runs and recover associations from a pre-upgrade DB backup if one exists.</p>
 </blockquote>
@@ -11546,8 +11800,8 @@ SQL</code></pre>
 </ul>
 <p>Under <strong>Changed</strong> or a short note: if you already upgraded, restore from backup using the steps above.</p>
 <hr>
-<a id="chapter-150-fix-lightbox-scale-to-fit"></a>
-<h2>Chapter 150: Fix lightbox scale-to-fit</h2>
+<a id="chapter-154-fix-lightbox-scale-to-fit"></a>
+<h2>Chapter 154: Fix lightbox scale-to-fit</h2>
 <blockquote>
 <p><strong>Overview:</strong> The lightbox is showing full-resolution images again because uncommitted local changes (zoom scroll/pan + tags overlay work) replaced scale-to-fit CSS with a scrollable stage at intrinsic image size. Release <strong>2026.07.11a</strong> still scales correctly; the regression is only in current uncommitted edits.</p>
 </blockquote>
@@ -11620,9 +11874,9 @@ No backend changes.
 
 ---
 
-&lt;a id=&quot;chapter-151-fix-mosaic-navigation&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-155-fix-mosaic-navigation&quot;&gt;&lt;/a&gt;
 
-## Chapter 151: Fix mosaic navigation
+## Chapter 155: Fix mosaic navigation
 
 &gt; **Overview:** Create mosaic appears to do nothing on Browse because PhotoDetail navigates to `/mosaic?source=…` and then immediately calls `onClose()`, which Browse implements as a second `navigate()` back to the current browse URL — the second navigation wins.
 
@@ -11673,8 +11927,8 @@ onClose={() =&gt; {
 </ol>
 <p>No backend or CSS changes needed.</p>
 <hr>
-<a id="chapter-152-fix-tag-wrap-blowout"></a>
-<h2>Chapter 152: Fix tag wrap blowout</h2>
+<a id="chapter-156-fix-tag-wrap-blowout"></a>
+<h2>Chapter 156: Fix tag wrap blowout</h2>
 <blockquote>
 <p><strong>Overview:</strong> The prior fix added flex-wrap and min-width on chip rows, but the grid column still sizes to the tag panel&#x27;s max-content when 1-char search returns many tags. Lock the left column width to the calendar and prevent the tagging panel from contributing horizontal intrinsic size.</p>
 </blockquote>
@@ -11774,8 +12028,8 @@ onClose={() =&gt; {
 <li>Inbox tag picker still works (stack CSS is calendar-scoped via <code>.calendar-left-stack</code>)</li>
 </ol>
 <hr>
-<a id="chapter-153-fix-tag-wrap-blowout"></a>
-<h2>Chapter 153: Fix tag wrap blowout</h2>
+<a id="chapter-157-fix-tag-wrap-blowout"></a>
+<h2>Chapter 157: Fix tag wrap blowout</h2>
 <blockquote>
 <p><strong>Overview:</strong> The prior fix added flex-wrap and min-width on chip rows, but the grid column still sizes to the tag panel&#x27;s max-content when 1-char search returns many tags. Lock the left column width to the calendar and prevent the tagging panel from contributing horizontal intrinsic size.</p>
 </blockquote>
@@ -11875,8 +12129,8 @@ onClose={() =&gt; {
 <li>Inbox tag picker still works (stack CSS is calendar-scoped via <code>.calendar-left-stack</code>)</li>
 </ol>
 <hr>
-<a id="chapter-154-html-book-output"></a>
-<h2>Chapter 154: HTML book output</h2>
+<a id="chapter-158-html-book-output"></a>
+<h2>Chapter 158: HTML book output</h2>
 <blockquote>
 <p><strong>Overview:</strong> Extend the development-book builder so every markdown build also writes a sibling self-contained HTML file, keeping Python stdlib-only and updating docs/skill/schema to match.</p>
 </blockquote>
@@ -11922,8 +12176,8 @@ onClose={() =&gt; {
 <li>Changing the markdown book content or chapter ordering logic</li>
 </ul>
 <hr>
-<a id="chapter-155-html-book-output"></a>
-<h2>Chapter 155: HTML book output</h2>
+<a id="chapter-159-html-book-output"></a>
+<h2>Chapter 159: HTML book output</h2>
 <blockquote>
 <p><strong>Overview:</strong> Extend the development-book builder so every markdown build also writes a sibling self-contained HTML file, keeping Python stdlib-only and updating docs/skill/schema to match.</p>
 </blockquote>
@@ -11969,8 +12223,8 @@ onClose={() =&gt; {
 <li>Changing the markdown book content or chapter ordering logic</li>
 </ul>
 <hr>
-<a id="chapter-156-inbox-autotag-investigation"></a>
-<h2>Chapter 156: Inbox autotag investigation</h2>
+<a id="chapter-160-inbox-autotag-investigation"></a>
+<h2>Chapter 160: Inbox autotag investigation</h2>
 <blockquote>
 <p><strong>Overview:</strong> Investigation of inbox tag recommendations: current gaps, available signals in the existing schema, approach comparison (heuristics vs phash vs ML), and a phased roadmap — no implementation in this phase.</p>
 </blockquote>
@@ -12053,8 +12307,8 @@ onClose={() =&gt; {
 <h2>Key files for future implementation</h2>
 <p>| Layer | Files | |-------|-------| | Scoring logic | New <code>backend/app/tag_recommendations.py</code> | | API | <a href="backend/app/main.py"><code>backend/app/main.py</code></a> | | Inbox UI | <a href="frontend/src/components/FileTagPicker.tsx"><code>FileTagPicker.tsx</code></a>, <a href="frontend/src/components/BulkLabelEditors.tsx"><code>BulkLabelEditors.tsx</code></a> | | Client | <a href="frontend/src/api/client.ts"><code>frontend/src/api/client.ts</code></a> | | Precedent (suggestion chips) | <a href="frontend/src/pages/Mosaic.tsx"><code>Mosaic.tsx</code></a> — source-label chip row |</p>
 <hr>
-<a id="chapter-157-inbox-detail-auto-advance"></a>
-<h2>Chapter 157: Inbox detail auto-advance</h2>
+<a id="chapter-161-inbox-detail-auto-advance"></a>
+<h2>Chapter 161: Inbox detail auto-advance</h2>
 <blockquote>
 <p><strong>Overview:</strong> When a photo in Inbox detail view leaves the filtered list (e.g. tagged while on Untagged filter), advance to the next remaining photo instead of closing the detail drawer.</p>
 </blockquote>
@@ -12110,8 +12364,92 @@ onClose={() =&gt; {
 <li>Auto-advancing when using grid bulk editors (not detail view)</li>
 </ul>
 <hr>
-<a id="chapter-158-kitchen-ledger-recipe-app"></a>
-<h2>Chapter 158: Kitchen Ledger recipe app</h2>
+<a id="chapter-162-incremental-update-backup"></a>
+<h2>Chapter 162: Incremental update backup</h2>
+<blockquote>
+<p><strong>Overview:</strong> Add Settings “Update backup” that incrementally copies new/changed media and catalog from the live library (<code>/media</code>) to the backup mount (<code>/media-backup</code>), without path rewrite or restart—matching the user’s post-cutover .env (live on 2TB, backup on old Media).</p>
+</blockquote>
+<h2>Context</h2>
+<p>After cutover, live library is <code>MEDIA_HOST_PATH</code> → <code>/media</code>, backup is <code>BACKUP_MEDIA_HOST_PATH</code> → <code>/media-backup</code>. The existing <strong>Copy and switch</strong> flow rewrites/bootstrap/restarts; it is the wrong tool for routine backup refresh.</p>
+<p><strong>Default behavior (chosen):</strong> copy <strong>new and changed</strong> files only (compare size + mtime). <strong>Do not delete</strong> files that exist only on the backup (safer; matches “just new changes”). Include <code>inbox/</code>, <code>photos/</code>, <code>.trash/</code>, and <code>.imageOrganizer/</code> (database + thumbs). No path rewrite, no bootstrap write, no restart.</p>
+<h2>Backend</h2>
+<p>Extend <a href="backend/app/library_migrate.py"><code>backend/app/library_migrate.py</code></a>:</p>
+<ul>
+<li><code>_file_needs_copy(src, dest) -&gt; bool</code> — true if missing, size differs, or mtime differs (tolerate small float via int mtime).</li>
+<li><code>_copy_tree_incremental(...)</code> — walk source; skip unchanged; track <code>copied</code> vs <code>skipped</code>; reuse progress state.</li>
+<li><code>run_backup_sync(media_root, backup_root)</code>:</li>
+</ul>
+<p>- Require Docker backup mount ready (same allowlist as migrate dest = <code>backup_media_root()</code>). - Preflight: writable backup; free-space check uses <strong>estimate of bytes that need copy</strong> (or a modest fixed margin), not full library size when most files already exist. - Optional lightweight SQLite online backup into live <code>backups/</code> before syncing catalog (reuse <code>create_database_backup</code>) so the synced tree includes a fresh <code>.db</code> snapshot habit—keep this as “backup DB on live, then sync tree” so the copy of <code>index.db</code> is consistent enough; document that WAL may still be mid-write (same as current full copy). - Copy subdirs incrementally; <strong>no</strong> <code>rewrite_paths</code>, <strong>no</strong> <code>write_bootstrap</code>, <strong>no</strong> <code>LIBRARY_COPIED_TO.txt</code>, <code>restart_required=False</code>. - Finish message: <code>N files updated, M skipped unchanged</code> (+ host backup path).</p>
+<p>Reuse <code>library_move_state</code> for progress (same mutex as migrate — only one job at a time).</p>
+<p>API in <a href="backend/app/main.py"><code>backend/app/main.py</code></a>:</p>
+<ul>
+<li><code>POST /api/library/backup-sync</code> — no body (always <code>MEDIA_ROOT</code> → <code>BACKUP_MEDIA_ROOT</code>).</li>
+<li>Status: reuse <code>GET /api/library/move/status</code> (same job state).</li>
+</ul>
+<p>Models: thin <code>LibraryBackupSyncOut</code> alias or reuse <code>LibraryMoveStatusOut</code>.</p>
+<p>Tests in <a href="backend/tests/test_library_migrate.py"><code>backend/tests/test_library_migrate.py</code></a>: unchanged file skipped; changed size/mtime recopied; new file copied; no bootstrap/restart flag.</p>
+<h2>Frontend</h2>
+<p>In <a href="frontend/src/pages/Settings.tsx"><code>frontend/src/pages/Settings.tsx</code></a>, under Copy library (Docker when <code>backup_media_ready</code>):</p>
+<ul>
+<li>New subsection <strong>Update backup</strong>: show From host / To host (config fields); button <strong>Update backup</strong>.</li>
+<li>Wire <code>api.updateBackup()</code> → <code>POST /api/library/backup-sync</code>; share move status polling/progress UI.</li>
+<li>Disable when mount missing or move/sync already running.</li>
+<li>Copy: “Copies only new or changed files (and catalog). Does not delete extras on the backup disk. No restart.”</li>
+</ul>
+<h2>Docs</h2>
+<p>README: short “Update backup” note after Docker cutover. ARCHITECTURE: new endpoint. CHANGELOG Unreleased Added.</p>
+<h2>Out of scope</h2>
+<ul>
+<li>Mirror/delete orphans on backup</li>
+<li>Native non-Docker second-disk sync UI (can still call same API if env backup root set)</li>
+<li>Auto-schedule / cron</li>
+<li>True block-level rsync protocol (Python walk is enough for v1)</li>
+</ul>
+<hr>
+<a id="chapter-163-incremental-update-backup"></a>
+<h2>Chapter 163: Incremental update backup</h2>
+<blockquote>
+<p><strong>Overview:</strong> Add Settings “Update backup” that incrementally copies new/changed media and catalog from the live library (<code>/media</code>) to the backup mount (<code>/media-backup</code>), without path rewrite or restart—matching the user’s post-cutover .env (live on 2TB, backup on old Media).</p>
+</blockquote>
+<h2>Context</h2>
+<p>After cutover, live library is <code>MEDIA_HOST_PATH</code> → <code>/media</code>, backup is <code>BACKUP_MEDIA_HOST_PATH</code> → <code>/media-backup</code>. The existing <strong>Copy and switch</strong> flow rewrites/bootstrap/restarts; it is the wrong tool for routine backup refresh.</p>
+<p><strong>Default behavior (chosen):</strong> copy <strong>new and changed</strong> files only (compare size + mtime). <strong>Do not delete</strong> files that exist only on the backup (safer; matches “just new changes”). Include <code>inbox/</code>, <code>photos/</code>, <code>.trash/</code>, and <code>.imageOrganizer/</code> (database + thumbs). No path rewrite, no bootstrap write, no restart.</p>
+<h2>Backend</h2>
+<p>Extend <a href="backend/app/library_migrate.py"><code>backend/app/library_migrate.py</code></a>:</p>
+<ul>
+<li><code>_file_needs_copy(src, dest) -&gt; bool</code> — true if missing, size differs, or mtime differs (tolerate small float via int mtime).</li>
+<li><code>_copy_tree_incremental(...)</code> — walk source; skip unchanged; track <code>copied</code> vs <code>skipped</code>; reuse progress state.</li>
+<li><code>run_backup_sync(media_root, backup_root)</code>:</li>
+</ul>
+<p>- Require Docker backup mount ready (same allowlist as migrate dest = <code>backup_media_root()</code>). - Preflight: writable backup; free-space check uses <strong>estimate of bytes that need copy</strong> (or a modest fixed margin), not full library size when most files already exist. - Optional lightweight SQLite online backup into live <code>backups/</code> before syncing catalog (reuse <code>create_database_backup</code>) so the synced tree includes a fresh <code>.db</code> snapshot habit—keep this as “backup DB on live, then sync tree” so the copy of <code>index.db</code> is consistent enough; document that WAL may still be mid-write (same as current full copy). - Copy subdirs incrementally; <strong>no</strong> <code>rewrite_paths</code>, <strong>no</strong> <code>write_bootstrap</code>, <strong>no</strong> <code>LIBRARY_COPIED_TO.txt</code>, <code>restart_required=False</code>. - Finish message: <code>N files updated, M skipped unchanged</code> (+ host backup path).</p>
+<p>Reuse <code>library_move_state</code> for progress (same mutex as migrate — only one job at a time).</p>
+<p>API in <a href="backend/app/main.py"><code>backend/app/main.py</code></a>:</p>
+<ul>
+<li><code>POST /api/library/backup-sync</code> — no body (always <code>MEDIA_ROOT</code> → <code>BACKUP_MEDIA_ROOT</code>).</li>
+<li>Status: reuse <code>GET /api/library/move/status</code> (same job state).</li>
+</ul>
+<p>Models: thin <code>LibraryBackupSyncOut</code> alias or reuse <code>LibraryMoveStatusOut</code>.</p>
+<p>Tests in <a href="backend/tests/test_library_migrate.py"><code>backend/tests/test_library_migrate.py</code></a>: unchanged file skipped; changed size/mtime recopied; new file copied; no bootstrap/restart flag.</p>
+<h2>Frontend</h2>
+<p>In <a href="frontend/src/pages/Settings.tsx"><code>frontend/src/pages/Settings.tsx</code></a>, under Copy library (Docker when <code>backup_media_ready</code>):</p>
+<ul>
+<li>New subsection <strong>Update backup</strong>: show From host / To host (config fields); button <strong>Update backup</strong>.</li>
+<li>Wire <code>api.updateBackup()</code> → <code>POST /api/library/backup-sync</code>; share move status polling/progress UI.</li>
+<li>Disable when mount missing or move/sync already running.</li>
+<li>Copy: “Copies only new or changed files (and catalog). Does not delete extras on the backup disk. No restart.”</li>
+</ul>
+<h2>Docs</h2>
+<p>README: short “Update backup” note after Docker cutover. ARCHITECTURE: new endpoint. CHANGELOG Unreleased Added.</p>
+<h2>Out of scope</h2>
+<ul>
+<li>Mirror/delete orphans on backup</li>
+<li>Native non-Docker second-disk sync UI (can still call same API if env backup root set)</li>
+<li>Auto-schedule / cron</li>
+<li>True block-level rsync protocol (Python walk is enough for v1)</li>
+</ul>
+<hr>
+<a id="chapter-164-kitchen-ledger-recipe-app"></a>
+<h2>Chapter 164: Kitchen Ledger recipe app</h2>
 <blockquote>
 <p><strong>Overview:</strong> Create a new &quot;Kitchen Ledger&quot; repo mirroring the Image Organizer architecture (FastAPI + SQLite + React/Vite + Docker) to index scanned handwritten recipes from a folder, OCR-assist ingredient/direction transcription on scan, and organize recipes with multi-tag AND filtering and search.</p>
 </blockquote>
@@ -12201,8 +12539,224 @@ onClose={() =&gt; {
 <li>Organize/Apply move workflow, trash/restore, dedupe, meal planning, import from URLs, nutrition, print/export.</li>
 </ul>
 <hr>
-<a id="chapter-159-library-mosaic-save"></a>
-<h2>Chapter 159: Library mosaic save</h2>
+<a id="chapter-165-library-disks-side-by-side"></a>
+<h2>Chapter 165: Library disks side-by-side</h2>
+<blockquote>
+<p><strong>Overview:</strong> Add bottom page padding so the advanced migrate control isn’t flush with the viewport, and put Update backup beside the advanced cutover block in a responsive two-column layout.</p>
+</blockquote>
+<h2>Fixes</h2>
+<ol>
+<li><strong>Bottom padding</strong> — Settings content hugs the viewport. Add page-level bottom padding (e.g. <code>3rem</code>) on a wrapper or the last settings section so “One-time full copy / cutover” has breathing room when scrolled to the end.</li>
+<li><strong>Side-by-side</strong> — Use the empty horizontal space: Update backup and advanced migrate sit in two columns on wide screens; stack on narrow.</li>
+</ol>
+<h2>Layout</h2>
+<p>In <a href="frontend/src/pages/Settings.tsx"><code>frontend/src/pages/Settings.tsx</code></a> under <strong>Library disks</strong>:</p>
+<pre><code>[ title + desc + disk free + warnings ]   full width
+[ Update backup          |  Advanced details ]   .settings-library-columns</code></pre>
+<ul>
+<li>Left: existing Update backup block (primary CTA).</li>
+<li>Right: <code>&lt;details class=&quot;settings-advanced&quot;&gt;</code> (same content as now).</li>
+<li>Remove the border-bottom that assumed a vertical stack under <code>.settings-library-primary</code> (or keep a subtle column separator via CSS gap only).</li>
+</ul>
+<p>Native migrate block unchanged (single column).</p>
+<h2>CSS (<a href="frontend/src/index.css"><code>frontend/src/index.css</code></a>)</h2>
+<ul>
+<li><code>.settings-page { padding-bottom: 3rem; }</code> on the root Settings <code>&lt;div&gt;</code> (add class).</li>
+<li><code>.settings-library-columns { display: grid; gap: 1.5rem; grid-template-columns: 1fr; }</code> and <code>@media (min-width: 900px) { grid-template-columns: 1fr 1fr; }</code>.</li>
+<li>Drop or relax <code>.settings-library-primary</code> bottom border when inside the grid.</li>
+<li>Ensure <code>.settings-advanced</code> summary/content wraps cleanly in a column (no max-width conflict with <code>.settings-grid</code>).</li>
+</ul>
+<h2>Docs</h2>
+<p>One CHANGELOG Unreleased Changed line.</p>
+<h2>Out of scope</h2>
+<ul>
+<li>Redesigning Paths &amp; patterns</li>
+<li>Fixing identical media/backup free-space numbers</li>
+</ul>
+<hr>
+<a id="chapter-166-library-disks-side-by-side"></a>
+<h2>Chapter 166: Library disks side-by-side</h2>
+<blockquote>
+<p><strong>Overview:</strong> Add bottom page padding so the advanced migrate control isn’t flush with the viewport, and put Update backup beside the advanced cutover block in a responsive two-column layout.</p>
+</blockquote>
+<h2>Fixes</h2>
+<ol>
+<li><strong>Bottom padding</strong> — Settings content hugs the viewport. Add page-level bottom padding (e.g. <code>3rem</code>) on a wrapper or the last settings section so “One-time full copy / cutover” has breathing room when scrolled to the end.</li>
+<li><strong>Side-by-side</strong> — Use the empty horizontal space: Update backup and advanced migrate sit in two columns on wide screens; stack on narrow.</li>
+</ol>
+<h2>Layout</h2>
+<p>In <a href="frontend/src/pages/Settings.tsx"><code>frontend/src/pages/Settings.tsx</code></a> under <strong>Library disks</strong>:</p>
+<pre><code>[ title + desc + disk free + warnings ]   full width
+[ Update backup          |  Advanced details ]   .settings-library-columns</code></pre>
+<ul>
+<li>Left: existing Update backup block (primary CTA).</li>
+<li>Right: <code>&lt;details class=&quot;settings-advanced&quot;&gt;</code> (same content as now).</li>
+<li>Remove the border-bottom that assumed a vertical stack under <code>.settings-library-primary</code> (or keep a subtle column separator via CSS gap only).</li>
+</ul>
+<p>Native migrate block unchanged (single column).</p>
+<h2>CSS (<a href="frontend/src/index.css"><code>frontend/src/index.css</code></a>)</h2>
+<ul>
+<li><code>.settings-page { padding-bottom: 3rem; }</code> on the root Settings <code>&lt;div&gt;</code> (add class).</li>
+<li><code>.settings-library-columns { display: grid; gap: 1.5rem; grid-template-columns: 1fr; }</code> and <code>@media (min-width: 900px) { grid-template-columns: 1fr 1fr; }</code>.</li>
+<li>Drop or relax <code>.settings-library-primary</code> bottom border when inside the grid.</li>
+<li>Ensure <code>.settings-advanced</code> summary/content wraps cleanly in a column (no max-width conflict with <code>.settings-grid</code>).</li>
+</ul>
+<h2>Docs</h2>
+<p>One CHANGELOG Unreleased Changed line.</p>
+<h2>Out of scope</h2>
+<ul>
+<li>Redesigning Paths &amp; patterns</li>
+<li>Fixing identical media/backup free-space numbers</li>
+</ul>
+<hr>
+<a id="chapter-167-library-migrate-backup"></a>
+<h2>Chapter 167: Library migrate backup</h2>
+<blockquote>
+<p><strong>Overview:</strong> Evolve the existing Settings “Move library” copy-and-repoint job into a clearer “Copy library to new drive” migration tool with progress, post-copy verification, optional rewrite-only mode, and Docker guidance—leaving the original root intact as a backup.</p>
+</blockquote>
+<h1>Copy library to new drive (migrate + keep original)</h1>
+<h2>Already built</h2>
+<p><a href="backend/app/library_migrate.py"><code>backend/app/library_migrate.py</code></a> + Settings <strong>Move library</strong> already:</p>
+<ol>
+<li>Online-backup <code>index.db</code></li>
+<li><strong>Copy</strong> <code>inbox/</code>, <code>photos/</code>, <code>.trash/</code>, <code>.imageOrganizer/</code> to a new media root (does not delete the old tree)</li>
+<li>Rewrite absolute path prefixes in SQLite</li>
+<li>Write <code>~/.config/imageOrganizer/bootstrap.json</code></li>
+<li>Require restart</li>
+</ol>
+<p>Gaps for a common “new larger drive” workflow: naming sounds destructive, weak progress, no post-copy verification, no “files already copied — only switch” mode, and Docker users still need env/<code>MEDIA_HOST_PATH</code> changes (env overrides bootstrap).</p>
+<h2>Target UX</h2>
+<p>Rename Settings section to <strong>Copy library to new drive</strong> in <a href="frontend/src/pages/Settings.tsx"><code>frontend/src/pages/Settings.tsx</code></a>:</p>
+<ul>
+<li>Explain: full copy of media + catalog; original root is left untouched as a backup; then the app points at the new root after restart.</li>
+<li>Input: new media root path (same as today).</li>
+<li>Checkbox: <strong>Paths already copied — only rewrite catalog and switch</strong> (skips file copy; runs DB rewrite + bootstrap). For users who used Finder/<code>cp -a</code> or a prior partial run.</li>
+<li>Primary button: <strong>Copy and switch</strong> (or <strong>Switch only</strong> when the checkbox is on).</li>
+<li>Live status: message + <strong>progress</strong> (<code>copied_files</code> / <code>total_files</code>, <code>copied_bytes</code> / <code>total_bytes</code>, percent).</li>
+<li>On success: verification summary (file counts + byte totals matched), path to a marker written on the <strong>old</strong> root, restart instructions.</li>
+<li>When config shows env-managed paths (Docker): extra note that after copy they must set <code>MEDIA_HOST_PATH</code> / <code>MEDIA_ROOT</code> to the new host path and recreate the container—bootstrap alone will not win over env.</li>
+</ul>
+<p>Keep <strong>Backup database</strong> as the lightweight SQLite-only action (unchanged).</p>
+<h2>Backend</h2>
+<h3>Status model (<a href="backend/app/models.py"><code>backend/app/models.py</code></a>, <a href="backend/app/library_migrate.py"><code>library_migrate.py</code></a>)</h3>
+<p>Extend <code>LibraryMoveStatusOut</code> / move state with:</p>
+<ul>
+<li><code>copied_files</code>, <code>total_files</code>, <code>copied_bytes</code>, <code>total_bytes</code> (nullable while unknown)</li>
+<li><code>phase</code>: <code>backup</code> | <code>counting</code> | <code>copying</code> | <code>rewrite</code> | <code>verify</code> | <code>done</code> | <code>error</code></li>
+<li>Keep <code>message</code>, <code>error</code>, <code>running</code>, <code>done</code>, <code>restart_required</code></li>
+</ul>
+<h3>Request body</h3>
+<pre><code class="language-json">{ &quot;new_media_root&quot;: &quot;/Volumes/BigDisk/Media&quot;, &quot;rewrite_only&quot;: false }</code></pre>
+<h3>Job improvements in <code>run_library_move</code></h3>
+<ol>
+<li><strong>Preflight:</strong> reject if new root is inside old root (or vice versa); ensure destination is writable; if not <code>rewrite_only</code>, refuse when destination already has a conflicting non-empty <code>.imageOrganizer/index.db</code> from a different library unless sizes look like a resume of the same copy (keep today’s same-size skip resume).</li>
+<li><strong>Count then copy:</strong> walk source trees once for totals, then copy with progress updates (throttle message frequency).</li>
+<li><strong>Rewrite</strong> on the <strong>new</strong> catalog DB (existing <code>rewrite_path_prefixes</code>).</li>
+<li><strong>Verify:</strong> compare per-subdir file counts and total bytes (source vs dest for <code>inbox</code>, <code>photos</code>, <code>.trash</code>, <code>.imageOrganizer</code>); fail the job (no bootstrap write) if mismatch—original remains authoritative.</li>
+<li><strong>Bootstrap</strong> only after verify passes.</li>
+<li><strong>Marker on old root:</strong> write <code>{old}/LIBRARY_COPIED_TO.txt</code> with ISO timestamp + new root path (and note that this folder is now a backup).</li>
+<li><code>rewrite_only=true</code>: skip copy/verify-of-copy; still backup DB, rewrite new catalog paths, write bootstrap (destination must already contain <code>.imageOrganizer/index.db</code>).</li>
+</ol>
+<p>API stays <code>POST /api/library/move</code> + <code>GET /api/library/move/status</code> (extend response). Wire <code>rewrite_only</code> through <a href="backend/app/main.py"><code>main.py</code></a> and <a href="frontend/src/api/client.ts"><code>frontend/src/api/client.ts</code></a>.</p>
+<h3>CLI</h3>
+<p>Document <a href="backend/scripts/migrate_library.py"><code>backend/scripts/migrate_library.py</code></a> as the offline rewrite-only companion. Add a short flag note in script help matching the Settings checkbox.</p>
+<h3>Tests</h3>
+<p>Add <a href="backend/tests/test_library_migrate.py"><code>backend/tests/test_library_migrate.py</code></a>:</p>
+<ul>
+<li><code>boundary_replace</code> / <code>rewrite_path_prefixes</code> on a tiny SQLite fixture</li>
+<li>Copy+verify happy path on <code>tmp_path</code> trees (small files)</li>
+<li>Verify failure when a dest file is missing (no bootstrap)</li>
+<li><code>rewrite_only</code> updates paths without requiring source files beyond the new DB</li>
+</ul>
+<h2>Docs</h2>
+<ul>
+<li><a href="docs/ARCHITECTURE.md"><code>docs/ARCHITECTURE.md</code></a>: describe copy-and-switch flow, bootstrap vs env, marker file, restart.</li>
+<li><a href="README.md"><code>README.md</code></a>: short “Migrate to a larger drive” steps (native + Docker <code>MEDIA_HOST_PATH</code>).</li>
+<li><a href="CHANGELOG.md"><code>CHANGELOG.md</code></a> Unreleased: Added/Changed bullets for the improved migrate tool.</li>
+</ul>
+<h2>Out of scope</h2>
+<ul>
+<li>Deleting or auto-pruning the old root after switch</li>
+<li>Live path switch without process restart</li>
+<li>Byte-for-byte checksum of every file (count + size verify is enough for v1)</li>
+<li>Network/cloud remotes as destinations (local/mounted paths only)</li>
+</ul>
+<hr>
+<a id="chapter-168-library-migrate-backup"></a>
+<h2>Chapter 168: Library migrate backup</h2>
+<blockquote>
+<p><strong>Overview:</strong> Evolve the existing Settings “Move library” copy-and-repoint job into a clearer “Copy library to new drive” migration tool with progress, post-copy verification, optional rewrite-only mode, and Docker guidance—leaving the original root intact as a backup.</p>
+</blockquote>
+<h1>Copy library to new drive (migrate + keep original)</h1>
+<h2>Already built</h2>
+<p><a href="backend/app/library_migrate.py"><code>backend/app/library_migrate.py</code></a> + Settings <strong>Move library</strong> already:</p>
+<ol>
+<li>Online-backup <code>index.db</code></li>
+<li><strong>Copy</strong> <code>inbox/</code>, <code>photos/</code>, <code>.trash/</code>, <code>.imageOrganizer/</code> to a new media root (does not delete the old tree)</li>
+<li>Rewrite absolute path prefixes in SQLite</li>
+<li>Write <code>~/.config/imageOrganizer/bootstrap.json</code></li>
+<li>Require restart</li>
+</ol>
+<p>Gaps for a common “new larger drive” workflow: naming sounds destructive, weak progress, no post-copy verification, no “files already copied — only switch” mode, and Docker users still need env/<code>MEDIA_HOST_PATH</code> changes (env overrides bootstrap).</p>
+<h2>Target UX</h2>
+<p>Rename Settings section to <strong>Copy library to new drive</strong> in <a href="frontend/src/pages/Settings.tsx"><code>frontend/src/pages/Settings.tsx</code></a>:</p>
+<ul>
+<li>Explain: full copy of media + catalog; original root is left untouched as a backup; then the app points at the new root after restart.</li>
+<li>Input: new media root path (same as today).</li>
+<li>Checkbox: <strong>Paths already copied — only rewrite catalog and switch</strong> (skips file copy; runs DB rewrite + bootstrap). For users who used Finder/<code>cp -a</code> or a prior partial run.</li>
+<li>Primary button: <strong>Copy and switch</strong> (or <strong>Switch only</strong> when the checkbox is on).</li>
+<li>Live status: message + <strong>progress</strong> (<code>copied_files</code> / <code>total_files</code>, <code>copied_bytes</code> / <code>total_bytes</code>, percent).</li>
+<li>On success: verification summary (file counts + byte totals matched), path to a marker written on the <strong>old</strong> root, restart instructions.</li>
+<li>When config shows env-managed paths (Docker): extra note that after copy they must set <code>MEDIA_HOST_PATH</code> / <code>MEDIA_ROOT</code> to the new host path and recreate the container—bootstrap alone will not win over env.</li>
+</ul>
+<p>Keep <strong>Backup database</strong> as the lightweight SQLite-only action (unchanged).</p>
+<h2>Backend</h2>
+<h3>Status model (<a href="backend/app/models.py"><code>backend/app/models.py</code></a>, <a href="backend/app/library_migrate.py"><code>library_migrate.py</code></a>)</h3>
+<p>Extend <code>LibraryMoveStatusOut</code> / move state with:</p>
+<ul>
+<li><code>copied_files</code>, <code>total_files</code>, <code>copied_bytes</code>, <code>total_bytes</code> (nullable while unknown)</li>
+<li><code>phase</code>: <code>backup</code> | <code>counting</code> | <code>copying</code> | <code>rewrite</code> | <code>verify</code> | <code>done</code> | <code>error</code></li>
+<li>Keep <code>message</code>, <code>error</code>, <code>running</code>, <code>done</code>, <code>restart_required</code></li>
+</ul>
+<h3>Request body</h3>
+<pre><code class="language-json">{ &quot;new_media_root&quot;: &quot;/Volumes/BigDisk/Media&quot;, &quot;rewrite_only&quot;: false }</code></pre>
+<h3>Job improvements in <code>run_library_move</code></h3>
+<ol>
+<li><strong>Preflight:</strong> reject if new root is inside old root (or vice versa); ensure destination is writable; if not <code>rewrite_only</code>, refuse when destination already has a conflicting non-empty <code>.imageOrganizer/index.db</code> from a different library unless sizes look like a resume of the same copy (keep today’s same-size skip resume).</li>
+<li><strong>Count then copy:</strong> walk source trees once for totals, then copy with progress updates (throttle message frequency).</li>
+<li><strong>Rewrite</strong> on the <strong>new</strong> catalog DB (existing <code>rewrite_path_prefixes</code>).</li>
+<li><strong>Verify:</strong> compare per-subdir file counts and total bytes (source vs dest for <code>inbox</code>, <code>photos</code>, <code>.trash</code>, <code>.imageOrganizer</code>); fail the job (no bootstrap write) if mismatch—original remains authoritative.</li>
+<li><strong>Bootstrap</strong> only after verify passes.</li>
+<li><strong>Marker on old root:</strong> write <code>{old}/LIBRARY_COPIED_TO.txt</code> with ISO timestamp + new root path (and note that this folder is now a backup).</li>
+<li><code>rewrite_only=true</code>: skip copy/verify-of-copy; still backup DB, rewrite new catalog paths, write bootstrap (destination must already contain <code>.imageOrganizer/index.db</code>).</li>
+</ol>
+<p>API stays <code>POST /api/library/move</code> + <code>GET /api/library/move/status</code> (extend response). Wire <code>rewrite_only</code> through <a href="backend/app/main.py"><code>main.py</code></a> and <a href="frontend/src/api/client.ts"><code>frontend/src/api/client.ts</code></a>.</p>
+<h3>CLI</h3>
+<p>Document <a href="backend/scripts/migrate_library.py"><code>backend/scripts/migrate_library.py</code></a> as the offline rewrite-only companion. Add a short flag note in script help matching the Settings checkbox.</p>
+<h3>Tests</h3>
+<p>Add <a href="backend/tests/test_library_migrate.py"><code>backend/tests/test_library_migrate.py</code></a>:</p>
+<ul>
+<li><code>boundary_replace</code> / <code>rewrite_path_prefixes</code> on a tiny SQLite fixture</li>
+<li>Copy+verify happy path on <code>tmp_path</code> trees (small files)</li>
+<li>Verify failure when a dest file is missing (no bootstrap)</li>
+<li><code>rewrite_only</code> updates paths without requiring source files beyond the new DB</li>
+</ul>
+<h2>Docs</h2>
+<ul>
+<li><a href="docs/ARCHITECTURE.md"><code>docs/ARCHITECTURE.md</code></a>: describe copy-and-switch flow, bootstrap vs env, marker file, restart.</li>
+<li><a href="README.md"><code>README.md</code></a>: short “Migrate to a larger drive” steps (native + Docker <code>MEDIA_HOST_PATH</code>).</li>
+<li><a href="CHANGELOG.md"><code>CHANGELOG.md</code></a> Unreleased: Added/Changed bullets for the improved migrate tool.</li>
+</ul>
+<h2>Out of scope</h2>
+<ul>
+<li>Deleting or auto-pruning the old root after switch</li>
+<li>Live path switch without process restart</li>
+<li>Byte-for-byte checksum of every file (count + size verify is enough for v1)</li>
+<li>Network/cloud remotes as destinations (local/mounted paths only)</li>
+</ul>
+<hr>
+<a id="chapter-169-library-mosaic-save"></a>
+<h2>Chapter 169: Library mosaic save</h2>
 <blockquote>
 <p><strong>Overview:</strong> Save generated mosaics under <code>{archive}/mosaics/</code>, index them as archive photos, and auto-tag with mosaic so they appear in Browse/Calendar like any library photo.</p>
 </blockquote>
@@ -12256,8 +12810,8 @@ onClose={() =&gt; {
 <li>Excluding <code>mosaics/</code> from tile pools (can still reuse mosaics as tiles; fine for v1)</li>
 </ul>
 <hr>
-<a id="chapter-160-lightbox-tag-fonts"></a>
-<h2>Chapter 160: Lightbox tag fonts</h2>
+<a id="chapter-170-lightbox-tag-fonts"></a>
+<h2>Chapter 170: Lightbox tag fonts</h2>
 <blockquote>
 <p><strong>Overview:</strong> Increase typography in the lightbox Tags &amp; people panel only (T overlay), scoped to <code>.photo-lightbox-tags</code> so grid/inbox badges stay unchanged.</p>
 </blockquote>
@@ -12306,8 +12860,8 @@ onClose={() =&gt; {
 <li>Drawer sidebar Tags/People section unchanged</li>
 </ol>
 <hr>
-<a id="chapter-161-lightbox-tag-overlay"></a>
-<h2>Chapter 161: Lightbox tag overlay</h2>
+<a id="chapter-171-lightbox-tag-overlay"></a>
+<h2>Chapter 171: Lightbox tag overlay</h2>
 <blockquote>
 <p><strong>Overview:</strong> Add a toggleable tag-application overlay to the PhotoDetail fullscreen lightbox, shown/hidden with T/t, reusing the existing FileTagPicker search/recent pattern.</p>
 </blockquote>
@@ -12392,8 +12946,8 @@ onClose={() =&gt; {
 <li>Grid-level fullscreen (lightbox is detail-only today)</li>
 </ul>
 <hr>
-<a id="chapter-162-link-inbox-image-as-hero"></a>
-<h2>Chapter 162: Link inbox image as hero</h2>
+<a id="chapter-172-link-inbox-image-as-hero"></a>
+<h2>Chapter 172: Link inbox image as hero</h2>
 <blockquote>
 <p><strong>Overview:</strong> Inbox is a review queue on disk and in the UI. Scan indexes only; Mark reviewed moves scans to recipes/; Link as hero to… moves dish photos to hero/ and removes the orphan draft.</p>
 </blockquote>
@@ -12442,8 +12996,8 @@ onClose={() =&gt; {
 <h2>Your banana-bread dish photo</h2>
 <p>Leave it in <strong>inbox</strong>, Scan if needed, then <strong>Link as hero to…</strong> → Banana Bread once this ships. Mark the handwritten card recipe <strong>reviewed</strong> to move that scan into <code>recipes/</code>.</p>
 <hr>
-<a id="chapter-163-link-inbox-image-as-hero"></a>
-<h2>Chapter 163: Link inbox image as hero</h2>
+<a id="chapter-173-link-inbox-image-as-hero"></a>
+<h2>Chapter 173: Link inbox image as hero</h2>
 <blockquote>
 <p><strong>Overview:</strong> Explain the current stem-match workflow, then add a manual &quot;Use as hero for…&quot; action so an Inbox draft (misplaced dish photo) can be attached as another recipe&#x27;s hero and removed as a standalone draft.</p>
 </blockquote>
@@ -12485,8 +13039,108 @@ onClose={() =&gt; {
 </ol>
 <p>The feature above makes step 1–2 a one-click UI action instead.</p>
 <hr>
-<a id="chapter-164-people-autotag-options"></a>
-<h2>Chapter 164: People autotag options</h2>
+<a id="chapter-174-migrate-disk-health"></a>
+<h2>Chapter 174: Migrate disk health</h2>
+<blockquote>
+<p><strong>Overview:</strong> Surface Docker/destination disk health in Settings and tighten library-copy preflight so users see low space or a non-mounted destination before a bad copy fills the container overlay again.</p>
+</blockquote>
+<h2>Problem</h2>
+<p>A library copy to a path that is <strong>writable but not bind-mounted</strong> fills the container’s overlayfs (we saw ~48GB on <code>imageorganizer-backend-1</code>), which fills Docker Desktop’s VM disk (<code>Docker.raw</code>) and breaks Compose with <code>no space left on device</code>. Users cannot see Docker Desktop disk from the app today; <a href="backend/app/storage_stats.py"><code>GET /api/storage/stats</code></a> only reports catalog DB sizes.</p>
+<h2>Approach</h2>
+<p>Add <strong>filesystem free-space probes</strong> plus a <strong>Docker destination allowlist</strong> on migrate preflight. Show the results in Settings so the user can fix mount/env or free Docker disk before copying.</p>
+<pre><code class="language-mermaid">flowchart TD
+  settings[&quot;Settings Copy library&quot;] --&gt; config[&quot;GET /api/config + disk health&quot;]
+  config --&gt; ready{&quot;backup_media_ready and free space OK?&quot;}
+  ready --&gt;|no| block[&quot;Disable copy + fix steps&quot;]
+  ready --&gt;|yes| post[&quot;POST /api/library/move&quot;]
+  post --&gt; preflight[&quot;Preflight: allowlist dest + statvfs&quot;]
+  preflight --&gt;|fail| err[&quot;Clear error in move status&quot;]
+  preflight --&gt;|ok| copy[&quot;Copy to /media-backup only&quot;]</code></pre>
+<h2>Backend</h2>
+<p>Extend migrate helpers in <a href="backend/app/library_migrate.py"><code>backend/app/library_migrate.py</code></a>:</p>
+<ul>
+<li><code>disk_usage(path) -&gt; {total_bytes, free_bytes, used_bytes}</code> via <code>os.statvfs</code></li>
+<li>When <code>paths_from_env</code>: also probe <code>/</code> as <code>container_root</code> (Docker VM rootfs the overlay sits on)</li>
+<li>Expose on config (or a small <code>GET /api/storage/disk</code> used by Settings):</li>
+</ul>
+<p>- <code>media_disk</code> for <code>MEDIA_ROOT</code> - <code>backup_disk</code> for <code>BACKUP_MEDIA_ROOT</code> when present - <code>container_root_disk</code> when <code>paths_from_env</code> - keep existing <code>backup_media_ready</code></p>
+<p>Tighten <code>_preflight</code>:</p>
+<ol>
+<li><strong>Docker allowlist:</strong> if <code>paths_from_env</code>, require <code>new_media_root</code> resolve equal to <code>backup_media_root()</code> (or under it). Reject host-style paths (<code>/Volumes/...</code>) and any other path that would create dirs on overlay.</li>
+<li><strong>Free space:</strong> estimate library size (reuse <code>_count_library_files</code> / existing totals) and require dest <code>free_bytes</code> ≥ estimate (small margin, e.g. 5%). Clear error text if not.</li>
+<li><strong>Container root warning threshold:</strong> if <code>paths_from_env</code> and <code>/</code> free &amp;lt; ~2GB (or free/total &amp;lt; 5%), set <code>container_disk_low: true</code> on config so UI can warn even before copy (does not replace allowlist).</li>
+</ol>
+<p>Wire fields through <a href="backend/app/models.py"><code>ConfigOut</code></a> / <code>_config_out()</code> in <a href="backend/app/main.py"><code>main.py</code></a> (prefer extending config to avoid a second round-trip; keep payloads numeric + ready flags only).</p>
+<p>Tests in <a href="backend/tests/test_library_migrate.py"><code>backend/tests/test_library_migrate.py</code></a>: allowlist rejection when env paths; free-space failure stub via monkeypatched <code>statvfs</code>; <code>disk_usage</code> smoke.</p>
+<h2>Frontend</h2>
+<p>In <a href="frontend/src/pages/Settings.tsx"><code>frontend/src/pages/Settings.tsx</code></a> under <strong>Copy library to new drive</strong>:</p>
+<ul>
+<li>Show free space for media and backup mounts (human sizes).</li>
+<li>If <code>container_disk_low</code>: warn — free Docker Desktop disk / recreate backend if a prior copy filled the container; link to the existing recreate instructions.</li>
+<li>Keep blocking when <code>!backup_media_ready</code>; also block when backup free space &amp;lt; catalog estimate if we already have storage stats / disk fields.</li>
+<li>When Docker, lock destination input to <code>/media-backup</code> (or read-only prefill) so users cannot type a host path that looks writable after <code>mkdir</code>.</li>
+</ul>
+<h2>Docs</h2>
+<p>Short notes in README migrate section + ARCHITECTURE (disk fields on config; Docker dest must be <code>/media-backup</code>) and CHANGELOG Unreleased.</p>
+<h2>Out of scope</h2>
+<ul>
+<li>Reading Docker Desktop’s allocated disk limit from the host</li>
+<li>Auto-pruning images/containers from the API</li>
+<li>Auto-editing <code>.env</code> / recreating Compose</li>
+</ul>
+<hr>
+<a id="chapter-175-migrate-disk-health"></a>
+<h2>Chapter 175: Migrate disk health</h2>
+<blockquote>
+<p><strong>Overview:</strong> Surface Docker/destination disk health in Settings and tighten library-copy preflight so users see low space or a non-mounted destination before a bad copy fills the container overlay again.</p>
+</blockquote>
+<h2>Problem</h2>
+<p>A library copy to a path that is <strong>writable but not bind-mounted</strong> fills the container’s overlayfs (we saw ~48GB on <code>imageorganizer-backend-1</code>), which fills Docker Desktop’s VM disk (<code>Docker.raw</code>) and breaks Compose with <code>no space left on device</code>. Users cannot see Docker Desktop disk from the app today; <a href="backend/app/storage_stats.py"><code>GET /api/storage/stats</code></a> only reports catalog DB sizes.</p>
+<h2>Approach</h2>
+<p>Add <strong>filesystem free-space probes</strong> plus a <strong>Docker destination allowlist</strong> on migrate preflight. Show the results in Settings so the user can fix mount/env or free Docker disk before copying.</p>
+<pre><code class="language-mermaid">flowchart TD
+  settings[&quot;Settings Copy library&quot;] --&gt; config[&quot;GET /api/config + disk health&quot;]
+  config --&gt; ready{&quot;backup_media_ready and free space OK?&quot;}
+  ready --&gt;|no| block[&quot;Disable copy + fix steps&quot;]
+  ready --&gt;|yes| post[&quot;POST /api/library/move&quot;]
+  post --&gt; preflight[&quot;Preflight: allowlist dest + statvfs&quot;]
+  preflight --&gt;|fail| err[&quot;Clear error in move status&quot;]
+  preflight --&gt;|ok| copy[&quot;Copy to /media-backup only&quot;]</code></pre>
+<h2>Backend</h2>
+<p>Extend migrate helpers in <a href="backend/app/library_migrate.py"><code>backend/app/library_migrate.py</code></a>:</p>
+<ul>
+<li><code>disk_usage(path) -&gt; {total_bytes, free_bytes, used_bytes}</code> via <code>os.statvfs</code></li>
+<li>When <code>paths_from_env</code>: also probe <code>/</code> as <code>container_root</code> (Docker VM rootfs the overlay sits on)</li>
+<li>Expose on config (or a small <code>GET /api/storage/disk</code> used by Settings):</li>
+</ul>
+<p>- <code>media_disk</code> for <code>MEDIA_ROOT</code> - <code>backup_disk</code> for <code>BACKUP_MEDIA_ROOT</code> when present - <code>container_root_disk</code> when <code>paths_from_env</code> - keep existing <code>backup_media_ready</code></p>
+<p>Tighten <code>_preflight</code>:</p>
+<ol>
+<li><strong>Docker allowlist:</strong> if <code>paths_from_env</code>, require <code>new_media_root</code> resolve equal to <code>backup_media_root()</code> (or under it). Reject host-style paths (<code>/Volumes/...</code>) and any other path that would create dirs on overlay.</li>
+<li><strong>Free space:</strong> estimate library size (reuse <code>_count_library_files</code> / existing totals) and require dest <code>free_bytes</code> ≥ estimate (small margin, e.g. 5%). Clear error text if not.</li>
+<li><strong>Container root warning threshold:</strong> if <code>paths_from_env</code> and <code>/</code> free &amp;lt; ~2GB (or free/total &amp;lt; 5%), set <code>container_disk_low: true</code> on config so UI can warn even before copy (does not replace allowlist).</li>
+</ol>
+<p>Wire fields through <a href="backend/app/models.py"><code>ConfigOut</code></a> / <code>_config_out()</code> in <a href="backend/app/main.py"><code>main.py</code></a> (prefer extending config to avoid a second round-trip; keep payloads numeric + ready flags only).</p>
+<p>Tests in <a href="backend/tests/test_library_migrate.py"><code>backend/tests/test_library_migrate.py</code></a>: allowlist rejection when env paths; free-space failure stub via monkeypatched <code>statvfs</code>; <code>disk_usage</code> smoke.</p>
+<h2>Frontend</h2>
+<p>In <a href="frontend/src/pages/Settings.tsx"><code>frontend/src/pages/Settings.tsx</code></a> under <strong>Copy library to new drive</strong>:</p>
+<ul>
+<li>Show free space for media and backup mounts (human sizes).</li>
+<li>If <code>container_disk_low</code>: warn — free Docker Desktop disk / recreate backend if a prior copy filled the container; link to the existing recreate instructions.</li>
+<li>Keep blocking when <code>!backup_media_ready</code>; also block when backup free space &amp;lt; catalog estimate if we already have storage stats / disk fields.</li>
+<li>When Docker, lock destination input to <code>/media-backup</code> (or read-only prefill) so users cannot type a host path that looks writable after <code>mkdir</code>.</li>
+</ul>
+<h2>Docs</h2>
+<p>Short notes in README migrate section + ARCHITECTURE (disk fields on config; Docker dest must be <code>/media-backup</code>) and CHANGELOG Unreleased.</p>
+<h2>Out of scope</h2>
+<ul>
+<li>Reading Docker Desktop’s allocated disk limit from the host</li>
+<li>Auto-pruning images/containers from the API</li>
+<li>Auto-editing <code>.env</code> / recreating Compose</li>
+</ul>
+<hr>
+<a id="chapter-176-people-autotag-options"></a>
+<h2>Chapter 176: People autotag options</h2>
 <blockquote>
 <p><strong>Overview:</strong> TABLED — Compare four approaches for inbox people labeling: heuristic suggestions (no ML), face detection, face recognition against known people, and face clustering. Parked for later; no implementation until revisited.</p>
 </blockquote>
@@ -12600,8 +13254,8 @@ file_face_detections(file_id, bbox, embedding, suggested_person_id, confidence)<
 <p>Say which phase to implement (e.g. <strong>&quot;implement people recommendations v1&quot;</strong> for Option 1, or <strong>&quot;prototype face recognition&quot;</strong> for Option 3 spike).</p>
 <p>No code in this phase — comparison only, per investigation scope.</p>
 <hr>
-<a id="chapter-165-per-passenger-price-display"></a>
-<h2>Chapter 165: Per-passenger price display</h2>
+<a id="chapter-177-per-passenger-price-display"></a>
+<h2>Chapter 177: Per-passenger price display</h2>
 <blockquote>
 <p><strong>Overview:</strong> Show trip total with a per-person breakdown like <code>$2,000 ($500 per/person)</code> using the search’s adult count.</p>
 </blockquote>
@@ -12628,8 +13282,8 @@ file_face_detections(file_id, bbox, embedding, suggested_person_id, confidence)<
 </ul>
 <p>Sorting stays by total <code>price</code>.</p>
 <hr>
-<a id="chapter-166-per-passenger-price-display"></a>
-<h2>Chapter 166: Per-passenger price display</h2>
+<a id="chapter-178-per-passenger-price-display"></a>
+<h2>Chapter 178: Per-passenger price display</h2>
 <blockquote>
 <p><strong>Overview:</strong> Show trip total with a per-person breakdown like <code>$2,000 ($500 per/person)</code> using the search’s adult count.</p>
 </blockquote>
@@ -12656,8 +13310,8 @@ file_face_detections(file_id, bbox, embedding, suggested_person_id, confidence)<
 </ul>
 <p>Sorting stays by total <code>price</code>.</p>
 <hr>
-<a id="chapter-167-persist-collapsible-sections"></a>
-<h2>Chapter 167: Persist collapsible sections</h2>
+<a id="chapter-179-persist-collapsible-sections"></a>
+<h2>Chapter 179: Persist collapsible sections</h2>
 <blockquote>
 <p><strong>Overview:</strong> Persist expanded/collapsed state for label-editor sections so user toggles survive remounts (e.g. single ↔ bulk selection, re-renders after label apply). Fix centrally in <code>CollapsibleSection</code> with optional localStorage keys shared across editor contexts.</p>
 </blockquote>
@@ -12719,8 +13373,8 @@ file_face_detections(file_id, bbox, embedding, suggested_person_id, confidence)<
 <li>Collapsing Tags section (Tags remain always visible with search/recent in Inbox)</li>
 </ul>
 <hr>
-<a id="chapter-168-persist-collapsible-sections"></a>
-<h2>Chapter 168: Persist collapsible sections</h2>
+<a id="chapter-180-persist-collapsible-sections"></a>
+<h2>Chapter 180: Persist collapsible sections</h2>
 <blockquote>
 <p><strong>Overview:</strong> Persist expanded/collapsed state for label-editor sections so user toggles survive remounts (e.g. single ↔ bulk selection, re-renders after label apply). Fix centrally in <code>CollapsibleSection</code> with optional localStorage keys shared across editor contexts.</p>
 </blockquote>
@@ -12782,8 +13436,8 @@ file_face_detections(file_id, bbox, embedding, suggested_person_id, confidence)<
 <li>Collapsing Tags section (Tags remain always visible with search/recent in Inbox)</li>
 </ul>
 <hr>
-<a id="chapter-169-persist-search-form-settings"></a>
-<h2>Chapter 169: Persist search form settings</h2>
+<a id="chapter-181-persist-search-form-settings"></a>
+<h2>Chapter 181: Persist search form settings</h2>
 <blockquote>
 <p><strong>Overview:</strong> Save SearchForm fields to localStorage on change and restore them on load so a browser refresh keeps the last origin, destination, dates, stay days, and adults.</p>
 </blockquote>
@@ -12809,8 +13463,8 @@ file_face_detections(file_id, bbox, embedding, suggested_person_id, confidence)<
 <h2>Verify</h2>
 <p>Change From/To (e.g. FLL→BTV), refresh → fields still show FLL/BTV and other last-edited values.</p>
 <hr>
-<a id="chapter-170-persist-search-form-settings"></a>
-<h2>Chapter 170: Persist search form settings</h2>
+<a id="chapter-182-persist-search-form-settings"></a>
+<h2>Chapter 182: Persist search form settings</h2>
 <blockquote>
 <p><strong>Overview:</strong> Save SearchForm fields to localStorage on change and restore them on load so a browser refresh keeps the last origin, destination, dates, stay days, and adults.</p>
 </blockquote>
@@ -12836,8 +13490,8 @@ file_face_detections(file_id, bbox, embedding, suggested_person_id, confidence)<
 <h2>Verify</h2>
 <p>Change From/To (e.g. FLL→BTV), refresh → fields still show FLL/BTV and other last-edited values.</p>
 <hr>
-<a id="chapter-171-recent-people-like-tags"></a>
-<h2>Chapter 171: Recent people like tags</h2>
+<a id="chapter-183-recent-people-like-tags"></a>
+<h2>Chapter 183: Recent people like tags</h2>
 <blockquote>
 <p><strong>Overview:</strong> Add a localStorage-backed &quot;Recently used&quot; section for people pickers, mirroring the existing tag pattern in <code>FileTagPicker</code> and <code>BulkLabelEditors</code>.</p>
 </blockquote>
@@ -12900,8 +13554,8 @@ file_face_detections(file_id, bbox, embedding, suggested_person_id, confidence)<
 <li>No duplicate chips (recent people excluded from main list below)</li>
 </ol>
 <hr>
-<a id="chapter-172-recipe-hero-dish-photo"></a>
-<h2>Chapter 172: Recipe hero dish photo</h2>
+<a id="chapter-184-recipe-hero-dish-photo"></a>
+<h2>Chapter 184: Recipe hero dish photo</h2>
 <blockquote>
 <p><strong>Overview:</strong> Add an optional &quot;hero&quot; dish photo per recipe, dropped into a new hero/ folder and matched to recipes by filename stem during scan. Show it big on the recipe detail page and use it as the card thumbnail (falling back to the scan when absent).</p>
 </blockquote>
@@ -12944,8 +13598,98 @@ file_face_detections(file_id, bbox, embedding, suggested_person_id, confidence)<
 <h2>Verify</h2>
 <p>Rebuild the backend (schema migration), drop <code>hero/banana_bread.jpg</code>, run Scan, and confirm: <code>GET /api/recipes</code> returns <code>hero_filename</code>, <code>/hero-thumbnail</code> returns 200, the card shows the dish photo, and the detail page shows the hero above the scan.</p>
 <hr>
-<a id="chapter-173-release-20260710"></a>
-<h2>Chapter 173: Release 2026.07.10</h2>
+<a id="chapter-185-relayout-library-backup-ui"></a>
+<h2>Chapter 185: Relayout library backup UI</h2>
+<blockquote>
+<p><strong>Overview:</strong> Reorganize Settings so routine “Update backup” is primary after cutover, fold one-time “Copy and switch” into a secondary/advanced block, show disk free once, and scope progress/status to the job that was started.</p>
+</blockquote>
+<h1>Relayout library / backup Settings</h1>
+<h2>Problems (from the screenshot)</h2>
+<ul>
+<li>After cutover, <strong>Copy and switch</strong> still looks like the main action and shows “Copy to: <code>/Users/alex/Media</code>” (the backup), which reads backwards.</li>
+<li>Cutover Docker steps and rewrite checkboxes stay visible when the user only wants incremental updates.</li>
+<li>The same “Backup updated…” status appears under <strong>both</strong> sections (shared <code>moveStatus</code>).</li>
+<li>Disk free is buried under migrate copy.</li>
+</ul>
+<h2>Layout (Docker, <code>paths_from_env</code>)</h2>
+<p>Single parent section <strong>Library disks</strong> in <a href="frontend/src/pages/Settings.tsx"><code>frontend/src/pages/Settings.tsx</code></a>:</p>
+<ol>
+<li><strong>Shared header</strong> — one disk-free line + <code>container_disk_low</code> / mount-not-ready warnings.</li>
+<li><strong>Update backup</strong> (first when <code>backup_media_ready</code>) — From → To host paths, short description, primary button, progress/status <strong>only for sync jobs</strong>.</li>
+<li><strong>Migrate to a new drive</strong> — wrapped in <code>&lt;details&gt;</code> (closed by default when backup is ready; open when mount missing). Contains cutover blurb, destination summary, checkboxes, Copy and switch, progress/status <strong>only for migrate jobs</strong>.</li>
+</ol>
+<p>Native (non-Docker): keep a single <strong>Migrate to a new drive</strong> block with Destination folder (no Update backup unless we later expose backup env).</p>
+<h2>Status scoping</h2>
+<p>Track local <code>libraryJob: &quot;move&quot; | &quot;sync&quot; | null</code>:</p>
+<ul>
+<li>Set on mutate click; clear when <code>!moveStatus?.running &amp;&amp; moveStatus?.done</code> after a short display, or when the other job starts.</li>
+<li>Render progress/message only in the matching subsection (<code>libraryJob === &quot;sync&quot;</code> vs <code>&quot;move&quot;</code>).</li>
+</ul>
+<p>No backend change required.</p>
+<h2>Copy tweaks</h2>
+<ul>
+<li>Update backup title stays; From/To use <code>media_host_path</code> / <code>backup_media_host_path</code>.</li>
+<li>Migrate details summary: “One-time full copy / cutover (advanced)”.</li>
+<li>Soften cutover step (3) to allow keeping <code>BACKUP_MEDIA_HOST_PATH</code> on the old disk for Update backup (matches current .env).</li>
+</ul>
+<h2>CSS</h2>
+<p>Light rules in <a href="frontend/src/index.css"><code>frontend/src/index.css</code></a> for <code>.settings-library-disks</code>, <code>.settings-job-status</code>, and <code>&lt;details class=&quot;settings-advanced&quot;&gt;</code> (spacing only; match existing settings typography).</p>
+<h2>Docs</h2>
+<p>CHANGELOG Unreleased Changed: Settings library disks relayout. No ARCHITECTURE change (UI only).</p>
+<h2>Out of scope</h2>
+<ul>
+<li>Fixing identical media/backup free-space numbers (statvfs / mount reporting)</li>
+<li>Backend job-type field on status API</li>
+<li>Removing Copy and switch entirely</li>
+</ul>
+<hr>
+<a id="chapter-186-relayout-library-backup-ui"></a>
+<h2>Chapter 186: Relayout library backup UI</h2>
+<blockquote>
+<p><strong>Overview:</strong> Reorganize Settings so routine “Update backup” is primary after cutover, fold one-time “Copy and switch” into a secondary/advanced block, show disk free once, and scope progress/status to the job that was started.</p>
+</blockquote>
+<h1>Relayout library / backup Settings</h1>
+<h2>Problems (from the screenshot)</h2>
+<ul>
+<li>After cutover, <strong>Copy and switch</strong> still looks like the main action and shows “Copy to: <code>/Users/alex/Media</code>” (the backup), which reads backwards.</li>
+<li>Cutover Docker steps and rewrite checkboxes stay visible when the user only wants incremental updates.</li>
+<li>The same “Backup updated…” status appears under <strong>both</strong> sections (shared <code>moveStatus</code>).</li>
+<li>Disk free is buried under migrate copy.</li>
+</ul>
+<h2>Layout (Docker, <code>paths_from_env</code>)</h2>
+<p>Single parent section <strong>Library disks</strong> in <a href="frontend/src/pages/Settings.tsx"><code>frontend/src/pages/Settings.tsx</code></a>:</p>
+<ol>
+<li><strong>Shared header</strong> — one disk-free line + <code>container_disk_low</code> / mount-not-ready warnings.</li>
+<li><strong>Update backup</strong> (first when <code>backup_media_ready</code>) — From → To host paths, short description, primary button, progress/status <strong>only for sync jobs</strong>.</li>
+<li><strong>Migrate to a new drive</strong> — wrapped in <code>&lt;details&gt;</code> (closed by default when backup is ready; open when mount missing). Contains cutover blurb, destination summary, checkboxes, Copy and switch, progress/status <strong>only for migrate jobs</strong>.</li>
+</ol>
+<p>Native (non-Docker): keep a single <strong>Migrate to a new drive</strong> block with Destination folder (no Update backup unless we later expose backup env).</p>
+<h2>Status scoping</h2>
+<p>Track local <code>libraryJob: &quot;move&quot; | &quot;sync&quot; | null</code>:</p>
+<ul>
+<li>Set on mutate click; clear when <code>!moveStatus?.running &amp;&amp; moveStatus?.done</code> after a short display, or when the other job starts.</li>
+<li>Render progress/message only in the matching subsection (<code>libraryJob === &quot;sync&quot;</code> vs <code>&quot;move&quot;</code>).</li>
+</ul>
+<p>No backend change required.</p>
+<h2>Copy tweaks</h2>
+<ul>
+<li>Update backup title stays; From/To use <code>media_host_path</code> / <code>backup_media_host_path</code>.</li>
+<li>Migrate details summary: “One-time full copy / cutover (advanced)”.</li>
+<li>Soften cutover step (3) to allow keeping <code>BACKUP_MEDIA_HOST_PATH</code> on the old disk for Update backup (matches current .env).</li>
+</ul>
+<h2>CSS</h2>
+<p>Light rules in <a href="frontend/src/index.css"><code>frontend/src/index.css</code></a> for <code>.settings-library-disks</code>, <code>.settings-job-status</code>, and <code>&lt;details class=&quot;settings-advanced&quot;&gt;</code> (spacing only; match existing settings typography).</p>
+<h2>Docs</h2>
+<p>CHANGELOG Unreleased Changed: Settings library disks relayout. No ARCHITECTURE change (UI only).</p>
+<h2>Out of scope</h2>
+<ul>
+<li>Fixing identical media/backup free-space numbers (statvfs / mount reporting)</li>
+<li>Backend job-type field on status API</li>
+<li>Removing Copy and switch entirely</li>
+</ul>
+<hr>
+<a id="chapter-187-release-20260710"></a>
+<h2>Chapter 187: Release 2026.07.10</h2>
 <blockquote>
 <p><strong>Overview:</strong> Document the SQLite lock fix in the development book and CHANGELOG, bump version strings to 2026.07.10, regenerate DEVELOPMENT_BOOK.md, then commit, tag, and push the release.</p>
 </blockquote>
@@ -13000,8 +13744,8 @@ git push origin 2026.07.10</code></pre>
     changelog --&gt; versions[version bumps]
     versions --&gt; git[commit tag push]</code></pre>
 <hr>
-<a id="chapter-174-release-20260712b"></a>
-<h2>Chapter 174: Release 2026.07.12b</h2>
+<a id="chapter-188-release-20260712b"></a>
+<h2>Chapter 188: Release 2026.07.12b</h2>
 <blockquote>
 <p><strong>Overview:</strong> Document the month-selectable photo grid feature, bump version strings to 2026.07.12b, regenerate the development book, then commit and tag the release.</p>
 </blockquote>
@@ -13067,8 +13811,8 @@ git tag 2026.07.12b</code></pre>
 <li>Spot-check: <code>/calendar/2016/7?view=month</code> loads month grid; Back returns month cards</li>
 </ul>
 <hr>
-<a id="chapter-175-release-20260714"></a>
-<h2>Chapter 175: Release 2026.07.14</h2>
+<a id="chapter-189-release-20260714"></a>
+<h2>Chapter 189: Release 2026.07.14</h2>
 <blockquote>
 <p><strong>Overview:</strong> Ship the Browse AND intersection work (tags, people, cameras) as release <strong>2026.07.14</strong>: finalize CHANGELOG/README/versions, register plans and rebuild the development book, then commit, tag, and push to origin.</p>
 </blockquote>
@@ -13119,8 +13863,8 @@ git push origin HEAD
 git push origin 2026.07.14</code></pre>
 <p>Push is included so the release is on origin (branch is currently even with <code>origin/main</code>).</p>
 <hr>
-<a id="chapter-176-release-20260714"></a>
-<h2>Chapter 176: Release 2026.07.14</h2>
+<a id="chapter-190-release-20260714"></a>
+<h2>Chapter 190: Release 2026.07.14</h2>
 <blockquote>
 <p><strong>Overview:</strong> Phase 1 (now): fix calendar day 500 from unresolved camera Query default. Phase 2 (after confirm): docs, version bump, commit/tag/push 2026.07.14.</p>
 </blockquote>
@@ -13158,8 +13902,8 @@ if not isinstance(camera, list):
 <h3>Git</h3>
 <p>Commit, tag <code>2026.07.14</code>, push HEAD + tag to origin.</p>
 <hr>
-<a id="chapter-177-review-restore-deletes"></a>
-<h2>Chapter 177: Review restore deletes</h2>
+<a id="chapter-191-review-restore-deletes"></a>
+<h2>Chapter 191: Review restore deletes</h2>
 <blockquote>
 <p><strong>Overview:</strong> Add per-item and bulk Restore for delete decisions on the Review page, reusing the existing <code>cancelReviewDecisions</code> API and <code>PhotoDetail</code> delete-queue mode already used in Inbox.</p>
 </blockquote>
@@ -13252,54 +13996,9 @@ Add under `[Unreleased]` → **Added** in [`CHANGELOG.md`](imageOrganizer/CHANGE
 
 ---
 
-&lt;a id=&quot;chapter-178-separate-kitchen-ledger-agent&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-192-separate-kitchen-ledger-agent&quot;&gt;&lt;/a&gt;
 
-## Chapter 178: Separate Kitchen Ledger agent
-
-&gt; **Overview:** Kitchen Ledger is already a separate git repo on disk. It appears under imageorganizer in Cursor only because this agent chat never successfully switched its workspace root. Fix by moving this agent to `/Users/alex/Documents/github/kitchenLedger`.
-
-## Why it shows under imageorganizer
-
-Cursor’s **Repositories** sidebar groups agent chats by the **workspace root** they started in (or currently own)—not by where files live on disk.
-
-| Layer | Reality |
-|-------|---------|
-| Disk / git | Sibling at [`/Users/alex/Documents/github/kitchenLedger`](/Users/alex/Documents/github/kitchenLedger), remote `https://github.com/aherna04/kitchenLedger` |
-| This agent | Still rooted in [`/Users/alex/Documents/github/imageOrganizer`](/Users/alex/Documents/github/imageOrganizer) |
-
-This chat began in Image Organizer. Early `move_agent_to_root` attempts failed (empty repo / no `origin`). Work continued by writing to the sibling path, so the agent stayed listed under **imageorganizer**.
-
-Nothing is wrong with the Kitchen Ledger codebase layout—only the Cursor agent association.
-
-## Separate it
-
-Call Cursor’s `move_agent_to_root` with:
-
-`rootPath = /Users/alex/Documents/github/kitchenLedger`
-
-That should:
-
-- Retarget this conversation’s workspace to Kitchen Ledger
-- Make new terminals default to that repo
-- Move/show this agent under a **kitchenLedger** (or similarly named) entry in Repositories instead of nested under imageorganizer
-
-`origin/main` now exists, so the earlier move failure mode should no longer apply.
-
-## After the move
-
-- Confirm the sidebar groups this chat with Kitchen Ledger, not Image Organizer
-- Confirm the editor/workspace root is `kitchenLedger`
-- No code, git, or Docker changes required
-
-## If the move UI still looks odd
-
-You can also drag the agent into a new folder via the Repositories “New Folder” control in the sidebar—that only reorganizes the agent list; the `move_agent_to_root` step is what actually changes the workspace.
-
----
-
-&lt;a id=&quot;chapter-179-separate-kitchen-ledger-agent&quot;&gt;&lt;/a&gt;
-
-## Chapter 179: Separate Kitchen Ledger agent
+## Chapter 192: Separate Kitchen Ledger agent
 
 &gt; **Overview:** Kitchen Ledger is already a separate git repo on disk. It appears under imageorganizer in Cursor only because this agent chat never successfully switched its workspace root. Fix by moving this agent to `/Users/alex/Documents/github/kitchenLedger`.
 
@@ -13342,9 +14041,170 @@ You can also drag the agent into a new folder via the Repositories “New Folder
 
 ---
 
-&lt;a id=&quot;chapter-180-show-connections-in-results&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-193-separate-kitchen-ledger-agent&quot;&gt;&lt;/a&gt;
 
-## Chapter 180: Show connections in results
+## Chapter 193: Separate Kitchen Ledger agent
+
+&gt; **Overview:** Kitchen Ledger is already a separate git repo on disk. It appears under imageorganizer in Cursor only because this agent chat never successfully switched its workspace root. Fix by moving this agent to `/Users/alex/Documents/github/kitchenLedger`.
+
+## Why it shows under imageorganizer
+
+Cursor’s **Repositories** sidebar groups agent chats by the **workspace root** they started in (or currently own)—not by where files live on disk.
+
+| Layer | Reality |
+|-------|---------|
+| Disk / git | Sibling at [`/Users/alex/Documents/github/kitchenLedger`](/Users/alex/Documents/github/kitchenLedger), remote `https://github.com/aherna04/kitchenLedger` |
+| This agent | Still rooted in [`/Users/alex/Documents/github/imageOrganizer`](/Users/alex/Documents/github/imageOrganizer) |
+
+This chat began in Image Organizer. Early `move_agent_to_root` attempts failed (empty repo / no `origin`). Work continued by writing to the sibling path, so the agent stayed listed under **imageorganizer**.
+
+Nothing is wrong with the Kitchen Ledger codebase layout—only the Cursor agent association.
+
+## Separate it
+
+Call Cursor’s `move_agent_to_root` with:
+
+`rootPath = /Users/alex/Documents/github/kitchenLedger`
+
+That should:
+
+- Retarget this conversation’s workspace to Kitchen Ledger
+- Make new terminals default to that repo
+- Move/show this agent under a **kitchenLedger** (or similarly named) entry in Repositories instead of nested under imageorganizer
+
+`origin/main` now exists, so the earlier move failure mode should no longer apply.
+
+## After the move
+
+- Confirm the sidebar groups this chat with Kitchen Ledger, not Image Organizer
+- Confirm the editor/workspace root is `kitchenLedger`
+- No code, git, or Docker changes required
+
+## If the move UI still looks odd
+
+You can also drag the agent into a new folder via the Repositories “New Folder” control in the sidebar—that only reorganizes the agent list; the `move_agent_to_root` step is what actually changes the workspace.
+
+---
+
+&lt;a id=&quot;chapter-194-settings-three-column-disks&quot;&gt;&lt;/a&gt;
+
+## Chapter 194: Settings three-column disks
+
+&gt; **Overview:** Postpone Docker free-space reporting. Restructure Settings so Paths &amp; patterns, Update backup, and advanced cutover sit in one responsive three-column row matching the mockup—using horizontal space instead of stacking Paths above Library disks.
+
+# Settings three-column disk management
+
+## Deferred
+
+Docker Desktop free-space misreport (identical media/backup GB) stays **tabled**—no probe fix in this task. Keep showing the numbers; optional one-line note later if needed.
+
+## Goal
+
+Match the mockup: one **Disk and library** band with three columns—
+
+| Paths &amp; patterns | Library disks (Update backup) | One-time full copy / cutover |
+|---|---|---|
+
+instead of Paths full-width above a two-column Library disks block.
+
+## Layout ([`frontend/src/pages/Settings.tsx`](frontend/src/pages/Settings.tsx))
+
+Keep **Storage**, **Quality**, **Display** as full-width sections above (unchanged).
+
+Replace the separate Paths section + Library disks section with:
+</code></pre>
+<p>&lt;section class=&quot;settings-section settings-disk-mgmt&quot;&gt; &lt;h3&gt;Disk and library management&lt;/h3&gt;  &lt;!-- or keep dual titles inside columns --&gt; &lt;div class=&quot;settings-disk-row&quot;&gt; &lt;div&gt;&lt;!-- Paths &amp; patterns fields + Save --&gt;&lt;/div&gt; &lt;div&gt;&lt;!-- disk free, warnings, Update backup --&gt;&lt;/div&gt; &lt;div class=&quot;settings-advanced-panel&quot;&gt;&lt;!-- cutover content always visible --&gt;&lt;/div&gt; &lt;/div&gt; &lt;/section&gt;</p>
+<pre><code>
+Details:
+
+- **Left:** move existing Paths &amp; patterns content (library root, catalog, inbox/archive/trash, patterns, Save).
+- **Middle:** Library disks intro + disk free + Update backup (current primary column).
+- **Right:** advanced cutover as a **panel** (bordered), not a collapsed `&lt;details&gt;`—content is already “advanced”; accordion wastes the column. Same fields/checkboxes/Copy and switch.
+- **Native** (`!paths_from_env`): two columns—Paths | Migrate to a new drive (no Update backup column).
+
+## CSS ([`frontend/src/index.css`](frontend/src/index.css))
+
+- `.settings-disk-row`: `display: grid; gap: 1.5rem; grid-template-columns: 1fr;`  
+  - `@media (min-width: 1100px) { grid-template-columns: 1fr 1fr 1fr; }`  
+  - `@media (min-width: 700px) and (max-width: 1099px) { grid-template-columns: 1fr 1fr; }` (Paths full row or Paths+Update, Advanced wraps—prefer Paths spans full on mid, then Update|Advanced; simpler: stack until 1100px then 3-col).
+- Concrete breakpoint choice: **&amp;lt;900px** single column; **≥900px** three equal columns (accept tighter mid-width; mockup is desktop-first).
+- `.settings-advanced-panel`: light border, padding, `min-width: 0`; remove reliance on `&lt;details&gt;` for Docker.
+- Keep `.settings-page { padding-bottom: 3rem; }`.
+- Column `.settings-grid { max-width: none; }`.
+
+## Docs
+
+CHANGELOG Unreleased Changed: Settings disk management three-column layout.
+
+## Out of scope
+
+- Fixing Docker `statvfs` free-space numbers
+- Redesigning Storage / Quality / Display
+- New backend fields
+
+---
+
+&lt;a id=&quot;chapter-195-settings-three-column-disks&quot;&gt;&lt;/a&gt;
+
+## Chapter 195: Settings three-column disks
+
+&gt; **Overview:** Postpone Docker free-space reporting. Restructure Settings so Paths &amp; patterns, Update backup, and advanced cutover sit in one responsive three-column row matching the mockup—using horizontal space instead of stacking Paths above Library disks.
+
+# Settings three-column disk management
+
+## Deferred
+
+Docker Desktop free-space misreport (identical media/backup GB) stays **tabled**—no probe fix in this task. Keep showing the numbers; optional one-line note later if needed.
+
+## Goal
+
+Match the mockup: one **Disk and library** band with three columns—
+
+| Paths &amp; patterns | Library disks (Update backup) | One-time full copy / cutover |
+|---|---|---|
+
+instead of Paths full-width above a two-column Library disks block.
+
+## Layout ([`frontend/src/pages/Settings.tsx`](frontend/src/pages/Settings.tsx))
+
+Keep **Storage**, **Quality**, **Display** as full-width sections above (unchanged).
+
+Replace the separate Paths section + Library disks section with:
+</code></pre>
+<p>&lt;section class=&quot;settings-section settings-disk-mgmt&quot;&gt; &lt;h3&gt;Disk and library management&lt;/h3&gt;  &lt;!-- or keep dual titles inside columns --&gt; &lt;div class=&quot;settings-disk-row&quot;&gt; &lt;div&gt;&lt;!-- Paths &amp; patterns fields + Save --&gt;&lt;/div&gt; &lt;div&gt;&lt;!-- disk free, warnings, Update backup --&gt;&lt;/div&gt; &lt;div class=&quot;settings-advanced-panel&quot;&gt;&lt;!-- cutover content always visible --&gt;&lt;/div&gt; &lt;/div&gt; &lt;/section&gt;</p>
+<pre><code>
+Details:
+
+- **Left:** move existing Paths &amp; patterns content (library root, catalog, inbox/archive/trash, patterns, Save).
+- **Middle:** Library disks intro + disk free + Update backup (current primary column).
+- **Right:** advanced cutover as a **panel** (bordered), not a collapsed `&lt;details&gt;`—content is already “advanced”; accordion wastes the column. Same fields/checkboxes/Copy and switch.
+- **Native** (`!paths_from_env`): two columns—Paths | Migrate to a new drive (no Update backup column).
+
+## CSS ([`frontend/src/index.css`](frontend/src/index.css))
+
+- `.settings-disk-row`: `display: grid; gap: 1.5rem; grid-template-columns: 1fr;`  
+  - `@media (min-width: 1100px) { grid-template-columns: 1fr 1fr 1fr; }`  
+  - `@media (min-width: 700px) and (max-width: 1099px) { grid-template-columns: 1fr 1fr; }` (Paths full row or Paths+Update, Advanced wraps—prefer Paths spans full on mid, then Update|Advanced; simpler: stack until 1100px then 3-col).
+- Concrete breakpoint choice: **&amp;lt;900px** single column; **≥900px** three equal columns (accept tighter mid-width; mockup is desktop-first).
+- `.settings-advanced-panel`: light border, padding, `min-width: 0`; remove reliance on `&lt;details&gt;` for Docker.
+- Keep `.settings-page { padding-bottom: 3rem; }`.
+- Column `.settings-grid { max-width: none; }`.
+
+## Docs
+
+CHANGELOG Unreleased Changed: Settings disk management three-column layout.
+
+## Out of scope
+
+- Fixing Docker `statvfs` free-space numbers
+- Redesigning Storage / Quality / Display
+- New backend fields
+
+---
+
+&lt;a id=&quot;chapter-196-show-connections-in-results&quot;&gt;&lt;/a&gt;
+
+## Chapter 196: Show connections in results
 
 &gt; **Overview:** Surface stop count on each flight result and show one airport icon per connection in the All Options table.
 
@@ -13373,9 +14233,9 @@ Layover airport codes are not in the current provider payload — icons are gene
 
 ---
 
-&lt;a id=&quot;chapter-181-show-connections-in-results&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-197-show-connections-in-results&quot;&gt;&lt;/a&gt;
 
-## Chapter 181: Show connections in results
+## Chapter 197: Show connections in results
 
 &gt; **Overview:** Surface stop count on each flight result and show one airport icon per connection in the All Options table.
 
@@ -13404,9 +14264,9 @@ Layover airport codes are not in the current provider payload — icons are gene
 
 ---
 
-&lt;a id=&quot;chapter-182-slim-inbox-delete-refetch&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-198-slim-inbox-delete-refetch&quot;&gt;&lt;/a&gt;
 
-## Chapter 182: Slim inbox delete refetch
+## Chapter 198: Slim inbox delete refetch
 
 &gt; **Overview:** Mark-delete does not need the full invalidateAfterReviewChange burst. Narrow that helper so Inbox only refetches what a delete decision actually changes.
 
@@ -13451,38 +14311,9 @@ Mark delete in Inbox detail → logs show files + pending_delete count + review-
 
 ---
 
-&lt;a id=&quot;chapter-183-sticky-search-form&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-199-sticky-search-form&quot;&gt;&lt;/a&gt;
 
-## Chapter 183: Sticky search form
-
-&gt; **Overview:** Make the search form card stick below the header while scrolling so results move underneath and the form stays on screen.
-
-## Goal
-
-Keep the search form visible while scrolling results. Header is already `sticky top-0` ([`Header.tsx`](src/components/layout/Header.tsx), `h-16`). Form should stick just below it.
-
-## Change
-
-Update [`SearchWidget.tsx`](src/components/search/SearchWidget.tsx):
-</code></pre>
-<p>&lt;div className=&quot;sticky top-16 z-40 -mt-24 mx-auto max-w-4xl px-4 sm:px-6&quot;&gt; &lt;div className=&quot;rounded-2xl border ... bg-[var(--bg-surface)] ... backdrop-blur-xl ...&quot;&gt; {children} &lt;/div&gt; &lt;/div&gt;</p>
-<pre><code>
-- `sticky top-16` — pins under the 64px header
-- `z-40` — above results (`ResultsSection`), below header (`z-50`)
-- Keep existing card styles and `-mt-24` hero overlap
-- No layout rewrite of [`page.tsx`](src/app/page.tsx); results continue to scroll in normal document flow
-
-Airport autocomplete (`z-50` inside the form) remains usable in the sticky stacking context.
-
-## Verify
-
-Run a search with many results, scroll down — form stays under the nav; price list scrolls.
-
----
-
-&lt;a id=&quot;chapter-184-sticky-search-form&quot;&gt;&lt;/a&gt;
-
-## Chapter 184: Sticky search form
+## Chapter 199: Sticky search form
 
 &gt; **Overview:** Make the search form card stick below the header while scrolling so results move underneath and the form stays on screen.
 
@@ -13509,9 +14340,38 @@ Run a search with many results, scroll down — form stays under the nav; price 
 
 ---
 
-&lt;a id=&quot;chapter-185-throttle-inbox-scan-refetch&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-200-sticky-search-form&quot;&gt;&lt;/a&gt;
 
-## Chapter 185: Throttle inbox scan refetch
+## Chapter 200: Sticky search form
+
+&gt; **Overview:** Make the search form card stick below the header while scrolling so results move underneath and the form stays on screen.
+
+## Goal
+
+Keep the search form visible while scrolling results. Header is already `sticky top-0` ([`Header.tsx`](src/components/layout/Header.tsx), `h-16`). Form should stick just below it.
+
+## Change
+
+Update [`SearchWidget.tsx`](src/components/search/SearchWidget.tsx):
+</code></pre>
+<p>&lt;div className=&quot;sticky top-16 z-40 -mt-24 mx-auto max-w-4xl px-4 sm:px-6&quot;&gt; &lt;div className=&quot;rounded-2xl border ... bg-[var(--bg-surface)] ... backdrop-blur-xl ...&quot;&gt; {children} &lt;/div&gt; &lt;/div&gt;</p>
+<pre><code>
+- `sticky top-16` — pins under the 64px header
+- `z-40` — above results (`ResultsSection`), below header (`z-50`)
+- Keep existing card styles and `-mt-24` hero overlap
+- No layout rewrite of [`page.tsx`](src/app/page.tsx); results continue to scroll in normal document flow
+
+Airport autocomplete (`z-50` inside the form) remains usable in the sticky stacking context.
+
+## Verify
+
+Run a search with many results, scroll down — form stays under the nav; price list scrolls.
+
+---
+
+&lt;a id=&quot;chapter-201-throttle-inbox-scan-refetch&quot;&gt;&lt;/a&gt;
+
+## Chapter 201: Throttle inbox scan refetch
 
 &gt; **Overview:** Stop reloading the full Inbox grid every few seconds during a scan. Keep lightweight status polling; refresh the grid once when the scan finishes (plus a much rarer mid-scan update if useful).
 
@@ -13570,9 +14430,9 @@ Same component handles trash: remove mid-scan trash list refetch; completion eff
 
 ---
 
-&lt;a id=&quot;chapter-186-trash-view-and-restore&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-202-trash-view-and-restore&quot;&gt;&lt;/a&gt;
 
-## Chapter 186: Trash view and restore
+## Chapter 202: Trash view and restore
 
 &gt; **Overview:** Add a Trash page listing files in `.trash/`, with scan and restore back to the original location (from operations log). Requires soft-delete in apply (keep DB rows with location=trash) plus a small schema migration and new API endpoints.
 
@@ -13690,50 +14550,9 @@ Minimal — reuse `.page-header`, `.photo-grid`, toolbar pattern from [`Blurry.t
 
 ---
 
-&lt;a id=&quot;chapter-187-update-cursor-book-submodule&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-203-update-cursor-book-submodule&quot;&gt;&lt;/a&gt;
 
-## Chapter 187: Update cursor-book submodule
-
-&gt; **Overview:** Bump imageOrganizer’s `tools/cursor-book` submodule to cursor-book v1.0.0 (HTML sibling output), regenerate the development book so `docs/DEVELOPMENT_BOOK.html` is committed, and sync the local skill for dual output.
-
-# Pull cursor-book update for the next book
-
-## What’s new upstream
-
-[`tools/cursor-book`](imageOrganizer/tools/cursor-book) is pinned at `36026cf`. Remote `main` / tag **`v1.0.0`** is at `7a276ef`:
-
-- Builder always writes a sibling **HTML** book next to the markdown (`output` → `.html`, or optional `output_html`)
-- Skill/README updated for dual commit (`DEVELOPMENT_BOOK.md` + `.html`)
-
-An untracked [`docs/DEVELOPMENT_BOOK.html`](imageOrganizer/docs/DEVELOPMENT_BOOK.html) already exists locally from a prior run; it is not in git yet.
-
-## Steps
-
-1. **Bump submodule** to `v1.0.0` (or `origin/main` — same commit):
-</code></pre>
-<p>cd tools/cursor-book &amp;&amp; git fetch origin &amp;&amp; git checkout v1.0.0 cd ../.. &amp;&amp; git add tools/cursor-book</p>
-<pre><code>
-2. **Optional config** — set `&quot;output_html&quot;: &quot;docs/DEVELOPMENT_BOOK.html&quot;` in [`book.json`](imageOrganizer/book.json) to match the schema example (default already derives this from `output`).
-
-3. **Rebuild** via [`scripts/build_development_book.py`](imageOrganizer/scripts/build_development_book.py); expect both:
-
-   - `Wrote …/docs/DEVELOPMENT_BOOK.md`
-   - `Wrote …/docs/DEVELOPMENT_BOOK.html`
-
-4. **Sync consumer skill** — update [`.cursor/skills/development-book/SKILL.md`](imageOrganizer/.cursor/skills/development-book/SKILL.md) to mention committing both `.md` and `.html` (align with `tools/cursor-book/skills/development-book/SKILL.md`).
-
-5. **Commit** submodule pointer + regenerated books + skill (no app version bump / release unless you ask later — this is tooling for the next book).
-
-## Out of scope
-
-- Cutting `2026.07.23a` / a new app release
-- Changing ARCHITECTURE primary link away from the markdown book
-
----
-
-&lt;a id=&quot;chapter-188-update-cursor-book-submodule&quot;&gt;&lt;/a&gt;
-
-## Chapter 188: Update cursor-book submodule
+## Chapter 203: Update cursor-book submodule
 
 &gt; **Overview:** Bump imageOrganizer’s `tools/cursor-book` submodule to cursor-book v1.0.0 (HTML sibling output), regenerate the development book so `docs/DEVELOPMENT_BOOK.html` is committed, and sync the local skill for dual output.
 
@@ -13772,38 +14591,50 @@ An untracked [`docs/DEVELOPMENT_BOOK.html`](imageOrganizer/docs/DEVELOPMENT_BOOK
 
 ---
 
-&lt;a id=&quot;chapter-189-view-skin-full-bleed&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-204-update-cursor-book-submodule&quot;&gt;&lt;/a&gt;
 
-## Chapter 189: View skin full bleed
+## Chapter 204: Update cursor-book submodule
 
-&gt; **Overview:** Remove the black frame around view-skin backgrounds by zeroing `.main` padding when a skin is active and restoring that padding on `.main-foreground` so content spacing is unchanged.
+&gt; **Overview:** Bump imageOrganizer’s `tools/cursor-book` submodule to cursor-book v1.0.0 (HTML sibling output), regenerate the development book so `docs/DEVELOPMENT_BOOK.html` is committed, and sync the local skill for dual output.
 
-# View skin full-bleed to left rail
+# Pull cursor-book update for the next book
 
-## Cause
+## What’s new upstream
 
-[`.main`](frontend/src/index.css) uses `padding: 1.5rem 2rem`. [`ViewSkin`](frontend/src/components/ViewSkin.tsx) is a grid child of `.main`, so the skin is inset from the sidebar and top of the viewport. Body/main `#0f1117` shows through as the black border on every chrome page when a skin is on.
+[`tools/cursor-book`](imageOrganizer/tools/cursor-book) is pinned at `36026cf`. Remote `main` / tag **`v1.0.0`** is at `7a276ef`:
 
-Home already sets `.app-shell--home .main { padding: 0 }` and is fine.
+- Builder always writes a sibling **HTML** book next to the markdown (`output` → `.html`, or optional `output_html`)
+- Skill/README updated for dual commit (`DEVELOPMENT_BOOK.md` + `.html`)
 
-## Fix (CSS only)
+An untracked [`docs/DEVELOPMENT_BOOK.html`](imageOrganizer/docs/DEVELOPMENT_BOOK.html) already exists locally from a prior run; it is not in git yet.
 
-In [`frontend/src/index.css`](frontend/src/index.css), next to the view-skin rules (~2832):
+## Steps
 
-When either skin motion class is present (set in [`App.tsx`](frontend/src/App.tsx) whenever a non-`off` style is active):
+1. **Bump submodule** to `v1.0.0` (or `origin/main` — same commit):
 </code></pre>
-<p>.app-shell--skin-scroll .main, .app-shell--skin-fixed .main { padding: 0; }</p>
-<p>.app-shell--skin-scroll .main-foreground, .app-shell--skin-fixed .main-foreground { padding: 1.5rem 2rem; }</p>
+<p>cd tools/cursor-book &amp;&amp; git fetch origin &amp;&amp; git checkout v1.0.0 cd ../.. &amp;&amp; git add tools/cursor-book</p>
 <pre><code>
-Skin stays absolute/sticky covering the full main pane flush to the left rail and top; page content keeps the same inset.
+2. **Optional config** — set `&quot;output_html&quot;: &quot;docs/DEVELOPMENT_BOOK.html&quot;` in [`book.json`](imageOrganizer/book.json) to match the schema example (default already derives this from `output`).
 
-No component changes. No ARCHITECTURE update (styling only). Add a one-line Fixed bullet under `## [Unreleased]` in [`CHANGELOG.md`](CHANGELOG.md).
+3. **Rebuild** via [`scripts/build_development_book.py`](imageOrganizer/scripts/build_development_book.py); expect both:
+
+   - `Wrote …/docs/DEVELOPMENT_BOOK.md`
+   - `Wrote …/docs/DEVELOPMENT_BOOK.html`
+
+4. **Sync consumer skill** — update [`.cursor/skills/development-book/SKILL.md`](imageOrganizer/.cursor/skills/development-book/SKILL.md) to mention committing both `.md` and `.html` (align with `tools/cursor-book/skills/development-book/SKILL.md`).
+
+5. **Commit** submodule pointer + regenerated books + skill (no app version bump / release unless you ask later — this is tooling for the next book).
+
+## Out of scope
+
+- Cutting `2026.07.23a` / a new app release
+- Changing ARCHITECTURE primary link away from the markdown book
 
 ---
 
-&lt;a id=&quot;chapter-190-widen-content-max-width&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-205-widen-content-max-width&quot;&gt;&lt;/a&gt;
 
-## Chapter 190: Widen content max-width
+## Chapter 205: Widen content max-width
 
 &gt; **Overview:** Widen the search form and results column from max-w-4xl to max-w-6xl so large screens use more horizontal space, matching the header width.
 
@@ -13828,9 +14659,9 @@ On a wide viewport, form and “All Options” table span roughly the same width
 
 ---
 
-&lt;a id=&quot;chapter-191-widen-content-max-width&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-206-widen-content-max-width&quot;&gt;&lt;/a&gt;
 
-## Chapter 191: Widen content max-width
+## Chapter 206: Widen content max-width
 
 &gt; **Overview:** Widen the search form and results column from max-w-4xl to max-w-6xl so large screens use more horizontal space, matching the header width.
 

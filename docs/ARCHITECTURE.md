@@ -26,7 +26,7 @@ flowchart TB
   Media --> Catalog[.imageOrganizer/]
 ```
 
-In Docker, the frontend dev server proxies `/api` to the backend. Host media is mounted via `docker-compose.yml` (`MEDIA_HOST_PATH` → `/media`); catalog defaults to `/media/.imageOrganizer`.
+In Docker, the frontend dev server proxies `/api` to the backend. Host media is mounted via `docker-compose.yml` (`MEDIA_HOST_PATH` → `/media`); catalog defaults to `/media/.imageOrganizer`. Optional migrate destination: `BACKUP_MEDIA_HOST_PATH` → `/media-backup` (placeholder `./.docker-unused-backup` when unset).
 
 ## Tech stack
 
@@ -147,8 +147,14 @@ Environment / bootstrap (resolve order: **env →** `~/.config/imageOrganizer/bo
 
 - `MEDIA_ROOT` — library root (default `/Users/alex/Media`, `/media` in Docker)
 - `APP_DATA_DIR` — catalog (default `{MEDIA_ROOT}/.imageOrganizer`)
+- `BACKUP_MEDIA_ROOT` / `BACKUP_MEDIA_HOST_PATH` — optional Docker second mount for library copy (`/media-backup`); exposed on `GET /api/config` as `backup_media_root`, `backup_media_host_path`, `backup_media_ready`
+- Disk health on `GET /api/config`: `media_disk`, `backup_disk`, `container_root_disk` (statvfs free/total/used), `container_disk_low` when Docker rootfs free is under 2GiB or under 5%, and `disk_free_unreliable` when media and backup mounts report identical free/total despite different host paths (Docker Desktop bind-mount quirk)
 
-**Migrate to another drive:** copy the whole `{MEDIA_ROOT}` tree, run `python backend/scripts/migrate_library.py --from OLD --to NEW` if stored paths change, then point `MEDIA_ROOT` / bootstrap at the new root (or use Settings → **Move library**). Docker installs that keep DB paths as `/media/...` often only need a new `MEDIA_HOST_PATH`.
+**Migrate to a larger drive:** Settings → **Copy library to new drive** copies `inbox/`, `photos/`, `.trash/`, and `.imageOrganizer/` to a new root, verifies file counts/bytes, optionally rewrites absolute paths in the **new** catalog (`rewrite_paths`, default true), writes `bootstrap.json`, and leaves `{old}/LIBRARY_COPIED_TO.txt` on the original (untouched backup). Restart required. Checkbox **Paths already copied** skips the file copy (rewrite + bootstrap only). Preflight checks destination free space (library size + 5% margin).
+
+**Docker cutover:** mount the new host folder with `BACKUP_MEDIA_HOST_PATH`, copy `/media` → `/media-backup` with `rewrite_paths: false` so DB paths stay `/media/...`, then swap `MEDIA_HOST_PATH` to that host path (optionally keep `BACKUP_MEDIA_HOST_PATH` on the old disk for ongoing sync), and recreate. Destination must be the backup bind mount — other paths are rejected so a bad copy cannot fill the container overlay.
+
+**Update backup:** `POST /api/library/backup-sync` incrementally copies new/changed files (size+mtime) from `MEDIA_ROOT` → `BACKUP_MEDIA_ROOT`; skips unchanged; does not delete orphans; no path rewrite or restart. Shares progress with `GET /api/library/move/status`. Offline companion: `python backend/scripts/migrate_library.py --from OLD --to NEW` (rewrite-only on an already-copied catalog).
 
 Supported media: common image formats (JPEG, PNG, HEIC, WebP, TIFF) and video (MP4, MOV, MKV, WebM, AVI).
 
@@ -277,7 +283,8 @@ Grouped by domain. See `/docs` for parameters and schemas.
 | Group | Endpoints |
 |-------|-----------|
 | Health | `GET /api/health` |
-| Config | `GET/PATCH /api/config` |
+| Config | `GET/PATCH /api/config` (backup mount status + disk free-space probes when Docker) |
+| Library migrate | `POST /api/library/move` (copy+verify; `rewrite_only`; `rewrite_paths`), `POST /api/library/backup-sync` (incremental update), `GET /api/library/move/status` (progress) |
 | Database backup | `POST /api/database/backup`, `GET /api/database/backups` |
 | Mosaic | `POST /api/mosaic/preview`, `POST /api/mosaic/generate`, `GET /api/mosaic/output/{filename}` |
 | Scan | `POST /api/scan/inbox`, `/archive`, `/trash`, `GET /api/scan/status` |

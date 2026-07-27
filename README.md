@@ -1,6 +1,6 @@
 # Image Organizer
 
-**Version:** 2026.07.26a — see [CHANGELOG.md](CHANGELOG.md)
+**Version:** 2026.07.26b — see [CHANGELOG.md](CHANGELOG.md)
 
 Architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
@@ -32,9 +32,30 @@ Open **http://localhost:5173**
 
 Default `MEDIA_ROOT` is `/Users/alex/Media` (Docker: `/media` via `MEDIA_HOST_PATH`).
 
-Override catalog location with `APP_DATA_DIR` (e.g. fast SSD) while keeping media on a large disk. Settings shows the resolved library/catalog paths and can **Move library** to a new root (copy + path rewrite; restart required).
+Override catalog location with `APP_DATA_DIR` (e.g. fast SSD) while keeping media on a large disk. Settings shows the resolved library/catalog paths.
 
-Cold migrate CLI: `python backend/scripts/migrate_library.py --from OLD --to NEW` (see script help). On first start, a legacy `~/.imageOrganizer` catalog is relocated into `{MEDIA_ROOT}/.imageOrganizer` when the co-located path is empty.
+### Migrate to a larger drive
+
+**Native (non-Docker):**
+
+1. **Settings → Copy library to new drive** — enter the new media root, click **Copy and switch**.
+2. Wait for copy + verify (progress shown). The original root is left in place as a backup (`LIBRARY_COPIED_TO.txt` marks it).
+3. Restart the backend.
+4. If you already copied with Finder/`cp -a`, check **Paths already copied — only rewrite catalog and switch**, or run:
+   `python backend/scripts/migrate_library.py --from OLD --to NEW --write-bootstrap`
+
+**Docker (two-mount cutover):** the container cannot write to a host path unless it is bind-mounted.
+
+1. Set `BACKUP_MEDIA_HOST_PATH` in `.env` to the new drive folder (see `.env.example`).
+2. `docker compose up -d --force-recreate backend` — mounts it at `/media-backup`.
+3. Settings shows your **host** destination (`BACKUP_MEDIA_HOST_PATH`) and copies via the container mount **`/media-backup`**. Leave path rewrite unchecked so catalog paths stay `/media/...`.
+4. Set `MEDIA_HOST_PATH` to that same host path; keep or set `BACKUP_MEDIA_HOST_PATH` to the old disk if you want an ongoing second copy, then recreate. The new disk is now `/media`.
+
+**Update backup (after cutover):** Settings → **Update backup** incrementally copies new/changed files (and catalog) from live `/media` → `/media-backup`. Skips unchanged files; does not delete extras on the backup; no restart.
+
+Settings shows free space on media/backup mounts and Docker root, warns when Docker disk is low, and blocks copy if the backup mount is missing or too small. Preflight rejects non-mounted destinations (they would fill the container overlay and Docker Desktop disk). Do not enter a host `/Volumes/...` path as the copy target inside Docker — that path is only for `.env`.
+
+Cold migrate CLI alone does not copy files — only rewrites paths in the new catalog. On first start, a legacy `~/.imageOrganizer` catalog is relocated into `{MEDIA_ROOT}/.imageOrganizer` when the co-located path is empty.
 
 ## Workflow
 

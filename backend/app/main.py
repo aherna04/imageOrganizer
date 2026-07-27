@@ -15,7 +15,17 @@ from app.config import (
     media_type_for_suffix,
     mime_type_for_path,
 )
-from app.library_migrate import library_move_state, start_library_move_background
+from app.library_migrate import (
+    backup_media_host_path,
+    backup_media_ready,
+    backup_media_root,
+    library_move_state,
+    media_host_path,
+    migrate_disk_status,
+    paths_from_env,
+    start_backup_sync_background,
+    start_library_move_background,
+)
 from app.db import get_config, get_conn, get_file_events, init_db, row_to_dict, update_config, file_list_order_clause
 from app.dedupe import dismiss_duplicate_member, get_duplicate_groups
 from app.inbox_filters import (
@@ -114,7 +124,7 @@ from app.scanner import combined_scan_status, scan_state, start_scan_background
 from app.blur_analysis import blur_analysis_state, start_blur_analysis_background
 from app.trash_restore import restore_from_trash
 
-app = FastAPI(title="Image Organizer", version="2026.07.26a")
+app = FastAPI(title="Image Organizer", version="2026.07.26b")
 
 app.add_middleware(
     CORSMiddleware,
@@ -195,15 +205,31 @@ def _file_out(conn, row, cfg: dict | None = None) -> FileOut:
     )
 
 
-@app.get("/api/config", response_model=ConfigOut)
-def api_get_config():
-    with get_conn() as conn:
-        cfg = get_config(conn)
+def _config_out(cfg: dict) -> ConfigOut:
+    backup_root = backup_media_root()
+    disks = migrate_disk_status(MEDIA_ROOT)
     return ConfigOut(
         **cfg,
         media_root=str(MEDIA_ROOT),
         app_data_dir=str(APP_DATA_DIR),
+        paths_from_env=paths_from_env(),
+        backup_media_root=str(backup_root) if backup_root else None,
+        backup_media_host_path=backup_media_host_path(),
+        backup_media_ready=backup_media_ready(backup_root),
+        media_host_path=media_host_path(),
+        media_disk=disks["media_disk"],
+        backup_disk=disks["backup_disk"],
+        container_root_disk=disks["container_root_disk"],
+        container_disk_low=disks["container_disk_low"],
+        disk_free_unreliable=disks["disk_free_unreliable"],
     )
+
+
+@app.get("/api/config", response_model=ConfigOut)
+def api_get_config():
+    with get_conn() as conn:
+        cfg = get_config(conn)
+    return _config_out(cfg)
 
 
 @app.patch("/api/config", response_model=ConfigOut)
@@ -212,11 +238,7 @@ def api_update_config(body: ConfigUpdate):
     with get_conn() as conn:
         cfg = update_config(conn, updates)
     ensure_media_dirs()
-    return ConfigOut(
-        **cfg,
-        media_root=str(MEDIA_ROOT),
-        app_data_dir=str(APP_DATA_DIR),
-    )
+    return _config_out(cfg)
 
 
 @app.post("/api/library/move", response_model=LibraryMoveStatusOut)
@@ -232,16 +254,48 @@ def api_library_move(body: LibraryMoveRequest):
     if dedupe_state.snapshot()["running"]:
         raise HTTPException(409, "Duplicate index rebuild already running")
     if library_move_state.snapshot()["running"]:
-        raise HTTPException(409, "Library move already running")
+        raise HTTPException(409, "Library copy already running")
 
     new_root = Path(body.new_media_root).expanduser()
-    if not start_library_move_background(MEDIA_ROOT, new_root):
-        raise HTTPException(409, "Library move already running")
+    if not start_library_move_background(
+        MEDIA_ROOT,
+        new_root,
+        rewrite_only=body.rewrite_only,
+        rewrite_paths=body.rewrite_paths,
+    ):
+        raise HTTPException(409, "Library copy already running")
     return LibraryMoveStatusOut(**library_move_state.snapshot())
 
 
 @app.get("/api/library/move/status", response_model=LibraryMoveStatusOut)
 def api_library_move_status():
+    return LibraryMoveStatusOut(**library_move_state.snapshot())
+
+
+@app.post("/api/library/backup-sync", response_model=LibraryMoveStatusOut)
+def api_library_backup_sync():
+    """Incrementally copy new/changed files from MEDIA_ROOT to the backup mount."""
+    from app.blur_analysis import blur_analysis_state
+    from app.dedupe import dedupe_state
+    from app.scanner import scan_state
+
+    if scan_state.snapshot()["running"]:
+        raise HTTPException(409, "Scan already running")
+    if blur_analysis_state.snapshot()["running"]:
+        raise HTTPException(409, "Sharpness analysis already running")
+    if dedupe_state.snapshot()["running"]:
+        raise HTTPException(409, "Duplicate index rebuild already running")
+    if library_move_state.snapshot()["running"]:
+        raise HTTPException(409, "Library copy or backup update already running")
+
+    backup = backup_media_root()
+    if backup is None or not backup_media_ready(backup):
+        raise HTTPException(
+            400,
+            "Backup mount is not ready. Set BACKUP_MEDIA_HOST_PATH and recreate the backend.",
+        )
+    if not start_backup_sync_background(MEDIA_ROOT, backup):
+        raise HTTPException(409, "Library copy or backup update already running")
     return LibraryMoveStatusOut(**library_move_state.snapshot())
 
 

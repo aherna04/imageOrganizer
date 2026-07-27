@@ -74,6 +74,23 @@ export interface Config {
   view_skin_interval_sec: string;
   media_root?: string | null;
   app_data_dir?: string | null;
+  paths_from_env?: boolean;
+  backup_media_root?: string | null;
+  backup_media_host_path?: string | null;
+  backup_media_ready?: boolean;
+  media_host_path?: string | null;
+  media_disk?: DiskUsage | null;
+  backup_disk?: DiskUsage | null;
+  container_root_disk?: DiskUsage | null;
+  container_disk_low?: boolean;
+  disk_free_unreliable?: boolean;
+}
+
+export interface DiskUsage {
+  path: string;
+  total_bytes: number;
+  free_bytes: number;
+  used_bytes: number;
 }
 
 export interface LibraryMoveStatus {
@@ -82,6 +99,11 @@ export interface LibraryMoveStatus {
   error: string | null;
   done: boolean;
   restart_required: boolean;
+  phase?: string | null;
+  copied_files?: number | null;
+  total_files?: number | null;
+  copied_bytes?: number | null;
+  total_bytes?: number | null;
 }
 
 export interface StorageStats {
@@ -321,12 +343,14 @@ export const api = {
   updateConfig: (data: Partial<Config>) =>
     request<Config>("/api/config", { method: "PATCH", body: JSON.stringify(data) }),
 
-  moveLibrary: (new_media_root: string) =>
+  moveLibrary: (new_media_root: string, rewrite_only = false, rewrite_paths = true) =>
     request<LibraryMoveStatus>("/api/library/move", {
       method: "POST",
-      body: JSON.stringify({ new_media_root }),
+      body: JSON.stringify({ new_media_root, rewrite_only, rewrite_paths }),
     }),
   moveLibraryStatus: () => request<LibraryMoveStatus>("/api/library/move/status"),
+  updateBackup: () =>
+    request<LibraryMoveStatus>("/api/library/backup-sync", { method: "POST" }),
 
   scanInbox: () => request<{ ok: boolean }>("/api/scan/inbox", { method: "POST" }),
   scanArchive: () => request<{ ok: boolean }>("/api/scan/archive", { method: "POST" }),

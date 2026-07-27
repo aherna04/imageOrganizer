@@ -4,6 +4,13 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 
+class DiskUsageOut(BaseModel):
+    path: str
+    total_bytes: int
+    free_bytes: int
+    used_bytes: int
+
+
 class ConfigOut(BaseModel):
     inbox_path: str
     archive_path: str
@@ -18,6 +25,16 @@ class ConfigOut(BaseModel):
     view_skin_interval_sec: str = "28"
     media_root: str | None = None
     app_data_dir: str | None = None
+    paths_from_env: bool = False
+    backup_media_root: str | None = None
+    backup_media_host_path: str | None = None
+    backup_media_ready: bool = False
+    media_host_path: str | None = None
+    media_disk: DiskUsageOut | None = None
+    backup_disk: DiskUsageOut | None = None
+    container_root_disk: DiskUsageOut | None = None
+    container_disk_low: bool = False
+    disk_free_unreliable: bool = False
 
 
 class ConfigUpdate(BaseModel):
@@ -36,6 +53,9 @@ class ConfigUpdate(BaseModel):
 
 class LibraryMoveRequest(BaseModel):
     new_media_root: str = Field(..., min_length=1)
+    rewrite_only: bool = False
+    # When False (Docker cutover to /media-backup), keep /media/... paths in the copied DB.
+    rewrite_paths: bool = True
 
 
 class LibraryMoveStatusOut(BaseModel):
@@ -44,6 +64,11 @@ class LibraryMoveStatusOut(BaseModel):
     error: str | None = None
     done: bool = False
     restart_required: bool = False
+    phase: str | None = None
+    copied_files: int | None = None
+    total_files: int | None = None
+    copied_bytes: int | None = None
+    total_bytes: int | None = None
 
 
 class StorageStatsOut(BaseModel):

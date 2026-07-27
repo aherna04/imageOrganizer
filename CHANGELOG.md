@@ -4,6 +4,25 @@ Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
 ## [Unreleased]
 
+## [2026.07.26b] - 2026-07-26
+
+### Added
+
+- Settings **Copy library to new drive** — full media+catalog copy with progress, post-copy verify, optional rewrite-only switch, and `LIBRARY_COPIED_TO.txt` backup marker on the original root
+- Docker optional `BACKUP_MEDIA_HOST_PATH` → `/media-backup` for migrate; Settings prefills container path, shows host mapping, blocks when mount missing; Docker cutover skips path rewrite so catalog stays `/media/...`
+- Migrate disk health on config: media/backup/Docker-root free space, `container_disk_low` warning; Docker copy destination locked to `/media-backup` with preflight allowlist and free-space check
+- Settings **Update backup** — incremental sync of new/changed media+catalog to `BACKUP_MEDIA_HOST_PATH` (no delete orphans, no restart)
+
+### Changed
+
+- Library migrate UI renamed from “Move library”; clearer messaging that the original stays as a backup (restart still required; Docker cutover swaps `MEDIA_HOST_PATH` after copy)
+- Docker migrate Settings: destination shows the host `BACKUP_MEDIA_HOST_PATH` first, with `/media-backup` labeled as the in-container mount (not an .env key); native field labeled “Destination folder”
+- Settings **Library disks** relayout: Update backup primary; one-time Copy and switch under advanced details; job status scoped to the action that ran
+- Settings Library disks: Update backup and advanced cutover side-by-side on wide screens; page bottom padding
+- Settings **Disk and library management**: Paths, Update backup, and advanced cutover in a three-column row on wide screens
+- Settings advanced cutover collapsed by default (`<details>`; opens when backup mount is missing)
+- Disk free in Settings shows host paths; `disk_free_unreliable` when Docker reports identical free/total for different mounts (Mac Data volume quirk)
+
 ## [2026.07.26a] - 2026-07-26
 
 ### Fixed

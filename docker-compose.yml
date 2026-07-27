@@ -6,9 +6,14 @@ services:
     volumes:
       - ./backend:/app
       - ${MEDIA_HOST_PATH:-/Users/alex/Media}:/media
+      # Optional migrate destination. Default placeholder keeps compose valid when unset.
+      - ${BACKUP_MEDIA_HOST_PATH:-./.docker-unused-backup}:/media-backup
     environment:
       MEDIA_ROOT: ${MEDIA_ROOT:-/media}
       APP_DATA_DIR: ${APP_DATA_DIR:-/media/.imageOrganizer}
+      BACKUP_MEDIA_ROOT: /media-backup
+      BACKUP_MEDIA_HOST_PATH: ${BACKUP_MEDIA_HOST_PATH:-}
+      MEDIA_HOST_PATH: ${MEDIA_HOST_PATH:-}
     restart: unless-stopped
 
   frontend:

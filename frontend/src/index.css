@@ -1664,6 +1664,21 @@ button.calendar-month-column-title:focus-visible {
   max-width: 600px;
 }
 
+.settings-checkbox-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin: 0.75rem 0;
+  font-size: 0.875rem;
+  color: #aab0bc;
+  cursor: pointer;
+}
+
+.settings-checkbox-row input {
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+}
+
 .settings-section {
   margin-bottom: 2rem;
 }
@@ -1678,6 +1693,110 @@ button.calendar-month-column-title:focus-visible {
   color: #8891a0;
   font-size: 0.85rem;
   margin: 0 0 1rem;
+}
+
+.settings-page {
+  padding-bottom: 3rem;
+}
+
+.settings-disk-row {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .settings-disk-row--three {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .settings-disk-row--two {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.settings-disk-col {
+  min-width: 0;
+}
+
+.settings-disk-row .settings-grid {
+  max-width: none;
+}
+
+.settings-advanced-panel {
+  border: 1px solid #2a2f3a;
+  border-radius: 10px;
+  padding: 1rem 1.1rem 1.15rem;
+  background: rgba(22, 25, 34, 0.55);
+}
+
+.settings-advanced-panel > summary {
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #c5cad3;
+  list-style: none;
+}
+
+.settings-advanced-panel > summary::-webkit-details-marker {
+  display: none;
+}
+
+.settings-advanced-panel > summary::before {
+  content: "▸ ";
+  color: #8891a0;
+}
+
+.settings-advanced-panel[open] > summary {
+  margin-bottom: 0.85rem;
+}
+
+.settings-advanced-panel[open] > summary::before {
+  content: "▾ ";
+}
+
+.settings-disk-free-list {
+  list-style: none;
+  margin: 0 0 0.75rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: #aab0bc;
+}
+
+.settings-disk-free-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.5rem;
+}
+
+.settings-disk-free-label {
+  min-width: 5.5rem;
+  color: #8891a0;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.settings-disk-free-list .path {
+  word-break: break-all;
+}
+
+.settings-subsection-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0 0 0.35rem;
+}
+
+.settings-job-status {
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+  color: #aab0bc;
 }
 
 .storage-stats-grid {

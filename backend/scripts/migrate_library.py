@@ -1,12 +1,18 @@
 #!/usr/bin/env python3
 """Rewrite absolute paths after copying a media library to a new root.
 
+This is the offline **rewrite-only** companion to Settings → Copy library to new drive
+(checkbox: “Paths already copied — only rewrite catalog and switch”).
+
 Usage:
   # Dry run
   python migrate_library.py --from /Users/alex/Media --to /Volumes/Big/Media --db /Volumes/Big/Media/.imageOrganizer/index.db --dry-run
 
   # Apply rewrite (DB already at --to catalog)
   python migrate_library.py --from /Users/alex/Media --to /Volumes/Big/Media
+
+  # Also write bootstrap so the next native start uses the new root:
+  python migrate_library.py --from OLD --to NEW --write-bootstrap
 
   # Docker container paths after renaming .trash only:
   python migrate_library.py --old-prefix /media --new-prefix /media --db /path/to/index.db
@@ -38,7 +44,12 @@ from app.library_migrate import boundary_replace, rewrite_path_prefixes, write_b
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Rewrite Image Organizer library path prefixes.")
+    parser = argparse.ArgumentParser(
+        description=(
+            "Rewrite Image Organizer library path prefixes on an already-copied catalog "
+            "(Settings “rewrite-only” / switch companion)."
+        )
+    )
     parser.add_argument("--from", dest="old_root", type=Path, help="Old media root prefix")
     parser.add_argument("--to", dest="new_root", type=Path, help="New media root prefix")
     parser.add_argument(

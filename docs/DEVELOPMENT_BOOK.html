@@ -75,7 +75,7 @@ li { margin: 0.25rem 0; }
 </head>
 <body>
 <h1>Image Organizer — Development Book</h1>
-<p><em>Release 2026.07.27 · collected Cursor implementation plans</em></p>
+<p><em>Release 2026.07.28 · collected Cursor implementation plans</em></p>
 <p>Related: <a href="ARCHITECTURE.md">ARCHITECTURE.md</a> · <a href="../CHANGELOG.md">CHANGELOG.md</a></p>
 <h2>Introduction</h2>
 <p>This book collects the Cursor agent implementation plans written while building Image Organizer. Each chapter records design intent, scope, and verification steps for a feature or fix. It is a development history — not end-user documentation. For current system design, see <a href="ARCHITECTURE.md">ARCHITECTURE.md</a>. For shipped changes by release, see <a href="../CHANGELOG.md">CHANGELOG.md</a>.</p>
@@ -258,61 +258,65 @@ li { margin: 0.25rem 0; }
 <li><a href="#chapter-153-fix-label-data-loss">Fix label data loss</a></li>
 <li><a href="#chapter-154-fix-lightbox-scale-to-fit">Fix lightbox scale-to-fit</a></li>
 <li><a href="#chapter-155-fix-mosaic-navigation">Fix mosaic navigation</a></li>
-<li><a href="#chapter-156-fix-tag-wrap-blowout">Fix tag wrap blowout</a></li>
-<li><a href="#chapter-157-fix-tag-wrap-blowout">Fix tag wrap blowout</a></li>
-<li><a href="#chapter-158-html-book-output">HTML book output</a></li>
-<li><a href="#chapter-159-html-book-output">HTML book output</a></li>
-<li><a href="#chapter-160-inbox-autotag-investigation">Inbox autotag investigation</a></li>
-<li><a href="#chapter-161-inbox-detail-auto-advance">Inbox detail auto-advance</a></li>
-<li><a href="#chapter-162-inbox-sticky-chrome-fix">Inbox sticky chrome fix</a></li>
-<li><a href="#chapter-163-inbox-sticky-chrome-fix">Inbox sticky chrome fix</a></li>
-<li><a href="#chapter-164-incremental-update-backup">Incremental update backup</a></li>
-<li><a href="#chapter-165-incremental-update-backup">Incremental update backup</a></li>
-<li><a href="#chapter-166-kitchen-ledger-recipe-app">Kitchen Ledger recipe app</a></li>
-<li><a href="#chapter-167-library-disks-side-by-side">Library disks side-by-side</a></li>
-<li><a href="#chapter-168-library-disks-side-by-side">Library disks side-by-side</a></li>
-<li><a href="#chapter-169-library-migrate-backup">Library migrate backup</a></li>
-<li><a href="#chapter-170-library-migrate-backup">Library migrate backup</a></li>
-<li><a href="#chapter-171-library-mosaic-save">Library mosaic save</a></li>
-<li><a href="#chapter-172-lightbox-tag-fonts">Lightbox tag fonts</a></li>
-<li><a href="#chapter-173-lightbox-tag-overlay">Lightbox tag overlay</a></li>
-<li><a href="#chapter-174-link-inbox-image-as-hero">Link inbox image as hero</a></li>
-<li><a href="#chapter-175-link-inbox-image-as-hero">Link inbox image as hero</a></li>
-<li><a href="#chapter-176-migrate-disk-health">Migrate disk health</a></li>
-<li><a href="#chapter-177-migrate-disk-health">Migrate disk health</a></li>
-<li><a href="#chapter-178-people-autotag-options">People autotag options</a></li>
-<li><a href="#chapter-179-per-passenger-price-display">Per-passenger price display</a></li>
-<li><a href="#chapter-180-per-passenger-price-display">Per-passenger price display</a></li>
-<li><a href="#chapter-181-persist-collapsible-sections">Persist collapsible sections</a></li>
-<li><a href="#chapter-182-persist-collapsible-sections">Persist collapsible sections</a></li>
-<li><a href="#chapter-183-persist-search-form-settings">Persist search form settings</a></li>
-<li><a href="#chapter-184-persist-search-form-settings">Persist search form settings</a></li>
-<li><a href="#chapter-185-recent-people-like-tags">Recent people like tags</a></li>
-<li><a href="#chapter-186-recipe-hero-dish-photo">Recipe hero dish photo</a></li>
-<li><a href="#chapter-187-relayout-library-backup-ui">Relayout library backup UI</a></li>
-<li><a href="#chapter-188-relayout-library-backup-ui">Relayout library backup UI</a></li>
-<li><a href="#chapter-189-release-20260710">Release 2026.07.10</a></li>
-<li><a href="#chapter-190-release-20260712b">Release 2026.07.12b</a></li>
-<li><a href="#chapter-191-release-20260714">Release 2026.07.14</a></li>
-<li><a href="#chapter-192-release-20260714">Release 2026.07.14</a></li>
-<li><a href="#chapter-193-remove-sticky-control-frame">Remove sticky control frame</a></li>
-<li><a href="#chapter-194-remove-sticky-control-frame">Remove sticky control frame</a></li>
-<li><a href="#chapter-195-review-restore-deletes">Review restore deletes</a></li>
-<li><a href="#chapter-196-separate-kitchen-ledger-agent">Separate Kitchen Ledger agent</a></li>
-<li><a href="#chapter-197-separate-kitchen-ledger-agent">Separate Kitchen Ledger agent</a></li>
-<li><a href="#chapter-198-settings-three-column-disks">Settings three-column disks</a></li>
-<li><a href="#chapter-199-settings-three-column-disks">Settings three-column disks</a></li>
-<li><a href="#chapter-200-show-connections-in-results">Show connections in results</a></li>
-<li><a href="#chapter-201-show-connections-in-results">Show connections in results</a></li>
-<li><a href="#chapter-202-slim-inbox-delete-refetch">Slim inbox delete refetch</a></li>
-<li><a href="#chapter-203-sticky-search-form">Sticky search form</a></li>
-<li><a href="#chapter-204-sticky-search-form">Sticky search form</a></li>
-<li><a href="#chapter-205-throttle-inbox-scan-refetch">Throttle inbox scan refetch</a></li>
-<li><a href="#chapter-206-trash-view-and-restore">Trash view and restore</a></li>
-<li><a href="#chapter-207-update-cursor-book-submodule">Update cursor-book submodule</a></li>
-<li><a href="#chapter-208-update-cursor-book-submodule">Update cursor-book submodule</a></li>
-<li><a href="#chapter-209-widen-content-max-width">Widen content max-width</a></li>
-<li><a href="#chapter-210-widen-content-max-width">Widen content max-width</a></li>
+<li><a href="#chapter-156-fix-mov-video-playback">Fix MOV video playback</a></li>
+<li><a href="#chapter-157-fix-mov-video-playback">Fix MOV video playback</a></li>
+<li><a href="#chapter-158-fix-tag-wrap-blowout">Fix tag wrap blowout</a></li>
+<li><a href="#chapter-159-fix-tag-wrap-blowout">Fix tag wrap blowout</a></li>
+<li><a href="#chapter-160-html-book-output">HTML book output</a></li>
+<li><a href="#chapter-161-html-book-output">HTML book output</a></li>
+<li><a href="#chapter-162-inbox-autotag-investigation">Inbox autotag investigation</a></li>
+<li><a href="#chapter-163-inbox-detail-auto-advance">Inbox detail auto-advance</a></li>
+<li><a href="#chapter-164-inbox-sticky-chrome-fix">Inbox sticky chrome fix</a></li>
+<li><a href="#chapter-165-inbox-sticky-chrome-fix">Inbox sticky chrome fix</a></li>
+<li><a href="#chapter-166-incremental-update-backup">Incremental update backup</a></li>
+<li><a href="#chapter-167-incremental-update-backup">Incremental update backup</a></li>
+<li><a href="#chapter-168-kitchen-ledger-recipe-app">Kitchen Ledger recipe app</a></li>
+<li><a href="#chapter-169-library-disks-side-by-side">Library disks side-by-side</a></li>
+<li><a href="#chapter-170-library-disks-side-by-side">Library disks side-by-side</a></li>
+<li><a href="#chapter-171-library-migrate-backup">Library migrate backup</a></li>
+<li><a href="#chapter-172-library-migrate-backup">Library migrate backup</a></li>
+<li><a href="#chapter-173-library-mosaic-save">Library mosaic save</a></li>
+<li><a href="#chapter-174-lightbox-tag-fonts">Lightbox tag fonts</a></li>
+<li><a href="#chapter-175-lightbox-tag-overlay">Lightbox tag overlay</a></li>
+<li><a href="#chapter-176-link-inbox-image-as-hero">Link inbox image as hero</a></li>
+<li><a href="#chapter-177-link-inbox-image-as-hero">Link inbox image as hero</a></li>
+<li><a href="#chapter-178-migrate-disk-health">Migrate disk health</a></li>
+<li><a href="#chapter-179-migrate-disk-health">Migrate disk health</a></li>
+<li><a href="#chapter-180-opaque-calendar-sticky-chrome">Opaque calendar sticky chrome</a></li>
+<li><a href="#chapter-181-opaque-calendar-sticky-chrome">Opaque calendar sticky chrome</a></li>
+<li><a href="#chapter-182-people-autotag-options">People autotag options</a></li>
+<li><a href="#chapter-183-per-passenger-price-display">Per-passenger price display</a></li>
+<li><a href="#chapter-184-per-passenger-price-display">Per-passenger price display</a></li>
+<li><a href="#chapter-185-persist-collapsible-sections">Persist collapsible sections</a></li>
+<li><a href="#chapter-186-persist-collapsible-sections">Persist collapsible sections</a></li>
+<li><a href="#chapter-187-persist-search-form-settings">Persist search form settings</a></li>
+<li><a href="#chapter-188-persist-search-form-settings">Persist search form settings</a></li>
+<li><a href="#chapter-189-recent-people-like-tags">Recent people like tags</a></li>
+<li><a href="#chapter-190-recipe-hero-dish-photo">Recipe hero dish photo</a></li>
+<li><a href="#chapter-191-relayout-library-backup-ui">Relayout library backup UI</a></li>
+<li><a href="#chapter-192-relayout-library-backup-ui">Relayout library backup UI</a></li>
+<li><a href="#chapter-193-release-20260710">Release 2026.07.10</a></li>
+<li><a href="#chapter-194-release-20260712b">Release 2026.07.12b</a></li>
+<li><a href="#chapter-195-release-20260714">Release 2026.07.14</a></li>
+<li><a href="#chapter-196-release-20260714">Release 2026.07.14</a></li>
+<li><a href="#chapter-197-remove-sticky-control-frame">Remove sticky control frame</a></li>
+<li><a href="#chapter-198-remove-sticky-control-frame">Remove sticky control frame</a></li>
+<li><a href="#chapter-199-review-restore-deletes">Review restore deletes</a></li>
+<li><a href="#chapter-200-separate-kitchen-ledger-agent">Separate Kitchen Ledger agent</a></li>
+<li><a href="#chapter-201-separate-kitchen-ledger-agent">Separate Kitchen Ledger agent</a></li>
+<li><a href="#chapter-202-settings-three-column-disks">Settings three-column disks</a></li>
+<li><a href="#chapter-203-settings-three-column-disks">Settings three-column disks</a></li>
+<li><a href="#chapter-204-show-connections-in-results">Show connections in results</a></li>
+<li><a href="#chapter-205-show-connections-in-results">Show connections in results</a></li>
+<li><a href="#chapter-206-slim-inbox-delete-refetch">Slim inbox delete refetch</a></li>
+<li><a href="#chapter-207-sticky-search-form">Sticky search form</a></li>
+<li><a href="#chapter-208-sticky-search-form">Sticky search form</a></li>
+<li><a href="#chapter-209-throttle-inbox-scan-refetch">Throttle inbox scan refetch</a></li>
+<li><a href="#chapter-210-trash-view-and-restore">Trash view and restore</a></li>
+<li><a href="#chapter-211-update-cursor-book-submodule">Update cursor-book submodule</a></li>
+<li><a href="#chapter-212-update-cursor-book-submodule">Update cursor-book submodule</a></li>
+<li><a href="#chapter-213-widen-content-max-width">Widen content max-width</a></li>
+<li><a href="#chapter-214-widen-content-max-width">Widen content max-width</a></li>
 </ol>
 <h3>Skipped Duplicates</h3>
 <ul>
@@ -11931,8 +11935,80 @@ onClose={() =&gt; {
 </ol>
 <p>No backend or CSS changes needed.</p>
 <hr>
-<a id="chapter-156-fix-tag-wrap-blowout"></a>
-<h2>Chapter 156: Fix tag wrap blowout</h2>
+<a id="chapter-156-fix-mov-video-playback"></a>
+<h2>Chapter 156: Fix MOV video playback</h2>
+<blockquote>
+<p><strong>Overview:</strong> Make MOV (and other browser-hostile video) play in the detail viewer by serving a browser-safe URL: remap MIME where helpful, and fall back to a cached ffmpeg H.264/AAC MP4 via a new <code>/play</code> endpoint.</p>
+</blockquote>
+<h1>Fix MOV playback in the viewer</h1>
+<h2>Cause</h2>
+<p>Detail view uses raw <a href="backend/app/main.py"><code>GET /api/files/{id}/original</code></a> in a <code>&lt;video&gt;</code> tag (<a href="frontend/src/components/PhotoDetail.tsx"><code>PhotoDetail.tsx</code></a>). <code>.mov</code> is served as <code>video/quicktime</code>. Many camera MOVs (e.g. <code>PICT*.MOV</code>) use codecs Chrome cannot decode (MJPEG / odd QuickTime), so the poster thumb shows but playback stays at <code>0:00</code>. Thumbnails already work via ffmpeg.</p>
+<h2>Approach</h2>
+<p>Hybrid, ffmpeg already required for video thumbs/metadata:</p>
+<ol>
+<li><strong>MIME</strong>: Treat <code>.mov</code> / <code>.m4v</code> as <code>video/mp4</code> when serving originals (helps H.264 QuickTime in Chromium).</li>
+<li><strong>Playable file</strong>: New helper probes with ffprobe; if the file is not browser-friendly, transcode once to a cached MP4 under <code>APP_DATA_DIR/video_play/{file_id}_{mtime}.mp4</code> (H.264 + AAC, <code>+faststart</code>).</li>
+<li><strong>API</strong>: <code>GET /api/files/{file_id}/play</code> returns that playable file (original or cache) with correct MIME and Starlette <code>FileResponse</code> (range-friendly).</li>
+<li><strong>Frontend</strong>: <code>&lt;video src={api.playUrl(...)}&gt;</code> instead of <code>originalUrl</code> in <a href="frontend/src/components/PhotoDetail.tsx"><code>PhotoDetail.tsx</code></a> (drawer + lightbox).</li>
+</ol>
+<p>Browser-friendly heuristic (no transcode): container in <code>{.mp4,.webm,.mov,.m4v}</code> and video codec in <code>{h264,avc1,vp8,vp9,av1}</code> (case-insensitive). Otherwise transcode. Missing ffprobe → try original with remapped MIME; on failure still allow cache path if ffmpeg succeeds.</p>
+<p>First play of a hostile MOV may wait on transcode (typical camera clips are short). Show native loading; no progress UI in this pass.</p>
+<h2>Key files</h2>
+<ul>
+<li>New: <a href="backend/app/video_play.py"><code>backend/app/video_play.py</code></a> — probe + ensure cached playable path</li>
+<li><a href="backend/app/config.py"><code>backend/app/config.py</code></a> — <code>VIDEO_PLAY_DIR</code>; <code>.mov</code>/<code>.m4v</code> → <code>video/mp4</code> in <code>VIDEO_MIME_TYPES</code></li>
+<li><a href="backend/app/main.py"><code>backend/app/main.py</code></a> — <code>/api/files/{id}/play</code></li>
+<li><a href="frontend/src/api/client.ts"><code>frontend/src/api/client.ts</code></a> — <code>playUrl</code></li>
+<li><a href="frontend/src/components/PhotoDetail.tsx"><code>frontend/src/components/PhotoDetail.tsx</code></a> — use <code>playUrl</code></li>
+<li>Tests: probe/transcode decisions with a tiny fixture or mocked ffprobe</li>
+<li><a href="docs/ARCHITECTURE.md"><code>docs/ARCHITECTURE.md</code></a> — play endpoint + <code>video_play</code> cache</li>
+<li><a href="CHANGELOG.md"><code>CHANGELOG.md</code></a> Unreleased Fixed/Added</li>
+</ul>
+<h2>Out of scope</h2>
+<ul>
+<li>Grid inline video playback</li>
+<li>Background pre-transcode of whole library</li>
+<li>Replacing <code>/original</code> (downloads/rotate still use original bytes)</li>
+</ul>
+<hr>
+<a id="chapter-157-fix-mov-video-playback"></a>
+<h2>Chapter 157: Fix MOV video playback</h2>
+<blockquote>
+<p><strong>Overview:</strong> Make MOV (and other browser-hostile video) play in the detail viewer by serving a browser-safe URL: remap MIME where helpful, and fall back to a cached ffmpeg H.264/AAC MP4 via a new <code>/play</code> endpoint.</p>
+</blockquote>
+<h1>Fix MOV playback in the viewer</h1>
+<h2>Cause</h2>
+<p>Detail view uses raw <a href="backend/app/main.py"><code>GET /api/files/{id}/original</code></a> in a <code>&lt;video&gt;</code> tag (<a href="frontend/src/components/PhotoDetail.tsx"><code>PhotoDetail.tsx</code></a>). <code>.mov</code> is served as <code>video/quicktime</code>. Many camera MOVs (e.g. <code>PICT*.MOV</code>) use codecs Chrome cannot decode (MJPEG / odd QuickTime), so the poster thumb shows but playback stays at <code>0:00</code>. Thumbnails already work via ffmpeg.</p>
+<h2>Approach</h2>
+<p>Hybrid, ffmpeg already required for video thumbs/metadata:</p>
+<ol>
+<li><strong>MIME</strong>: Treat <code>.mov</code> / <code>.m4v</code> as <code>video/mp4</code> when serving originals (helps H.264 QuickTime in Chromium).</li>
+<li><strong>Playable file</strong>: New helper probes with ffprobe; if the file is not browser-friendly, transcode once to a cached MP4 under <code>APP_DATA_DIR/video_play/{file_id}_{mtime}.mp4</code> (H.264 + AAC, <code>+faststart</code>).</li>
+<li><strong>API</strong>: <code>GET /api/files/{file_id}/play</code> returns that playable file (original or cache) with correct MIME and Starlette <code>FileResponse</code> (range-friendly).</li>
+<li><strong>Frontend</strong>: <code>&lt;video src={api.playUrl(...)}&gt;</code> instead of <code>originalUrl</code> in <a href="frontend/src/components/PhotoDetail.tsx"><code>PhotoDetail.tsx</code></a> (drawer + lightbox).</li>
+</ol>
+<p>Browser-friendly heuristic (no transcode): container in <code>{.mp4,.webm,.mov,.m4v}</code> and video codec in <code>{h264,avc1,vp8,vp9,av1}</code> (case-insensitive). Otherwise transcode. Missing ffprobe → try original with remapped MIME; on failure still allow cache path if ffmpeg succeeds.</p>
+<p>First play of a hostile MOV may wait on transcode (typical camera clips are short). Show native loading; no progress UI in this pass.</p>
+<h2>Key files</h2>
+<ul>
+<li>New: <a href="backend/app/video_play.py"><code>backend/app/video_play.py</code></a> — probe + ensure cached playable path</li>
+<li><a href="backend/app/config.py"><code>backend/app/config.py</code></a> — <code>VIDEO_PLAY_DIR</code>; <code>.mov</code>/<code>.m4v</code> → <code>video/mp4</code> in <code>VIDEO_MIME_TYPES</code></li>
+<li><a href="backend/app/main.py"><code>backend/app/main.py</code></a> — <code>/api/files/{id}/play</code></li>
+<li><a href="frontend/src/api/client.ts"><code>frontend/src/api/client.ts</code></a> — <code>playUrl</code></li>
+<li><a href="frontend/src/components/PhotoDetail.tsx"><code>frontend/src/components/PhotoDetail.tsx</code></a> — use <code>playUrl</code></li>
+<li>Tests: probe/transcode decisions with a tiny fixture or mocked ffprobe</li>
+<li><a href="docs/ARCHITECTURE.md"><code>docs/ARCHITECTURE.md</code></a> — play endpoint + <code>video_play</code> cache</li>
+<li><a href="CHANGELOG.md"><code>CHANGELOG.md</code></a> Unreleased Fixed/Added</li>
+</ul>
+<h2>Out of scope</h2>
+<ul>
+<li>Grid inline video playback</li>
+<li>Background pre-transcode of whole library</li>
+<li>Replacing <code>/original</code> (downloads/rotate still use original bytes)</li>
+</ul>
+<hr>
+<a id="chapter-158-fix-tag-wrap-blowout"></a>
+<h2>Chapter 158: Fix tag wrap blowout</h2>
 <blockquote>
 <p><strong>Overview:</strong> The prior fix added flex-wrap and min-width on chip rows, but the grid column still sizes to the tag panel&#x27;s max-content when 1-char search returns many tags. Lock the left column width to the calendar and prevent the tagging panel from contributing horizontal intrinsic size.</p>
 </blockquote>
@@ -12032,8 +12108,8 @@ onClose={() =&gt; {
 <li>Inbox tag picker still works (stack CSS is calendar-scoped via <code>.calendar-left-stack</code>)</li>
 </ol>
 <hr>
-<a id="chapter-157-fix-tag-wrap-blowout"></a>
-<h2>Chapter 157: Fix tag wrap blowout</h2>
+<a id="chapter-159-fix-tag-wrap-blowout"></a>
+<h2>Chapter 159: Fix tag wrap blowout</h2>
 <blockquote>
 <p><strong>Overview:</strong> The prior fix added flex-wrap and min-width on chip rows, but the grid column still sizes to the tag panel&#x27;s max-content when 1-char search returns many tags. Lock the left column width to the calendar and prevent the tagging panel from contributing horizontal intrinsic size.</p>
 </blockquote>
@@ -12133,8 +12209,8 @@ onClose={() =&gt; {
 <li>Inbox tag picker still works (stack CSS is calendar-scoped via <code>.calendar-left-stack</code>)</li>
 </ol>
 <hr>
-<a id="chapter-158-html-book-output"></a>
-<h2>Chapter 158: HTML book output</h2>
+<a id="chapter-160-html-book-output"></a>
+<h2>Chapter 160: HTML book output</h2>
 <blockquote>
 <p><strong>Overview:</strong> Extend the development-book builder so every markdown build also writes a sibling self-contained HTML file, keeping Python stdlib-only and updating docs/skill/schema to match.</p>
 </blockquote>
@@ -12180,8 +12256,8 @@ onClose={() =&gt; {
 <li>Changing the markdown book content or chapter ordering logic</li>
 </ul>
 <hr>
-<a id="chapter-159-html-book-output"></a>
-<h2>Chapter 159: HTML book output</h2>
+<a id="chapter-161-html-book-output"></a>
+<h2>Chapter 161: HTML book output</h2>
 <blockquote>
 <p><strong>Overview:</strong> Extend the development-book builder so every markdown build also writes a sibling self-contained HTML file, keeping Python stdlib-only and updating docs/skill/schema to match.</p>
 </blockquote>
@@ -12227,8 +12303,8 @@ onClose={() =&gt; {
 <li>Changing the markdown book content or chapter ordering logic</li>
 </ul>
 <hr>
-<a id="chapter-160-inbox-autotag-investigation"></a>
-<h2>Chapter 160: Inbox autotag investigation</h2>
+<a id="chapter-162-inbox-autotag-investigation"></a>
+<h2>Chapter 162: Inbox autotag investigation</h2>
 <blockquote>
 <p><strong>Overview:</strong> Investigation of inbox tag recommendations: current gaps, available signals in the existing schema, approach comparison (heuristics vs phash vs ML), and a phased roadmap — no implementation in this phase.</p>
 </blockquote>
@@ -12311,8 +12387,8 @@ onClose={() =&gt; {
 <h2>Key files for future implementation</h2>
 <p>| Layer | Files | |-------|-------| | Scoring logic | New <code>backend/app/tag_recommendations.py</code> | | API | <a href="backend/app/main.py"><code>backend/app/main.py</code></a> | | Inbox UI | <a href="frontend/src/components/FileTagPicker.tsx"><code>FileTagPicker.tsx</code></a>, <a href="frontend/src/components/BulkLabelEditors.tsx"><code>BulkLabelEditors.tsx</code></a> | | Client | <a href="frontend/src/api/client.ts"><code>frontend/src/api/client.ts</code></a> | | Precedent (suggestion chips) | <a href="frontend/src/pages/Mosaic.tsx"><code>Mosaic.tsx</code></a> — source-label chip row |</p>
 <hr>
-<a id="chapter-161-inbox-detail-auto-advance"></a>
-<h2>Chapter 161: Inbox detail auto-advance</h2>
+<a id="chapter-163-inbox-detail-auto-advance"></a>
+<h2>Chapter 163: Inbox detail auto-advance</h2>
 <blockquote>
 <p><strong>Overview:</strong> When a photo in Inbox detail view leaves the filtered list (e.g. tagged while on Untagged filter), advance to the next remaining photo instead of closing the detail drawer.</p>
 </blockquote>
@@ -12368,8 +12444,8 @@ onClose={() =&gt; {
 <li>Auto-advancing when using grid bulk editors (not detail view)</li>
 </ul>
 <hr>
-<a id="chapter-162-inbox-sticky-chrome-fix"></a>
-<h2>Chapter 162: Inbox sticky chrome fix</h2>
+<a id="chapter-164-inbox-sticky-chrome-fix"></a>
+<h2>Chapter 164: Inbox sticky chrome fix</h2>
 <blockquote>
 <p><strong>Overview:</strong> Remove the awkward full-width opaque black strip behind Inbox filter buttons by restyling <code>.page-sticky-controls</code> to a Review-like frosted strip so the view-skin shows through.</p>
 </blockquote>
@@ -12396,9 +12472,9 @@ Same class is shared by Trash, Blurry, and Calendar photo panels; they get the s
 
 ---
 
-&lt;a id=&quot;chapter-163-inbox-sticky-chrome-fix&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-165-inbox-sticky-chrome-fix&quot;&gt;&lt;/a&gt;
 
-## Chapter 163: Inbox sticky chrome fix
+## Chapter 165: Inbox sticky chrome fix
 
 &gt; **Overview:** Remove the awkward full-width opaque black strip behind Inbox filter buttons by restyling `.page-sticky-controls` to a Review-like frosted strip so the view-skin shows through.
 
@@ -12434,8 +12510,8 @@ Inbox wraps All / Untagged / Delete queue in [`.page-sticky-controls`](frontend/
 <li>No ARCHITECTURE update (styling only)</li>
 </ul>
 <hr>
-<a id="chapter-164-incremental-update-backup"></a>
-<h2>Chapter 164: Incremental update backup</h2>
+<a id="chapter-166-incremental-update-backup"></a>
+<h2>Chapter 166: Incremental update backup</h2>
 <blockquote>
 <p><strong>Overview:</strong> Add Settings “Update backup” that incrementally copies new/changed media and catalog from the live library (<code>/media</code>) to the backup mount (<code>/media-backup</code>), without path rewrite or restart—matching the user’s post-cutover .env (live on 2TB, backup on old Media).</p>
 </blockquote>
@@ -12476,8 +12552,8 @@ Inbox wraps All / Untagged / Delete queue in [`.page-sticky-controls`](frontend/
 <li>True block-level rsync protocol (Python walk is enough for v1)</li>
 </ul>
 <hr>
-<a id="chapter-165-incremental-update-backup"></a>
-<h2>Chapter 165: Incremental update backup</h2>
+<a id="chapter-167-incremental-update-backup"></a>
+<h2>Chapter 167: Incremental update backup</h2>
 <blockquote>
 <p><strong>Overview:</strong> Add Settings “Update backup” that incrementally copies new/changed media and catalog from the live library (<code>/media</code>) to the backup mount (<code>/media-backup</code>), without path rewrite or restart—matching the user’s post-cutover .env (live on 2TB, backup on old Media).</p>
 </blockquote>
@@ -12518,8 +12594,8 @@ Inbox wraps All / Untagged / Delete queue in [`.page-sticky-controls`](frontend/
 <li>True block-level rsync protocol (Python walk is enough for v1)</li>
 </ul>
 <hr>
-<a id="chapter-166-kitchen-ledger-recipe-app"></a>
-<h2>Chapter 166: Kitchen Ledger recipe app</h2>
+<a id="chapter-168-kitchen-ledger-recipe-app"></a>
+<h2>Chapter 168: Kitchen Ledger recipe app</h2>
 <blockquote>
 <p><strong>Overview:</strong> Create a new &quot;Kitchen Ledger&quot; repo mirroring the Image Organizer architecture (FastAPI + SQLite + React/Vite + Docker) to index scanned handwritten recipes from a folder, OCR-assist ingredient/direction transcription on scan, and organize recipes with multi-tag AND filtering and search.</p>
 </blockquote>
@@ -12609,8 +12685,8 @@ Inbox wraps All / Untagged / Delete queue in [`.page-sticky-controls`](frontend/
 <li>Organize/Apply move workflow, trash/restore, dedupe, meal planning, import from URLs, nutrition, print/export.</li>
 </ul>
 <hr>
-<a id="chapter-167-library-disks-side-by-side"></a>
-<h2>Chapter 167: Library disks side-by-side</h2>
+<a id="chapter-169-library-disks-side-by-side"></a>
+<h2>Chapter 169: Library disks side-by-side</h2>
 <blockquote>
 <p><strong>Overview:</strong> Add bottom page padding so the advanced migrate control isn’t flush with the viewport, and put Update backup beside the advanced cutover block in a responsive two-column layout.</p>
 </blockquote>
@@ -12644,8 +12720,8 @@ Inbox wraps All / Untagged / Delete queue in [`.page-sticky-controls`](frontend/
 <li>Fixing identical media/backup free-space numbers</li>
 </ul>
 <hr>
-<a id="chapter-168-library-disks-side-by-side"></a>
-<h2>Chapter 168: Library disks side-by-side</h2>
+<a id="chapter-170-library-disks-side-by-side"></a>
+<h2>Chapter 170: Library disks side-by-side</h2>
 <blockquote>
 <p><strong>Overview:</strong> Add bottom page padding so the advanced migrate control isn’t flush with the viewport, and put Update backup beside the advanced cutover block in a responsive two-column layout.</p>
 </blockquote>
@@ -12679,8 +12755,8 @@ Inbox wraps All / Untagged / Delete queue in [`.page-sticky-controls`](frontend/
 <li>Fixing identical media/backup free-space numbers</li>
 </ul>
 <hr>
-<a id="chapter-169-library-migrate-backup"></a>
-<h2>Chapter 169: Library migrate backup</h2>
+<a id="chapter-171-library-migrate-backup"></a>
+<h2>Chapter 171: Library migrate backup</h2>
 <blockquote>
 <p><strong>Overview:</strong> Evolve the existing Settings “Move library” copy-and-repoint job into a clearer “Copy library to new drive” migration tool with progress, post-copy verification, optional rewrite-only mode, and Docker guidance—leaving the original root intact as a backup.</p>
 </blockquote>
@@ -12752,8 +12828,8 @@ Inbox wraps All / Untagged / Delete queue in [`.page-sticky-controls`](frontend/
 <li>Network/cloud remotes as destinations (local/mounted paths only)</li>
 </ul>
 <hr>
-<a id="chapter-170-library-migrate-backup"></a>
-<h2>Chapter 170: Library migrate backup</h2>
+<a id="chapter-172-library-migrate-backup"></a>
+<h2>Chapter 172: Library migrate backup</h2>
 <blockquote>
 <p><strong>Overview:</strong> Evolve the existing Settings “Move library” copy-and-repoint job into a clearer “Copy library to new drive” migration tool with progress, post-copy verification, optional rewrite-only mode, and Docker guidance—leaving the original root intact as a backup.</p>
 </blockquote>
@@ -12825,8 +12901,8 @@ Inbox wraps All / Untagged / Delete queue in [`.page-sticky-controls`](frontend/
 <li>Network/cloud remotes as destinations (local/mounted paths only)</li>
 </ul>
 <hr>
-<a id="chapter-171-library-mosaic-save"></a>
-<h2>Chapter 171: Library mosaic save</h2>
+<a id="chapter-173-library-mosaic-save"></a>
+<h2>Chapter 173: Library mosaic save</h2>
 <blockquote>
 <p><strong>Overview:</strong> Save generated mosaics under <code>{archive}/mosaics/</code>, index them as archive photos, and auto-tag with mosaic so they appear in Browse/Calendar like any library photo.</p>
 </blockquote>
@@ -12880,8 +12956,8 @@ Inbox wraps All / Untagged / Delete queue in [`.page-sticky-controls`](frontend/
 <li>Excluding <code>mosaics/</code> from tile pools (can still reuse mosaics as tiles; fine for v1)</li>
 </ul>
 <hr>
-<a id="chapter-172-lightbox-tag-fonts"></a>
-<h2>Chapter 172: Lightbox tag fonts</h2>
+<a id="chapter-174-lightbox-tag-fonts"></a>
+<h2>Chapter 174: Lightbox tag fonts</h2>
 <blockquote>
 <p><strong>Overview:</strong> Increase typography in the lightbox Tags &amp; people panel only (T overlay), scoped to <code>.photo-lightbox-tags</code> so grid/inbox badges stay unchanged.</p>
 </blockquote>
@@ -12930,8 +13006,8 @@ Inbox wraps All / Untagged / Delete queue in [`.page-sticky-controls`](frontend/
 <li>Drawer sidebar Tags/People section unchanged</li>
 </ol>
 <hr>
-<a id="chapter-173-lightbox-tag-overlay"></a>
-<h2>Chapter 173: Lightbox tag overlay</h2>
+<a id="chapter-175-lightbox-tag-overlay"></a>
+<h2>Chapter 175: Lightbox tag overlay</h2>
 <blockquote>
 <p><strong>Overview:</strong> Add a toggleable tag-application overlay to the PhotoDetail fullscreen lightbox, shown/hidden with T/t, reusing the existing FileTagPicker search/recent pattern.</p>
 </blockquote>
@@ -13016,8 +13092,8 @@ Inbox wraps All / Untagged / Delete queue in [`.page-sticky-controls`](frontend/
 <li>Grid-level fullscreen (lightbox is detail-only today)</li>
 </ul>
 <hr>
-<a id="chapter-174-link-inbox-image-as-hero"></a>
-<h2>Chapter 174: Link inbox image as hero</h2>
+<a id="chapter-176-link-inbox-image-as-hero"></a>
+<h2>Chapter 176: Link inbox image as hero</h2>
 <blockquote>
 <p><strong>Overview:</strong> Inbox is a review queue on disk and in the UI. Scan indexes only; Mark reviewed moves scans to recipes/; Link as hero to… moves dish photos to hero/ and removes the orphan draft.</p>
 </blockquote>
@@ -13066,8 +13142,8 @@ Inbox wraps All / Untagged / Delete queue in [`.page-sticky-controls`](frontend/
 <h2>Your banana-bread dish photo</h2>
 <p>Leave it in <strong>inbox</strong>, Scan if needed, then <strong>Link as hero to…</strong> → Banana Bread once this ships. Mark the handwritten card recipe <strong>reviewed</strong> to move that scan into <code>recipes/</code>.</p>
 <hr>
-<a id="chapter-175-link-inbox-image-as-hero"></a>
-<h2>Chapter 175: Link inbox image as hero</h2>
+<a id="chapter-177-link-inbox-image-as-hero"></a>
+<h2>Chapter 177: Link inbox image as hero</h2>
 <blockquote>
 <p><strong>Overview:</strong> Explain the current stem-match workflow, then add a manual &quot;Use as hero for…&quot; action so an Inbox draft (misplaced dish photo) can be attached as another recipe&#x27;s hero and removed as a standalone draft.</p>
 </blockquote>
@@ -13109,8 +13185,8 @@ Inbox wraps All / Untagged / Delete queue in [`.page-sticky-controls`](frontend/
 </ol>
 <p>The feature above makes step 1–2 a one-click UI action instead.</p>
 <hr>
-<a id="chapter-176-migrate-disk-health"></a>
-<h2>Chapter 176: Migrate disk health</h2>
+<a id="chapter-178-migrate-disk-health"></a>
+<h2>Chapter 178: Migrate disk health</h2>
 <blockquote>
 <p><strong>Overview:</strong> Surface Docker/destination disk health in Settings and tighten library-copy preflight so users see low space or a non-mounted destination before a bad copy fills the container overlay again.</p>
 </blockquote>
@@ -13159,8 +13235,8 @@ Inbox wraps All / Untagged / Delete queue in [`.page-sticky-controls`](frontend/
 <li>Auto-editing <code>.env</code> / recreating Compose</li>
 </ul>
 <hr>
-<a id="chapter-177-migrate-disk-health"></a>
-<h2>Chapter 177: Migrate disk health</h2>
+<a id="chapter-179-migrate-disk-health"></a>
+<h2>Chapter 179: Migrate disk health</h2>
 <blockquote>
 <p><strong>Overview:</strong> Surface Docker/destination disk health in Settings and tighten library-copy preflight so users see low space or a non-mounted destination before a bad copy fills the container overlay again.</p>
 </blockquote>
@@ -13209,8 +13285,70 @@ Inbox wraps All / Untagged / Delete queue in [`.page-sticky-controls`](frontend/
 <li>Auto-editing <code>.env</code> / recreating Compose</li>
 </ul>
 <hr>
-<a id="chapter-178-people-autotag-options"></a>
-<h2>Chapter 178: People autotag options</h2>
+<a id="chapter-180-opaque-calendar-sticky-chrome"></a>
+<h2>Chapter 180: Opaque calendar sticky chrome</h2>
+<blockquote>
+<p><strong>Overview:</strong> Restore an opaque sticky background for Calendar photo panels (and other pages with photo grids) so labels and Prev/Next stay readable while scrolling, without bringing back Inbox’s empty-state black frame over the view-skin.</p>
+</blockquote>
+<h1>Opaque sticky chrome over photo grids</h1>
+<h2>Cause</h2>
+<p>Release <code>2026.07.27</code> made <a href="frontend/src/index.css"><code>.page-sticky-controls</code></a> fully transparent so Inbox filters no longer sat in a black frame over the view-skin. Calendar month/year photo views reuse that class (<a href="frontend/src/components/CalendarMonthPhotosPanel.tsx"><code>CalendarMonthPhotosPanel.tsx</code></a> / <a href="frontend/src/components/CalendarYearPhotosPanel.tsx"><code>CalendarYearPhotosPanel.tsx</code></a> with <code>calendar-photo-grid-sticky</code>), so thumbnails scroll under Back / labels / Prev–Next and obscure them. The “Select all” bar stays readable because it has its own solid fill.</p>
+<p>View-skins are already hidden when a <code>.photo-grid</code> is present, so an opaque sticky bar over photo pages does not recreate the Inbox empty-state problem.</p>
+<h2>Fix (CSS only)</h2>
+<p>In <a href="frontend/src/index.css"><code>frontend/src/index.css</code></a>:</p>
+<ol>
+<li>Keep <code>.page-sticky-controls</code> / <code>.inbox-sticky-controls</code> <strong>transparent</strong> by default (Inbox empty / skin pages).</li>
+<li>When the shell has a photo (or similar) grid, restore opaque sticky chrome:</li>
+</ol>
+<pre><code class="language-css">.app-shell:has(.photo-grid) .page-sticky-controls,
+.app-shell:has(.photo-grid) .inbox-sticky-controls,
+.app-shell:has(.duplicate-compare-grid) .page-sticky-controls,
+.app-shell:has(.duplicate-compare-grid) .inbox-sticky-controls {
+  background: #0f1117;
+  border-bottom: 1px solid #2a2f3a;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}</code></pre>
+<p>Also add <code>calendar-photo-grid-sticky</code> to <a href="frontend/src/components/CalendarDayPanel.tsx"><code>CalendarDayPanel.tsx</code></a>’s sticky wrapper for consistency with month/year (markup one-liner; day panel already uses <code>page-sticky-controls</code>).</p>
+<p>No change to label/pagination component markup beyond that class if missing on day.</p>
+<h2>Docs</h2>
+<ul>
+<li><a href="CHANGELOG.md"><code>CHANGELOG.md</code></a> Unreleased <strong>Fixed</strong>: Calendar (and other photo-grid) sticky controls keep an opaque background so labels/pagination stay readable while scrolling</li>
+<li>No ARCHITECTURE update</li>
+</ul>
+<hr>
+<a id="chapter-181-opaque-calendar-sticky-chrome"></a>
+<h2>Chapter 181: Opaque calendar sticky chrome</h2>
+<blockquote>
+<p><strong>Overview:</strong> Restore an opaque sticky background for Calendar photo panels (and other pages with photo grids) so labels and Prev/Next stay readable while scrolling, without bringing back Inbox’s empty-state black frame over the view-skin.</p>
+</blockquote>
+<h1>Opaque sticky chrome over photo grids</h1>
+<h2>Cause</h2>
+<p>Release <code>2026.07.27</code> made <a href="frontend/src/index.css"><code>.page-sticky-controls</code></a> fully transparent so Inbox filters no longer sat in a black frame over the view-skin. Calendar month/year photo views reuse that class (<a href="frontend/src/components/CalendarMonthPhotosPanel.tsx"><code>CalendarMonthPhotosPanel.tsx</code></a> / <a href="frontend/src/components/CalendarYearPhotosPanel.tsx"><code>CalendarYearPhotosPanel.tsx</code></a> with <code>calendar-photo-grid-sticky</code>), so thumbnails scroll under Back / labels / Prev–Next and obscure them. The “Select all” bar stays readable because it has its own solid fill.</p>
+<p>View-skins are already hidden when a <code>.photo-grid</code> is present, so an opaque sticky bar over photo pages does not recreate the Inbox empty-state problem.</p>
+<h2>Fix (CSS only)</h2>
+<p>In <a href="frontend/src/index.css"><code>frontend/src/index.css</code></a>:</p>
+<ol>
+<li>Keep <code>.page-sticky-controls</code> / <code>.inbox-sticky-controls</code> <strong>transparent</strong> by default (Inbox empty / skin pages).</li>
+<li>When the shell has a photo (or similar) grid, restore opaque sticky chrome:</li>
+</ol>
+<pre><code class="language-css">.app-shell:has(.photo-grid) .page-sticky-controls,
+.app-shell:has(.photo-grid) .inbox-sticky-controls,
+.app-shell:has(.duplicate-compare-grid) .page-sticky-controls,
+.app-shell:has(.duplicate-compare-grid) .inbox-sticky-controls {
+  background: #0f1117;
+  border-bottom: 1px solid #2a2f3a;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}</code></pre>
+<p>Also add <code>calendar-photo-grid-sticky</code> to <a href="frontend/src/components/CalendarDayPanel.tsx"><code>CalendarDayPanel.tsx</code></a>’s sticky wrapper for consistency with month/year (markup one-liner; day panel already uses <code>page-sticky-controls</code>).</p>
+<p>No change to label/pagination component markup beyond that class if missing on day.</p>
+<h2>Docs</h2>
+<ul>
+<li><a href="CHANGELOG.md"><code>CHANGELOG.md</code></a> Unreleased <strong>Fixed</strong>: Calendar (and other photo-grid) sticky controls keep an opaque background so labels/pagination stay readable while scrolling</li>
+<li>No ARCHITECTURE update</li>
+</ul>
+<hr>
+<a id="chapter-182-people-autotag-options"></a>
+<h2>Chapter 182: People autotag options</h2>
 <blockquote>
 <p><strong>Overview:</strong> TABLED — Compare four approaches for inbox people labeling: heuristic suggestions (no ML), face detection, face recognition against known people, and face clustering. Parked for later; no implementation until revisited.</p>
 </blockquote>
@@ -13324,8 +13462,8 @@ file_face_detections(file_id, bbox, embedding, suggested_person_id, confidence)<
 <p>Say which phase to implement (e.g. <strong>&quot;implement people recommendations v1&quot;</strong> for Option 1, or <strong>&quot;prototype face recognition&quot;</strong> for Option 3 spike).</p>
 <p>No code in this phase — comparison only, per investigation scope.</p>
 <hr>
-<a id="chapter-179-per-passenger-price-display"></a>
-<h2>Chapter 179: Per-passenger price display</h2>
+<a id="chapter-183-per-passenger-price-display"></a>
+<h2>Chapter 183: Per-passenger price display</h2>
 <blockquote>
 <p><strong>Overview:</strong> Show trip total with a per-person breakdown like <code>$2,000 ($500 per/person)</code> using the search’s adult count.</p>
 </blockquote>
@@ -13352,8 +13490,8 @@ file_face_detections(file_id, bbox, embedding, suggested_person_id, confidence)<
 </ul>
 <p>Sorting stays by total <code>price</code>.</p>
 <hr>
-<a id="chapter-180-per-passenger-price-display"></a>
-<h2>Chapter 180: Per-passenger price display</h2>
+<a id="chapter-184-per-passenger-price-display"></a>
+<h2>Chapter 184: Per-passenger price display</h2>
 <blockquote>
 <p><strong>Overview:</strong> Show trip total with a per-person breakdown like <code>$2,000 ($500 per/person)</code> using the search’s adult count.</p>
 </blockquote>
@@ -13380,8 +13518,8 @@ file_face_detections(file_id, bbox, embedding, suggested_person_id, confidence)<
 </ul>
 <p>Sorting stays by total <code>price</code>.</p>
 <hr>
-<a id="chapter-181-persist-collapsible-sections"></a>
-<h2>Chapter 181: Persist collapsible sections</h2>
+<a id="chapter-185-persist-collapsible-sections"></a>
+<h2>Chapter 185: Persist collapsible sections</h2>
 <blockquote>
 <p><strong>Overview:</strong> Persist expanded/collapsed state for label-editor sections so user toggles survive remounts (e.g. single ↔ bulk selection, re-renders after label apply). Fix centrally in <code>CollapsibleSection</code> with optional localStorage keys shared across editor contexts.</p>
 </blockquote>
@@ -13443,8 +13581,8 @@ file_face_detections(file_id, bbox, embedding, suggested_person_id, confidence)<
 <li>Collapsing Tags section (Tags remain always visible with search/recent in Inbox)</li>
 </ul>
 <hr>
-<a id="chapter-182-persist-collapsible-sections"></a>
-<h2>Chapter 182: Persist collapsible sections</h2>
+<a id="chapter-186-persist-collapsible-sections"></a>
+<h2>Chapter 186: Persist collapsible sections</h2>
 <blockquote>
 <p><strong>Overview:</strong> Persist expanded/collapsed state for label-editor sections so user toggles survive remounts (e.g. single ↔ bulk selection, re-renders after label apply). Fix centrally in <code>CollapsibleSection</code> with optional localStorage keys shared across editor contexts.</p>
 </blockquote>
@@ -13506,8 +13644,8 @@ file_face_detections(file_id, bbox, embedding, suggested_person_id, confidence)<
 <li>Collapsing Tags section (Tags remain always visible with search/recent in Inbox)</li>
 </ul>
 <hr>
-<a id="chapter-183-persist-search-form-settings"></a>
-<h2>Chapter 183: Persist search form settings</h2>
+<a id="chapter-187-persist-search-form-settings"></a>
+<h2>Chapter 187: Persist search form settings</h2>
 <blockquote>
 <p><strong>Overview:</strong> Save SearchForm fields to localStorage on change and restore them on load so a browser refresh keeps the last origin, destination, dates, stay days, and adults.</p>
 </blockquote>
@@ -13533,8 +13671,8 @@ file_face_detections(file_id, bbox, embedding, suggested_person_id, confidence)<
 <h2>Verify</h2>
 <p>Change From/To (e.g. FLL→BTV), refresh → fields still show FLL/BTV and other last-edited values.</p>
 <hr>
-<a id="chapter-184-persist-search-form-settings"></a>
-<h2>Chapter 184: Persist search form settings</h2>
+<a id="chapter-188-persist-search-form-settings"></a>
+<h2>Chapter 188: Persist search form settings</h2>
 <blockquote>
 <p><strong>Overview:</strong> Save SearchForm fields to localStorage on change and restore them on load so a browser refresh keeps the last origin, destination, dates, stay days, and adults.</p>
 </blockquote>
@@ -13560,8 +13698,8 @@ file_face_detections(file_id, bbox, embedding, suggested_person_id, confidence)<
 <h2>Verify</h2>
 <p>Change From/To (e.g. FLL→BTV), refresh → fields still show FLL/BTV and other last-edited values.</p>
 <hr>
-<a id="chapter-185-recent-people-like-tags"></a>
-<h2>Chapter 185: Recent people like tags</h2>
+<a id="chapter-189-recent-people-like-tags"></a>
+<h2>Chapter 189: Recent people like tags</h2>
 <blockquote>
 <p><strong>Overview:</strong> Add a localStorage-backed &quot;Recently used&quot; section for people pickers, mirroring the existing tag pattern in <code>FileTagPicker</code> and <code>BulkLabelEditors</code>.</p>
 </blockquote>
@@ -13624,8 +13762,8 @@ file_face_detections(file_id, bbox, embedding, suggested_person_id, confidence)<
 <li>No duplicate chips (recent people excluded from main list below)</li>
 </ol>
 <hr>
-<a id="chapter-186-recipe-hero-dish-photo"></a>
-<h2>Chapter 186: Recipe hero dish photo</h2>
+<a id="chapter-190-recipe-hero-dish-photo"></a>
+<h2>Chapter 190: Recipe hero dish photo</h2>
 <blockquote>
 <p><strong>Overview:</strong> Add an optional &quot;hero&quot; dish photo per recipe, dropped into a new hero/ folder and matched to recipes by filename stem during scan. Show it big on the recipe detail page and use it as the card thumbnail (falling back to the scan when absent).</p>
 </blockquote>
@@ -13668,8 +13806,8 @@ file_face_detections(file_id, bbox, embedding, suggested_person_id, confidence)<
 <h2>Verify</h2>
 <p>Rebuild the backend (schema migration), drop <code>hero/banana_bread.jpg</code>, run Scan, and confirm: <code>GET /api/recipes</code> returns <code>hero_filename</code>, <code>/hero-thumbnail</code> returns 200, the card shows the dish photo, and the detail page shows the hero above the scan.</p>
 <hr>
-<a id="chapter-187-relayout-library-backup-ui"></a>
-<h2>Chapter 187: Relayout library backup UI</h2>
+<a id="chapter-191-relayout-library-backup-ui"></a>
+<h2>Chapter 191: Relayout library backup UI</h2>
 <blockquote>
 <p><strong>Overview:</strong> Reorganize Settings so routine “Update backup” is primary after cutover, fold one-time “Copy and switch” into a secondary/advanced block, show disk free once, and scope progress/status to the job that was started.</p>
 </blockquote>
@@ -13713,8 +13851,8 @@ file_face_detections(file_id, bbox, embedding, suggested_person_id, confidence)<
 <li>Removing Copy and switch entirely</li>
 </ul>
 <hr>
-<a id="chapter-188-relayout-library-backup-ui"></a>
-<h2>Chapter 188: Relayout library backup UI</h2>
+<a id="chapter-192-relayout-library-backup-ui"></a>
+<h2>Chapter 192: Relayout library backup UI</h2>
 <blockquote>
 <p><strong>Overview:</strong> Reorganize Settings so routine “Update backup” is primary after cutover, fold one-time “Copy and switch” into a secondary/advanced block, show disk free once, and scope progress/status to the job that was started.</p>
 </blockquote>
@@ -13758,8 +13896,8 @@ file_face_detections(file_id, bbox, embedding, suggested_person_id, confidence)<
 <li>Removing Copy and switch entirely</li>
 </ul>
 <hr>
-<a id="chapter-189-release-20260710"></a>
-<h2>Chapter 189: Release 2026.07.10</h2>
+<a id="chapter-193-release-20260710"></a>
+<h2>Chapter 193: Release 2026.07.10</h2>
 <blockquote>
 <p><strong>Overview:</strong> Document the SQLite lock fix in the development book and CHANGELOG, bump version strings to 2026.07.10, regenerate DEVELOPMENT_BOOK.md, then commit, tag, and push the release.</p>
 </blockquote>
@@ -13814,8 +13952,8 @@ git push origin 2026.07.10</code></pre>
     changelog --&gt; versions[version bumps]
     versions --&gt; git[commit tag push]</code></pre>
 <hr>
-<a id="chapter-190-release-20260712b"></a>
-<h2>Chapter 190: Release 2026.07.12b</h2>
+<a id="chapter-194-release-20260712b"></a>
+<h2>Chapter 194: Release 2026.07.12b</h2>
 <blockquote>
 <p><strong>Overview:</strong> Document the month-selectable photo grid feature, bump version strings to 2026.07.12b, regenerate the development book, then commit and tag the release.</p>
 </blockquote>
@@ -13881,8 +14019,8 @@ git tag 2026.07.12b</code></pre>
 <li>Spot-check: <code>/calendar/2016/7?view=month</code> loads month grid; Back returns month cards</li>
 </ul>
 <hr>
-<a id="chapter-191-release-20260714"></a>
-<h2>Chapter 191: Release 2026.07.14</h2>
+<a id="chapter-195-release-20260714"></a>
+<h2>Chapter 195: Release 2026.07.14</h2>
 <blockquote>
 <p><strong>Overview:</strong> Ship the Browse AND intersection work (tags, people, cameras) as release <strong>2026.07.14</strong>: finalize CHANGELOG/README/versions, register plans and rebuild the development book, then commit, tag, and push to origin.</p>
 </blockquote>
@@ -13933,8 +14071,8 @@ git push origin HEAD
 git push origin 2026.07.14</code></pre>
 <p>Push is included so the release is on origin (branch is currently even with <code>origin/main</code>).</p>
 <hr>
-<a id="chapter-192-release-20260714"></a>
-<h2>Chapter 192: Release 2026.07.14</h2>
+<a id="chapter-196-release-20260714"></a>
+<h2>Chapter 196: Release 2026.07.14</h2>
 <blockquote>
 <p><strong>Overview:</strong> Phase 1 (now): fix calendar day 500 from unresolved camera Query default. Phase 2 (after confirm): docs, version bump, commit/tag/push 2026.07.14.</p>
 </blockquote>
@@ -13972,8 +14110,8 @@ if not isinstance(camera, list):
 <h3>Git</h3>
 <p>Commit, tag <code>2026.07.14</code>, push HEAD + tag to origin.</p>
 <hr>
-<a id="chapter-193-remove-sticky-control-frame"></a>
-<h2>Chapter 193: Remove sticky control frame</h2>
+<a id="chapter-197-remove-sticky-control-frame"></a>
+<h2>Chapter 197: Remove sticky control frame</h2>
 <blockquote>
 <p><strong>Overview:</strong> The frosted sticky bar still reads as a black slab. Remove its background, border, and shadow so Inbox filter buttons sit directly on the page/skin like Review chrome, with no full-width frame.</p>
 </blockquote>
@@ -13995,8 +14133,8 @@ if not isinstance(camera, list):
 <li>No ARCHITECTURE change</li>
 </ul>
 <hr>
-<a id="chapter-194-remove-sticky-control-frame"></a>
-<h2>Chapter 194: Remove sticky control frame</h2>
+<a id="chapter-198-remove-sticky-control-frame"></a>
+<h2>Chapter 198: Remove sticky control frame</h2>
 <blockquote>
 <p><strong>Overview:</strong> The frosted sticky bar still reads as a black slab. Remove its background, border, and shadow so Inbox filter buttons sit directly on the page/skin like Review chrome, with no full-width frame.</p>
 </blockquote>
@@ -14018,8 +14156,8 @@ if not isinstance(camera, list):
 <li>No ARCHITECTURE change</li>
 </ul>
 <hr>
-<a id="chapter-195-review-restore-deletes"></a>
-<h2>Chapter 195: Review restore deletes</h2>
+<a id="chapter-199-review-restore-deletes"></a>
+<h2>Chapter 199: Review restore deletes</h2>
 <blockquote>
 <p><strong>Overview:</strong> Add per-item and bulk Restore for delete decisions on the Review page, reusing the existing <code>cancelReviewDecisions</code> API and <code>PhotoDetail</code> delete-queue mode already used in Inbox.</p>
 </blockquote>
@@ -14112,54 +14250,9 @@ Add under `[Unreleased]` → **Added** in [`CHANGELOG.md`](imageOrganizer/CHANGE
 
 ---
 
-&lt;a id=&quot;chapter-196-separate-kitchen-ledger-agent&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-200-separate-kitchen-ledger-agent&quot;&gt;&lt;/a&gt;
 
-## Chapter 196: Separate Kitchen Ledger agent
-
-&gt; **Overview:** Kitchen Ledger is already a separate git repo on disk. It appears under imageorganizer in Cursor only because this agent chat never successfully switched its workspace root. Fix by moving this agent to `/Users/alex/Documents/github/kitchenLedger`.
-
-## Why it shows under imageorganizer
-
-Cursor’s **Repositories** sidebar groups agent chats by the **workspace root** they started in (or currently own)—not by where files live on disk.
-
-| Layer | Reality |
-|-------|---------|
-| Disk / git | Sibling at [`/Users/alex/Documents/github/kitchenLedger`](/Users/alex/Documents/github/kitchenLedger), remote `https://github.com/aherna04/kitchenLedger` |
-| This agent | Still rooted in [`/Users/alex/Documents/github/imageOrganizer`](/Users/alex/Documents/github/imageOrganizer) |
-
-This chat began in Image Organizer. Early `move_agent_to_root` attempts failed (empty repo / no `origin`). Work continued by writing to the sibling path, so the agent stayed listed under **imageorganizer**.
-
-Nothing is wrong with the Kitchen Ledger codebase layout—only the Cursor agent association.
-
-## Separate it
-
-Call Cursor’s `move_agent_to_root` with:
-
-`rootPath = /Users/alex/Documents/github/kitchenLedger`
-
-That should:
-
-- Retarget this conversation’s workspace to Kitchen Ledger
-- Make new terminals default to that repo
-- Move/show this agent under a **kitchenLedger** (or similarly named) entry in Repositories instead of nested under imageorganizer
-
-`origin/main` now exists, so the earlier move failure mode should no longer apply.
-
-## After the move
-
-- Confirm the sidebar groups this chat with Kitchen Ledger, not Image Organizer
-- Confirm the editor/workspace root is `kitchenLedger`
-- No code, git, or Docker changes required
-
-## If the move UI still looks odd
-
-You can also drag the agent into a new folder via the Repositories “New Folder” control in the sidebar—that only reorganizes the agent list; the `move_agent_to_root` step is what actually changes the workspace.
-
----
-
-&lt;a id=&quot;chapter-197-separate-kitchen-ledger-agent&quot;&gt;&lt;/a&gt;
-
-## Chapter 197: Separate Kitchen Ledger agent
+## Chapter 200: Separate Kitchen Ledger agent
 
 &gt; **Overview:** Kitchen Ledger is already a separate git repo on disk. It appears under imageorganizer in Cursor only because this agent chat never successfully switched its workspace root. Fix by moving this agent to `/Users/alex/Documents/github/kitchenLedger`.
 
@@ -14202,9 +14295,54 @@ You can also drag the agent into a new folder via the Repositories “New Folder
 
 ---
 
-&lt;a id=&quot;chapter-198-settings-three-column-disks&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-201-separate-kitchen-ledger-agent&quot;&gt;&lt;/a&gt;
 
-## Chapter 198: Settings three-column disks
+## Chapter 201: Separate Kitchen Ledger agent
+
+&gt; **Overview:** Kitchen Ledger is already a separate git repo on disk. It appears under imageorganizer in Cursor only because this agent chat never successfully switched its workspace root. Fix by moving this agent to `/Users/alex/Documents/github/kitchenLedger`.
+
+## Why it shows under imageorganizer
+
+Cursor’s **Repositories** sidebar groups agent chats by the **workspace root** they started in (or currently own)—not by where files live on disk.
+
+| Layer | Reality |
+|-------|---------|
+| Disk / git | Sibling at [`/Users/alex/Documents/github/kitchenLedger`](/Users/alex/Documents/github/kitchenLedger), remote `https://github.com/aherna04/kitchenLedger` |
+| This agent | Still rooted in [`/Users/alex/Documents/github/imageOrganizer`](/Users/alex/Documents/github/imageOrganizer) |
+
+This chat began in Image Organizer. Early `move_agent_to_root` attempts failed (empty repo / no `origin`). Work continued by writing to the sibling path, so the agent stayed listed under **imageorganizer**.
+
+Nothing is wrong with the Kitchen Ledger codebase layout—only the Cursor agent association.
+
+## Separate it
+
+Call Cursor’s `move_agent_to_root` with:
+
+`rootPath = /Users/alex/Documents/github/kitchenLedger`
+
+That should:
+
+- Retarget this conversation’s workspace to Kitchen Ledger
+- Make new terminals default to that repo
+- Move/show this agent under a **kitchenLedger** (or similarly named) entry in Repositories instead of nested under imageorganizer
+
+`origin/main` now exists, so the earlier move failure mode should no longer apply.
+
+## After the move
+
+- Confirm the sidebar groups this chat with Kitchen Ledger, not Image Organizer
+- Confirm the editor/workspace root is `kitchenLedger`
+- No code, git, or Docker changes required
+
+## If the move UI still looks odd
+
+You can also drag the agent into a new folder via the Repositories “New Folder” control in the sidebar—that only reorganizes the agent list; the `move_agent_to_root` step is what actually changes the workspace.
+
+---
+
+&lt;a id=&quot;chapter-202-settings-three-column-disks&quot;&gt;&lt;/a&gt;
+
+## Chapter 202: Settings three-column disks
 
 &gt; **Overview:** Postpone Docker free-space reporting. Restructure Settings so Paths &amp; patterns, Update backup, and advanced cutover sit in one responsive three-column row matching the mockup—using horizontal space instead of stacking Paths above Library disks.
 
@@ -14260,9 +14398,9 @@ CHANGELOG Unreleased Changed: Settings disk management three-column layout.
 
 ---
 
-&lt;a id=&quot;chapter-199-settings-three-column-disks&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-203-settings-three-column-disks&quot;&gt;&lt;/a&gt;
 
-## Chapter 199: Settings three-column disks
+## Chapter 203: Settings three-column disks
 
 &gt; **Overview:** Postpone Docker free-space reporting. Restructure Settings so Paths &amp; patterns, Update backup, and advanced cutover sit in one responsive three-column row matching the mockup—using horizontal space instead of stacking Paths above Library disks.
 
@@ -14318,40 +14456,9 @@ CHANGELOG Unreleased Changed: Settings disk management three-column layout.
 
 ---
 
-&lt;a id=&quot;chapter-200-show-connections-in-results&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-204-show-connections-in-results&quot;&gt;&lt;/a&gt;
 
-## Chapter 200: Show connections in results
-
-&gt; **Overview:** Surface stop count on each flight result and show one airport icon per connection in the All Options table.
-
-# Add connection count to results
-
-## Data
-
-[`ProviderOffer`](src/lib/providers/types.ts) already has `stops`. [`FlightResult`](src/types/search.ts) does not — [`mapOffer`](src/components/search/SearchForm.tsx) drops it.
-
-1. Add `stops: number` to `FlightResult`.
-2. In `mapOffer`, set `stops: offer.stops`.
-
-## UI — [`AlternativesList.tsx`](src/components/results/AlternativesList.tsx)
-
-Add a **Connections** column (between Duration and Airline):
-
-- Label: `Nonstop` when `stops === 0`, else `1 stop` / `N stops`
-- Render **one Lucide `Plane` icon per stop** in a row (connection = stop). Nonstop: no icons.
-- Widen grid from `grid-cols-[1fr_1.5fr_1fr_auto]` to five columns, e.g. `grid-cols-[1fr_1.5fr_1fr_1fr_auto]`
-
-Also show stops on [`CheapestHeroCard`](src/components/results/CheapestHeroCard.tsx) next to nights/airline (text only, same Nonstop/N stops wording).
-
-## Note
-
-Layover airport codes are not in the current provider payload — icons are generic plane markers, one per stop count.
-
----
-
-&lt;a id=&quot;chapter-201-show-connections-in-results&quot;&gt;&lt;/a&gt;
-
-## Chapter 201: Show connections in results
+## Chapter 204: Show connections in results
 
 &gt; **Overview:** Surface stop count on each flight result and show one airport icon per connection in the All Options table.
 
@@ -14380,9 +14487,40 @@ Layover airport codes are not in the current provider payload — icons are gene
 
 ---
 
-&lt;a id=&quot;chapter-202-slim-inbox-delete-refetch&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-205-show-connections-in-results&quot;&gt;&lt;/a&gt;
 
-## Chapter 202: Slim inbox delete refetch
+## Chapter 205: Show connections in results
+
+&gt; **Overview:** Surface stop count on each flight result and show one airport icon per connection in the All Options table.
+
+# Add connection count to results
+
+## Data
+
+[`ProviderOffer`](src/lib/providers/types.ts) already has `stops`. [`FlightResult`](src/types/search.ts) does not — [`mapOffer`](src/components/search/SearchForm.tsx) drops it.
+
+1. Add `stops: number` to `FlightResult`.
+2. In `mapOffer`, set `stops: offer.stops`.
+
+## UI — [`AlternativesList.tsx`](src/components/results/AlternativesList.tsx)
+
+Add a **Connections** column (between Duration and Airline):
+
+- Label: `Nonstop` when `stops === 0`, else `1 stop` / `N stops`
+- Render **one Lucide `Plane` icon per stop** in a row (connection = stop). Nonstop: no icons.
+- Widen grid from `grid-cols-[1fr_1.5fr_1fr_auto]` to five columns, e.g. `grid-cols-[1fr_1.5fr_1fr_1fr_auto]`
+
+Also show stops on [`CheapestHeroCard`](src/components/results/CheapestHeroCard.tsx) next to nights/airline (text only, same Nonstop/N stops wording).
+
+## Note
+
+Layover airport codes are not in the current provider payload — icons are generic plane markers, one per stop count.
+
+---
+
+&lt;a id=&quot;chapter-206-slim-inbox-delete-refetch&quot;&gt;&lt;/a&gt;
+
+## Chapter 206: Slim inbox delete refetch
 
 &gt; **Overview:** Mark-delete does not need the full invalidateAfterReviewChange burst. Narrow that helper so Inbox only refetches what a delete decision actually changes.
 
@@ -14427,38 +14565,9 @@ Mark delete in Inbox detail → logs show files + pending_delete count + review-
 
 ---
 
-&lt;a id=&quot;chapter-203-sticky-search-form&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-207-sticky-search-form&quot;&gt;&lt;/a&gt;
 
-## Chapter 203: Sticky search form
-
-&gt; **Overview:** Make the search form card stick below the header while scrolling so results move underneath and the form stays on screen.
-
-## Goal
-
-Keep the search form visible while scrolling results. Header is already `sticky top-0` ([`Header.tsx`](src/components/layout/Header.tsx), `h-16`). Form should stick just below it.
-
-## Change
-
-Update [`SearchWidget.tsx`](src/components/search/SearchWidget.tsx):
-</code></pre>
-<p>&lt;div className=&quot;sticky top-16 z-40 -mt-24 mx-auto max-w-4xl px-4 sm:px-6&quot;&gt; &lt;div className=&quot;rounded-2xl border ... bg-[var(--bg-surface)] ... backdrop-blur-xl ...&quot;&gt; {children} &lt;/div&gt; &lt;/div&gt;</p>
-<pre><code>
-- `sticky top-16` — pins under the 64px header
-- `z-40` — above results (`ResultsSection`), below header (`z-50`)
-- Keep existing card styles and `-mt-24` hero overlap
-- No layout rewrite of [`page.tsx`](src/app/page.tsx); results continue to scroll in normal document flow
-
-Airport autocomplete (`z-50` inside the form) remains usable in the sticky stacking context.
-
-## Verify
-
-Run a search with many results, scroll down — form stays under the nav; price list scrolls.
-
----
-
-&lt;a id=&quot;chapter-204-sticky-search-form&quot;&gt;&lt;/a&gt;
-
-## Chapter 204: Sticky search form
+## Chapter 207: Sticky search form
 
 &gt; **Overview:** Make the search form card stick below the header while scrolling so results move underneath and the form stays on screen.
 
@@ -14485,9 +14594,38 @@ Run a search with many results, scroll down — form stays under the nav; price 
 
 ---
 
-&lt;a id=&quot;chapter-205-throttle-inbox-scan-refetch&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-208-sticky-search-form&quot;&gt;&lt;/a&gt;
 
-## Chapter 205: Throttle inbox scan refetch
+## Chapter 208: Sticky search form
+
+&gt; **Overview:** Make the search form card stick below the header while scrolling so results move underneath and the form stays on screen.
+
+## Goal
+
+Keep the search form visible while scrolling results. Header is already `sticky top-0` ([`Header.tsx`](src/components/layout/Header.tsx), `h-16`). Form should stick just below it.
+
+## Change
+
+Update [`SearchWidget.tsx`](src/components/search/SearchWidget.tsx):
+</code></pre>
+<p>&lt;div className=&quot;sticky top-16 z-40 -mt-24 mx-auto max-w-4xl px-4 sm:px-6&quot;&gt; &lt;div className=&quot;rounded-2xl border ... bg-[var(--bg-surface)] ... backdrop-blur-xl ...&quot;&gt; {children} &lt;/div&gt; &lt;/div&gt;</p>
+<pre><code>
+- `sticky top-16` — pins under the 64px header
+- `z-40` — above results (`ResultsSection`), below header (`z-50`)
+- Keep existing card styles and `-mt-24` hero overlap
+- No layout rewrite of [`page.tsx`](src/app/page.tsx); results continue to scroll in normal document flow
+
+Airport autocomplete (`z-50` inside the form) remains usable in the sticky stacking context.
+
+## Verify
+
+Run a search with many results, scroll down — form stays under the nav; price list scrolls.
+
+---
+
+&lt;a id=&quot;chapter-209-throttle-inbox-scan-refetch&quot;&gt;&lt;/a&gt;
+
+## Chapter 209: Throttle inbox scan refetch
 
 &gt; **Overview:** Stop reloading the full Inbox grid every few seconds during a scan. Keep lightweight status polling; refresh the grid once when the scan finishes (plus a much rarer mid-scan update if useful).
 
@@ -14546,9 +14684,9 @@ Same component handles trash: remove mid-scan trash list refetch; completion eff
 
 ---
 
-&lt;a id=&quot;chapter-206-trash-view-and-restore&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-210-trash-view-and-restore&quot;&gt;&lt;/a&gt;
 
-## Chapter 206: Trash view and restore
+## Chapter 210: Trash view and restore
 
 &gt; **Overview:** Add a Trash page listing files in `.trash/`, with scan and restore back to the original location (from operations log). Requires soft-delete in apply (keep DB rows with location=trash) plus a small schema migration and new API endpoints.
 
@@ -14666,50 +14804,9 @@ Minimal — reuse `.page-header`, `.photo-grid`, toolbar pattern from [`Blurry.t
 
 ---
 
-&lt;a id=&quot;chapter-207-update-cursor-book-submodule&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-211-update-cursor-book-submodule&quot;&gt;&lt;/a&gt;
 
-## Chapter 207: Update cursor-book submodule
-
-&gt; **Overview:** Bump imageOrganizer’s `tools/cursor-book` submodule to cursor-book v1.0.0 (HTML sibling output), regenerate the development book so `docs/DEVELOPMENT_BOOK.html` is committed, and sync the local skill for dual output.
-
-# Pull cursor-book update for the next book
-
-## What’s new upstream
-
-[`tools/cursor-book`](imageOrganizer/tools/cursor-book) is pinned at `36026cf`. Remote `main` / tag **`v1.0.0`** is at `7a276ef`:
-
-- Builder always writes a sibling **HTML** book next to the markdown (`output` → `.html`, or optional `output_html`)
-- Skill/README updated for dual commit (`DEVELOPMENT_BOOK.md` + `.html`)
-
-An untracked [`docs/DEVELOPMENT_BOOK.html`](imageOrganizer/docs/DEVELOPMENT_BOOK.html) already exists locally from a prior run; it is not in git yet.
-
-## Steps
-
-1. **Bump submodule** to `v1.0.0` (or `origin/main` — same commit):
-</code></pre>
-<p>cd tools/cursor-book &amp;&amp; git fetch origin &amp;&amp; git checkout v1.0.0 cd ../.. &amp;&amp; git add tools/cursor-book</p>
-<pre><code>
-2. **Optional config** — set `&quot;output_html&quot;: &quot;docs/DEVELOPMENT_BOOK.html&quot;` in [`book.json`](imageOrganizer/book.json) to match the schema example (default already derives this from `output`).
-
-3. **Rebuild** via [`scripts/build_development_book.py`](imageOrganizer/scripts/build_development_book.py); expect both:
-
-   - `Wrote …/docs/DEVELOPMENT_BOOK.md`
-   - `Wrote …/docs/DEVELOPMENT_BOOK.html`
-
-4. **Sync consumer skill** — update [`.cursor/skills/development-book/SKILL.md`](imageOrganizer/.cursor/skills/development-book/SKILL.md) to mention committing both `.md` and `.html` (align with `tools/cursor-book/skills/development-book/SKILL.md`).
-
-5. **Commit** submodule pointer + regenerated books + skill (no app version bump / release unless you ask later — this is tooling for the next book).
-
-## Out of scope
-
-- Cutting `2026.07.23a` / a new app release
-- Changing ARCHITECTURE primary link away from the markdown book
-
----
-
-&lt;a id=&quot;chapter-208-update-cursor-book-submodule&quot;&gt;&lt;/a&gt;
-
-## Chapter 208: Update cursor-book submodule
+## Chapter 211: Update cursor-book submodule
 
 &gt; **Overview:** Bump imageOrganizer’s `tools/cursor-book` submodule to cursor-book v1.0.0 (HTML sibling output), regenerate the development book so `docs/DEVELOPMENT_BOOK.html` is committed, and sync the local skill for dual output.
 
@@ -14748,9 +14845,50 @@ An untracked [`docs/DEVELOPMENT_BOOK.html`](imageOrganizer/docs/DEVELOPMENT_BOOK
 
 ---
 
-&lt;a id=&quot;chapter-209-widen-content-max-width&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-212-update-cursor-book-submodule&quot;&gt;&lt;/a&gt;
 
-## Chapter 209: Widen content max-width
+## Chapter 212: Update cursor-book submodule
+
+&gt; **Overview:** Bump imageOrganizer’s `tools/cursor-book` submodule to cursor-book v1.0.0 (HTML sibling output), regenerate the development book so `docs/DEVELOPMENT_BOOK.html` is committed, and sync the local skill for dual output.
+
+# Pull cursor-book update for the next book
+
+## What’s new upstream
+
+[`tools/cursor-book`](imageOrganizer/tools/cursor-book) is pinned at `36026cf`. Remote `main` / tag **`v1.0.0`** is at `7a276ef`:
+
+- Builder always writes a sibling **HTML** book next to the markdown (`output` → `.html`, or optional `output_html`)
+- Skill/README updated for dual commit (`DEVELOPMENT_BOOK.md` + `.html`)
+
+An untracked [`docs/DEVELOPMENT_BOOK.html`](imageOrganizer/docs/DEVELOPMENT_BOOK.html) already exists locally from a prior run; it is not in git yet.
+
+## Steps
+
+1. **Bump submodule** to `v1.0.0` (or `origin/main` — same commit):
+</code></pre>
+<p>cd tools/cursor-book &amp;&amp; git fetch origin &amp;&amp; git checkout v1.0.0 cd ../.. &amp;&amp; git add tools/cursor-book</p>
+<pre><code>
+2. **Optional config** — set `&quot;output_html&quot;: &quot;docs/DEVELOPMENT_BOOK.html&quot;` in [`book.json`](imageOrganizer/book.json) to match the schema example (default already derives this from `output`).
+
+3. **Rebuild** via [`scripts/build_development_book.py`](imageOrganizer/scripts/build_development_book.py); expect both:
+
+   - `Wrote …/docs/DEVELOPMENT_BOOK.md`
+   - `Wrote …/docs/DEVELOPMENT_BOOK.html`
+
+4. **Sync consumer skill** — update [`.cursor/skills/development-book/SKILL.md`](imageOrganizer/.cursor/skills/development-book/SKILL.md) to mention committing both `.md` and `.html` (align with `tools/cursor-book/skills/development-book/SKILL.md`).
+
+5. **Commit** submodule pointer + regenerated books + skill (no app version bump / release unless you ask later — this is tooling for the next book).
+
+## Out of scope
+
+- Cutting `2026.07.23a` / a new app release
+- Changing ARCHITECTURE primary link away from the markdown book
+
+---
+
+&lt;a id=&quot;chapter-213-widen-content-max-width&quot;&gt;&lt;/a&gt;
+
+## Chapter 213: Widen content max-width
 
 &gt; **Overview:** Widen the search form and results column from max-w-4xl to max-w-6xl so large screens use more horizontal space, matching the header width.
 
@@ -14775,9 +14913,9 @@ On a wide viewport, form and “All Options” table span roughly the same width
 
 ---
 
-&lt;a id=&quot;chapter-210-widen-content-max-width&quot;&gt;&lt;/a&gt;
+&lt;a id=&quot;chapter-214-widen-content-max-width&quot;&gt;&lt;/a&gt;
 
-## Chapter 210: Widen content max-width
+## Chapter 214: Widen content max-width
 
 &gt; **Overview:** Widen the search form and results column from max-w-4xl to max-w-6xl so large screens use more horizontal space, matching the header width.
 

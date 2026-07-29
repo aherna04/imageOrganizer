@@ -132,7 +132,7 @@ export default function CalendarDayPanel({
 
   return (
     <div className="calendar-day-panel">
-      <div className="page-sticky-controls">
+      <div className="page-sticky-controls calendar-photo-grid-sticky">
         <div className="calendar-day-panel-header-row">
           <h3 className="calendar-day-panel-header">{date}</h3>
           <button type="button" className="btn btn-secondary" onClick={onClose}>

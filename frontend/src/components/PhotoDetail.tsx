@@ -304,7 +304,7 @@ export default function PhotoDetail({
           ) : (
             <video
               ref={drawerVideoRef}
-              src={api.originalUrl(file.id, thumbMtime)}
+              src={api.playUrl(file.id, thumbMtime)}
               controls
               poster={api.thumbUrl(file.id, thumbMtime)}
               className="photo-detail-preview"
@@ -482,7 +482,7 @@ export default function PhotoDetail({
         >
           {file.media_type === "video" ? (
             <video
-              src={api.originalUrl(file.id, thumbMtime)}
+              src={api.playUrl(file.id, thumbMtime)}
               controls
               autoPlay
               className="photo-lightbox-media"

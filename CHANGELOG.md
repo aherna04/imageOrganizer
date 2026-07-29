@@ -4,6 +4,17 @@ Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
 ## [Unreleased]
 
+## [2026.07.28] - 2026-07-28
+
+### Added
+
+- `GET /api/files/{id}/play` — browser-safe video for the detail viewer (serves original when codecs allow; otherwise caches an H.264/AAC MP4 under `video_play/`)
+
+### Fixed
+
+- Sticky controls over photo grids (Calendar labels / Prev–Next, etc.) keep an opaque background so they stay readable while scrolling
+- MOV and other camera videos that Chromium cannot decode natively now play in the detail viewer (via `/play` + ffmpeg when needed); `.mov`/`.m4v` served as `video/mp4`
+
 ## [2026.07.27] - 2026-07-27
 
 ### Fixed

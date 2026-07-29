@@ -389,6 +389,8 @@ export const api = {
     mtime != null ? `/api/files/${id}/thumbnail?v=${encodeURIComponent(String(mtime))}` : `/api/files/${id}/thumbnail`,
   originalUrl: (id: number, mtime?: number) =>
     mtime != null ? `/api/files/${id}/original?v=${encodeURIComponent(String(mtime))}` : `/api/files/${id}/original`,
+  playUrl: (id: number, mtime?: number) =>
+    mtime != null ? `/api/files/${id}/play?v=${encodeURIComponent(String(mtime))}` : `/api/files/${id}/play`,
 
   rotateFile: (id: number, direction: "left" | "right") =>
     request<MediaFile>(`/api/files/${id}/rotate`, {

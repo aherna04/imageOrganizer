@@ -1470,6 +1470,15 @@ button.calendar-month-column-title:focus-visible {
   overflow-y: auto;
 }
 
+.app-shell:has(.photo-grid) .page-sticky-controls,
+.app-shell:has(.photo-grid) .inbox-sticky-controls,
+.app-shell:has(.duplicate-compare-grid) .page-sticky-controls,
+.app-shell:has(.duplicate-compare-grid) .inbox-sticky-controls {
+  background: #0f1117;
+  border-bottom: 1px solid #2a2f3a;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
 .page-sticky-controls .photo-alerts-bar,
 .inbox-sticky-controls .photo-alerts-bar {
   margin-bottom: 0;

@@ -34,7 +34,7 @@ In Docker, the frontend dev server proxies `/api` to the backend. Host media is 
 |-------|--------|
 | Backend | Python 3.12, FastAPI, SQLite |
 | Frontend | React 18, TypeScript, Vite, TanStack Query, react-router |
-| Media | Pillow (images/thumbs), ffmpeg/ffprobe (video metadata), perceptual hash dedupe |
+| Media | Pillow (images/thumbs), ffmpeg/ffprobe (video metadata + playback transcode), perceptual hash dedupe |
 | Deploy | Docker Compose |
 
 Full interactive API spec: `http://localhost:8000/docs` when the backend is running.
@@ -51,6 +51,7 @@ Full interactive API spec: `http://localhost:8000/docs` when the backend is runn
 | `config.py` | Paths, supported extensions, env vars |
 | `scanner.py` | Background scan of inbox/archive into `files`; releases before duplicate rebuild |
 | `metadata.py` | EXIF/ffprobe extraction, thumbnails |
+| `video_play.py` | Browser-safe video for detail viewer: codec probe + cached H.264/AAC MP4 under `{APP_DATA_DIR}/video_play/` |
 | `image_rotate.py` | 90° left/right pixel rotate; preserves EXIF, normalizes Orientation |
 | `organizer.py` | Date-folder and rename preview/apply |
 | `dedupe.py` | Exact (SHA256) and perceptual (pHash) duplicate groups for inbox/archive only; background rebuild after scan (offline pHash) |
@@ -140,7 +141,7 @@ Configured in `backend/app/config.py` (inbox/archive/trash also overridable via 
 | `{MEDIA_ROOT}/photos/` | Organized archive (date-based subfolders after Apply) |
 | `{MEDIA_ROOT}/photos/mosaics/` | Generated photomosaic JPEGs (indexed + tagged `mosaic`) |
 | `{MEDIA_ROOT}/.trash/` | Soft-deleted files |
-| `{MEDIA_ROOT}/.imageOrganizer/` | Default catalog (co-located): `index.db`, `thumbs/`, `backups/` |
+| `{MEDIA_ROOT}/.imageOrganizer/` | Default catalog (co-located): `index.db`, `thumbs/`, `video_play/`, `backups/` |
 | `{APP_DATA_DIR}/` | Catalog location (defaults to `{MEDIA_ROOT}/.imageOrganizer`; override via env or bootstrap) |
 
 Environment / bootstrap (resolve order: **env →** `~/.config/imageOrganizer/bootstrap.json` **→ defaults**):
@@ -289,7 +290,7 @@ Grouped by domain. See `/docs` for parameters and schemas.
 | Mosaic | `POST /api/mosaic/preview`, `POST /api/mosaic/generate`, `GET /api/mosaic/output/{filename}` |
 | Scan | `POST /api/scan/inbox`, `/archive`, `/trash`, `GET /api/scan/status` |
 | Blur analysis | `POST /api/blur-analysis/inbox`, `/archive`, `/all`, `GET /api/blur-analysis/status` |
-| Files | `GET /api/files` (filters: location, `capture_day`, `capture_year`, `capture_month`, event, repeated `person_id` AND, repeated `tag_id` AND, repeated `camera` AND, blurry), thumbnails, original, metadata, `POST /api/files/{id}/rotate` (image-only 90° left/right; preserves EXIF) |
+| Files | `GET /api/files` (filters: location, `capture_day`, `capture_year`, `capture_month`, event, repeated `person_id` AND, repeated `tag_id` AND, repeated `camera` AND, blurry), thumbnails, original, `GET /api/files/{id}/play` (browser-safe video; may serve cached transcode), metadata, `POST /api/files/{id}/rotate` (image-only 90° left/right; preserves EXIF) |
 | File relations | `PATCH /api/files/{id}/events`, `/people`, `/tags` |
 | Calendar | `GET /api/calendar/months`, `/summary`, `/labels`, `/year-labels`, `/events`, `/day` (paginated; `page`, `page_size`) |
 | Events | CRUD, files list, assign-ids, assign-range |

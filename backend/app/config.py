@@ -14,6 +14,7 @@ DB_PATH = APP_DATA_DIR / "index.db"
 BACKUPS_DIR = APP_DATA_DIR / "backups"
 MOSAICS_DIR = APP_DATA_DIR / "mosaics"
 THUMBS_DIR = APP_DATA_DIR / "thumbs"
+VIDEO_PLAY_DIR = APP_DATA_DIR / "video_play"
 
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".heic", ".heif", ".tiff", ".tif", ".webp"}
 VIDEO_EXTENSIONS = {".mp4", ".mov", ".m4v", ".mkv", ".webm", ".avi"}
@@ -21,8 +22,8 @@ SUPPORTED_EXTENSIONS = IMAGE_EXTENSIONS | VIDEO_EXTENSIONS
 
 VIDEO_MIME_TYPES = {
     ".mp4": "video/mp4",
-    ".mov": "video/quicktime",
-    ".m4v": "video/x-m4v",
+    ".mov": "video/mp4",
+    ".m4v": "video/mp4",
     ".mkv": "video/x-matroska",
     ".webm": "video/webm",
     ".avi": "video/x-msvideo",
@@ -58,4 +59,5 @@ def ensure_media_dirs() -> None:
 def ensure_app_dirs() -> None:
     APP_DATA_DIR.mkdir(parents=True, exist_ok=True)
     THUMBS_DIR.mkdir(parents=True, exist_ok=True)
+    VIDEO_PLAY_DIR.mkdir(parents=True, exist_ok=True)
     BACKUPS_DIR.mkdir(parents=True, exist_ok=True)

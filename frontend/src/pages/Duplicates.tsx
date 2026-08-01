@@ -26,6 +26,18 @@ export default function Duplicates() {
     return ids;
   }, [reviewQueue]);
 
+  const rebuildIndex = useMutation({
+    mutationFn: () => api.rebuildDuplicates(),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["scan-status"] });
+      // Index builds in the background; refetch after a short delay and when user revisits.
+      setTimeout(() => {
+        void refetch();
+        qc.invalidateQueries({ queryKey: ["scan-status"] });
+      }, 2000);
+    },
+  });
+
   const setKeeper = useMutation({
     mutationFn: ({ groupId, keeperId }: { groupId: number; keeperId: number }) =>
       api.setKeeper(groupId, keeperId),
@@ -81,6 +93,14 @@ export default function Duplicates() {
     <div className="duplicates-page">
       <div className="page-header">
         <h2>Duplicates</h2>
+        <button
+          type="button"
+          className="btn"
+          disabled={rebuildIndex.isPending}
+          onClick={() => rebuildIndex.mutate()}
+        >
+          {rebuildIndex.isPending ? "Starting…" : "Rebuild index"}
+        </button>
         <button className="btn btn-secondary" onClick={() => api.scanInbox().then(() => refetch())}>
           Re-scan inbox
         </button>
@@ -89,12 +109,19 @@ export default function Duplicates() {
         </button>
       </div>
 
+      <p className="page-intro">
+        Rebuild index runs in the background (banner shows Building duplicate index…). Manual tags like
+        Dup are separate from this index.
+      </p>
+
       {groups.length > 0 && (
         <p className="duplicates-merge-hint">Deleting merges tags onto the kept file.</p>
       )}
 
       {groups.length === 0 && (
-        <div className="empty-state">No duplicate groups found. Scan inbox or archive to detect duplicates.</div>
+        <div className="empty-state">
+          No duplicate groups found. Use Rebuild index, or scan inbox/archive to detect duplicates.
+        </div>
       )}
 
       <div className="duplicates-list">

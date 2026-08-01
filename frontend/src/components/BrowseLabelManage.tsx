@@ -6,6 +6,71 @@ import { personLabel } from "../utils/personLabel";
 
 type ManageKind = "person" | "tag";
 
+function TrashIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+      <path d="M3 6h18" />
+      <path d="M8 6V4h8v2" />
+      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+      <path d="M10 11v6" />
+      <path d="M14 11v6" />
+    </svg>
+  );
+}
+
+/** Quiet trailing delete control for Browse header (after Label photos). */
+export function BrowseLabelDeleteButton({
+  kind,
+  entity,
+  people,
+}: {
+  kind: ManageKind;
+  entity: Person | Tag;
+  people: Person[];
+}) {
+  const qc = useQueryClient();
+  const navigate = useNavigate();
+
+  const remove = useMutation({
+    mutationFn: () =>
+      kind === "person" ? api.deletePerson(entity.id) : api.deleteTag(entity.id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["people"] });
+      qc.invalidateQueries({ queryKey: ["tags"] });
+      qc.invalidateQueries({ queryKey: ["files"] });
+      qc.invalidateQueries({ queryKey: ["browse-files"] });
+      qc.invalidateQueries({ queryKey: ["browse-cooccurring"] });
+      navigate("/browse", { replace: true });
+    },
+  });
+
+  const label =
+    kind === "person" ? personLabel(entity as Person, people) : entity.name;
+
+  const handleDelete = () => {
+    const msg =
+      entity.photo_count > 0
+        ? `Delete ${kind === "person" ? label : `"${label}"`}? This removes ${kind === "person" ? "them" : "it"} from ${entity.photo_count} photo(s).`
+        : `Delete ${kind === "person" ? label : `"${label}"`}?`;
+    if (window.confirm(msg)) {
+      remove.mutate();
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      className="browse-label-delete-btn"
+      title={kind === "person" ? "Delete person" : "Delete tag"}
+      aria-label={kind === "person" ? "Delete person" : "Delete tag"}
+      disabled={remove.isPending}
+      onClick={handleDelete}
+    >
+      <TrashIcon />
+    </button>
+  );
+}
+
 export default function BrowseLabelManage({
   kind,
   entity,
@@ -30,7 +95,7 @@ export default function BrowseLabelManage({
     qc.invalidateQueries({ queryKey: ["tags"] });
     qc.invalidateQueries({ queryKey: ["files"] });
     qc.invalidateQueries({ queryKey: ["browse-files"] });
-    qc.invalidateQueries({ queryKey: ["browse-cooccur"] });
+    qc.invalidateQueries({ queryKey: ["browse-cooccurring"] });
   };
 
   const update = useMutation({
@@ -70,15 +135,6 @@ export default function BrowseLabelManage({
     },
   });
 
-  const remove = useMutation({
-    mutationFn: () =>
-      kind === "person" ? api.deletePerson(entity.id) : api.deleteTag(entity.id),
-    onSuccess: () => {
-      invalidate();
-      navigate("/browse", { replace: true });
-    },
-  });
-
   const label =
     kind === "person" ? personLabel(entity as Person, people) : entity.name;
 
@@ -90,16 +146,6 @@ export default function BrowseLabelManage({
   const startMerge = () => {
     setMergeTargetId("");
     setMode("merge");
-  };
-
-  const handleDelete = () => {
-    const msg =
-      entity.photo_count > 0
-        ? `Delete ${kind === "person" ? label : `"${label}"`}? This removes ${kind === "person" ? "them" : "it"} from ${entity.photo_count} photo(s).`
-        : `Delete ${kind === "person" ? label : `"${label}"`}?`;
-    if (window.confirm(msg)) {
-      remove.mutate();
-    }
   };
 
   const handleMerge = () => {
@@ -180,14 +226,6 @@ export default function BrowseLabelManage({
       </button>
       <button type="button" className="btn btn-secondary" onClick={startMerge}>
         Merge
-      </button>
-      <button
-        type="button"
-        className="btn btn-danger"
-        onClick={handleDelete}
-        disabled={remove.isPending}
-      >
-        Delete
       </button>
     </div>
   );

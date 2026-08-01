@@ -2,7 +2,7 @@ import hashlib
 import json
 import re
 import subprocess
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 
 import imagehash
@@ -74,12 +74,42 @@ def _base_metadata(path: Path) -> dict:
     }
 
 
-def _apply_mtime_fallback(result: dict, path: Path) -> dict:
+def filesystem_fallback_datetime(path: Path, *, today: date | None = None) -> datetime:
+    """
+    Prefer file mtime, but when mtime falls on today and birthtime is older,
+    use birthtime (macOS Created) so copied/touched files keep a historical day.
+    """
+    stat = path.stat()
+    mtime_dt = datetime.fromtimestamp(stat.st_mtime)
+    day = today if today is not None else date.today()
+    if mtime_dt.date() != day:
+        return mtime_dt
+    birth = getattr(stat, "st_birthtime", None)
+    if birth is None:
+        return mtime_dt
+    try:
+        birth_f = float(birth)
+    except (TypeError, ValueError):
+        return mtime_dt
+    if birth_f <= 0:
+        return mtime_dt
+    birth_dt = datetime.fromtimestamp(birth_f)
+    if birth_dt.date() < day:
+        return birth_dt
+    return mtime_dt
+
+
+def _apply_filesystem_date_fallback(result: dict, path: Path) -> dict:
     if not result["capture_date"]:
-        fallback = datetime.fromtimestamp(path.stat().st_mtime)
+        fallback = filesystem_fallback_datetime(path)
         result["capture_date"] = fallback.isoformat()
         result["capture_day"] = fallback.date().isoformat()
     return result
+
+
+def _apply_mtime_fallback(result: dict, path: Path) -> dict:
+    """Backward-compatible alias for filesystem date fallback."""
+    return _apply_filesystem_date_fallback(result, path)
 
 
 def extract_video_metadata(path: Path) -> dict:
@@ -118,7 +148,7 @@ def extract_video_metadata(path: Path) -> dict:
                 break
     except Exception:
         pass
-    return _apply_mtime_fallback(result, path)
+    return _apply_filesystem_date_fallback(result, path)
 
 
 def extract_image_metadata(path: Path) -> dict:
@@ -170,7 +200,7 @@ def extract_image_metadata(path: Path) -> dict:
                     result["gps"] = "present"
     except Exception:
         pass
-    return _apply_mtime_fallback(result, path)
+    return _apply_filesystem_date_fallback(result, path)
 
 
 def extract_metadata(path: Path) -> dict:

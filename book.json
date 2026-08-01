@@ -1,6 +1,6 @@
 {
   "title": "Image Organizer — Development Book",
-  "version": "2026.07.28",
+  "version": "2026.08.01",
   "output": "docs/DEVELOPMENT_BOOK.md",
   "output_html": "docs/DEVELOPMENT_BOOK.html",
   "plans_dir": "~/.cursor/plans",

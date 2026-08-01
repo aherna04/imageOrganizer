@@ -579,6 +579,10 @@ export const api = {
     }),
 
   duplicates: () => request<DuplicateGroup[]>("/api/duplicates"),
+  rebuildDuplicates: () =>
+    request<{ ok: boolean; running: boolean; message: string | null }>("/api/duplicates/rebuild", {
+      method: "POST",
+    }),
   setKeeper: (groupId: number, keeperId: number) =>
     request<{ ok: boolean }>(`/api/duplicates/${groupId}/keeper`, {
       method: "PATCH",

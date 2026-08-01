@@ -124,7 +124,7 @@ from app.scanner import combined_scan_status, scan_state, start_scan_background
 from app.blur_analysis import blur_analysis_state, start_blur_analysis_background
 from app.trash_restore import restore_from_trash
 
-app = FastAPI(title="Image Organizer", version="2026.07.28")
+app = FastAPI(title="Image Organizer", version="2026.08.01")
 
 app.add_middleware(
     CORSMiddleware,
@@ -1627,6 +1627,14 @@ def api_duplicates():
                 )
             )
         return result
+
+
+@app.post("/api/duplicates/rebuild")
+def api_rebuild_duplicates():
+    from app.dedupe import dedupe_state, start_dedupe_rebuild_background
+
+    start_dedupe_rebuild_background()
+    return {"ok": True, **dedupe_state.snapshot()}
 
 
 @app.patch("/api/duplicates/{group_id}/keeper")

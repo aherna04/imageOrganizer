@@ -2667,6 +2667,33 @@ button.calendar-month-column-title:focus-visible {
   font-size: 0.875rem;
 }
 
+.browse-label-delete-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #8891a0;
+  cursor: pointer;
+}
+
+.browse-label-delete-btn:hover:not(:disabled) {
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.12);
+}
+
+.browse-label-delete-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.browse-label-delete-btn svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
 .browse-results-header h3 {
   margin: 0;
 }

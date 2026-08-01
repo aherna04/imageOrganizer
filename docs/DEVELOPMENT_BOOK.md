@@ -1,6 +1,6 @@
 # Image Organizer — Development Book
 
-*Release 2026.07.28 · collected Cursor implementation plans*
+*Release 2026.08.01 · collected Cursor implementation plans*
 
 Related: [ARCHITECTURE.md](ARCHITECTURE.md) · [CHANGELOG.md](../CHANGELOG.md)
 
@@ -143,110 +143,166 @@ This book collects the Cursor agent implementation plans written while building 
 108. [Add Northeast regionals](#chapter-108-add-northeast-regionals)
 109. [Add plane type to results](#chapter-109-add-plane-type-to-results)
 110. [Add plane type to results](#chapter-110-add-plane-type-to-results)
-111. [Blur feature documentation](#chapter-111-blur-feature-documentation)
-112. [Blurry image detection](#chapter-112-blurry-image-detection)
-113. [Blurry scroll and nav](#chapter-113-blurry-scroll-and-nav)
-114. [Book update and release](#chapter-114-book-update-and-release)
-115. [Browse cameras subset](#chapter-115-browse-cameras-subset)
-116. [Browse multi-tag AND](#chapter-116-browse-multi-tag-and)
-117. [Browse subset people fix](#chapter-117-browse-subset-people-fix)
-118. [Bump version 2026.07.25a](#chapter-118-bump-version-20260725a)
-119. [Bump version 2026.07.25a](#chapter-119-bump-version-20260725a)
-120. [Calendar day pagination](#chapter-120-calendar-day-pagination)
-121. [Calendar global untagged](#chapter-121-calendar-global-untagged)
-122. [Calendar tagging bottom-left](#chapter-122-calendar-tagging-bottom-left)
-123. [Calendar untagged edit mode](#chapter-123-calendar-untagged-edit-mode)
-124. [Calendar untagged filter](#chapter-124-calendar-untagged-filter)
-125. [Clarify migrate destination UX](#chapter-125-clarify-migrate-destination-ux)
-126. [Clarify migrate destination UX](#chapter-126-clarify-migrate-destination-ux)
-127. [Clone datefare repo](#chapter-127-clone-datefare-repo)
-128. [Clone datefare repo](#chapter-128-clone-datefare-repo)
-129. [Connection airport icons](#chapter-129-connection-airport-icons)
-130. [Connection airport icons](#chapter-130-connection-airport-icons)
-131. [cursor-book development book](#chapter-131-cursor-book-development-book)
-132. [cursor-book development book](#chapter-132-cursor-book-development-book)
-133. [Cursor book tool repo](#chapter-133-cursor-book-tool-repo)
-134. [Database datetime backups](#chapter-134-database-datetime-backups)
-135. [Detail applied labels](#chapter-135-detail-applied-labels)
-136. [Detail applied labels](#chapter-136-detail-applied-labels)
-137. [Docker backup media mount](#chapter-137-docker-backup-media-mount)
-138. [Docker backup media mount](#chapter-138-docker-backup-media-mount)
-139. [Dockerize datefare app](#chapter-139-dockerize-datefare-app)
-140. [Dockerize datefare app](#chapter-140-dockerize-datefare-app)
-141. [Docs commit and PR](#chapter-141-docs-commit-and-pr)
-142. [Docs commit and PR](#chapter-142-docs-commit-and-pr)
-143. [Document and commit foundation](#chapter-143-document-and-commit-foundation)
-144. [Document and commit foundation](#chapter-144-document-and-commit-foundation)
-145. [Expand Plattsburgh regionals](#chapter-145-expand-plattsburgh-regionals)
-146. [Expand Plattsburgh regionals](#chapter-146-expand-plattsburgh-regionals)
-147. [Fix blocked scan clicks](#chapter-147-fix-blocked-scan-clicks)
-148. [Fix blur detection threshold](#chapter-148-fix-blur-detection-threshold)
-149. [Fix calendar tag search layout](#chapter-149-fix-calendar-tag-search-layout)
-150. [Fix camera model order](#chapter-150-fix-camera-model-order)
-151. [Fix fast-flights v3 API](#chapter-151-fix-fast-flights-v3-api)
-152. [Fix fast-flights v3 API](#chapter-152-fix-fast-flights-v3-api)
-153. [Fix label data loss](#chapter-153-fix-label-data-loss)
-154. [Fix lightbox scale-to-fit](#chapter-154-fix-lightbox-scale-to-fit)
-155. [Fix mosaic navigation](#chapter-155-fix-mosaic-navigation)
-156. [Fix MOV video playback](#chapter-156-fix-mov-video-playback)
-157. [Fix MOV video playback](#chapter-157-fix-mov-video-playback)
-158. [Fix tag wrap blowout](#chapter-158-fix-tag-wrap-blowout)
-159. [Fix tag wrap blowout](#chapter-159-fix-tag-wrap-blowout)
-160. [HTML book output](#chapter-160-html-book-output)
-161. [HTML book output](#chapter-161-html-book-output)
-162. [Inbox autotag investigation](#chapter-162-inbox-autotag-investigation)
-163. [Inbox detail auto-advance](#chapter-163-inbox-detail-auto-advance)
-164. [Inbox sticky chrome fix](#chapter-164-inbox-sticky-chrome-fix)
-165. [Inbox sticky chrome fix](#chapter-165-inbox-sticky-chrome-fix)
-166. [Incremental update backup](#chapter-166-incremental-update-backup)
-167. [Incremental update backup](#chapter-167-incremental-update-backup)
-168. [Kitchen Ledger recipe app](#chapter-168-kitchen-ledger-recipe-app)
-169. [Library disks side-by-side](#chapter-169-library-disks-side-by-side)
-170. [Library disks side-by-side](#chapter-170-library-disks-side-by-side)
-171. [Library migrate backup](#chapter-171-library-migrate-backup)
-172. [Library migrate backup](#chapter-172-library-migrate-backup)
-173. [Library mosaic save](#chapter-173-library-mosaic-save)
-174. [Lightbox tag fonts](#chapter-174-lightbox-tag-fonts)
-175. [Lightbox tag overlay](#chapter-175-lightbox-tag-overlay)
-176. [Link inbox image as hero](#chapter-176-link-inbox-image-as-hero)
-177. [Link inbox image as hero](#chapter-177-link-inbox-image-as-hero)
-178. [Migrate disk health](#chapter-178-migrate-disk-health)
-179. [Migrate disk health](#chapter-179-migrate-disk-health)
-180. [Opaque calendar sticky chrome](#chapter-180-opaque-calendar-sticky-chrome)
-181. [Opaque calendar sticky chrome](#chapter-181-opaque-calendar-sticky-chrome)
-182. [People autotag options](#chapter-182-people-autotag-options)
-183. [Per-passenger price display](#chapter-183-per-passenger-price-display)
-184. [Per-passenger price display](#chapter-184-per-passenger-price-display)
-185. [Persist collapsible sections](#chapter-185-persist-collapsible-sections)
-186. [Persist collapsible sections](#chapter-186-persist-collapsible-sections)
-187. [Persist search form settings](#chapter-187-persist-search-form-settings)
-188. [Persist search form settings](#chapter-188-persist-search-form-settings)
-189. [Recent people like tags](#chapter-189-recent-people-like-tags)
-190. [Recipe hero dish photo](#chapter-190-recipe-hero-dish-photo)
-191. [Relayout library backup UI](#chapter-191-relayout-library-backup-ui)
-192. [Relayout library backup UI](#chapter-192-relayout-library-backup-ui)
-193. [Release 2026.07.10](#chapter-193-release-20260710)
-194. [Release 2026.07.12b](#chapter-194-release-20260712b)
-195. [Release 2026.07.14](#chapter-195-release-20260714)
-196. [Release 2026.07.14](#chapter-196-release-20260714)
-197. [Remove sticky control frame](#chapter-197-remove-sticky-control-frame)
-198. [Remove sticky control frame](#chapter-198-remove-sticky-control-frame)
-199. [Review restore deletes](#chapter-199-review-restore-deletes)
-200. [Separate Kitchen Ledger agent](#chapter-200-separate-kitchen-ledger-agent)
-201. [Separate Kitchen Ledger agent](#chapter-201-separate-kitchen-ledger-agent)
-202. [Settings three-column disks](#chapter-202-settings-three-column-disks)
-203. [Settings three-column disks](#chapter-203-settings-three-column-disks)
-204. [Show connections in results](#chapter-204-show-connections-in-results)
-205. [Show connections in results](#chapter-205-show-connections-in-results)
-206. [Slim inbox delete refetch](#chapter-206-slim-inbox-delete-refetch)
-207. [Sticky search form](#chapter-207-sticky-search-form)
-208. [Sticky search form](#chapter-208-sticky-search-form)
-209. [Throttle inbox scan refetch](#chapter-209-throttle-inbox-scan-refetch)
-210. [Trash view and restore](#chapter-210-trash-view-and-restore)
-211. [Update cursor-book submodule](#chapter-211-update-cursor-book-submodule)
-212. [Update cursor-book submodule](#chapter-212-update-cursor-book-submodule)
-213. [Widen content max-width](#chapter-213-widen-content-max-width)
-214. [Widen content max-width](#chapter-214-widen-content-max-width)
+111. [Apply move or copy](#chapter-111-apply-move-or-copy)
+112. [Apply move or copy](#chapter-112-apply-move-or-copy)
+113. [Arrow category nav](#chapter-113-arrow-category-nav)
+114. [Arrow category nav](#chapter-114-arrow-category-nav)
+115. [Blur feature documentation](#chapter-115-blur-feature-documentation)
+116. [Blurry image detection](#chapter-116-blurry-image-detection)
+117. [Blurry scroll and nav](#chapter-117-blurry-scroll-and-nav)
+118. [Book update and release](#chapter-118-book-update-and-release)
+119. [Browse cameras subset](#chapter-119-browse-cameras-subset)
+120. [Browse multi-tag AND](#chapter-120-browse-multi-tag-and)
+121. [Browse pagination and delete](#chapter-121-browse-pagination-and-delete)
+122. [Browse pagination and delete](#chapter-122-browse-pagination-and-delete)
+123. [Browse subset people fix](#chapter-123-browse-subset-people-fix)
+124. [Bump version 2026.07.25a](#chapter-124-bump-version-20260725a)
+125. [Bump version 2026.07.25a](#chapter-125-bump-version-20260725a)
+126. [Bust image cache](#chapter-126-bust-image-cache)
+127. [Bust image cache](#chapter-127-bust-image-cache)
+128. [Bust image cache](#chapter-128-bust-image-cache)
+129. [Bust image cache](#chapter-129-bust-image-cache)
+130. [Calendar day pagination](#chapter-130-calendar-day-pagination)
+131. [Calendar global untagged](#chapter-131-calendar-global-untagged)
+132. [Calendar tagging bottom-left](#chapter-132-calendar-tagging-bottom-left)
+133. [Calendar untagged edit mode](#chapter-133-calendar-untagged-edit-mode)
+134. [Calendar untagged filter](#chapter-134-calendar-untagged-filter)
+135. [Category nav and fullscreen](#chapter-135-category-nav-and-fullscreen)
+136. [Category nav and fullscreen](#chapter-136-category-nav-and-fullscreen)
+137. [Category search filter](#chapter-137-category-search-filter)
+138. [Category search filter](#chapter-138-category-search-filter)
+139. [Clarify migrate destination UX](#chapter-139-clarify-migrate-destination-ux)
+140. [Clarify migrate destination UX](#chapter-140-clarify-migrate-destination-ux)
+141. [Clone datefare repo](#chapter-141-clone-datefare-repo)
+142. [Clone datefare repo](#chapter-142-clone-datefare-repo)
+143. [Connection airport icons](#chapter-143-connection-airport-icons)
+144. [Connection airport icons](#chapter-144-connection-airport-icons)
+145. [cursor-book development book](#chapter-145-cursor-book-development-book)
+146. [cursor-book development book](#chapter-146-cursor-book-development-book)
+147. [Cursor book tool repo](#chapter-147-cursor-book-tool-repo)
+148. [Database datetime backups](#chapter-148-database-datetime-backups)
+149. [Datefare-style UI](#chapter-149-datefare-style-ui)
+150. [Datefare-style UI](#chapter-150-datefare-style-ui)
+151. [Default apply move](#chapter-151-default-apply-move)
+152. [Default apply move](#chapter-152-default-apply-move)
+153. [Delete and new category](#chapter-153-delete-and-new-category)
+154. [Delete and new category](#chapter-154-delete-and-new-category)
+155. [Detail applied labels](#chapter-155-detail-applied-labels)
+156. [Detail applied labels](#chapter-156-detail-applied-labels)
+157. [Docker backup media mount](#chapter-157-docker-backup-media-mount)
+158. [Docker backup media mount](#chapter-158-docker-backup-media-mount)
+159. [Dockerize datefare app](#chapter-159-dockerize-datefare-app)
+160. [Dockerize datefare app](#chapter-160-dockerize-datefare-app)
+161. [Docs commit and PR](#chapter-161-docs-commit-and-pr)
+162. [Docs commit and PR](#chapter-162-docs-commit-and-pr)
+163. [Document and commit foundation](#chapter-163-document-and-commit-foundation)
+164. [Document and commit foundation](#chapter-164-document-and-commit-foundation)
+165. [Dup thumbs and views](#chapter-165-dup-thumbs-and-views)
+166. [Dup thumbs and views](#chapter-166-dup-thumbs-and-views)
+167. [Exact output duplicates](#chapter-167-exact-output-duplicates)
+168. [Exact output duplicates](#chapter-168-exact-output-duplicates)
+169. [Expand Plattsburgh regionals](#chapter-169-expand-plattsburgh-regionals)
+170. [Expand Plattsburgh regionals](#chapter-170-expand-plattsburgh-regionals)
+171. [Fix blocked scan clicks](#chapter-171-fix-blocked-scan-clicks)
+172. [Fix blur detection threshold](#chapter-172-fix-blur-detection-threshold)
+173. [Fix calendar tag search layout](#chapter-173-fix-calendar-tag-search-layout)
+174. [Fix camera model order](#chapter-174-fix-camera-model-order)
+175. [Fix empty duplicates index](#chapter-175-fix-empty-duplicates-index)
+176. [Fix empty duplicates index](#chapter-176-fix-empty-duplicates-index)
+177. [Fix fast-flights v3 API](#chapter-177-fix-fast-flights-v3-api)
+178. [Fix fast-flights v3 API](#chapter-178-fix-fast-flights-v3-api)
+179. [Fix label data loss](#chapter-179-fix-label-data-loss)
+180. [Fix lightbox scale-to-fit](#chapter-180-fix-lightbox-scale-to-fit)
+181. [Fix mosaic navigation](#chapter-181-fix-mosaic-navigation)
+182. [Fix MOV video playback](#chapter-182-fix-mov-video-playback)
+183. [Fix MOV video playback](#chapter-183-fix-mov-video-playback)
+184. [Fix search first char](#chapter-184-fix-search-first-char)
+185. [Fix search first char](#chapter-185-fix-search-first-char)
+186. [Fix SQLite locked](#chapter-186-fix-sqlite-locked)
+187. [Fix SQLite locked](#chapter-187-fix-sqlite-locked)
+188. [Fix stale thumbnails](#chapter-188-fix-stale-thumbnails)
+189. [Fix stale thumbnails](#chapter-189-fix-stale-thumbnails)
+190. [Fix tag wrap blowout](#chapter-190-fix-tag-wrap-blowout)
+191. [Fix tag wrap blowout](#chapter-191-fix-tag-wrap-blowout)
+192. [Hide empty categories](#chapter-192-hide-empty-categories)
+193. [Hide empty categories](#chapter-193-hide-empty-categories)
+194. [HTML book output](#chapter-194-html-book-output)
+195. [HTML book output](#chapter-195-html-book-output)
+196. [imageSorter web app](#chapter-196-imagesorter-web-app)
+197. [imageSorter web app](#chapter-197-imagesorter-web-app)
+198. [Inbox autotag investigation](#chapter-198-inbox-autotag-investigation)
+199. [Inbox detail auto-advance](#chapter-199-inbox-detail-auto-advance)
+200. [Inbox sticky chrome fix](#chapter-200-inbox-sticky-chrome-fix)
+201. [Inbox sticky chrome fix](#chapter-201-inbox-sticky-chrome-fix)
+202. [Incremental update backup](#chapter-202-incremental-update-backup)
+203. [Incremental update backup](#chapter-203-incremental-update-backup)
+204. [Install Python3 Mac](#chapter-204-install-python3-mac)
+205. [Install Python3 Mac](#chapter-205-install-python3-mac)
+206. [Kitchen Ledger recipe app](#chapter-206-kitchen-ledger-recipe-app)
+207. [Library disks side-by-side](#chapter-207-library-disks-side-by-side)
+208. [Library disks side-by-side](#chapter-208-library-disks-side-by-side)
+209. [Library migrate backup](#chapter-209-library-migrate-backup)
+210. [Library migrate backup](#chapter-210-library-migrate-backup)
+211. [Library mosaic save](#chapter-211-library-mosaic-save)
+212. [Lightbox tag fonts](#chapter-212-lightbox-tag-fonts)
+213. [Lightbox tag overlay](#chapter-213-lightbox-tag-overlay)
+214. [Link inbox image as hero](#chapter-214-link-inbox-image-as-hero)
+215. [Link inbox image as hero](#chapter-215-link-inbox-image-as-hero)
+216. [Migrate disk health](#chapter-216-migrate-disk-health)
+217. [Migrate disk health](#chapter-217-migrate-disk-health)
+218. [Opaque calendar sticky chrome](#chapter-218-opaque-calendar-sticky-chrome)
+219. [Opaque calendar sticky chrome](#chapter-219-opaque-calendar-sticky-chrome)
+220. [People autotag options](#chapter-220-people-autotag-options)
+221. [Per-passenger price display](#chapter-221-per-passenger-price-display)
+222. [Per-passenger price display](#chapter-222-per-passenger-price-display)
+223. [Persist categories across batches](#chapter-223-persist-categories-across-batches)
+224. [Persist categories across batches](#chapter-224-persist-categories-across-batches)
+225. [Persist collapsible sections](#chapter-225-persist-collapsible-sections)
+226. [Persist collapsible sections](#chapter-226-persist-collapsible-sections)
+227. [Persist search form settings](#chapter-227-persist-search-form-settings)
+228. [Persist search form settings](#chapter-228-persist-search-form-settings)
+229. [Prefer birthtime over today mtime](#chapter-229-prefer-birthtime-over-today-mtime)
+230. [Prefer birthtime over today mtime](#chapter-230-prefer-birthtime-over-today-mtime)
+231. [Reanalyze Uncategorized](#chapter-231-reanalyze-uncategorized)
+232. [Reanalyze Uncategorized](#chapter-232-reanalyze-uncategorized)
+233. [Recent people like tags](#chapter-233-recent-people-like-tags)
+234. [Recipe hero dish photo](#chapter-234-recipe-hero-dish-photo)
+235. [Relayout library backup UI](#chapter-235-relayout-library-backup-ui)
+236. [Relayout library backup UI](#chapter-236-relayout-library-backup-ui)
+237. [Release 2026.07.10](#chapter-237-release-20260710)
+238. [Release 2026.07.12b](#chapter-238-release-20260712b)
+239. [Release 2026.07.14](#chapter-239-release-20260714)
+240. [Release 2026.07.14](#chapter-240-release-20260714)
+241. [Remove sticky control frame](#chapter-241-remove-sticky-control-frame)
+242. [Remove sticky control frame](#chapter-242-remove-sticky-control-frame)
+243. [Rename hero headline](#chapter-243-rename-hero-headline)
+244. [Rename hero headline](#chapter-244-rename-hero-headline)
+245. [Review restore deletes](#chapter-245-review-restore-deletes)
+246. [Select all images](#chapter-246-select-all-images)
+247. [Select all images](#chapter-247-select-all-images)
+248. [Separate Kitchen Ledger agent](#chapter-248-separate-kitchen-ledger-agent)
+249. [Separate Kitchen Ledger agent](#chapter-249-separate-kitchen-ledger-agent)
+250. [Settings three-column disks](#chapter-250-settings-three-column-disks)
+251. [Settings three-column disks](#chapter-251-settings-three-column-disks)
+252. [Show connections in results](#chapter-252-show-connections-in-results)
+253. [Show connections in results](#chapter-253-show-connections-in-results)
+254. [Show dup folders](#chapter-254-show-dup-folders)
+255. [Show dup folders](#chapter-255-show-dup-folders)
+256. [Slim inbox delete refetch](#chapter-256-slim-inbox-delete-refetch)
+257. [Smarter category matching](#chapter-257-smarter-category-matching)
+258. [Smarter category matching](#chapter-258-smarter-category-matching)
+259. [Sticky search form](#chapter-259-sticky-search-form)
+260. [Sticky search form](#chapter-260-sticky-search-form)
+261. [Switchable dup keep](#chapter-261-switchable-dup-keep)
+262. [Switchable dup keep](#chapter-262-switchable-dup-keep)
+263. [Text match and auto-advance](#chapter-263-text-match-and-auto-advance)
+264. [Text match and auto-advance](#chapter-264-text-match-and-auto-advance)
+265. [Throttle inbox scan refetch](#chapter-265-throttle-inbox-scan-refetch)
+266. [Trash view and restore](#chapter-266-trash-view-and-restore)
+267. [Update cursor-book submodule](#chapter-267-update-cursor-book-submodule)
+268. [Update cursor-book submodule](#chapter-268-update-cursor-book-submodule)
+269. [Widen content max-width](#chapter-269-widen-content-max-width)
+270. [Widen content max-width](#chapter-270-widen-content-max-width)
 
 ### Skipped Duplicates
 
@@ -11849,9 +11905,119 @@ Docker users need `docker compose up --build` so the updated Python script is in
 
 ---
 
-<a id="chapter-111-blur-feature-documentation"></a>
+<a id="chapter-111-apply-move-or-copy"></a>
 
-## Chapter 111: Blur feature documentation
+## Chapter 111: Apply move or copy
+
+> **Overview:** Add a Copy/Move mode on the Apply page so users can either copy files into /output (current behavior) or move them, then remove the moved files from the app DB.
+
+# Apply: Copy or Move
+
+Default stays **Copy** (originals remain in source). **Move** uses `shutil.move` into `/output`, then deletes those file rows and thumbs so Categories no longer shows missing sources.
+
+## Backend — [`backend/app/apply.py`](backend/app/apply.py), [`backend/app/main.py`](backend/app/main.py)
+
+- Rename/generalize `apply_copies()` → `apply_files(mode: Literal["copy","move"] = "copy")`.
+- Per file: `shutil.copy2` or `shutil.move` into the same `_unique_dest` layout under `OUTPUT_DIR`.
+- On successful **move**: delete thumb via `db.thumb_path(id)`, then `DELETE FROM files WHERE id=?` (same cleanup pattern as scan removals in [`scanner.py`](backend/app/scanner.py)).
+- Return shape: `{ mode, copied|moved count as `transferred`, skipped, errors, output_dir }` — keep `copied` as alias of transferred for copy mode so the UI can show “Copied N” / “Moved N”.
+- `POST /api/apply` body: `{ "mode": "copy" | "move" }` (default `"copy"`).
+
+## Frontend — [`Apply.tsx`](frontend/src/pages/Apply.tsx), [`client.ts`](frontend/src/api/client.ts)
+
+- Mode control: two mutually exclusive choices (Copy / Move), Copy selected by default — reuse existing `.cat-toggle` styling or a compact radio row above the actions.
+- Copy subcopy: “Originals stay in the source folder.”
+- Move subcopy: “Files are moved into `/output` and removed from this library.”
+- Primary button / confirm / pending / success text switch on mode (`Copy N files` / `Move N files`).
+- `api.apply(mode)` POSTs `{ mode }`.
+
+## Light copy tweak
+
+- [`Home.tsx`](frontend/src/pages/Home.tsx): “review and copy” → “review and apply (copy or move)”.
+
+---
+
+<a id="chapter-112-apply-move-or-copy"></a>
+
+## Chapter 112: Apply move or copy
+
+> **Overview:** Add a Copy/Move mode on the Apply page so users can either copy files into /output (current behavior) or move them, then remove the moved files from the app DB.
+
+# Apply: Copy or Move
+
+Default stays **Copy** (originals remain in source). **Move** uses `shutil.move` into `/output`, then deletes those file rows and thumbs so Categories no longer shows missing sources.
+
+## Backend — [`backend/app/apply.py`](backend/app/apply.py), [`backend/app/main.py`](backend/app/main.py)
+
+- Rename/generalize `apply_copies()` → `apply_files(mode: Literal["copy","move"] = "copy")`.
+- Per file: `shutil.copy2` or `shutil.move` into the same `_unique_dest` layout under `OUTPUT_DIR`.
+- On successful **move**: delete thumb via `db.thumb_path(id)`, then `DELETE FROM files WHERE id=?` (same cleanup pattern as scan removals in [`scanner.py`](backend/app/scanner.py)).
+- Return shape: `{ mode, copied|moved count as `transferred`, skipped, errors, output_dir }` — keep `copied` as alias of transferred for copy mode so the UI can show “Copied N” / “Moved N”.
+- `POST /api/apply` body: `{ "mode": "copy" | "move" }` (default `"copy"`).
+
+## Frontend — [`Apply.tsx`](frontend/src/pages/Apply.tsx), [`client.ts`](frontend/src/api/client.ts)
+
+- Mode control: two mutually exclusive choices (Copy / Move), Copy selected by default — reuse existing `.cat-toggle` styling or a compact radio row above the actions.
+- Copy subcopy: “Originals stay in the source folder.”
+- Move subcopy: “Files are moved into `/output` and removed from this library.”
+- Primary button / confirm / pending / success text switch on mode (`Copy N files` / `Move N files`).
+- `api.apply(mode)` POSTs `{ mode }`.
+
+## Light copy tweak
+
+- [`Home.tsx`](frontend/src/pages/Home.tsx): “review and copy” → “review and apply (copy or move)”.
+
+---
+
+<a id="chapter-113-arrow-category-nav"></a>
+
+## Chapter 113: Arrow category nav
+
+> **Overview:** When the lightbox is closed on category detail, Left/Right arrow keys navigate prev/next category (same as the title-row buttons). Lightbox keeps arrows for images.
+
+# Keyboard arrows for category navigation
+
+On [`CategoryDetail.tsx`](frontend/src/pages/CategoryDetail.tsx), category prev/next currently works via `[` / `]` and Alt+Arrow. Plain **ArrowLeft / ArrowRight** only work inside the lightbox (images).
+
+## Change
+
+In the existing `keydown` handler, when `lightbox == null` and not typing:
+
+- `ArrowLeft` → navigate to `prevCat` (same as the left title button)
+- `ArrowRight` → navigate to `nextCat`
+
+Keep `[` / `]` as aliases. Lightbox arrow behavior unchanged (images first when open).
+
+Update the lightbox footer hint if it still says `[ ] categories` only — optional note is fine; no need for a new help strip on the main view unless one already documents keys.
+
+---
+
+<a id="chapter-114-arrow-category-nav"></a>
+
+## Chapter 114: Arrow category nav
+
+> **Overview:** When the lightbox is closed on category detail, Left/Right arrow keys navigate prev/next category (same as the title-row buttons). Lightbox keeps arrows for images.
+
+# Keyboard arrows for category navigation
+
+On [`CategoryDetail.tsx`](frontend/src/pages/CategoryDetail.tsx), category prev/next currently works via `[` / `]` and Alt+Arrow. Plain **ArrowLeft / ArrowRight** only work inside the lightbox (images).
+
+## Change
+
+In the existing `keydown` handler, when `lightbox == null` and not typing:
+
+- `ArrowLeft` → navigate to `prevCat` (same as the left title button)
+- `ArrowRight` → navigate to `nextCat`
+
+Keep `[` / `]` as aliases. Lightbox arrow behavior unchanged (images first when open).
+
+Update the lightbox footer hint if it still says `[ ] categories` only — optional note is fine; no need for a new help strip on the main view unless one already documents keys.
+
+---
+
+<a id="chapter-115-blur-feature-documentation"></a>
+
+## Chapter 115: Blur feature documentation
 
 > **Overview:** Document how blurry image detection works for users (README workflow) and developers (ARCHITECTURE algorithm, API, and UI), matching the current implementation including outlier detection and Settings threshold.
 
@@ -11971,9 +12137,9 @@ Add under **[Unreleased] → Changed** (one line):
 
 ---
 
-<a id="chapter-112-blurry-image-detection"></a>
+<a id="chapter-116-blurry-image-detection"></a>
 
-## Chapter 112: Blurry image detection
+## Chapter 116: Blurry image detection
 
 > **Overview:** Add a separate post-scan sharpness analysis pass (Laplacian variance on downscaled images), store scores in SQLite, and expose a dedicated Blurry nav page to browse and act on out-of-focus photos.
 
@@ -12133,9 +12299,9 @@ In [`Settings.tsx`](frontend/src/pages/Settings.tsx), add **Blur detection thres
 
 ---
 
-<a id="chapter-113-blurry-scroll-and-nav"></a>
+<a id="chapter-117-blurry-scroll-and-nav"></a>
 
-## Chapter 113: Blurry scroll and nav
+## Chapter 117: Blurry scroll and nav
 
 > **Overview:** Fix Blurry page detail/lightbox parity with Inbox by wiring PhotoDetail navigation props and applying the documented lightbox scroll/pan CSS fix globally in PhotoDetail.
 
@@ -12279,9 +12445,9 @@ On **Blurry** page with 3+ blurry photos:
 
 ---
 
-<a id="chapter-114-book-update-and-release"></a>
+<a id="chapter-118-book-update-and-release"></a>
 
-## Chapter 114: Book update and release
+## Chapter 118: Book update and release
 
 > **Overview:** Add post-2026.07.05b feature plans to book.json, rebuild DEVELOPMENT_BOOK.md, write CHANGELOG 2026.07.07 for all uncommitted work, bump versions, commit, tag, and push to origin.
 
@@ -12379,9 +12545,9 @@ Requires network + git_write permissions for push.
 
 ---
 
-<a id="chapter-115-browse-cameras-subset"></a>
+<a id="chapter-119-browse-cameras-subset"></a>
 
-## Chapter 115: Browse cameras subset
+## Chapter 119: Browse cameras subset
 
 > **Overview:** When Browse has tag/person (and camera) filters active, the Cameras sidebar will list only cameras present in that AND selection with counts in-set — same idea as Also tagged / People — and clicking a camera will AND it into the filter.
 
@@ -12482,9 +12648,9 @@ Legacy `/browse/camera/:name` already redirects into the query model — keep th
 
 ---
 
-<a id="chapter-116-browse-multi-tag-and"></a>
+<a id="chapter-120-browse-multi-tag-and"></a>
 
-## Chapter 116: Browse multi-tag AND
+## Chapter 120: Browse multi-tag AND
 
 > **Overview:** Define a Browse multi-tag feature: selecting a tag shows all co-occurring tags in that result set; selecting more tags narrows via AND intersection (Cars AND corvette), inspired by the Calendar year label bar.
 
@@ -12628,9 +12794,103 @@ Concept locked as above. Implementation waits until you approve (and confirm Bro
 
 ---
 
-<a id="chapter-117-browse-subset-people-fix"></a>
+<a id="chapter-121-browse-pagination-and-delete"></a>
 
-## Chapter 117: Browse subset people fix
+## Chapter 121: Browse pagination and delete
+
+> **Overview:** Add Calendar-style pagination to Browse tag/person/camera results (currently capped at 200 with no UI), and demote the tag/person Delete control to a trailing trash icon so Edit/Merge/Label stay primary.
+
+# Browse pagination + quieter Delete
+
+## Problems
+
+1. [`Browse.tsx`](frontend/src/pages/Browse.tsx) loads `api.listFiles({ …, page_size: 200 })` with **no `page`** and no pagination UI, so a 677-photo tag only shows the first page.
+2. [`BrowseLabelManage.tsx`](frontend/src/components/BrowseLabelManage.tsx) renders a full `btn btn-danger` **Delete** between Merge and Label photos — too prominent.
+
+## 1. Pagination (match Trash / Calendar)
+
+In [`Browse.tsx`](frontend/src/pages/Browse.tsx):
+
+- `PAGE_SIZE = 100` (same as Calendar/Trash)
+- `page` state; reset to `1` when the filter selection changes (same effect that clears `selectedIds`)
+- Include `page` in `browseFilesKey` and pass `page` + `page_size: PAGE_SIZE` to `listFiles`
+- When `total > PAGE_SIZE`, render the existing `.calendar-day-pagination` block (range label + Prev / Page N of M / Next), placed above the photo grid (after active chips / label editors), same pattern as [`Trash.tsx`](frontend/src/pages/Trash.tsx)
+- Clear selection (or clamp) when changing pages; keep detail navigation within the current page’s `items`
+
+No backend changes — `listFiles` already supports `page` / `page_size` / `total`.
+
+## 2. Delete → trailing trash icon
+
+In [`BrowseLabelManage.tsx`](frontend/src/components/BrowseLabelManage.tsx):
+
+- Idle row: **Edit** and **Merge** only (`btn-secondary`)
+- Export delete as a small icon button (reuse the trash SVG / styling approach from [`.photo-detail-delete-btn`](frontend/src/index.css) in PhotoDetail), with `aria-label="Delete tag"` / `"Delete person"`, still using `window.confirm`
+
+In [`Browse.tsx`](frontend/src/pages/Browse.tsx) header actions order:
+
+`count badge` → `Edit` / `Merge` → `Label photos` / `Done labeling` → **trash icon** (far right)
+
+Implement by either rendering a `BrowseLabelManage` that accepts a render slot, or splitting idle actions: manage component for Edit/Merge + `BrowseLabelDeleteButton` (or `showDeleteIcon` sibling) after the label button. Prefer one component with an optional `deletePosition="trailing"` rendered via fragment from parent — simplest concrete approach: **split idle Delete into a small exported button component** used after Label photos in Browse.
+
+Minimal CSS in [`index.css`](frontend/src/index.css) for `.browse-label-delete-btn` (icon-sized, muted, danger on hover — not a large red filled button).
+
+## Docs
+
+- [`CHANGELOG.md`](CHANGELOG.md) Unreleased: Browse pagination; quieter tag/person delete icon
+- No ARCHITECTURE change (UI + existing list API)
+
+---
+
+<a id="chapter-122-browse-pagination-and-delete"></a>
+
+## Chapter 122: Browse pagination and delete
+
+> **Overview:** Add Calendar-style pagination to Browse tag/person/camera results (currently capped at 200 with no UI), and demote the tag/person Delete control to a trailing trash icon so Edit/Merge/Label stay primary.
+
+# Browse pagination + quieter Delete
+
+## Problems
+
+1. [`Browse.tsx`](frontend/src/pages/Browse.tsx) loads `api.listFiles({ …, page_size: 200 })` with **no `page`** and no pagination UI, so a 677-photo tag only shows the first page.
+2. [`BrowseLabelManage.tsx`](frontend/src/components/BrowseLabelManage.tsx) renders a full `btn btn-danger` **Delete** between Merge and Label photos — too prominent.
+
+## 1. Pagination (match Trash / Calendar)
+
+In [`Browse.tsx`](frontend/src/pages/Browse.tsx):
+
+- `PAGE_SIZE = 100` (same as Calendar/Trash)
+- `page` state; reset to `1` when the filter selection changes (same effect that clears `selectedIds`)
+- Include `page` in `browseFilesKey` and pass `page` + `page_size: PAGE_SIZE` to `listFiles`
+- When `total > PAGE_SIZE`, render the existing `.calendar-day-pagination` block (range label + Prev / Page N of M / Next), placed above the photo grid (after active chips / label editors), same pattern as [`Trash.tsx`](frontend/src/pages/Trash.tsx)
+- Clear selection (or clamp) when changing pages; keep detail navigation within the current page’s `items`
+
+No backend changes — `listFiles` already supports `page` / `page_size` / `total`.
+
+## 2. Delete → trailing trash icon
+
+In [`BrowseLabelManage.tsx`](frontend/src/components/BrowseLabelManage.tsx):
+
+- Idle row: **Edit** and **Merge** only (`btn-secondary`)
+- Export delete as a small icon button (reuse the trash SVG / styling approach from [`.photo-detail-delete-btn`](frontend/src/index.css) in PhotoDetail), with `aria-label="Delete tag"` / `"Delete person"`, still using `window.confirm`
+
+In [`Browse.tsx`](frontend/src/pages/Browse.tsx) header actions order:
+
+`count badge` → `Edit` / `Merge` → `Label photos` / `Done labeling` → **trash icon** (far right)
+
+Implement by either rendering a `BrowseLabelManage` that accepts a render slot, or splitting idle actions: manage component for Edit/Merge + `BrowseLabelDeleteButton` (or `showDeleteIcon` sibling) after the label button. Prefer one component with an optional `deletePosition="trailing"` rendered via fragment from parent — simplest concrete approach: **split idle Delete into a small exported button component** used after Label photos in Browse.
+
+Minimal CSS in [`index.css`](frontend/src/index.css) for `.browse-label-delete-btn` (icon-sized, muted, danger on hover — not a large red filled button).
+
+## Docs
+
+- [`CHANGELOG.md`](CHANGELOG.md) Unreleased: Browse pagination; quieter tag/person delete icon
+- No ARCHITECTURE change (UI + existing list API)
+
+---
+
+<a id="chapter-123-browse-subset-people-fix"></a>
+
+## Chapter 123: Browse subset people fix
 
 > **Overview:** Fix the broken Also-tagged sidebar buttons, restyle Browse accents to Wimbledon purple, and when a Browse filter is active show only the subset of people who appear in that result set (with counts), clickable to AND into the intersection.
 
@@ -12743,57 +13003,9 @@ Legacy `/browse/person/:slug` redirects to `/browse/tags?person=:slug` (same pat
 
 ---
 
-<a id="chapter-118-bump-version-20260725a"></a>
+<a id="chapter-124-bump-version-20260725a"></a>
 
-## Chapter 118: Bump version 2026.07.25a
-
-> **Overview:** Bump Kitchen Ledger to `2026.07.25a` for the same-day subsequent deploy, document the letter-suffix convention, then commit, push, and publish a GitHub release.
-
-# Bump to 2026.07.25a
-
-Same-day subsequent deploy after the already-published `2026.07.25` tag. Version strings live in two places; CHANGELOG and ARCHITECTURE need to match.
-
-## Version strings
-
-- [frontend/package.json](frontend/package.json): `"version": "2026.07.25a"`
-- [backend/app/main.py](backend/app/main.py): `FastAPI(..., version="2026.07.25a")` (sidebar reads `package.json`; health uses FastAPI version)
-
-## Changelog
-
-Split [CHANGELOG.md](CHANGELOG.md) so `2026.07.25` stays the initial foundation, and `2026.07.25a` holds the subsequent work:
-
-```markdown
-## 2026.07.25a
-
-### Added
-- Optional per-recipe hero dish photo ...
-- Inbox as a review queue ...
-
-### Fixed
-- Move reviewed scans still in inbox/ ...
-- Cache-bust hero and scan image URLs ...
-
-## 2026.07.25
-
-### Added
-- Initial Kitchen Ledger app ...
-```
-
-## Versioning docs
-
-Update [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) Versioning section to: date-based `YYYY.MM.DD`, then letter suffixes (`a`, `b`, …) for later deploys the same day.
-
-## Release
-
-1. Commit the version/docs bump.
-2. Push `main`.
-3. Create GitHub release tag `2026.07.25a` with notes from the new CHANGELOG section (leave existing `2026.07.25` release as-is).
-
----
-
-<a id="chapter-119-bump-version-20260725a"></a>
-
-## Chapter 119: Bump version 2026.07.25a
+## Chapter 124: Bump version 2026.07.25a
 
 > **Overview:** Bump Kitchen Ledger to `2026.07.25a` for the same-day subsequent deploy, document the letter-suffix convention, then commit, push, and publish a GitHub release.
 
@@ -12839,9 +13051,217 @@ Update [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) Versioning section to: date-
 
 ---
 
-<a id="chapter-120-calendar-day-pagination"></a>
+<a id="chapter-125-bump-version-20260725a"></a>
 
-## Chapter 120: Calendar day pagination
+## Chapter 125: Bump version 2026.07.25a
+
+> **Overview:** Bump Kitchen Ledger to `2026.07.25a` for the same-day subsequent deploy, document the letter-suffix convention, then commit, push, and publish a GitHub release.
+
+# Bump to 2026.07.25a
+
+Same-day subsequent deploy after the already-published `2026.07.25` tag. Version strings live in two places; CHANGELOG and ARCHITECTURE need to match.
+
+## Version strings
+
+- [frontend/package.json](frontend/package.json): `"version": "2026.07.25a"`
+- [backend/app/main.py](backend/app/main.py): `FastAPI(..., version="2026.07.25a")` (sidebar reads `package.json`; health uses FastAPI version)
+
+## Changelog
+
+Split [CHANGELOG.md](CHANGELOG.md) so `2026.07.25` stays the initial foundation, and `2026.07.25a` holds the subsequent work:
+
+```markdown
+## 2026.07.25a
+
+### Added
+- Optional per-recipe hero dish photo ...
+- Inbox as a review queue ...
+
+### Fixed
+- Move reviewed scans still in inbox/ ...
+- Cache-bust hero and scan image URLs ...
+
+## 2026.07.25
+
+### Added
+- Initial Kitchen Ledger app ...
+```
+
+## Versioning docs
+
+Update [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) Versioning section to: date-based `YYYY.MM.DD`, then letter suffixes (`a`, `b`, …) for later deploys the same day.
+
+## Release
+
+1. Commit the version/docs bump.
+2. Push `main`.
+3. Create GitHub release tag `2026.07.25a` with notes from the new CHANGELOG section (leave existing `2026.07.25` release as-is).
+
+---
+
+<a id="chapter-126-bust-image-cache"></a>
+
+## Chapter 126: Bust image cache
+
+> **Overview:** Add Cache-Control and cache-busting URLs, then reset current file assignments and re-import against the preserved category prototypes so groupings match real image content.
+
+# Cache-Control + clean re-import
+
+## Clarification
+
+Incognito showed server/full and thumbs can agree. The **old “correct” sports thumbs on Athletes were stale** (wrong ID collision). After rebuild, Athletes correctly shows the files actually assigned there (meme / docs / graphs) — those assignments are wrong relative to the category name. Fix cache, then **abort this batch’s assignments and re-import** into the preserved category library.
+
+Keep category rows + `prototype_embedding` (from `imagesSorted` restore). Do not wipe the category library.
+
+## 1. Cache-Control + thumb validation — [`main.py`](backend/app/main.py)
+
+- `/api/thumbs/{id}` and `/api/images/{id}/full`: `Cache-Control: no-store`
+- `api_thumb`: always load file row and call `ensure_thumb(...)` before serving (do not trust orphan files on disk alone)
+
+## 2. Cache-bust URLs — [`client.ts`](frontend/src/api/client.ts) + callers
+
+- `thumbUrl(id, v?)` / `fullUrl(id, v?)` → `?v=${size}` (use `ImageRow.size`)
+- Update Categories sample thumbs and CategoryDetail grid/lightbox
+
+## 3. Re-import current batch (keep categories)
+
+One-shot via script or startup endpoint / docker exec:
+
+1. `UPDATE files SET category_id=NULL` (all current files unassigned)
+2. `UPDATE files SET has_thumb=0`; purge orphan thumbs; `generate_thumbs(force=True)`
+3. Run incremental `run_clustering()` (matches to existing prototypes) + `name_categories` only for any truly new groups
+4. Or trigger existing Analyze job (scan → thumbs force → embed missing → incremental cluster) — **preferred** so one code path is used
+
+Ensure Analyze still does **not** delete categories (already fixed).
+
+## Verify
+
+- Athletes (and other named cats) contain visually matching images, or stay empty if none match
+- Thumb and lightbox agree in a normal (non-incognito) window after hard refresh
+
+---
+
+<a id="chapter-127-bust-image-cache"></a>
+
+## Chapter 127: Bust image cache
+
+> **Overview:** Server already serves correct Athletes images; the mismatch is almost certainly browser cache of `/api/thumbs/{id}` and `/api/images/{id}/full` with no Cache-Control. Do not re-run Analyze — add no-store headers and cache-busting URL params.
+
+# Fix remaining thumb/full mismatch (browser cache)
+
+## Do not re-run Analyze
+
+On the server right now, Athletes image `id=45` (`9o0visqe05511.jpg`) **full bytes match the source file**. Disk thumbs were rebuilt. Re-analyzing will not fix a cached browser response for the same URL.
+
+## Cause
+
+[`FileResponse`](backend/app/main.py) for thumbs/full sends **no `Cache-Control`**. After DB ID reuse, the browser can keep serving an old body for `/api/images/45/full` (e.g. a meme) while the grid may show a newer thumb (or vice versa).
+
+Also, `api_thumb` only calls `ensure_thumb` when the file is **missing** — if a stale file exists it returns it without checking `has_thumb`.
+
+## Fix (no Analyze required)
+
+### 1. Backend headers + thumb validation — [`main.py`](backend/app/main.py)
+
+- For `/api/thumbs/{id}` and `/api/images/{id}/full`, set `Cache-Control: no-store` (or `private, max-age=0, must-revalidate`).
+- In `api_thumb`, always resolve the file row and call `ensure_thumb(file_id, abs_path)` (respects `has_thumb` / regenerates orphans) before returning.
+
+### 2. Cache-bust URLs — [`frontend/src/api/client.ts`](frontend/src/api/client.ts)
+
+- Change `thumbUrl` / `fullUrl` to accept optional version (size or mtime): e.g. `/api/thumbs/${id}?v=${size}`.
+- Pass `img.size` (already on `ImageRow`) from Categories / CategoryDetail so URLs change when the file changes.
+
+### 3. Quick verify
+
+Hard refresh once after deploy; Athletes first thumb expand should match football source. No Analyze needed.
+
+---
+
+<a id="chapter-128-bust-image-cache"></a>
+
+## Chapter 128: Bust image cache
+
+> **Overview:** Add Cache-Control and cache-busting URLs, then reset current file assignments and re-import against the preserved category prototypes so groupings match real image content.
+
+# Cache-Control + clean re-import
+
+## Clarification
+
+Incognito confirmed the browser cache theory. The **old “correct” sports thumbs on Athletes were stale** (wrong ID collision). After rebuild, Athletes correctly shows the files actually assigned there (meme / docs / graphs) — those assignments are wrong relative to the category name. Fix cache, then **abort this batch’s assignments and re-import** into the preserved category library.
+
+Keep category rows + `prototype_embedding` (from `imagesSorted` restore). Do not wipe the category library.
+
+## 1. Cache-Control + thumb validation — [`backend/app/main.py`](backend/app/main.py)
+
+- `/api/thumbs/{id}` and `/api/images/{id}/full`: `Cache-Control: no-store`
+- `api_thumb`: always load file row and call `ensure_thumb(...)` before serving
+
+## 2. Cache-bust URLs — [`frontend/src/api/client.ts`](frontend/src/api/client.ts) + callers
+
+- `thumbUrl(id, v?)` / `fullUrl(id, v?)` → `?v=${size}` (use `ImageRow.size`)
+- Update Categories sample thumbs and CategoryDetail grid/lightbox
+
+## 3. Re-import current batch (keep categories)
+
+Prefer triggering the existing Analyze job so one code path is used:
+
+1. `UPDATE files SET category_id=NULL` (unassign all current files)
+2. Force thumb regen (`has_thumb=0` + `generate_thumbs(force=True)`)
+3. Incremental `run_clustering()` against existing prototypes + name only truly new groups
+
+Ensure Analyze still does **not** delete categories (already fixed).
+
+## Verify
+
+- Named categories contain visually matching images, or stay empty if none match
+- Thumb and lightbox agree in a normal browser window after hard refresh
+
+---
+
+<a id="chapter-129-bust-image-cache"></a>
+
+## Chapter 129: Bust image cache
+
+> **Overview:** Add Cache-Control and cache-busting URLs, then reset current file assignments and re-import against the preserved category prototypes so groupings match real image content.
+
+# Cache-Control + clean re-import
+
+## Clarification
+
+Incognito confirmed the browser cache theory. The **old “correct” sports thumbs on Athletes were stale** (wrong ID collision). After rebuild, Athletes correctly shows the files actually assigned there (meme / docs / graphs) — those assignments are wrong relative to the category name. Fix cache, then **abort this batch’s assignments and re-import** into the preserved category library.
+
+Keep category rows + `prototype_embedding` (from `imagesSorted` restore). Do not wipe the category library.
+
+## 1. Cache-Control + thumb validation — [`backend/app/main.py`](backend/app/main.py)
+
+- `/api/thumbs/{id}` and `/api/images/{id}/full`: `Cache-Control: no-store`
+- `api_thumb`: always load file row and call `ensure_thumb(...)` before serving
+
+## 2. Cache-bust URLs — [`frontend/src/api/client.ts`](frontend/src/api/client.ts) + callers
+
+- `thumbUrl(id, v?)` / `fullUrl(id, v?)` → `?v=${size}` (use `ImageRow.size`)
+- Update Categories sample thumbs and CategoryDetail grid/lightbox
+
+## 3. Re-import current batch (keep categories)
+
+Prefer triggering the existing Analyze job so one code path is used:
+
+1. `UPDATE files SET category_id=NULL` (unassign all current files)
+2. Force thumb regen (`has_thumb=0` + `generate_thumbs(force=True)`)
+3. Incremental `run_clustering()` against existing prototypes + name only truly new groups
+
+Ensure Analyze still does **not** delete categories (already fixed).
+
+## Verify
+
+- Named categories contain visually matching images, or stay empty if none match
+- Thumb and lightbox agree in a normal browser window after hard refresh
+
+---
+
+<a id="chapter-130-calendar-day-pagination"></a>
+
+## Chapter 130: Calendar day pagination
 
 > **Overview:** Add Prev/Next page navigation to the calendar day panel so days with more than 100 photos can be browsed fully. Backend already supports `page` and `page_size`; wire them through the API client and CalendarDayPanel.
 
@@ -12963,9 +13383,9 @@ Under `[Unreleased]` → **Added** in [`CHANGELOG.md`](imageOrganizer/CHANGELOG.
 
 ---
 
-<a id="chapter-121-calendar-global-untagged"></a>
+<a id="chapter-131-calendar-global-untagged"></a>
 
-## Chapter 121: Calendar global untagged
+## Chapter 131: Calendar global untagged
 
 > **Overview:** Add an All / Untagged control in the Calendar top filter bar (next to Archive and Media dropdowns), applying the existing `unlabeled=true` API filter globally across all visible months. Keep per-month Untagged chips for single-month filtering when global mode is off.
 
@@ -13075,9 +13495,9 @@ Under `[Unreleased]` → **Added**: Calendar global **Untagged** filter in top b
 
 ---
 
-<a id="chapter-122-calendar-tagging-bottom-left"></a>
+<a id="chapter-132-calendar-tagging-bottom-left"></a>
 
-## Chapter 122: Calendar tagging bottom-left
+## Chapter 132: Calendar tagging bottom-left
 
 > **Overview:** Move the calendar day tagging form (Date / Events / People / Tags) from the top of the right day panel to a fixed area below the month calendars on the left, while keeping the selection bar above the photo grid on the right.
 
@@ -13211,9 +13631,9 @@ Add CHANGELOG entry under `[Unreleased]` → **Changed**.
 
 ---
 
-<a id="chapter-123-calendar-untagged-edit-mode"></a>
+<a id="chapter-133-calendar-untagged-edit-mode"></a>
 
-## Chapter 123: Calendar untagged edit mode
+## Chapter 133: Calendar untagged edit mode
 
 > **Overview:** Fix Calendar untagged workflow: memoize the day filter to stop selection from clearing on every re-render (flash/exit), and while photos are selected in untagged mode, fetch the day as \"all\" so tagged photos stay visible until selection is cleared.
 
@@ -13333,9 +13753,9 @@ sequenceDiagram
 
 ---
 
-<a id="chapter-124-calendar-untagged-filter"></a>
+<a id="chapter-134-calendar-untagged-filter"></a>
 
-## Chapter 124: Calendar untagged filter
+## Chapter 134: Calendar untagged filter
 
 > **Overview:** Add a per-month **Untagged** chip on the calendar (same definition as Inbox: no tags, people, or events), respecting the existing Images/Videos media-type dropdown. Requires backend `unlabeled` support on calendar summary/day/labels endpoints and frontend filter wiring.
 
@@ -13450,9 +13870,161 @@ Under `[Unreleased]` → **Added**: Calendar month **Untagged** filter (no tags,
 
 ---
 
-<a id="chapter-125-clarify-migrate-destination-ux"></a>
+<a id="chapter-135-category-nav-and-fullscreen"></a>
 
-## Chapter 125: Clarify migrate destination UX
+## Chapter 135: Category nav and fullscreen
+
+> **Overview:** Add prev/next category navigation on the detail page, and upgrade the image lightbox into a clear full-screen viewer with keyboard/arrow controls.
+
+# Category navigation + full-screen images
+
+## Context
+
+On [`CategoryDetail.tsx`](frontend/src/pages/CategoryDetail.tsx), click selects images for move/merge; double-click already opens a basic overlay. There is no way to jump to the previous/next category without returning to the list.
+
+## 1. Prev / next category
+
+- Build an ordered list from `allCats` (same order as the API: sort_order / name).
+- Include only categories with `count > 0` (matches the default Categories grid), but always include the current category if it is somehow empty.
+- Place **←** / **→** controls beside the category title (or under the back link).
+- Navigate with `react-router` `navigate(/categories/{id})`.
+- Disable prev on first / next on last.
+- Keyboard: when not typing in an input, **[** / **]** or **Alt+←** / **Alt+→** for category prev/next.
+
+## 2. Full-screen image viewer
+
+Upgrade the existing lightbox:
+
+- Keep **click = select**; open viewer via **double-click** and a small **expand** control on each thumb (hover-visible) so full-screen is discoverable.
+- Overlay: dark full-viewport, centered image (`object-fit: contain`), close on backdrop click / **Esc** / close button.
+- Within-category image prev/next: on-screen arrows + **←** / **→** keys; wrap or stop at ends (stop at ends).
+- Optional: **F** toggles `element.requestFullscreen()` on the overlay.
+
+## 3. Styles
+
+Add light styles in [`styles.css`](frontend/src/styles.css) for category nav buttons, thumb expand control, and lightbox chrome (arrows, close).
+
+No backend changes.
+
+---
+
+<a id="chapter-136-category-nav-and-fullscreen"></a>
+
+## Chapter 136: Category nav and fullscreen
+
+> **Overview:** Add prev/next category navigation on the detail page, and upgrade the image lightbox into a clear full-screen viewer with keyboard/arrow controls.
+
+# Category navigation + full-screen images
+
+## Context
+
+On [`CategoryDetail.tsx`](frontend/src/pages/CategoryDetail.tsx), click selects images for move/merge; double-click already opens a basic overlay. There is no way to jump to the previous/next category without returning to the list.
+
+## 1. Prev / next category
+
+- Build an ordered list from `allCats` (same order as the API: sort_order / name).
+- Include only categories with `count > 0` (matches the default Categories grid), but always include the current category if it is somehow empty.
+- Place **←** / **→** controls beside the category title (or under the back link).
+- Navigate with `react-router` `navigate(/categories/{id})`.
+- Disable prev on first / next on last.
+- Keyboard: when not typing in an input, **[** / **]** or **Alt+←** / **Alt+→** for category prev/next.
+
+## 2. Full-screen image viewer
+
+Upgrade the existing lightbox:
+
+- Keep **click = select**; open viewer via **double-click** and a small **expand** control on each thumb (hover-visible) so full-screen is discoverable.
+- Overlay: dark full-viewport, centered image (`object-fit: contain`), close on backdrop click / **Esc** / close button.
+- Within-category image prev/next: on-screen arrows + **←** / **→** keys; wrap or stop at ends (stop at ends).
+- Optional: **F** toggles `element.requestFullscreen()` on the overlay.
+
+## 3. Styles
+
+Add light styles in [`styles.css`](frontend/src/styles.css) for category nav buttons, thumb expand control, and lightbox chrome (arrows, close).
+
+No backend changes.
+
+---
+
+<a id="chapter-137-category-search-filter"></a>
+
+## Chapter 137: Category search filter
+
+> **Overview:** Replace the long native Move/merge select with a searchable category filter, and add a matching search box on the Categories page.
+
+# Search for categories
+
+## Problem
+
+With ~47 restored categories, the native **Move / merge into…** `<select>` on category detail is hard to scan (see screenshot).
+
+## Approach
+
+### 1. Category detail — searchable picker ([`CategoryDetail.tsx`](frontend/src/pages/CategoryDetail.tsx))
+
+Replace the `<select>` with a compact combobox:
+
+- Text input placeholder: `Move / merge into…`
+- Filters `others` by name/slug (case-insensitive substring)
+- Dropdown list of matches showing `Name (count)`; click sets `targetId`
+- Shows selected category name when one is chosen; clear control to reset
+- Keep existing **Move selected** / **Merge all** buttons wired to `targetId`
+
+No new dependency — plain React state + filtered list (same visual language as existing toolbar inputs).
+
+### 2. Categories page filter ([`Categories.tsx`](frontend/src/pages/Categories.tsx))
+
+Add a search input above the grid that filters category cards by name/slug the same way.
+
+### 3. Styles ([`styles.css`](frontend/src/styles.css))
+
+Minimal styles for the combobox panel (border, max-height scroll, hover) matching existing cream/green UI.
+
+Spelling in UI: **categories** (correct).
+
+---
+
+<a id="chapter-138-category-search-filter"></a>
+
+## Chapter 138: Category search filter
+
+> **Overview:** Replace the long native Move/merge select with a searchable category filter, and add a matching search box on the Categories page.
+
+# Search for categories
+
+## Problem
+
+With ~47 restored categories, the native **Move / merge into…** `<select>` on category detail is hard to scan (see screenshot).
+
+## Approach
+
+### 1. Category detail — searchable picker ([`CategoryDetail.tsx`](frontend/src/pages/CategoryDetail.tsx))
+
+Replace the `<select>` with a compact combobox:
+
+- Text input placeholder: `Move / merge into…`
+- Filters `others` by name/slug (case-insensitive substring)
+- Dropdown list of matches showing `Name (count)`; click sets `targetId`
+- Shows selected category name when one is chosen; clear control to reset
+- Keep existing **Move selected** / **Merge all** buttons wired to `targetId`
+
+No new dependency — plain React state + filtered list (same visual language as existing toolbar inputs).
+
+### 2. Categories page filter ([`Categories.tsx`](frontend/src/pages/Categories.tsx))
+
+Add a search input above the grid that filters category cards by name/slug the same way.
+
+### 3. Styles ([`styles.css`](frontend/src/styles.css))
+
+Minimal styles for the combobox panel (border, max-height scroll, hover) matching existing cream/green UI.
+
+Spelling in UI: **categories** (correct).
+
+---
+
+<a id="chapter-139-clarify-migrate-destination-ux"></a>
+
+## Chapter 139: Clarify migrate destination UX
 
 > **Overview:** Settings is technically correct (`/media-backup` is the in-container destination), but the “New media root” label reads like a .env path. Clarify Docker copy UX so the host path is primary and `/media-backup` is explained as the container mount.
 
@@ -13501,9 +14073,9 @@ One-line README note that Settings shows the host path but copies via `/media-ba
 
 ---
 
-<a id="chapter-126-clarify-migrate-destination-ux"></a>
+<a id="chapter-140-clarify-migrate-destination-ux"></a>
 
-## Chapter 126: Clarify migrate destination UX
+## Chapter 140: Clarify migrate destination UX
 
 > **Overview:** Settings is technically correct (`/media-backup` is the in-container destination), but the “New media root” label reads like a .env path. Clarify Docker copy UX so the host path is primary and `/media-backup` is explained as the container mount.
 
@@ -13552,30 +14124,9 @@ One-line README note that Settings shows the host path but copies via `/media-ba
 
 ---
 
-<a id="chapter-127-clone-datefare-repo"></a>
+<a id="chapter-141-clone-datefare-repo"></a>
 
-## Chapter 127: Clone datefare repo
-
-> **Overview:** Clone https://github.com/noah-a-mays/datefare into /Users/alex/Documents/github/datefare and switch this agent workspace to that directory.
-
-## Steps
-
-1. Clone the repository into the requested path:
-   ```bash
-   git clone https://github.com/noah-a-mays/datefare /Users/alex/Documents/github/datefare
-   ```
-2. Move this agent’s workspace root to `/Users/alex/Documents/github/datefare` via `move_agent_to_root` so subsequent work runs in the new repo.
-
-## Notes
-
-- `/Users/alex/Documents/github/datefare` does not exist yet; clone will create it.
-- No further setup (deps, env, etc.) unless you ask after the clone.
-
----
-
-<a id="chapter-128-clone-datefare-repo"></a>
-
-## Chapter 128: Clone datefare repo
+## Chapter 141: Clone datefare repo
 
 > **Overview:** Clone https://github.com/noah-a-mays/datefare into /Users/alex/Documents/github/datefare and switch this agent workspace to that directory.
 
@@ -13594,9 +14145,30 @@ One-line README note that Settings shows the host path but copies via `/media-ba
 
 ---
 
-<a id="chapter-129-connection-airport-icons"></a>
+<a id="chapter-142-clone-datefare-repo"></a>
 
-## Chapter 129: Connection airport icons
+## Chapter 142: Clone datefare repo
+
+> **Overview:** Clone https://github.com/noah-a-mays/datefare into /Users/alex/Documents/github/datefare and switch this agent workspace to that directory.
+
+## Steps
+
+1. Clone the repository into the requested path:
+   ```bash
+   git clone https://github.com/noah-a-mays/datefare /Users/alex/Documents/github/datefare
+   ```
+2. Move this agent’s workspace root to `/Users/alex/Documents/github/datefare` via `move_agent_to_root` so subsequent work runs in the new repo.
+
+## Notes
+
+- `/Users/alex/Documents/github/datefare` does not exist yet; clone will create it.
+- No further setup (deps, env, etc.) unless you ask after the clone.
+
+---
+
+<a id="chapter-143-connection-airport-icons"></a>
+
+## Chapter 143: Connection airport icons
 
 > **Overview:** Show layover airports as Plane + IATA + Plane (hover for full name), keep Nonstop, and simplify per-person price to a quieter two-line layout with a person icon.
 
@@ -13664,9 +14236,9 @@ Rebuild Docker so the Python script update is included: `docker compose up --bui
 
 ---
 
-<a id="chapter-130-connection-airport-icons"></a>
+<a id="chapter-144-connection-airport-icons"></a>
 
-## Chapter 130: Connection airport icons
+## Chapter 144: Connection airport icons
 
 > **Overview:** Show layover airports as Plane + IATA + Plane (with full name on hover), keep Nonstop text, and drop the “1 stop / 2 stops” labels.
 
@@ -13721,78 +14293,9 @@ Rebuild Docker so the Python script update is included: `docker compose up --bui
 
 ---
 
-<a id="chapter-131-cursor-book-development-book"></a>
+<a id="chapter-145-cursor-book-development-book"></a>
 
-## Chapter 131: cursor-book development book
-
-> **Overview:** Add a cursor-book `book.json` that only includes this repo’s plans (via a local plans mirror), then generate `docs/DEVELOPMENT_BOOK.md` and `.html`.
-
-# Build the development book for cursor-book
-
-## Problem
-
-This repo is the book *tool*, but it has no `book.json` yet. Using `~/.cursor/plans` directly would pull in ~147 Image Organizer plans into the Appendix. Scope the input to cursor-book plans only.
-
-## Approach
-
-1. **Local plans mirror** at [`.cursor/plans/`](.cursor/plans/) containing only these stems (copied from `~/.cursor/plans/`):
-   - `plans_development_book_11a2f88a` — original book builder (precursor)
-   - `cursor_book_tool_repo_5221eefc` — extract standalone repo + skill
-   - `html_book_output_2dff9d25` — dual MD/HTML output (canonical)
-
-2. **Skip duplicate:** `html_book_output_c632072c` (same title/overview, empty todos; superseded by `…2dff9d25`)
-
-3. **Add** [`book.json`](book.json) at repo root:
-
-```json
-{
-  "title": "cursor-book — Development Book",
-  "version": "2026.07.23",
-  "output": "docs/DEVELOPMENT_BOOK.md",
-  "output_html": "docs/DEVELOPMENT_BOOK.html",
-  "plans_dir": ".cursor/plans",
-  "related_links": "[README.md](../README.md)",
-  "parts": [
-    {
-      "title": "Part I — Foundation",
-      "plans": ["plans_development_book_11a2f88a", "cursor_book_tool_repo_5221eefc"]
-    },
-    {
-      "title": "Part II — HTML Output",
-      "plans": ["html_book_output_2dff9d25"]
-    }
-  ],
-  "skip_plans": {
-    "html_book_output_c632072c": {
-      "note": "Superseded by html_book_output_2dff9d25."
-    }
-  }
-}
-```
-
-4. **Gitignore** `.cursor/plans/` (add [`.gitignore`](.gitignore) if missing) so the mirror is not committed; commit generated docs instead.
-
-5. **Build:**
-
-```bash
-python build_development_book.py --config book.json --repo-root .
-```
-
-Expect `docs/DEVELOPMENT_BOOK.md` and `docs/DEVELOPMENT_BOOK.html` with 3 chapters.
-
-6. **Docs:** One-line README note that this repo also maintains its own development book under `docs/`.
-
-## Out of scope
-
-- Committing/pushing (unless you ask after the build)
-- Changing the builder
-- Registering Image Organizer plans here
-
----
-
-<a id="chapter-132-cursor-book-development-book"></a>
-
-## Chapter 132: cursor-book development book
+## Chapter 145: cursor-book development book
 
 > **Overview:** Add a cursor-book `book.json` that only includes this repo’s plans (via a local plans mirror), then generate `docs/DEVELOPMENT_BOOK.md` and `.html`.
 
@@ -13859,9 +14362,78 @@ Expect `docs/DEVELOPMENT_BOOK.md` and `docs/DEVELOPMENT_BOOK.html` with 3 chapte
 
 ---
 
-<a id="chapter-133-cursor-book-tool-repo"></a>
+<a id="chapter-146-cursor-book-development-book"></a>
 
-## Chapter 133: Cursor book tool repo
+## Chapter 146: cursor-book development book
+
+> **Overview:** Add a cursor-book `book.json` that only includes this repo’s plans (via a local plans mirror), then generate `docs/DEVELOPMENT_BOOK.md` and `.html`.
+
+# Build the development book for cursor-book
+
+## Problem
+
+This repo is the book *tool*, but it has no `book.json` yet. Using `~/.cursor/plans` directly would pull in ~147 Image Organizer plans into the Appendix. Scope the input to cursor-book plans only.
+
+## Approach
+
+1. **Local plans mirror** at [`.cursor/plans/`](.cursor/plans/) containing only these stems (copied from `~/.cursor/plans/`):
+   - `plans_development_book_11a2f88a` — original book builder (precursor)
+   - `cursor_book_tool_repo_5221eefc` — extract standalone repo + skill
+   - `html_book_output_2dff9d25` — dual MD/HTML output (canonical)
+
+2. **Skip duplicate:** `html_book_output_c632072c` (same title/overview, empty todos; superseded by `…2dff9d25`)
+
+3. **Add** [`book.json`](book.json) at repo root:
+
+```json
+{
+  "title": "cursor-book — Development Book",
+  "version": "2026.07.23",
+  "output": "docs/DEVELOPMENT_BOOK.md",
+  "output_html": "docs/DEVELOPMENT_BOOK.html",
+  "plans_dir": ".cursor/plans",
+  "related_links": "[README.md](../README.md)",
+  "parts": [
+    {
+      "title": "Part I — Foundation",
+      "plans": ["plans_development_book_11a2f88a", "cursor_book_tool_repo_5221eefc"]
+    },
+    {
+      "title": "Part II — HTML Output",
+      "plans": ["html_book_output_2dff9d25"]
+    }
+  ],
+  "skip_plans": {
+    "html_book_output_c632072c": {
+      "note": "Superseded by html_book_output_2dff9d25."
+    }
+  }
+}
+```
+
+4. **Gitignore** `.cursor/plans/` (add [`.gitignore`](.gitignore) if missing) so the mirror is not committed; commit generated docs instead.
+
+5. **Build:**
+
+```bash
+python build_development_book.py --config book.json --repo-root .
+```
+
+Expect `docs/DEVELOPMENT_BOOK.md` and `docs/DEVELOPMENT_BOOK.html` with 3 chapters.
+
+6. **Docs:** One-line README note that this repo also maintains its own development book under `docs/`.
+
+## Out of scope
+
+- Committing/pushing (unless you ask after the build)
+- Changing the builder
+- Registering Image Organizer plans here
+
+---
+
+<a id="chapter-147-cursor-book-tool-repo"></a>
+
+## Chapter 147: Cursor book tool repo
 
 > **Overview:** Extract the development book builder into a standalone repo with a config-driven script and a reusable Cursor skill; migrate imageOrganizer to a thin `book.yaml` + wrapper script.
 
@@ -14066,9 +14638,9 @@ Optional: tag `v1.0.0` on `cursor-book` after migration verified.
 
 ---
 
-<a id="chapter-134-database-datetime-backups"></a>
+<a id="chapter-148-database-datetime-backups"></a>
 
-## Chapter 134: Database datetime backups
+## Chapter 148: Database datetime backups
 
 > **Overview:** Add safe SQLite database backups as datetime-stamped copies in `{APP_DATA_DIR}/backups/`, exposed via a Settings button and a CLI script for manual or scheduled use.
 
@@ -14207,9 +14779,287 @@ Monkeypatch `BACKUPS_DIR` / `DB_PATH` to temp dirs (same pattern as existing mig
 
 ---
 
-<a id="chapter-135-detail-applied-labels"></a>
+<a id="chapter-149-datefare-style-ui"></a>
 
-## Chapter 135: Detail applied labels
+## Chapter 149: Datefare-style UI
+
+> **Overview:** Restyle imageSorter to match Datefare’s dark charcoal theme — Playfair gold brand, Inter body, teal primary actions — mainly by remapping CSS tokens and fonts.
+
+## Target look (from [`datefare/src/app/globals.css`](file:///Users/alex/Documents/github/datefare/src/app/globals.css))
+
+| Token | Value |
+|-------|--------|
+| Background | `#12141a` |
+| Surface / panel | `rgba(30, 34, 40, 0.85)` / `#252930` |
+| Text | `#ffffff` / muted `#9ca3af` |
+| Brand gold | `#c5a059` |
+| Action teal | `#15808d` |
+| Border | `#2d3340` |
+| Fonts | Playfair Display (logo/titles), Inter (UI) |
+
+## Changes
+
+### 1. Fonts — [`frontend/index.html`](frontend/index.html)
+
+Swap Google Fonts to **Playfair Display** + **Inter** (same pairing as Datefare).
+
+### 2. Design tokens + surfaces — [`frontend/src/styles.css`](frontend/src/styles.css)
+
+Remap `:root` variables used everywhere today:
+
+- `--bg` / `--bg-deep` → Datefare primary charcoal
+- `--ink` / `--muted` → white / gray
+- `--accent` → teal `#15808d`; soft accent → translucent teal
+- `--panel` / `--line` / `--shadow` → elevated dark surface + subtle border
+- `--font-display` → Playfair; `--font-body` → Inter
+
+Update key chrome that hardcodes light colors:
+
+- `body` background → solid dark (no cream radials)
+- `.topbar` → dark sticky bar; `.brand` → gold; `.active` nav → gold underline (Datefare header pattern)
+- Buttons: primary teal fill; secondary dark elevated + border
+- Cards / mosaics / inputs / combobox / lightbox meta contrast for dark
+- Error/success panels toned for dark backgrounds
+- Progress bars, photo checks, expand controls
+
+### 3. Light markup polish — [`frontend/src/App.tsx`](frontend/src/App.tsx)
+
+Align header structure with Datefare (brand left, nav right) if needed so the gold underline active state works cleanly. No page rewrites beyond class tweaks if required.
+
+## Out of scope
+
+- Tailwind / copying Datefare components
+- Changing Analyze / category behavior
+- Hero mountain imagery (imageSorter is not a landing marketing page)
+
+## Default
+
+Full dark Datefare palette as requested (overrides the usual “avoid dark mode” bias because the reference app is dark).
+
+---
+
+<a id="chapter-150-datefare-style-ui"></a>
+
+## Chapter 150: Datefare-style UI
+
+> **Overview:** Restyle imageSorter to match Datefare’s dark charcoal theme — Playfair gold brand, Inter body, teal primary actions — mainly by remapping CSS tokens and fonts.
+
+## Target look (from [`datefare/src/app/globals.css`](file:///Users/alex/Documents/github/datefare/src/app/globals.css))
+
+| Token | Value |
+|-------|--------|
+| Background | `#12141a` |
+| Surface / panel | `rgba(30, 34, 40, 0.85)` / `#252930` |
+| Text | `#ffffff` / muted `#9ca3af` |
+| Brand gold | `#c5a059` |
+| Action teal | `#15808d` |
+| Border | `#2d3340` |
+| Fonts | Playfair Display (logo/titles), Inter (UI) |
+
+## Changes
+
+### 1. Fonts — [`frontend/index.html`](frontend/index.html)
+
+Swap Google Fonts to **Playfair Display** + **Inter** (same pairing as Datefare).
+
+### 2. Design tokens + surfaces — [`frontend/src/styles.css`](frontend/src/styles.css)
+
+Remap `:root` variables used everywhere today:
+
+- `--bg` / `--bg-deep` → Datefare primary charcoal
+- `--ink` / `--muted` → white / gray
+- `--accent` → teal `#15808d`; soft accent → translucent teal
+- `--panel` / `--line` / `--shadow` → elevated dark surface + subtle border
+- `--font-display` → Playfair; `--font-body` → Inter
+
+Update key chrome that hardcodes light colors:
+
+- `body` background → solid dark (no cream radials)
+- `.topbar` → dark sticky bar; `.brand` → gold; `.active` nav → gold underline (Datefare header pattern)
+- Buttons: primary teal fill; secondary dark elevated + border
+- Cards / mosaics / inputs / combobox / lightbox meta contrast for dark
+- Error/success panels toned for dark backgrounds
+- Progress bars, photo checks, expand controls
+
+### 3. Light markup polish — [`frontend/src/App.tsx`](frontend/src/App.tsx)
+
+Align header structure with Datefare (brand left, nav right) if needed so the gold underline active state works cleanly. No page rewrites beyond class tweaks if required.
+
+## Out of scope
+
+- Tailwind / copying Datefare components
+- Changing Analyze / category behavior
+- Hero mountain imagery (imageSorter is not a landing marketing page)
+
+## Default
+
+Full dark Datefare palette as requested (overrides the usual “avoid dark mode” bias because the reference app is dark).
+
+---
+
+<a id="chapter-151-default-apply-move"></a>
+
+## Chapter 151: Default apply move
+
+> **Overview:** Change the Apply page and API defaults from copy to move so Move is selected unless the user chooses Copy.
+
+# Make Move the default on Apply
+
+Change defaults only — Copy remains available via the radio.
+
+## Changes
+
+- [`frontend/src/pages/Apply.tsx`](frontend/src/pages/Apply.tsx): `useState<ApplyMode>("move")` so Move is selected on load.
+- [`frontend/src/api/client.ts`](frontend/src/api/client.ts): `api.apply(mode = "move")`.
+- [`backend/app/main.py`](backend/app/main.py): `ApplyRequest.mode` default `"move"`; empty-body fallback `"move"`.
+- [`backend/app/apply.py`](backend/app/apply.py): `apply_files(mode=...)` default `"move"`. Keep `apply_copies()` calling `apply_files("copy")` explicitly.
+
+---
+
+<a id="chapter-152-default-apply-move"></a>
+
+## Chapter 152: Default apply move
+
+> **Overview:** Change the Apply page and API defaults from copy to move so Move is selected unless the user chooses Copy.
+
+# Make Move the default on Apply
+
+Change defaults only — Copy remains available via the radio.
+
+## Changes
+
+- [`frontend/src/pages/Apply.tsx`](frontend/src/pages/Apply.tsx): `useState<ApplyMode>("move")` so Move is selected on load.
+- [`frontend/src/api/client.ts`](frontend/src/api/client.ts): `api.apply(mode = "move")`.
+- [`backend/app/main.py`](backend/app/main.py): `ApplyRequest.mode` default `"move"`; empty-body fallback `"move"`.
+- [`backend/app/apply.py`](backend/app/apply.py): `apply_files(mode=...)` default `"move"`. Keep `apply_copies()` calling `apply_files("copy")` explicitly.
+
+---
+
+<a id="chapter-153-delete-and-new-category"></a>
+
+## Chapter 153: Delete and new category
+
+> **Overview:** Add empty-only category delete (trash icon on detail) and a New category action on the Categories page, plus the pending Home headline copy change.
+
+# Delete + New category
+
+## Decisions locked
+
+- **Delete** only when the category has **0 images**; otherwise show an error and block.
+- Cannot delete **Uncategorized**.
+- **New category** on the Categories list page: prompt for a name, create empty category, navigate to its detail page.
+- Also apply the pending Home headline: `Group random images into catagories`.
+
+## Backend ([`backend/app/main.py`](backend/app/main.py))
+
+### `DELETE /api/categories/{category_id}`
+
+1. 404 if missing
+2. 400 if `slug == "uncategorized"`
+3. Count files with that `category_id`; if `count > 0` → **400** `"Category must be empty before deleting"`
+4. `DELETE FROM categories WHERE id=?`
+5. Return `{ ok: true }`
+
+### `POST /api/categories`
+
+Body: `{ "name": string }`
+
+1. Slugify name (reuse [`namer.slugify`](backend/app/namer.py)); ensure unique slug (`-2`, `-3`, …)
+2. Insert category with next `sort_order` (before Uncategorized’s high order)
+3. Return `{ id, name, slug }`
+
+## Frontend
+
+### [`frontend/src/api/client.ts`](frontend/src/api/client.ts)
+
+- `createCategory(name)`
+- `deleteCategory(id)`
+
+### [`frontend/src/pages/CategoryDetail.tsx`](frontend/src/pages/CategoryDetail.tsx)
+
+- Trash icon button at end of toolbar (accessible label “Delete category”)
+- Hidden/disabled for Uncategorized
+- On click: if `total > 0`, show error “Empty the category before deleting”; if empty, confirm then call delete and navigate to `/categories`
+
+### [`frontend/src/pages/Categories.tsx`](frontend/src/pages/Categories.tsx)
+
+- **New category** button near the page title
+- `prompt` (or small inline input) for name → create → `navigate(/categories/{id})`
+
+### [`frontend/src/pages/Home.tsx`](frontend/src/pages/Home.tsx)
+
+- Change `<h1>` to `Group random images into catagories`
+
+### Styles
+
+- Icon button style in [`frontend/src/styles.css`](frontend/src/styles.css) (pill/secondary, matches existing toolbar buttons; simple SVG trash, no icon library)
+
+---
+
+<a id="chapter-154-delete-and-new-category"></a>
+
+## Chapter 154: Delete and new category
+
+> **Overview:** Add empty-only category delete (trash icon on detail) and a New category action on the Categories page, plus the pending Home headline copy change.
+
+# Delete + New category
+
+## Decisions locked
+
+- **Delete** only when the category has **0 images**; otherwise show an error and block.
+- Cannot delete **Uncategorized**.
+- **New category** on the Categories list page: prompt for a name, create empty category, navigate to its detail page.
+- Also apply the pending Home headline: `Group random images into categories`.
+
+## Backend ([`backend/app/main.py`](backend/app/main.py))
+
+### `DELETE /api/categories/{category_id}`
+
+1. 404 if missing
+2. 400 if `slug == "uncategorized"`
+3. Count files with that `category_id`; if `count > 0` → **400** `"Category must be empty before deleting"`
+4. `DELETE FROM categories WHERE id=?`
+5. Return `{ ok: true }`
+
+### `POST /api/categories`
+
+Body: `{ "name": string }`
+
+1. Slugify name (reuse [`namer.slugify`](backend/app/namer.py)); ensure unique slug (`-2`, `-3`, …)
+2. Insert category with next `sort_order` (before Uncategorized’s high order)
+3. Return `{ id, name, slug }`
+
+## Frontend
+
+### [`frontend/src/api/client.ts`](frontend/src/api/client.ts)
+
+- `createCategory(name)`
+- `deleteCategory(id)`
+
+### [`frontend/src/pages/CategoryDetail.tsx`](frontend/src/pages/CategoryDetail.tsx)
+
+- Trash icon button at end of toolbar (accessible label “Delete category”)
+- Hidden/disabled for Uncategorized
+- On click: if `total > 0`, show error “Empty the category before deleting”; if empty, confirm then call delete and navigate to `/categories`
+
+### [`frontend/src/pages/Categories.tsx`](frontend/src/pages/Categories.tsx)
+
+- **New category** button near the page title
+- `prompt` (or small inline input) for name → create → `navigate(/categories/{id})`
+
+### [`frontend/src/pages/Home.tsx`](frontend/src/pages/Home.tsx)
+
+- Change `<h1>` to `Group random images into categories`
+
+### Styles
+
+- Icon button style in [`frontend/src/styles.css`](frontend/src/styles.css) (pill/secondary, matches existing toolbar buttons; simple SVG trash, no icon library)
+
+---
+
+<a id="chapter-155-detail-applied-labels"></a>
+
+## Chapter 155: Detail applied labels
 
 > **Overview:** Show currently applied events, people, and tags in PhotoDetail above the Caption field using the existing PhotoCardLabels component, and hide already-applied items from the pickers below to avoid duplicate chips.
 
@@ -14313,9 +15163,9 @@ Reuse existing `.photo-card-labels` / `.badge-removable` styles (no card-specifi
 
 ---
 
-<a id="chapter-136-detail-applied-labels"></a>
+<a id="chapter-156-detail-applied-labels"></a>
 
-## Chapter 136: Detail applied labels
+## Chapter 156: Detail applied labels
 
 > **Overview:** Show currently applied events, people, and tags in PhotoDetail above the Caption field using the existing PhotoCardLabels component, and hide already-applied items from the pickers below to avoid duplicate chips.
 
@@ -14419,95 +15269,9 @@ Reuse existing `.photo-card-labels` / `.badge-removable` styles (no card-specifi
 
 ---
 
-<a id="chapter-137-docker-backup-media-mount"></a>
+<a id="chapter-157-docker-backup-media-mount"></a>
 
-## Chapter 137: Docker backup media mount
-
-> **Overview:** Add an optional Docker bind mount for the migrate destination (`BACKUP_MEDIA_HOST_PATH` → `/media-backup`), and teach the copy/switch flow to use container paths without rewriting `/media` prefixes so cutover is “swap MEDIA_HOST_PATH and recreate.”
-
-# Docker backup target for library copy
-
-Yes — that makes sense. The backend only sees what Compose mounts. A host path like `/Volumes/2TB_M2/...` is invisible inside the container unless bind-mounted, which is why preflight reported “not writable.”
-
-## Intended Docker workflow
-
-```mermaid
-flowchart LR
-  hostOld["MEDIA_HOST_PATH old disk"] --> media["/media"]
-  hostNew["BACKUP_MEDIA_HOST_PATH new disk"] --> backup["/media-backup"]
-  media -->|"copy files"| backup
-  cutover["Set MEDIA_HOST_PATH to former BACKUP path; recreate"] --> media
-```
-
-1. Set `BACKUP_MEDIA_HOST_PATH` in `.env` to the new drive folder.
-2. Recreate backend so `/media-backup` is mounted.
-3. In Settings, copy **`/media` → `/media-backup`** (container paths).
-4. **Do not rewrite** SQLite paths when cutting over this way — they stay `/media/...`.
-5. Point `MEDIA_HOST_PATH` at the new host folder (same value you used for backup), remove or clear `BACKUP_MEDIA_HOST_PATH`, recreate. New disk is now `/media`; original disk remains as backup.
-
-This matches existing docs: Docker often only changes `MEDIA_HOST_PATH`; DB stays `/media/...`.
-
-## Compose / env
-
-Update [`.env.example`](.env.example) and [`.env`](.env) (document only in example; user fills real path):
-
-```bash
-# Optional: second disk for Settings → Copy library (mounted at /media-backup)
-# BACKUP_MEDIA_HOST_PATH=/Volumes/2TB_M2/ImageOrganizer/media
-```
-
-Update [`docker-compose.yml`](docker-compose.yml):
-
-```yaml
-volumes:
-  - ${MEDIA_HOST_PATH:-/Users/alex/Media}:/media
-  - ${BACKUP_MEDIA_HOST_PATH:-./.docker-unused-backup}:/media-backup
-```
-
-Use a repo-local placeholder default when unset so Compose always starts; Settings will treat backup as unavailable if the mount is the placeholder or not writable. Prefer documenting “set `BACKUP_MEDIA_HOST_PATH` then `docker compose up -d --force-recreate backend`.”
-
-Pass through for UI/status (optional env):
-
-```yaml
-environment:
-  MEDIA_ROOT: ${MEDIA_ROOT:-/media}
-  APP_DATA_DIR: ${APP_DATA_DIR:-/media/.imageOrganizer}
-  BACKUP_MEDIA_ROOT: /media-backup
-  BACKUP_MEDIA_HOST_PATH: ${BACKUP_MEDIA_HOST_PATH:-}
-```
-
-## Backend / Settings behavior
-
-- Extend `GET /api/config` (or move status) with:
-  - `backup_media_root` (e.g. `/media-backup`) when configured
-  - `backup_media_host_path` (host string for display)
-  - `backup_media_ready` (dir exists + writable probe)
-- Settings **Copy library to new drive** when `paths_from_env`:
-  - Prefill destination with `/media-backup`
-  - Show host mapping: “Host: /Volumes/2TB_M2/…”
-  - Disable copy with a clear message if backup mount missing/unwritable
-  - Success copy for Docker cutover: **`preserve_media_paths` / skip rewrite** when source is `MEDIA_ROOT` (`/media`) and dest is `BACKUP_MEDIA_ROOT` (`/media-backup`), so the new catalog still references `/media/...`
-  - Success text: set `MEDIA_HOST_PATH` to the backup host path, clear `BACKUP_MEDIA_HOST_PATH`, recreate containers; original `MEDIA_HOST_PATH` disk is the backup
-- Still allow explicit rewrite when someone truly wants paths changed (checkbox or advanced); default Docker migrate = no rewrite
-
-Implement skip-rewrite as a request flag `rewrite_paths: false` defaulting to `true` for native, and `false` when Settings detects Docker backup-mount cutover — or a single `docker_cutover: true` from the UI.
-
-## Docs
-
-- [`.env.example`](.env.example), [`README.md`](README.md) migrate section, [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md): document the two-mount migrate + `MEDIA_HOST_PATH` swap.
-- [`CHANGELOG.md`](CHANGELOG.md) Unreleased note.
-
-## Out of scope
-
-- Auto-editing `.env` from the app
-- Auto-recreate Compose from the API
-- Changing how primary `MEDIA_HOST_PATH` works day-to-day
-
----
-
-<a id="chapter-138-docker-backup-media-mount"></a>
-
-## Chapter 138: Docker backup media mount
+## Chapter 157: Docker backup media mount
 
 > **Overview:** Add an optional Docker bind mount for the migrate destination (`BACKUP_MEDIA_HOST_PATH` → `/media-backup`), and teach the copy/switch flow to use container paths without rewriting `/media` prefixes so cutover is “swap MEDIA_HOST_PATH and recreate.”
 
@@ -14591,9 +15355,95 @@ Implement skip-rewrite as a request flag `rewrite_paths: false` defaulting to `t
 
 ---
 
-<a id="chapter-139-dockerize-datefare-app"></a>
+<a id="chapter-158-docker-backup-media-mount"></a>
 
-## Chapter 139: Dockerize datefare app
+## Chapter 158: Docker backup media mount
+
+> **Overview:** Add an optional Docker bind mount for the migrate destination (`BACKUP_MEDIA_HOST_PATH` → `/media-backup`), and teach the copy/switch flow to use container paths without rewriting `/media` prefixes so cutover is “swap MEDIA_HOST_PATH and recreate.”
+
+# Docker backup target for library copy
+
+Yes — that makes sense. The backend only sees what Compose mounts. A host path like `/Volumes/2TB_M2/...` is invisible inside the container unless bind-mounted, which is why preflight reported “not writable.”
+
+## Intended Docker workflow
+
+```mermaid
+flowchart LR
+  hostOld["MEDIA_HOST_PATH old disk"] --> media["/media"]
+  hostNew["BACKUP_MEDIA_HOST_PATH new disk"] --> backup["/media-backup"]
+  media -->|"copy files"| backup
+  cutover["Set MEDIA_HOST_PATH to former BACKUP path; recreate"] --> media
+```
+
+1. Set `BACKUP_MEDIA_HOST_PATH` in `.env` to the new drive folder.
+2. Recreate backend so `/media-backup` is mounted.
+3. In Settings, copy **`/media` → `/media-backup`** (container paths).
+4. **Do not rewrite** SQLite paths when cutting over this way — they stay `/media/...`.
+5. Point `MEDIA_HOST_PATH` at the new host folder (same value you used for backup), remove or clear `BACKUP_MEDIA_HOST_PATH`, recreate. New disk is now `/media`; original disk remains as backup.
+
+This matches existing docs: Docker often only changes `MEDIA_HOST_PATH`; DB stays `/media/...`.
+
+## Compose / env
+
+Update [`.env.example`](.env.example) and [`.env`](.env) (document only in example; user fills real path):
+
+```bash
+# Optional: second disk for Settings → Copy library (mounted at /media-backup)
+# BACKUP_MEDIA_HOST_PATH=/Volumes/2TB_M2/ImageOrganizer/media
+```
+
+Update [`docker-compose.yml`](docker-compose.yml):
+
+```yaml
+volumes:
+  - ${MEDIA_HOST_PATH:-/Users/alex/Media}:/media
+  - ${BACKUP_MEDIA_HOST_PATH:-./.docker-unused-backup}:/media-backup
+```
+
+Use a repo-local placeholder default when unset so Compose always starts; Settings will treat backup as unavailable if the mount is the placeholder or not writable. Prefer documenting “set `BACKUP_MEDIA_HOST_PATH` then `docker compose up -d --force-recreate backend`.”
+
+Pass through for UI/status (optional env):
+
+```yaml
+environment:
+  MEDIA_ROOT: ${MEDIA_ROOT:-/media}
+  APP_DATA_DIR: ${APP_DATA_DIR:-/media/.imageOrganizer}
+  BACKUP_MEDIA_ROOT: /media-backup
+  BACKUP_MEDIA_HOST_PATH: ${BACKUP_MEDIA_HOST_PATH:-}
+```
+
+## Backend / Settings behavior
+
+- Extend `GET /api/config` (or move status) with:
+  - `backup_media_root` (e.g. `/media-backup`) when configured
+  - `backup_media_host_path` (host string for display)
+  - `backup_media_ready` (dir exists + writable probe)
+- Settings **Copy library to new drive** when `paths_from_env`:
+  - Prefill destination with `/media-backup`
+  - Show host mapping: “Host: /Volumes/2TB_M2/…”
+  - Disable copy with a clear message if backup mount missing/unwritable
+  - Success copy for Docker cutover: **`preserve_media_paths` / skip rewrite** when source is `MEDIA_ROOT` (`/media`) and dest is `BACKUP_MEDIA_ROOT` (`/media-backup`), so the new catalog still references `/media/...`
+  - Success text: set `MEDIA_HOST_PATH` to the backup host path, clear `BACKUP_MEDIA_HOST_PATH`, recreate containers; original `MEDIA_HOST_PATH` disk is the backup
+- Still allow explicit rewrite when someone truly wants paths changed (checkbox or advanced); default Docker migrate = no rewrite
+
+Implement skip-rewrite as a request flag `rewrite_paths: false` defaulting to `true` for native, and `false` when Settings detects Docker backup-mount cutover — or a single `docker_cutover: true` from the UI.
+
+## Docs
+
+- [`.env.example`](.env.example), [`README.md`](README.md) migrate section, [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md): document the two-mount migrate + `MEDIA_HOST_PATH` swap.
+- [`CHANGELOG.md`](CHANGELOG.md) Unreleased note.
+
+## Out of scope
+
+- Auto-editing `.env` from the app
+- Auto-recreate Compose from the API
+- Changing how primary `MEDIA_HOST_PATH` works day-to-day
+
+---
+
+<a id="chapter-159-dockerize-datefare-app"></a>
+
+## Chapter 159: Dockerize datefare app
 
 > **Overview:** Add a production multi-stage Dockerfile (Node + Python/fast-flights) and docker-compose so the app builds and runs with `docker compose up --build` on port 3000—no local Node required.
 
@@ -14668,9 +15518,9 @@ App at http://localhost:3000. Flight search works inside the container because P
 
 ---
 
-<a id="chapter-140-dockerize-datefare-app"></a>
+<a id="chapter-160-dockerize-datefare-app"></a>
 
-## Chapter 140: Dockerize datefare app
+## Chapter 160: Dockerize datefare app
 
 > **Overview:** Add optional Docker/Compose packaging so the app can run in a container without changing the existing local Node + Python venv workflow.
 
@@ -14753,39 +15603,9 @@ PYTHON=./.venv/bin/python npm run dev
 
 ---
 
-<a id="chapter-141-docs-commit-and-pr"></a>
+<a id="chapter-161-docs-commit-and-pr"></a>
 
-## Chapter 141: Docs commit and PR
-
-> **Overview:** Add brief README docs for Docker and recent UX features, then commit everything on a feature branch, push, and open a PR against main.
-
-# Document, commit, push, and open PR
-
-## Docs
-
-Update [`README.md`](README.md) with a short **Optional Docker** section (compose up / legacy npm path unchanged) and brief notes that the form persists settings and results show connections, aircraft, and per-person price. Keep it concise; no new markdown files beyond README.
-
-## Git
-
-1. Create branch e.g. `feature/flight-search-ux-docker`
-2. Stage all relevant changes (Docker files, airport data, UI, Python bridge, helpers) — exclude secrets / `.env*`
-3. Commit with a message summarizing why (Docker optional path + search UX: hubs, sticky form, connections, aircraft, per-person pricing, fast-flights v3)
-4. Push with `-u` and open PR via `gh pr create`
-
-## PR body
-
-- Summary bullets: optional Docker; airport coverage; sticky/wider form; results UX (airline names, connections, aircraft, per-person price); fast-flights v3 fix
-- Test plan: compose up, search FLL→BTV, check autocomplete/persistence/results columns
-
-## Note
-
-Execution needs Agent mode (git write + network). Approve this plan or switch to Agent to proceed.
-
----
-
-<a id="chapter-142-docs-commit-and-pr"></a>
-
-## Chapter 142: Docs commit and PR
+## Chapter 161: Docs commit and PR
 
 > **Overview:** Add brief README docs for Docker and recent UX features, then commit everything on a feature branch, push, and open a PR against main.
 
@@ -14813,9 +15633,39 @@ Execution needs Agent mode (git write + network). Approve this plan or switch to
 
 ---
 
-<a id="chapter-143-document-and-commit-foundation"></a>
+<a id="chapter-162-docs-commit-and-pr"></a>
 
-## Chapter 143: Document and commit foundation
+## Chapter 162: Docs commit and PR
+
+> **Overview:** Add brief README docs for Docker and recent UX features, then commit everything on a feature branch, push, and open a PR against main.
+
+# Document, commit, push, and open PR
+
+## Docs
+
+Update [`README.md`](README.md) with a short **Optional Docker** section (compose up / legacy npm path unchanged) and brief notes that the form persists settings and results show connections, aircraft, and per-person price. Keep it concise; no new markdown files beyond README.
+
+## Git
+
+1. Create branch e.g. `feature/flight-search-ux-docker`
+2. Stage all relevant changes (Docker files, airport data, UI, Python bridge, helpers) — exclude secrets / `.env*`
+3. Commit with a message summarizing why (Docker optional path + search UX: hubs, sticky form, connections, aircraft, per-person pricing, fast-flights v3)
+4. Push with `-u` and open PR via `gh pr create`
+
+## PR body
+
+- Summary bullets: optional Docker; airport coverage; sticky/wider form; results UX (airline names, connections, aircraft, per-person price); fast-flights v3 fix
+- Test plan: compose up, search FLL→BTV, check autocomplete/persistence/results columns
+
+## Note
+
+Execution needs Agent mode (git write + network). Approve this plan or switch to Agent to proceed.
+
+---
+
+<a id="chapter-163-document-and-commit-foundation"></a>
+
+## Chapter 163: Document and commit foundation
 
 > **Overview:** Polish Kitchen Ledger docs to match the running Docker foundation, then create a single git commit of the full app scaffold on main.
 
@@ -14858,9 +15708,9 @@ Do **not** commit `.env`, `.venv`, or media under `/Users/alex/KitchenLedger`. D
 
 ---
 
-<a id="chapter-144-document-and-commit-foundation"></a>
+<a id="chapter-164-document-and-commit-foundation"></a>
 
-## Chapter 144: Document and commit foundation
+## Chapter 164: Document and commit foundation
 
 > **Overview:** Polish Kitchen Ledger docs to match the running Docker foundation, then create a single git commit of the full app scaffold on main.
 
@@ -14903,9 +15753,177 @@ Do **not** commit `.env`, `.venv`, or media under `/Users/alex/KitchenLedger`. D
 
 ---
 
-<a id="chapter-145-expand-plattsburgh-regionals"></a>
+<a id="chapter-165-dup-thumbs-and-views"></a>
 
-## Chapter 145: Expand Plattsburgh regionals
+## Chapter 165: Dup thumbs and views
+
+> **Overview:** Add thumbnail previews on the Duplicates page via a safe output-file image endpoint, plus list vs grid view toggle so users can visually confirm exact dups before deleting.
+
+# Duplicates: thumbnails + view options
+
+## Backend — serve output images
+
+Add `GET /api/output/file?path=...` in [`main.py`](backend/app/main.py):
+
+- Resolve `path` under `OUTPUT_DIR` with the same escape checks as [`duplicates.py`](backend/app/duplicates.py) `_safe_output_path`
+- Return `FileResponse` with correct media type and `Cache-Control: no-store` (or short cache by path+mtime)
+- 404 if missing / not an image
+
+No separate thumb store for now — browsers scale full images via CSS (`object-fit: cover` on small frames). Output set is ~1.7k and only dup members load.
+
+## Frontend — [`Duplicates.tsx`](frontend/src/pages/Duplicates.tsx) + styles
+
+- Helper `outputUrl(rel_path)` → `/api/output/file?path=${encodeURIComponent(rel_path)}`
+- Each member row: small thumb (`~64px`) beside checkbox/path; click thumb opens lightweight lightbox (reuse CategoryDetail lightbox patterns or a minimal overlay)
+- **View toggle** (list | grid) above the groups:
+  - **List** (default): current card layout + thumbs
+  - **Grid**: per group, a row of larger thumbs (~120px) with Keep badge and checkbox overlay
+- Persist view in `localStorage` key `imagesorter.dupView`
+
+## API client
+
+- Add `outputFileUrl(relPath: string)` in [`client.ts`](frontend/src/api/client.ts)
+
+## Out of scope
+
+Server-side thumb generation for output; source-dir dups; filename heuristics.
+
+---
+
+<a id="chapter-166-dup-thumbs-and-views"></a>
+
+## Chapter 166: Dup thumbs and views
+
+> **Overview:** Add thumbnail previews on the Duplicates page via a safe output-file image endpoint, plus list vs grid view toggle so users can visually confirm exact dups before deleting.
+
+# Duplicates: thumbnails + view options
+
+## Backend — serve output images
+
+Add `GET /api/output/file?path=...` in [`main.py`](backend/app/main.py):
+
+- Resolve `path` under `OUTPUT_DIR` with the same escape checks as [`duplicates.py`](backend/app/duplicates.py) `_safe_output_path`
+- Return `FileResponse` with correct media type and `Cache-Control: no-store` (or short cache by path+mtime)
+- 404 if missing / not an image
+
+No separate thumb store for now — browsers scale full images via CSS (`object-fit: cover` on small frames). Output set is ~1.7k and only dup members load.
+
+## Frontend — [`Duplicates.tsx`](frontend/src/pages/Duplicates.tsx) + styles
+
+- Helper `outputUrl(rel_path)` → `/api/output/file?path=${encodeURIComponent(rel_path)}`
+- Each member row: small thumb (`~64px`) beside checkbox/path; click thumb opens lightweight lightbox (reuse CategoryDetail lightbox patterns or a minimal overlay)
+- **View toggle** (list | grid) above the groups:
+  - **List** (default): current card layout + thumbs
+  - **Grid**: per group, a row of larger thumbs (~120px) with Keep badge and checkbox overlay
+- Persist view in `localStorage` key `imagesorter.dupView`
+
+## API client
+
+- Add `outputFileUrl(relPath: string)` in [`client.ts`](frontend/src/api/client.ts)
+
+## Out of scope
+
+Server-side thumb generation for output; source-dir dups; filename heuristics.
+
+---
+
+<a id="chapter-167-exact-output-duplicates"></a>
+
+## Chapter 167: Exact output duplicates
+
+> **Overview:** Add an exact-duplicate scanner for the output directory using size+SHA-256 grouping, with a keep-one preference and confirmed delete of extras. Filename-only matching is deferred.
+
+# Exact duplicates in output (hash + delete extras)
+
+Scan [`OUTPUT_DIR`](backend/app/config.py) (`imagesSorted`) for **byte-identical** files. Filename heuristics are **out of scope** (table for later).
+
+## Backend — new [`backend/app/duplicates.py`](backend/app/duplicates.py) + routes in [`main.py`](backend/app/main.py)
+
+**Scan** `GET /api/duplicates/scan` (or `POST` if preferred for long work — use sync scan; ~1.7k files is fine):
+
+1. Walk `OUTPUT_DIR` recursively for image extensions (reuse `IMAGE_EXTENSIONS`).
+2. Group by file size; skip unique sizes.
+3. SHA-256 each file in same-size groups (chunked reads).
+4. Return groups with `hash`, `size`, and members `{ rel_path, filename, mtime }`.
+
+**Keep preference** (mark one `keep: true` per group):
+
+1. Prefer name without `copy of` / ` copy` / trailing ` (n)` patterns (case-insensitive)
+2. Else shorter `rel_path`
+3. Else oldest `mtime`
+
+**Delete** `POST /api/duplicates/delete` body `{ paths: string[] }` (rel paths under output only):
+
+- Resolve under `OUTPUT_DIR`, reject path escape
+- `unlink` each; return `{ deleted, errors }`
+- Does not touch the app DB / source (output-only)
+
+## Frontend — Duplicates page
+
+- Nav link in [`App.tsx`](frontend/src/App.tsx); page [`Duplicates.tsx`](frontend/src/pages/Duplicates.tsx)
+- **Scan** button → list groups: keep file highlighted, extras pre-checked for delete
+- **Delete selected extras** with confirm (`N` files)
+- Show group count / bytes reclaimable
+- API helpers in [`client.ts`](frontend/src/api/client.ts)
+
+## Deferred
+
+- Filename-only matching (option 4)
+- Near-dup / perceptual hash
+- Source-dir scan (can add later with a `root=output|source` flag)
+
+---
+
+<a id="chapter-168-exact-output-duplicates"></a>
+
+## Chapter 168: Exact output duplicates
+
+> **Overview:** Add an exact-duplicate scanner for the output directory using size+SHA-256 grouping, with a keep-one preference and confirmed delete of extras. Filename-only matching is deferred.
+
+# Exact duplicates in output (hash + delete extras)
+
+Scan [`OUTPUT_DIR`](backend/app/config.py) (`imagesSorted`) for **byte-identical** files. Filename heuristics are **out of scope** (table for later).
+
+## Backend — new [`backend/app/duplicates.py`](backend/app/duplicates.py) + routes in [`main.py`](backend/app/main.py)
+
+**Scan** `GET /api/duplicates/scan` (or `POST` if preferred for long work — use sync scan; ~1.7k files is fine):
+
+1. Walk `OUTPUT_DIR` recursively for image extensions (reuse `IMAGE_EXTENSIONS`).
+2. Group by file size; skip unique sizes.
+3. SHA-256 each file in same-size groups (chunked reads).
+4. Return groups with `hash`, `size`, and members `{ rel_path, filename, mtime }`.
+
+**Keep preference** (mark one `keep: true` per group):
+
+1. Prefer name without `copy of` / ` copy` / trailing ` (n)` patterns (case-insensitive)
+2. Else shorter `rel_path`
+3. Else oldest `mtime`
+
+**Delete** `POST /api/duplicates/delete` body `{ paths: string[] }` (rel paths under output only):
+
+- Resolve under `OUTPUT_DIR`, reject path escape
+- `unlink` each; return `{ deleted, errors }`
+- Does not touch the app DB / source (output-only)
+
+## Frontend — Duplicates page
+
+- Nav link in [`App.tsx`](frontend/src/App.tsx); page [`Duplicates.tsx`](frontend/src/pages/Duplicates.tsx)
+- **Scan** button → list groups: keep file highlighted, extras pre-checked for delete
+- **Delete selected extras** with confirm (`N` files)
+- Show group count / bytes reclaimable
+- API helpers in [`client.ts`](frontend/src/api/client.ts)
+
+## Deferred
+
+- Filename-only matching (option 4)
+- Near-dup / perceptual hash
+- Source-dir scan (can add later with a `root=output|source` flag)
+
+---
+
+<a id="chapter-169-expand-plattsburgh-regionals"></a>
+
+## Chapter 169: Expand Plattsburgh regionals
 
 > **Overview:** Expand Northeast regionals near Plattsburgh/Burlington and make “platsburg”-style typos match via airport aliases, so TO/FROM autocomplete finds these cities.
 
@@ -14957,9 +15975,9 @@ If using Compose, rebuild so the image picks up the data: `docker compose up --b
 
 ---
 
-<a id="chapter-146-expand-plattsburgh-regionals"></a>
+<a id="chapter-170-expand-plattsburgh-regionals"></a>
 
-## Chapter 146: Expand Plattsburgh regionals
+## Chapter 170: Expand Plattsburgh regionals
 
 > **Overview:** Expand Northeast regionals near Plattsburgh/Burlington and make “platsburg”-style typos match via airport aliases, so TO/FROM autocomplete finds these cities.
 
@@ -15011,9 +16029,9 @@ If using Compose, rebuild so the image picks up the data: `docker compose up --b
 
 ---
 
-<a id="chapter-147-fix-blocked-scan-clicks"></a>
+<a id="chapter-171-fix-blocked-scan-clicks"></a>
 
-## Chapter 147: Fix blocked scan clicks
+## Chapter 171: Fix blocked scan clicks
 
 > **Overview:** Scan clicks fail silently when another scan or blur analysis holds the mutex, or when scan_state.running is stuck true and disables the button. Fix by claiming/clearing scan state reliably and surfacing blocked/error state in the UI.
 
@@ -15083,9 +16101,9 @@ On Inbox, Calendar, Cameras (and Trash if it has Scan):
 
 ---
 
-<a id="chapter-148-fix-blur-detection-threshold"></a>
+<a id="chapter-172-fix-blur-detection-threshold"></a>
 
-## Chapter 148: Fix blur detection threshold
+## Chapter 172: Fix blur detection threshold
 
 > **Overview:** IMG_7483.JPG scores 130.5 (lowest in inbox by 4×) but is not flagged because blur uses `score < threshold` and your threshold is 25. Fix the inverted Settings copy, raise the default, and add relative outlier detection so obvious misses like this are caught.
 
@@ -15201,9 +16219,9 @@ No re-analysis needed — scores are already stored; classification changes appl
 
 ---
 
-<a id="chapter-149-fix-calendar-tag-search-layout"></a>
+<a id="chapter-173-fix-calendar-tag-search-layout"></a>
 
-## Chapter 149: Fix calendar tag search layout
+## Chapter 173: Fix calendar tag search layout
 
 > **Overview:** Single-character tag search matches many tags; the chip row expands horizontally because the calendar left column uses `width: max-content` and tag chip containers lack width constraints. Fix by constraining the tagging panel to the calendar column width and ensuring chip rows wrap.
 
@@ -15334,9 +16352,9 @@ Replace inline flex styles in [`FileTagPicker.tsx`](imageOrganizer/frontend/src/
 
 ---
 
-<a id="chapter-150-fix-camera-model-order"></a>
+<a id="chapter-174-fix-camera-model-order"></a>
 
-## Chapter 150: Fix camera model order
+## Chapter 174: Fix camera model order
 
 > **Overview:** Fix the backend startup crash by defining `InboxCameraOut` before `BrowseCooccurringOut` references it in models.py.
 
@@ -15366,9 +16384,137 @@ No API or frontend changes. After Docker reloads, backend should boot cleanly.
 
 ---
 
-<a id="chapter-151-fix-fast-flights-v3-api"></a>
+<a id="chapter-175-fix-empty-duplicates-index"></a>
 
-## Chapter 151: Fix fast-flights v3 API
+## Chapter 175: Fix empty duplicates index
+
+> **Overview:** Manual “Dup” tags are an intentional find-aid and stay as-is. Harden duplicate rebuild so a failed rebuild cannot wipe all groups, and add an explicit Rebuild control so the Duplicates page can resurface SHA/pHash matches.
+
+# Why duplicates aren’t surfaced (and fix rebuild)
+
+## What’s going on
+
+Two different systems are in play (both valid):
+
+| What you see | What it is |
+|---|---|
+| **“Dup” tags** on Calendar day cards | **Intentional manual tags** so you can find candidates via Browse/Calendar. They do **not** populate the Duplicates page (and we will not auto-manage them). |
+| **Duplicates** page empty state | Reads `GET /api/duplicates` → `duplicate_groups` / `duplicate_members` built by [`dedupe.py`](backend/app/dedupe.py) (exact SHA256 + perceptual pHash ≤ `PHASH_THRESHOLD` 5), only for inbox/archive. |
+
+Calendar/Inbox “duplicate alerts” (badges / “N duplicate groups”) use the **same** `/api/duplicates` index ([`usePhotoGridAlerts.ts`](frontend/src/utils/usePhotoGridAlerts.ts)). If that index is empty, those alerts stay empty even while your manual “Dup” tags remain visible on cards.
+
+Rebuild is kicked only after inbox/archive scan finishes ([`scanner.py`](backend/app/scanner.py) → `start_dedupe_rebuild_background()`). The Duplicates “Re-scan …” buttons only start a scan; they do not rebuild the index by themselves until that scan completes.
+
+## Likely bug: wipe-then-fail
+
+[`_rebuild_exact_groups`](backend/app/dedupe.py) **deletes all groups first**, then writes new ones. [`_run_dedupe_rebuild`](backend/app/dedupe.py) wraps the whole job in `except Exception: pass` (errors swallowed). If rebuild errors after the delete (or never finishes on a large library), the UI correctly shows **No duplicate groups found** even when near-duplicates exist on disk (e.g. starfish pairs with shared `IMG_20130917_…` stems).
+
+```mermaid
+flowchart LR
+  scan[Scan finishes] --> rebuild[Dedupe rebuild]
+  rebuild --> wipe[DELETE all groups]
+  wipe --> exact[Write SHA groups]
+  exact --> phash[pHash offline]
+  phash --> write[Write perceptual groups]
+  wipe -.->|exception swallowed| empty[Empty Duplicates page]
+```
+
+The visually identical 2013-09-17 pairs should normally match as **exact** (same bytes) or **perceptual** (pHash). Empty index is an index/rebuild problem first; raise threshold only if a healthy rebuild still misses them.
+
+## Fix
+
+### 1. Safe rebuild in [`dedupe.py`](backend/app/dedupe.py)
+
+- Compute exact clusters and load pHash pairs **without** deleting first.
+- Run perceptual grouping offline (unchanged).
+- Then, in one short write phase: delete old groups + insert new exact + perceptual + reconcile keepers + commit.
+- On exception: **log** the error (no silent `pass`); leave previous groups intact if the wipe transaction never committed.
+
+### 2. Explicit rebuild API + UI
+
+- `POST /api/duplicates/rebuild` → `start_dedupe_rebuild_background()` (and return current dedupe/scan status if already available).
+- Duplicates page: **Rebuild index** button (in addition to Re-scan inbox/archive), with short copy that rebuild runs in the background (banner already shows **Building duplicate index…** via scan status).
+
+### 3. Docs / CHANGELOG
+
+- [`CHANGELOG.md`](CHANGELOG.md): Fixed wipe-on-failed rebuild; Added Rebuild index on Duplicates.
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md): note safe rebuild + `/api/duplicates/rebuild`.
+
+## Out of scope
+
+- Changing or auto-managing the manual “Dup” tag workflow
+- Auto-creating a “Dup” tag from the index / backfilling from the tag into `duplicate_groups`
+- Raising `PHASH_THRESHOLD` or filename-stem matching (revisit only if pairs remain unmatched after a successful rebuild)
+
+---
+
+<a id="chapter-176-fix-empty-duplicates-index"></a>
+
+## Chapter 176: Fix empty duplicates index
+
+> **Overview:** Explain why Calendar “Dup” tags and the empty Duplicates page are unrelated, then harden duplicate rebuild so a failed rebuild cannot wipe all groups, and add an explicit Rebuild control on the Duplicates page.
+
+# Why duplicates aren’t surfaced (and fix rebuild)
+
+## What’s going on
+
+Two different systems are in play:
+
+| What you see | What it is |
+|---|---|
+| **“Dup” tags** on Calendar day cards | A normal **user tag** (`file_tags`). It does **not** feed the Duplicates page. |
+| **Duplicates** page empty state | Reads `GET /api/duplicates` → `duplicate_groups` / `duplicate_members` built by [`dedupe.py`](backend/app/dedupe.py) (exact SHA256 + perceptual pHash ≤ `PHASH_THRESHOLD` 5), only for inbox/archive. |
+
+Calendar/Inbox “duplicate alerts” use the **same** `/api/duplicates` index ([`usePhotoGridAlerts.ts`](frontend/src/utils/usePhotoGridAlerts.ts)). If the Duplicates page is empty, alerts will be empty too—manual “Dup” tags still show on cards.
+
+Rebuild is kicked only after inbox/archive scan finishes ([`scanner.py`](backend/app/scanner.py) → `start_dedupe_rebuild_background()`). The Duplicates “Re-scan …” buttons only start a scan; they do not rebuild the index by themselves until that scan completes.
+
+## Likely bug: wipe-then-fail
+
+[`_rebuild_exact_groups`](backend/app/dedupe.py) **deletes all groups first**, then writes new ones. [`_run_dedupe_rebuild`](backend/app/dedupe.py) wraps the whole job in `except Exception: pass` (errors swallowed). If rebuild errors after the delete (or never finishes on a large library), the UI correctly shows **No duplicate groups found** even when near-duplicates exist on disk (e.g. starfish pairs with shared `IMG_20130917_…` stems).
+
+```mermaid
+flowchart LR
+  scan[Scan finishes] --> rebuild[Dedupe rebuild]
+  rebuild --> wipe[DELETE all groups]
+  wipe --> exact[Write SHA groups]
+  exact --> phash[pHash offline]
+  phash --> write[Write perceptual groups]
+  wipe -.->|exception swallowed| empty[Empty Duplicates page]
+```
+
+The visually identical 2013-09-17 pairs should normally match as **exact** (same bytes) or **perceptual** (pHash). Empty index is an index/rebuild problem first; raise threshold only if a healthy rebuild still misses them.
+
+## Fix
+
+### 1. Safe rebuild in [`dedupe.py`](backend/app/dedupe.py)
+
+- Compute exact clusters and load pHash pairs **without** deleting first.
+- Run perceptual grouping offline (unchanged).
+- Then, in one short write phase: delete old groups + insert new exact + perceptual + reconcile keepers + commit.
+- On exception: **log** the error (no silent `pass`); leave previous groups intact if the wipe transaction never committed.
+
+### 2. Explicit rebuild API + UI
+
+- `POST /api/duplicates/rebuild` → `start_dedupe_rebuild_background()` (and return current dedupe/scan status if already available).
+- Duplicates page: **Rebuild index** button (in addition to Re-scan inbox/archive), with short copy that rebuild runs in the background (banner already shows **Building duplicate index…** via scan status).
+
+### 3. Docs / CHANGELOG
+
+- [`CHANGELOG.md`](CHANGELOG.md): Fixed wipe-on-failed rebuild; Added Rebuild index on Duplicates.
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md): note safe rebuild + `/api/duplicates/rebuild`.
+
+## Out of scope
+
+- Auto-creating a “Dup” tag from the index
+- Raising `PHASH_THRESHOLD` or filename-stem matching (revisit only if pairs remain unmatched after a successful rebuild)
+- Backfilling from the manual “Dup” tag
+
+---
+
+<a id="chapter-177-fix-fast-flights-v3-api"></a>
+
+## Chapter 177: Fix fast-flights v3 API
 
 > **Overview:** Update the Python Google Flights bridge to the fast-flights 3.x API (FlightQuery + create_query) so FLL→BTV searches stop failing on the FlightData import.
 
@@ -15429,9 +16575,9 @@ Re-run a search FLL→BTV (or `docker compose exec web /opt/venv/bin/python scri
 
 ---
 
-<a id="chapter-152-fix-fast-flights-v3-api"></a>
+<a id="chapter-178-fix-fast-flights-v3-api"></a>
 
-## Chapter 152: Fix fast-flights v3 API
+## Chapter 178: Fix fast-flights v3 API
 
 > **Overview:** Update the Python Google Flights bridge to the fast-flights 3.x API (FlightQuery + create_query) so FLL→BTV searches stop failing on the FlightData import.
 
@@ -15492,9 +16638,9 @@ Re-run a search FLL→BTV (or `docker compose exec web /opt/venv/bin/python scri
 
 ---
 
-<a id="chapter-153-fix-label-data-loss"></a>
+<a id="chapter-179-fix-label-data-loss"></a>
 
-## Chapter 153: Fix label data loss
+## Chapter 179: Fix label data loss
 
 > **Overview:** Tags, People, and Events show 0 photos because the trash-location database migration (`DROP TABLE files` with `PRAGMA foreign_keys=ON`) cascaded and deleted all rows in `file_tags`, `file_people`, and `file_events`. Cameras still work because they count from `files.camera` directly. Fix the migration for future runs and recover associations from a pre-upgrade DB backup if one exists.
 
@@ -15638,9 +16784,9 @@ Under **Changed** or a short note: if you already upgraded, restore from backup 
 
 ---
 
-<a id="chapter-154-fix-lightbox-scale-to-fit"></a>
+<a id="chapter-180-fix-lightbox-scale-to-fit"></a>
 
-## Chapter 154: Fix lightbox scale-to-fit
+## Chapter 180: Fix lightbox scale-to-fit
 
 > **Overview:** The lightbox is showing full-resolution images again because uncommitted local changes (zoom scroll/pan + tags overlay work) replaced scale-to-fit CSS with a scrollable stage at intrinsic image size. Release **2026.07.11a** still scales correctly; the regression is only in current uncommitted edits.
 
@@ -15754,9 +16900,9 @@ No backend changes.
 
 ---
 
-<a id="chapter-155-fix-mosaic-navigation"></a>
+<a id="chapter-181-fix-mosaic-navigation"></a>
 
-## Chapter 155: Fix mosaic navigation
+## Chapter 181: Fix mosaic navigation
 
 > **Overview:** Create mosaic appears to do nothing on Browse because PhotoDetail navigates to `/mosaic?source=…` and then immediately calls `onClose()`, which Browse implements as a second `navigate()` back to the current browse URL — the second navigation wins.
 
@@ -15832,53 +16978,9 @@ No backend or CSS changes needed.
 
 ---
 
-<a id="chapter-156-fix-mov-video-playback"></a>
+<a id="chapter-182-fix-mov-video-playback"></a>
 
-## Chapter 156: Fix MOV video playback
-
-> **Overview:** Make MOV (and other browser-hostile video) play in the detail viewer by serving a browser-safe URL: remap MIME where helpful, and fall back to a cached ffmpeg H.264/AAC MP4 via a new `/play` endpoint.
-
-# Fix MOV playback in the viewer
-
-## Cause
-
-Detail view uses raw [`GET /api/files/{id}/original`](backend/app/main.py) in a `<video>` tag ([`PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx)). `.mov` is served as `video/quicktime`. Many camera MOVs (e.g. `PICT*.MOV`) use codecs Chrome cannot decode (MJPEG / odd QuickTime), so the poster thumb shows but playback stays at `0:00`. Thumbnails already work via ffmpeg.
-
-## Approach
-
-Hybrid, ffmpeg already required for video thumbs/metadata:
-
-1. **MIME**: Treat `.mov` / `.m4v` as `video/mp4` when serving originals (helps H.264 QuickTime in Chromium).
-2. **Playable file**: New helper probes with ffprobe; if the file is not browser-friendly, transcode once to a cached MP4 under `APP_DATA_DIR/video_play/{file_id}_{mtime}.mp4` (H.264 + AAC, `+faststart`).
-3. **API**: `GET /api/files/{file_id}/play` returns that playable file (original or cache) with correct MIME and Starlette `FileResponse` (range-friendly).
-4. **Frontend**: `<video src={api.playUrl(...)}>` instead of `originalUrl` in [`PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx) (drawer + lightbox).
-
-Browser-friendly heuristic (no transcode): container in `{.mp4,.webm,.mov,.m4v}` and video codec in `{h264,avc1,vp8,vp9,av1}` (case-insensitive). Otherwise transcode. Missing ffprobe → try original with remapped MIME; on failure still allow cache path if ffmpeg succeeds.
-
-First play of a hostile MOV may wait on transcode (typical camera clips are short). Show native loading; no progress UI in this pass.
-
-## Key files
-
-- New: [`backend/app/video_play.py`](backend/app/video_play.py) — probe + ensure cached playable path
-- [`backend/app/config.py`](backend/app/config.py) — `VIDEO_PLAY_DIR`; `.mov`/`.m4v` → `video/mp4` in `VIDEO_MIME_TYPES`
-- [`backend/app/main.py`](backend/app/main.py) — `/api/files/{id}/play`
-- [`frontend/src/api/client.ts`](frontend/src/api/client.ts) — `playUrl`
-- [`frontend/src/components/PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx) — use `playUrl`
-- Tests: probe/transcode decisions with a tiny fixture or mocked ffprobe
-- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — play endpoint + `video_play` cache
-- [`CHANGELOG.md`](CHANGELOG.md) Unreleased Fixed/Added
-
-## Out of scope
-
-- Grid inline video playback
-- Background pre-transcode of whole library
-- Replacing `/original` (downloads/rotate still use original bytes)
-
----
-
-<a id="chapter-157-fix-mov-video-playback"></a>
-
-## Chapter 157: Fix MOV video playback
+## Chapter 182: Fix MOV video playback
 
 > **Overview:** Make MOV (and other browser-hostile video) play in the detail viewer by serving a browser-safe URL: remap MIME where helpful, and fall back to a cached ffmpeg H.264/AAC MP4 via a new `/play` endpoint.
 
@@ -15920,9 +17022,307 @@ First play of a hostile MOV may wait on transcode (typical camera clips are shor
 
 ---
 
-<a id="chapter-158-fix-tag-wrap-blowout"></a>
+<a id="chapter-183-fix-mov-video-playback"></a>
 
-## Chapter 158: Fix tag wrap blowout
+## Chapter 183: Fix MOV video playback
+
+> **Overview:** Make MOV (and other browser-hostile video) play in the detail viewer by serving a browser-safe URL: remap MIME where helpful, and fall back to a cached ffmpeg H.264/AAC MP4 via a new `/play` endpoint.
+
+# Fix MOV playback in the viewer
+
+## Cause
+
+Detail view uses raw [`GET /api/files/{id}/original`](backend/app/main.py) in a `<video>` tag ([`PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx)). `.mov` is served as `video/quicktime`. Many camera MOVs (e.g. `PICT*.MOV`) use codecs Chrome cannot decode (MJPEG / odd QuickTime), so the poster thumb shows but playback stays at `0:00`. Thumbnails already work via ffmpeg.
+
+## Approach
+
+Hybrid, ffmpeg already required for video thumbs/metadata:
+
+1. **MIME**: Treat `.mov` / `.m4v` as `video/mp4` when serving originals (helps H.264 QuickTime in Chromium).
+2. **Playable file**: New helper probes with ffprobe; if the file is not browser-friendly, transcode once to a cached MP4 under `APP_DATA_DIR/video_play/{file_id}_{mtime}.mp4` (H.264 + AAC, `+faststart`).
+3. **API**: `GET /api/files/{file_id}/play` returns that playable file (original or cache) with correct MIME and Starlette `FileResponse` (range-friendly).
+4. **Frontend**: `<video src={api.playUrl(...)}>` instead of `originalUrl` in [`PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx) (drawer + lightbox).
+
+Browser-friendly heuristic (no transcode): container in `{.mp4,.webm,.mov,.m4v}` and video codec in `{h264,avc1,vp8,vp9,av1}` (case-insensitive). Otherwise transcode. Missing ffprobe → try original with remapped MIME; on failure still allow cache path if ffmpeg succeeds.
+
+First play of a hostile MOV may wait on transcode (typical camera clips are short). Show native loading; no progress UI in this pass.
+
+## Key files
+
+- New: [`backend/app/video_play.py`](backend/app/video_play.py) — probe + ensure cached playable path
+- [`backend/app/config.py`](backend/app/config.py) — `VIDEO_PLAY_DIR`; `.mov`/`.m4v` → `video/mp4` in `VIDEO_MIME_TYPES`
+- [`backend/app/main.py`](backend/app/main.py) — `/api/files/{id}/play`
+- [`frontend/src/api/client.ts`](frontend/src/api/client.ts) — `playUrl`
+- [`frontend/src/components/PhotoDetail.tsx`](frontend/src/components/PhotoDetail.tsx) — use `playUrl`
+- Tests: probe/transcode decisions with a tiny fixture or mocked ffprobe
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — play endpoint + `video_play` cache
+- [`CHANGELOG.md`](CHANGELOG.md) Unreleased Fixed/Added
+
+## Out of scope
+
+- Grid inline video playback
+- Background pre-transcode of whole library
+- Replacing `/original` (downloads/rotate still use original bytes)
+
+---
+
+<a id="chapter-184-fix-search-first-char"></a>
+
+## Chapter 184: Fix search first char
+
+> **Overview:** Fix CategoryCombobox dropping the first typed character when a selection is cleared — the value-sync effect was resetting the query to empty right after the first keystroke.
+
+# Fix search missing first character
+
+## Cause
+
+In [`CategoryCombobox.tsx`](frontend/src/components/CategoryCombobox.tsx), when a category is already selected:
+
+1. First keypress updates `query` and calls `onChange("")` to clear the selection
+2. The sync effect runs on `value === ""` and does `setQuery("")`, wiping that first character
+3. Later keystrokes work because `value` is already empty
+
+Matches the screenshot: typing “cars” leaves “ars”.
+
+## Fix
+
+Only sync the input from selection when appropriate:
+
+```tsx
+useEffect(() => {
+  if (selected) setQuery(`${selected.name} (${selected.count})`);
+  else if (value === "" && !open) setQuery("");
+}, [selected, value, open]);
+```
+
+While the dropdown is open and the user is typing, do not blank `query` when `value` clears. Explicit clear (×) already sets `query` to `""` and closes.
+
+No change needed for the Categories page search bar — this bug is specific to the Move/merge combobox.
+
+---
+
+<a id="chapter-185-fix-search-first-char"></a>
+
+## Chapter 185: Fix search first char
+
+> **Overview:** Fix CategoryCombobox dropping the first typed character when a selection is cleared — the value-sync effect was resetting the query to empty right after the first keystroke.
+
+# Fix search missing first character
+
+## Cause
+
+In [`CategoryCombobox.tsx`](frontend/src/components/CategoryCombobox.tsx), when a category is already selected:
+
+1. First keypress updates `query` and calls `onChange("")` to clear the selection
+2. The sync effect runs on `value === ""` and does `setQuery("")`, wiping that first character
+3. Later keystrokes work because `value` is already empty
+
+Matches the screenshot: typing “cars” leaves “ars”.
+
+## Fix
+
+Only sync the input from selection when appropriate:
+
+```tsx
+useEffect(() => {
+  if (selected) setQuery(`${selected.name} (${selected.count})`);
+  else if (value === "" && !open) setQuery("");
+}, [selected, value, open]);
+```
+
+While the dropdown is open and the user is typing, do not blank `query` when `value` clears. Explicit clear (×) already sets `query` to `""` and closes.
+
+No change needed for the Categories page search bar — this bug is specific to the Move/merge combobox.
+
+---
+
+<a id="chapter-186-fix-sqlite-locked"></a>
+
+## Chapter 186: Fix SQLite locked
+
+> **Overview:** Explain and fix the “database is locked” error caused by nested SQLite connections during Analyze (especially the new matcher) plus concurrent status/thumb requests, with no WAL or busy timeout.
+
+# Fix “database is locked”
+
+## What happened
+
+SQLite only allows one writer. imageSorter opens a **new connection per** `get_db()` / `fetchall` / `fetchone` ([`db.py`](backend/app/db.py)), with **no** `PRAGMA journal_mode=WAL` and **no** busy timeout (default ~5s).
+
+When you clicked **Analyze**:
+
+1. The analyze thread runs clustering/matching and holds write transactions.
+2. The Home page polls `/api/status` every second (more DB opens).
+3. The new smarter matcher ([`cluster.py`](backend/app/cluster.py)) opens **many** connections: `_build_match_library` does a `fetchall` **per category** (~100+), plus frequent `refresh_category_metadata` (each opens 2–3 more connections).
+4. In at least one path, `refresh_category_metadata(...)` is called **while another `with db.get_db()` is still open** (single-leftover branch). That nested write waits on the outer connection → classic **database is locked**.
+
+So Analyze failed mid-run; the red banner is that SQLite error bubbled into job status.
+
+## Fix
+
+### 1. Harden SQLite — [`db.py`](backend/app/db.py)
+
+In `_connect()`:
+
+- `timeout=30` on `sqlite3.connect`
+- `PRAGMA journal_mode=WAL`
+- `PRAGMA busy_timeout=30000`
+
+### 2. Stop nested writes — [`cluster.py`](backend/app/cluster.py)
+
+- Never call `refresh_category_metadata` inside an open `get_db()` block; collect ids and refresh after commit.
+- In `_build_match_library`, load all category member embeddings in **one query** (or one connection), not N round-trips.
+
+### 3. Optional small win — [`jobs.py`](backend/app/jobs.py) / status
+
+Leave status polling as-is once WAL + busy_timeout are in; concurrent reads should stop blocking writers.
+
+No UI change required.
+
+---
+
+<a id="chapter-187-fix-sqlite-locked"></a>
+
+## Chapter 187: Fix SQLite locked
+
+> **Overview:** Explain and fix the “database is locked” error caused by nested SQLite connections during Analyze (especially the new matcher) plus concurrent status/thumb requests, with no WAL or busy timeout.
+
+# Fix “database is locked”
+
+## What happened
+
+SQLite only allows one writer. imageSorter opens a **new connection per** `get_db()` / `fetchall` / `fetchone` ([`db.py`](backend/app/db.py)), with **no** `PRAGMA journal_mode=WAL` and **no** busy timeout (default ~5s).
+
+When you clicked **Analyze**:
+
+1. The analyze thread runs clustering/matching and holds write transactions.
+2. The Home page polls `/api/status` every second (more DB opens).
+3. The new smarter matcher ([`cluster.py`](backend/app/cluster.py)) opens **many** connections: `_build_match_library` does a `fetchall` **per category** (~100+), plus frequent `refresh_category_metadata` (each opens 2–3 more connections).
+4. In at least one path, `refresh_category_metadata(...)` is called **while another `with db.get_db()` is still open** (single-leftover branch). That nested write waits on the outer connection → classic **database is locked**.
+
+So Analyze failed mid-run; the red banner is that SQLite error bubbled into job status.
+
+## Fix
+
+### 1. Harden SQLite — [`db.py`](backend/app/db.py)
+
+In `_connect()`:
+
+- `timeout=30` on `sqlite3.connect`
+- `PRAGMA journal_mode=WAL`
+- `PRAGMA busy_timeout=30000`
+
+### 2. Stop nested writes — [`cluster.py`](backend/app/cluster.py)
+
+- Never call `refresh_category_metadata` inside an open `get_db()` block; collect ids and refresh after commit.
+- In `_build_match_library`, load all category member embeddings in **one query** (or one connection), not N round-trips.
+
+### 3. Optional small win — [`jobs.py`](backend/app/jobs.py) / status
+
+Leave status polling as-is once WAL + busy_timeout are in; concurrent reads should stop blocking writers.
+
+No UI change required.
+
+---
+
+<a id="chapter-188-fix-stale-thumbnails"></a>
+
+## Chapter 188: Fix stale thumbnails
+
+> **Overview:** Thumbnails are wrong because old `.data/thumbs/{id}.jpg` files survive DB resets and get reused for new files with the same IDs. Fix ensure_thumb, delete thumbs on file removal, and rebuild current thumbs.
+
+# Fix thumbnail / full-image mismatch
+
+## Root cause
+
+[`ensure_thumb`](backend/app/scanner.py) returns early if `.data/thumbs/{id}.jpg` **exists**, without checking whether it belongs to the current file:
+
+```python
+if out.exists():
+    ...
+    return True
+```
+
+After the library was wiped/re-scanned, SQLite IDs restarted at 1–76 while **659 orphan thumbs** from the old 718-file library remained. New file `id=17` serves the **old** `17.jpg` (meme) as the thumb, while `/api/images/17/full` correctly opens the current athletes screenshot.
+
+## Fix
+
+### 1. Trust DB, not disk alone — [`scanner.py`](backend/app/scanner.py)
+
+- Only reuse an existing thumb if `files.has_thumb = 1` for that id; otherwise regenerate (overwrite).
+- Add `force: bool = False` to always regenerate when requested.
+- When scan **deletes** a file row, also `unlink` its thumb path.
+
+### 2. Thumb endpoint — [`main.py`](backend/app/main.py)
+
+Keep using `ensure_thumb`; with the fix above, stale orphans regenerate on first request.
+
+### 3. One-shot rebuild
+
+On backend startup (or a short block in `init_db` / first analyze thumbs pass): for every current file, if thumb exists but `has_thumb=0`, regenerate. Plus immediately set `has_thumb=0` for all files once and run `generate_thumbs` with force so Athletes (and all categories) are correct without waiting for clicks.
+
+Simplest durable approach in `generate_thumbs`: call `ensure_thumb(..., force=True)` always during Analyze thumb stage so each analyze refreshes thumbs from source. Slightly more CPU (~76 images is fine); avoids stale state forever.
+
+**Chosen:** regenerate during Analyze (`force=True`), and on API miss only reuse when `has_thumb=1`; delete thumb on file delete; run one forced rebuild on next backend reload via a small `rebuild_thumbs_if_needed()` that forces regen when orphan collision detected or simply force all current files once after deploy.
+
+Even simpler for the user now: **force regenerate all current thumbs** in `generate_thumbs` always (`force=True`). 76 images is cheap. Delete orphans when removing files.
+
+## Verify
+
+After fix, Athletes id 17 thumb aspect/content should match its PNG source; lightbox and grid agree.
+
+---
+
+<a id="chapter-189-fix-stale-thumbnails"></a>
+
+## Chapter 189: Fix stale thumbnails
+
+> **Overview:** Thumbnails are wrong because old `.data/thumbs/{id}.jpg` files survive DB resets and get reused for new files with the same IDs. Fix ensure_thumb, delete thumbs on file removal, and rebuild current thumbs.
+
+# Fix thumbnail / full-image mismatch
+
+## Root cause
+
+[`ensure_thumb`](backend/app/scanner.py) returns early if `.data/thumbs/{id}.jpg` **exists**, without checking whether it belongs to the current file:
+
+```python
+if out.exists():
+    ...
+    return True
+```
+
+After the library was wiped/re-scanned, SQLite IDs restarted at 1–76 while **659 orphan thumbs** from the old 718-file library remained. New file `id=17` serves the **old** `17.jpg` (meme) as the thumb, while `/api/images/17/full` correctly opens the current athletes screenshot.
+
+## Fix
+
+### 1. Trust DB, not disk alone — [`scanner.py`](backend/app/scanner.py)
+
+- Only reuse an existing thumb if `files.has_thumb = 1` for that id; otherwise regenerate (overwrite).
+- Add `force: bool = False` to always regenerate when requested.
+- When scan **deletes** a file row, also `unlink` its thumb path.
+
+### 2. Thumb endpoint — [`main.py`](backend/app/main.py)
+
+Keep using `ensure_thumb`; with the fix above, stale orphans regenerate on first request.
+
+### 3. One-shot rebuild
+
+On backend startup (or a short block in `init_db` / first analyze thumbs pass): for every current file, if thumb exists but `has_thumb=0`, regenerate. Plus immediately set `has_thumb=0` for all files once and run `generate_thumbs` with force so Athletes (and all categories) are correct without waiting for clicks.
+
+Simplest durable approach in `generate_thumbs`: call `ensure_thumb(..., force=True)` always during Analyze thumb stage so each analyze refreshes thumbs from source. Slightly more CPU (~76 images is fine); avoids stale state forever.
+
+**Chosen:** regenerate during Analyze (`force=True`), and on API miss only reuse when `has_thumb=1`; delete thumb on file delete; run one forced rebuild on next backend reload via a small `rebuild_thumbs_if_needed()` that forces regen when orphan collision detected or simply force all current files once after deploy.
+
+Even simpler for the user now: **force regenerate all current thumbs** in `generate_thumbs` always (`force=True`). 76 images is cheap. Delete orphans when removing files.
+
+## Verify
+
+After fix, Athletes id 17 thumb aspect/content should match its PNG source; lightbox and grid agree.
+
+---
+
+<a id="chapter-190-fix-tag-wrap-blowout"></a>
+
+## Chapter 190: Fix tag wrap blowout
 
 > **Overview:** The prior fix added flex-wrap and min-width on chip rows, but the grid column still sizes to the tag panel's max-content when 1-char search returns many tags. Lock the left column width to the calendar and prevent the tagging panel from contributing horizontal intrinsic size.
 
@@ -16053,9 +17453,9 @@ Replace people section inline flex (line ~298) with `className="tag-picker-chips
 
 ---
 
-<a id="chapter-159-fix-tag-wrap-blowout"></a>
+<a id="chapter-191-fix-tag-wrap-blowout"></a>
 
-## Chapter 159: Fix tag wrap blowout
+## Chapter 191: Fix tag wrap blowout
 
 > **Overview:** The prior fix added flex-wrap and min-width on chip rows, but the grid column still sizes to the tag panel's max-content when 1-char search returns many tags. Lock the left column width to the calendar and prevent the tagging panel from contributing horizontal intrinsic size.
 
@@ -16186,9 +17586,51 @@ Replace people section inline flex (line ~298) with `className="tag-picker-chips
 
 ---
 
-<a id="chapter-160-html-book-output"></a>
+<a id="chapter-192-hide-empty-categories"></a>
 
-## Chapter 160: HTML book output
+## Chapter 192: Hide empty categories
+
+> **Overview:** Hide categories with 0 images on the Categories grid by default, with a toggle to show them again when needed.
+
+## Change
+
+In [`frontend/src/pages/Categories.tsx`](frontend/src/pages/Categories.tsx):
+
+- Default: filter out categories where `count === 0` before search/grid render
+- Add a checkbox **Show empty** next to the search bar (off by default)
+- When on, empty cards appear again (still needed for managing the durable library)
+- Update the subtitle to reflect visible count, e.g. `12 with images · 43 hidden` when empties are hidden
+
+Move/merge combobox on category detail is unchanged — empty categories remain selectable as targets.
+
+Spelling in UI: **categories**.
+
+---
+
+<a id="chapter-193-hide-empty-categories"></a>
+
+## Chapter 193: Hide empty categories
+
+> **Overview:** Hide categories with 0 images on the Categories grid by default, with a toggle to show them again when needed.
+
+## Change
+
+In [`frontend/src/pages/Categories.tsx`](frontend/src/pages/Categories.tsx):
+
+- Default: filter out categories where `count === 0` before search/grid render
+- Add a checkbox **Show empty** next to the search bar (off by default)
+- When on, empty cards appear again (still needed for managing the durable library)
+- Update the subtitle to reflect visible count, e.g. `12 with images · 43 hidden` when empties are hidden
+
+Move/merge combobox on category detail is unchanged — empty categories remain selectable as targets.
+
+Spelling in UI: **categories**.
+
+---
+
+<a id="chapter-194-html-book-output"></a>
+
+## Chapter 194: HTML book output
 
 > **Overview:** Extend the development-book builder so every markdown build also writes a sibling self-contained HTML file, keeping Python stdlib-only and updating docs/skill/schema to match.
 
@@ -16242,9 +17684,9 @@ flowchart LR
 
 ---
 
-<a id="chapter-161-html-book-output"></a>
+<a id="chapter-195-html-book-output"></a>
 
-## Chapter 161: HTML book output
+## Chapter 195: HTML book output
 
 > **Overview:** Extend the development-book builder so every markdown build also writes a sibling self-contained HTML file, keeping Python stdlib-only and updating docs/skill/schema to match.
 
@@ -16298,9 +17740,235 @@ flowchart LR
 
 ---
 
-<a id="chapter-162-inbox-autotag-investigation"></a>
+<a id="chapter-196-imagesorter-web-app"></a>
 
-## Chapter 162: Inbox autotag investigation
+## Chapter 196: imageSorter web app
+
+> **Overview:** Build a local Dockerized web app at `imageSorter` that embeds ~718 images from `/Users/alex/Pictures/imagesTocatagorize`, clusters similar ones, auto-invents category names from captions, and lets you review/rename before copying into sorted folders.
+
+# imageSorter — auto-categorize + similarity UI
+
+## Goal
+
+Local web app that scans `/Users/alex/Pictures/imagesTocatagorize` (~718 JPGs under `Twitter/`), groups visually similar images, invents category names, and (after review) copies files into an output tree.
+
+## Stack (chosen)
+
+- **Docker Compose** — host has Docker; no local Node/npm; system Python is 3.9
+- **Backend**: Python 3.12, FastAPI, SQLite, Pillow, PyTorch (CPU), OpenCLIP embeddings, HDBSCAN clustering, BLIP captions for naming
+- **Frontend**: React + Vite + TypeScript (served via Compose; browser at `:5173`)
+- **Preview before write** — filesystem copies only on Apply (same spirit as [imageOrganizer](file:///Users/alex/Documents/github/imageOrganizer))
+
+Not a fork of imageOrganizer — smaller scope: categorize one dump folder, not a full photo library.
+
+## Paths
+
+| Role | Default |
+|------|---------|
+| Source | `/Users/alex/Pictures/imagesTocatagorize` |
+| Output | `/Users/alex/Pictures/imagesSorted` |
+| App data | `./.data/` in the project (SQLite, embedding cache, thumbs) |
+
+Compose bind-mounts source + output; override via `.env`.
+
+## Pipeline
+
+```mermaid
+flowchart LR
+  Scan[Scan images] --> Thumbs[Thumbs]
+  Scan --> Embed[OpenCLIP embeddings]
+  Embed --> Cluster[HDBSCAN clusters]
+  Cluster --> Caption[BLIP on exemplars]
+  Caption --> Name[Invent category names]
+  Name --> UI[Review in web UI]
+  UI --> Apply[Copy to output folders]
+```
+
+1. **Scan** — recursive image walk (`jpg`/`jpeg`/`png`/`webp`/`gif`); store path, size, mtime in SQLite
+2. **Thumbs** — JPEG thumbnails for the grid
+3. **Embed** — OpenCLIP `ViT-B-32` vectors; cache in SQLite/blob so reruns are cheap
+4. **Cluster** — HDBSCAN on normalized embeddings (auto number of groups; outliers → `uncategorized`)
+5. **Name** — for each cluster, caption 2–3 medoid/exemplar images with BLIP; invent a short slug name (noun-ish phrase from captions; de-dupe with `-2`, `-3`); user can rename later
+6. **Apply** — copy (not move) into `{OUTPUT}/{category_slug}/original_filename`; conflict → numeric suffix
+
+## Project layout
+
+```
+imageSorter/
+  docker-compose.yml
+  .env.example
+  README.md
+  backend/
+    Dockerfile
+    requirements.txt
+    app/
+      main.py          # routes
+      config.py        # SOURCE_DIR, OUTPUT_DIR, DATA_DIR
+      db.py            # schema + cache
+      scanner.py
+      embedder.py      # OpenCLIP
+      cluster.py       # HDBSCAN
+      namer.py         # BLIP + name invent
+      jobs.py          # background analyze job + progress
+      apply.py         # copy plan + execute
+  frontend/
+    Dockerfile
+    package.json
+    src/...
+```
+
+## API (minimal)
+
+- `GET /api/status` — scan/analyze progress, counts
+- `POST /api/analyze` — start full pipeline (or resume cached embeddings)
+- `GET /api/categories` — list categories with counts + sample thumb ids
+- `PATCH /api/categories/{id}` — rename
+- `POST /api/categories/merge` — merge A into B
+- `GET /api/categories/{id}/images` — paginated images
+- `POST /api/images/reassign` — move selected images to another category
+- `GET /api/thumbs/{file_id}` — thumbnail
+- `GET /api/images/{file_id}/full` — full image (for lightbox)
+- `GET /api/apply/preview` — planned output tree summary
+- `POST /api/apply` — execute copies
+
+## UI pages
+
+1. **Home** — source/output paths, Analyze button, progress (embed/cluster/name stages)
+2. **Categories** — card grid: invented name, count, 4 sample thumbs; click into detail
+3. **Category detail** — image grid, multi-select reassign, rename, merge
+4. **Apply** — preview folder layout + confirm copy to `imagesSorted`
+
+Keep the first viewport simple: one purpose per page; thumbnail-led, not a dashboard clone of imageOrganizer.
+
+## Bootstrap steps (on execute)
+
+1. `create_project` + `move_agent_to_root` for `/Users/alex/Documents/github/imageSorter`
+2. Scaffold backend/frontend + Compose + `.env` pointing at the source dir
+3. Implement pipeline + API + UI
+4. `docker compose up --build` and verify against the Twitter dump
+
+## Performance note
+
+First analyze on ~718 images with CPU PyTorch will take several minutes (model download + embeddings). Progress is streamed via `/api/status`. Later runs reuse cached embeddings and only re-cluster/rename if requested.
+
+---
+
+<a id="chapter-197-imagesorter-web-app"></a>
+
+## Chapter 197: imageSorter web app
+
+> **Overview:** Build a local Dockerized web app at `imageSorter` that embeds ~718 images from `/Users/alex/Pictures/imagesTocatagorize`, clusters similar ones, auto-invents category names from captions, and lets you review/rename before copying into sorted folders.
+
+# imageSorter — auto-categorize + similarity UI
+
+## Goal
+
+Local web app that scans `/Users/alex/Pictures/imagesTocatagorize` (~718 JPGs under `Twitter/`), groups visually similar images, invents category names, and (after review) copies files into an output tree.
+
+## Stack (chosen)
+
+- **Docker Compose** — host has Docker; no local Node/npm; system Python is 3.9
+- **Backend**: Python 3.12, FastAPI, SQLite, Pillow, PyTorch (CPU), OpenCLIP embeddings, HDBSCAN clustering, BLIP captions for naming
+- **Frontend**: React + Vite + TypeScript (served via Compose; browser at `:5173`)
+- **Preview before write** — filesystem copies only on Apply (same spirit as [imageOrganizer](file:///Users/alex/Documents/github/imageOrganizer))
+
+Not a fork of imageOrganizer — smaller scope: categorize one dump folder, not a full photo library.
+
+## Paths
+
+| Role | Default |
+|------|---------|
+| Source | `/Users/alex/Pictures/imagesTocatagorize` |
+| Output | `/Users/alex/Pictures/imagesSorted` |
+| App data | `./.data/` in the project (SQLite, embedding cache, thumbs) |
+
+Compose bind-mounts source + output; override via `.env`.
+
+## Pipeline
+
+```mermaid
+flowchart LR
+  Scan[Scan images] --> Thumbs[Thumbs]
+  Scan --> Embed[OpenCLIP embeddings]
+  Embed --> Cluster[HDBSCAN clusters]
+  Cluster --> Caption[BLIP on exemplars]
+  Caption --> Name[Invent category names]
+  Name --> UI[Review in web UI]
+  UI --> Apply[Copy to output folders]
+```
+
+1. **Scan** — recursive image walk (`jpg`/`jpeg`/`png`/`webp`/`gif`); store path, size, mtime in SQLite
+2. **Thumbs** — JPEG thumbnails for the grid
+3. **Embed** — OpenCLIP `ViT-B-32` vectors; cache in SQLite/blob so reruns are cheap
+4. **Cluster** — HDBSCAN on normalized embeddings (auto number of groups; outliers → `uncategorized`)
+5. **Name** — for each cluster, caption 2–3 medoid/exemplar images with BLIP; invent a short slug name (noun-ish phrase from captions; de-dupe with `-2`, `-3`); user can rename later
+6. **Apply** — copy (not move) into `{OUTPUT}/{category_slug}/original_filename`; conflict → numeric suffix
+
+## Project layout
+
+```
+imageSorter/
+  docker-compose.yml
+  .env.example
+  README.md
+  backend/
+    Dockerfile
+    requirements.txt
+    app/
+      main.py          # routes
+      config.py        # SOURCE_DIR, OUTPUT_DIR, DATA_DIR
+      db.py            # schema + cache
+      scanner.py
+      embedder.py      # OpenCLIP
+      cluster.py       # HDBSCAN
+      namer.py         # BLIP + name invent
+      jobs.py          # background analyze job + progress
+      apply.py         # copy plan + execute
+  frontend/
+    Dockerfile
+    package.json
+    src/...
+```
+
+## API (minimal)
+
+- `GET /api/status` — scan/analyze progress, counts
+- `POST /api/analyze` — start full pipeline (or resume cached embeddings)
+- `GET /api/categories` — list categories with counts + sample thumb ids
+- `PATCH /api/categories/{id}` — rename
+- `POST /api/categories/merge` — merge A into B
+- `GET /api/categories/{id}/images` — paginated images
+- `POST /api/images/reassign` — move selected images to another category
+- `GET /api/thumbs/{file_id}` — thumbnail
+- `GET /api/images/{file_id}/full` — full image (for lightbox)
+- `GET /api/apply/preview` — planned output tree summary
+- `POST /api/apply` — execute copies
+
+## UI pages
+
+1. **Home** — source/output paths, Analyze button, progress (embed/cluster/name stages)
+2. **Categories** — card grid: invented name, count, 4 sample thumbs; click into detail
+3. **Category detail** — image grid, multi-select reassign, rename, merge
+4. **Apply** — preview folder layout + confirm copy to `imagesSorted`
+
+Keep the first viewport simple: one purpose per page; thumbnail-led, not a dashboard clone of imageOrganizer.
+
+## Bootstrap steps (on execute)
+
+1. `create_project` + `move_agent_to_root` for `/Users/alex/Documents/github/imageSorter`
+2. Scaffold backend/frontend + Compose + `.env` pointing at the source dir
+3. Implement pipeline + API + UI
+4. `docker compose up --build` and verify against the Twitter dump
+
+## Performance note
+
+First analyze on ~718 images with CPU PyTorch will take several minutes (model download + embeddings). Progress is streamed via `/api/status`. Later runs reuse cached embeddings and only re-cluster/rename if requested.
+
+---
+
+<a id="chapter-198-inbox-autotag-investigation"></a>
+
+## Chapter 198: Inbox autotag investigation
 
 > **Overview:** Investigation of inbox tag recommendations: current gaps, available signals in the existing schema, approach comparison (heuristics vs phash vs ML), and a phased roadmap — no implementation in this phase.
 
@@ -16474,9 +18142,9 @@ Do **not** auto-apply without confirmation (consistent with app’s safe-apply p
 
 ---
 
-<a id="chapter-163-inbox-detail-auto-advance"></a>
+<a id="chapter-199-inbox-detail-auto-advance"></a>
 
-## Chapter 163: Inbox detail auto-advance
+## Chapter 199: Inbox detail auto-advance
 
 > **Overview:** When a photo in Inbox detail view leaves the filtered list (e.g. tagged while on Untagged filter), advance to the next remaining photo instead of closing the detail drawer.
 
@@ -16557,52 +18225,9 @@ Manual in Inbox with **Untagged** filter:
 
 ---
 
-<a id="chapter-164-inbox-sticky-chrome-fix"></a>
+<a id="chapter-200-inbox-sticky-chrome-fix"></a>
 
-## Chapter 164: Inbox sticky chrome fix
-
-> **Overview:** Remove the awkward full-width opaque black strip behind Inbox filter buttons by restyling `.page-sticky-controls` to a Review-like frosted strip so the view-skin shows through.
-
-# Soften Inbox sticky control bar
-
-## Cause
-
-Inbox wraps All / Untagged / Delete queue in [`.page-sticky-controls`](frontend/src/index.css), which uses solid `background: #0f1117`, a hard bottom border, and a heavy box-shadow. With a view-skin visible (empty or sparse Inbox), that reads as a full-width black frame. Review uses [`.review-queue-panel`](frontend/src/index.css) — bordered, rounded, not a flush opaque strip — which is why it feels better.
-
-```1461:1473:frontend/src/index.css
-.page-sticky-controls,
-.inbox-sticky-controls {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  background: #0f1117;
-  ...
-  border-bottom: 1px solid #2a2f3a;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
-}
-```
-
-## Fix (CSS only)
-
-In [`frontend/src/index.css`](frontend/src/index.css), restyle `.page-sticky-controls` / `.inbox-sticky-controls`:
-
-- Background: `rgba(15, 17, 23, 0.72)` (not solid `#0f1117`)
-- `backdrop-filter: blur(10px)` (+ `-webkit-backdrop-filter`) so content behind stays readable when scrolling
-- Soften separator: lighter border and smaller shadow (or drop the heavy shadow) so it does not read as a black slab
-- Keep sticky positioning, padding, and z-index — no markup changes in [`Inbox.tsx`](frontend/src/pages/Inbox.tsx)
-
-Same class is shared by Trash, Blurry, and Calendar photo panels; they get the same lighter chrome (intentional consistency).
-
-## Docs
-
-- [`CHANGELOG.md`](CHANGELOG.md) Unreleased **Fixed**: sticky page controls no longer draw an opaque black bar over view-skins
-- No ARCHITECTURE update (styling only)
-
----
-
-<a id="chapter-165-inbox-sticky-chrome-fix"></a>
-
-## Chapter 165: Inbox sticky chrome fix
+## Chapter 200: Inbox sticky chrome fix
 
 > **Overview:** Remove the awkward full-width opaque black strip behind Inbox filter buttons by restyling `.page-sticky-controls` to a Review-like frosted strip so the view-skin shows through.
 
@@ -16643,9 +18268,52 @@ Same class is shared by Trash, Blurry, and Calendar photo panels; they get the s
 
 ---
 
-<a id="chapter-166-incremental-update-backup"></a>
+<a id="chapter-201-inbox-sticky-chrome-fix"></a>
 
-## Chapter 166: Incremental update backup
+## Chapter 201: Inbox sticky chrome fix
+
+> **Overview:** Remove the awkward full-width opaque black strip behind Inbox filter buttons by restyling `.page-sticky-controls` to a Review-like frosted strip so the view-skin shows through.
+
+# Soften Inbox sticky control bar
+
+## Cause
+
+Inbox wraps All / Untagged / Delete queue in [`.page-sticky-controls`](frontend/src/index.css), which uses solid `background: #0f1117`, a hard bottom border, and a heavy box-shadow. With a view-skin visible (empty or sparse Inbox), that reads as a full-width black frame. Review uses [`.review-queue-panel`](frontend/src/index.css) — bordered, rounded, not a flush opaque strip — which is why it feels better.
+
+```1461:1473:frontend/src/index.css
+.page-sticky-controls,
+.inbox-sticky-controls {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #0f1117;
+  ...
+  border-bottom: 1px solid #2a2f3a;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+```
+
+## Fix (CSS only)
+
+In [`frontend/src/index.css`](frontend/src/index.css), restyle `.page-sticky-controls` / `.inbox-sticky-controls`:
+
+- Background: `rgba(15, 17, 23, 0.72)` (not solid `#0f1117`)
+- `backdrop-filter: blur(10px)` (+ `-webkit-backdrop-filter`) so content behind stays readable when scrolling
+- Soften separator: lighter border and smaller shadow (or drop the heavy shadow) so it does not read as a black slab
+- Keep sticky positioning, padding, and z-index — no markup changes in [`Inbox.tsx`](frontend/src/pages/Inbox.tsx)
+
+Same class is shared by Trash, Blurry, and Calendar photo panels; they get the same lighter chrome (intentional consistency).
+
+## Docs
+
+- [`CHANGELOG.md`](CHANGELOG.md) Unreleased **Fixed**: sticky page controls no longer draw an opaque black bar over view-skins
+- No ARCHITECTURE update (styling only)
+
+---
+
+<a id="chapter-202-incremental-update-backup"></a>
+
+## Chapter 202: Incremental update backup
 
 > **Overview:** Add Settings “Update backup” that incrementally copies new/changed media and catalog from the live library (`/media`) to the backup mount (`/media-backup`), without path rewrite or restart—matching the user’s post-cutover .env (live on 2TB, backup on old Media).
 
@@ -16701,9 +18369,9 @@ README: short “Update backup” note after Docker cutover. ARCHITECTURE: new e
 
 ---
 
-<a id="chapter-167-incremental-update-backup"></a>
+<a id="chapter-203-incremental-update-backup"></a>
 
-## Chapter 167: Incremental update backup
+## Chapter 203: Incremental update backup
 
 > **Overview:** Add Settings “Update backup” that incrementally copies new/changed media and catalog from the live library (`/media`) to the backup mount (`/media-backup`), without path rewrite or restart—matching the user’s post-cutover .env (live on 2TB, backup on old Media).
 
@@ -16759,9 +18427,125 @@ README: short “Update backup” note after Docker cutover. ARCHITECTURE: new e
 
 ---
 
-<a id="chapter-168-kitchen-ledger-recipe-app"></a>
+<a id="chapter-204-install-python3-mac"></a>
 
-## Chapter 168: Kitchen Ledger recipe app
+## Chapter 204: Install Python3 Mac
+
+> **Overview:** Python 3.9.6 is already present via Apple Command Line Tools. This plan upgrades to a current Python via Homebrew (installing Homebrew first), which is the standard approach on macOS for a maintained, up-to-date `python3`.
+
+# Install / upgrade Python 3 on Mac
+
+## Current state
+
+- `python3` already exists: **Python 3.9.6** at `/usr/bin/python3` (Apple CLT)
+- **Homebrew is not installed**
+
+Apple’s system Python is intentionally old and should not be replaced. For day-to-day use, install a current Python via Homebrew.
+
+## Approach
+
+Install Homebrew, then install Python 3 from Homebrew so `python3` points at a maintained release (currently 3.13.x).
+
+### 1. Install Homebrew
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+On Apple Silicon, add Homebrew to `PATH` as the installer prints (typically):
+
+```bash
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+eval "$(/opt/homebrew/bin/brew shellenv)"
+```
+
+### 2. Install Python
+
+```bash
+brew install python
+```
+
+This provides `python3` and `pip3` under `/opt/homebrew/bin` (Apple Silicon) or `/usr/local/bin` (Intel), which take precedence over `/usr/bin/python3` once Homebrew is on `PATH`.
+
+### 3. Verify
+
+```bash
+which python3
+python3 --version
+pip3 --version
+```
+
+Expect Homebrew’s `python3` (not `/usr/bin/python3`) and a version newer than 3.9.6.
+
+## Notes
+
+- Do not remove or overwrite Apple’s `/usr/bin/python3`.
+- The Homebrew installer may prompt for your macOS password and take several minutes.
+- If you only needed *any* Python 3 for scripts, you already have it — this plan is for a current, package-managed install.
+
+---
+
+<a id="chapter-205-install-python3-mac"></a>
+
+## Chapter 205: Install Python3 Mac
+
+> **Overview:** Python 3.9.6 is already present via Apple Command Line Tools. This plan upgrades to a current Python via Homebrew (installing Homebrew first), which is the standard approach on macOS for a maintained, up-to-date `python3`.
+
+# Install / upgrade Python 3 on Mac
+
+## Current state
+
+- `python3` already exists: **Python 3.9.6** at `/usr/bin/python3` (Apple CLT)
+- **Homebrew is not installed**
+
+Apple’s system Python is intentionally old and should not be replaced. For day-to-day use, install a current Python via Homebrew.
+
+## Approach
+
+Install Homebrew, then install Python 3 from Homebrew so `python3` points at a maintained release (currently 3.13.x).
+
+### 1. Install Homebrew
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+On Apple Silicon, add Homebrew to `PATH` as the installer prints (typically):
+
+```bash
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+eval "$(/opt/homebrew/bin/brew shellenv)"
+```
+
+### 2. Install Python
+
+```bash
+brew install python
+```
+
+This provides `python3` and `pip3` under `/opt/homebrew/bin` (Apple Silicon) or `/usr/local/bin` (Intel), which take precedence over `/usr/bin/python3` once Homebrew is on `PATH`.
+
+### 3. Verify
+
+```bash
+which python3
+python3 --version
+pip3 --version
+```
+
+Expect Homebrew’s `python3` (not `/usr/bin/python3`) and a version newer than 3.9.6.
+
+## Notes
+
+- Do not remove or overwrite Apple’s `/usr/bin/python3`.
+- The Homebrew installer may prompt for your macOS password and take several minutes.
+- If you only needed *any* Python 3 for scripts, you already have it — this plan is for a current, package-managed install.
+
+---
+
+<a id="chapter-206-kitchen-ledger-recipe-app"></a>
+
+## Chapter 206: Kitchen Ledger recipe app
 
 > **Overview:** Create a new "Kitchen Ledger" repo mirroring the Image Organizer architecture (FastAPI + SQLite + React/Vite + Docker) to index scanned handwritten recipes from a folder, OCR-assist ingredient/direction transcription on scan, and organize recipes with multi-tag AND filtering and search.
 
@@ -16853,53 +18637,9 @@ for tid in tag_ids:
 
 ---
 
-<a id="chapter-169-library-disks-side-by-side"></a>
+<a id="chapter-207-library-disks-side-by-side"></a>
 
-## Chapter 169: Library disks side-by-side
-
-> **Overview:** Add bottom page padding so the advanced migrate control isn’t flush with the viewport, and put Update backup beside the advanced cutover block in a responsive two-column layout.
-
-## Fixes
-
-1. **Bottom padding** — Settings content hugs the viewport. Add page-level bottom padding (e.g. `3rem`) on a wrapper or the last settings section so “One-time full copy / cutover” has breathing room when scrolled to the end.
-2. **Side-by-side** — Use the empty horizontal space: Update backup and advanced migrate sit in two columns on wide screens; stack on narrow.
-
-## Layout
-
-In [`frontend/src/pages/Settings.tsx`](frontend/src/pages/Settings.tsx) under **Library disks**:
-
-```
-[ title + desc + disk free + warnings ]   full width
-[ Update backup          |  Advanced details ]   .settings-library-columns
-```
-
-- Left: existing Update backup block (primary CTA).
-- Right: `<details class="settings-advanced">` (same content as now).
-- Remove the border-bottom that assumed a vertical stack under `.settings-library-primary` (or keep a subtle column separator via CSS gap only).
-
-Native migrate block unchanged (single column).
-
-## CSS ([`frontend/src/index.css`](frontend/src/index.css))
-
-- `.settings-page { padding-bottom: 3rem; }` on the root Settings `<div>` (add class).
-- `.settings-library-columns { display: grid; gap: 1.5rem; grid-template-columns: 1fr; }` and `@media (min-width: 900px) { grid-template-columns: 1fr 1fr; }`.
-- Drop or relax `.settings-library-primary` bottom border when inside the grid.
-- Ensure `.settings-advanced` summary/content wraps cleanly in a column (no max-width conflict with `.settings-grid`).
-
-## Docs
-
-One CHANGELOG Unreleased Changed line.
-
-## Out of scope
-
-- Redesigning Paths & patterns
-- Fixing identical media/backup free-space numbers
-
----
-
-<a id="chapter-170-library-disks-side-by-side"></a>
-
-## Chapter 170: Library disks side-by-side
+## Chapter 207: Library disks side-by-side
 
 > **Overview:** Add bottom page padding so the advanced migrate control isn’t flush with the viewport, and put Update backup beside the advanced cutover block in a responsive two-column layout.
 
@@ -16941,9 +18681,53 @@ One CHANGELOG Unreleased Changed line.
 
 ---
 
-<a id="chapter-171-library-migrate-backup"></a>
+<a id="chapter-208-library-disks-side-by-side"></a>
 
-## Chapter 171: Library migrate backup
+## Chapter 208: Library disks side-by-side
+
+> **Overview:** Add bottom page padding so the advanced migrate control isn’t flush with the viewport, and put Update backup beside the advanced cutover block in a responsive two-column layout.
+
+## Fixes
+
+1. **Bottom padding** — Settings content hugs the viewport. Add page-level bottom padding (e.g. `3rem`) on a wrapper or the last settings section so “One-time full copy / cutover” has breathing room when scrolled to the end.
+2. **Side-by-side** — Use the empty horizontal space: Update backup and advanced migrate sit in two columns on wide screens; stack on narrow.
+
+## Layout
+
+In [`frontend/src/pages/Settings.tsx`](frontend/src/pages/Settings.tsx) under **Library disks**:
+
+```
+[ title + desc + disk free + warnings ]   full width
+[ Update backup          |  Advanced details ]   .settings-library-columns
+```
+
+- Left: existing Update backup block (primary CTA).
+- Right: `<details class="settings-advanced">` (same content as now).
+- Remove the border-bottom that assumed a vertical stack under `.settings-library-primary` (or keep a subtle column separator via CSS gap only).
+
+Native migrate block unchanged (single column).
+
+## CSS ([`frontend/src/index.css`](frontend/src/index.css))
+
+- `.settings-page { padding-bottom: 3rem; }` on the root Settings `<div>` (add class).
+- `.settings-library-columns { display: grid; gap: 1.5rem; grid-template-columns: 1fr; }` and `@media (min-width: 900px) { grid-template-columns: 1fr 1fr; }`.
+- Drop or relax `.settings-library-primary` bottom border when inside the grid.
+- Ensure `.settings-advanced` summary/content wraps cleanly in a column (no max-width conflict with `.settings-grid`).
+
+## Docs
+
+One CHANGELOG Unreleased Changed line.
+
+## Out of scope
+
+- Redesigning Paths & patterns
+- Fixing identical media/backup free-space numbers
+
+---
+
+<a id="chapter-209-library-migrate-backup"></a>
+
+## Chapter 209: Library migrate backup
 
 > **Overview:** Evolve the existing Settings “Move library” copy-and-repoint job into a clearer “Copy library to new drive” migration tool with progress, post-copy verification, optional rewrite-only mode, and Docker guidance—leaving the original root intact as a backup.
 
@@ -17031,9 +18815,9 @@ Add [`backend/tests/test_library_migrate.py`](backend/tests/test_library_migrate
 
 ---
 
-<a id="chapter-172-library-migrate-backup"></a>
+<a id="chapter-210-library-migrate-backup"></a>
 
-## Chapter 172: Library migrate backup
+## Chapter 210: Library migrate backup
 
 > **Overview:** Evolve the existing Settings “Move library” copy-and-repoint job into a clearer “Copy library to new drive” migration tool with progress, post-copy verification, optional rewrite-only mode, and Docker guidance—leaving the original root intact as a backup.
 
@@ -17121,9 +18905,9 @@ Add [`backend/tests/test_library_migrate.py`](backend/tests/test_library_migrate
 
 ---
 
-<a id="chapter-173-library-mosaic-save"></a>
+<a id="chapter-211-library-mosaic-save"></a>
 
-## Chapter 173: Library mosaic save
+## Chapter 211: Library mosaic save
 
 > **Overview:** Save generated mosaics under `{archive}/mosaics/`, index them as archive photos, and auto-tag with mosaic so they appear in Browse/Calendar like any library photo.
 
@@ -17197,9 +18981,9 @@ In [`Mosaic.tsx`](frontend/src/pages/Mosaic.tsx), after success: invalidate `["f
 
 ---
 
-<a id="chapter-174-lightbox-tag-fonts"></a>
+<a id="chapter-212-lightbox-tag-fonts"></a>
 
-## Chapter 174: Lightbox tag fonts
+## Chapter 212: Lightbox tag fonts
 
 > **Overview:** Increase typography in the lightbox Tags & people panel only (T overlay), scoped to `.photo-lightbox-tags` so grid/inbox badges stay unchanged.
 
@@ -17268,9 +19052,9 @@ Optional small tweak: bump `.photo-lightbox-tags .badge-remove` to `1rem` so the
 
 ---
 
-<a id="chapter-175-lightbox-tag-overlay"></a>
+<a id="chapter-213-lightbox-tag-overlay"></a>
 
-## Chapter 175: Lightbox tag overlay
+## Chapter 213: Lightbox tag overlay
 
 > **Overview:** Add a toggleable tag-application overlay to the PhotoDetail fullscreen lightbox, shown/hidden with T/t, reusing the existing FileTagPicker search/recent pattern.
 
@@ -17388,9 +19172,9 @@ Add styles near existing `.photo-lightbox` rules:
 
 ---
 
-<a id="chapter-176-link-inbox-image-as-hero"></a>
+<a id="chapter-214-link-inbox-image-as-hero"></a>
 
-## Chapter 176: Link inbox image as hero
+## Chapter 214: Link inbox image as hero
 
 > **Overview:** Inbox is a review queue on disk and in the UI. Scan indexes only; Mark reviewed moves scans to recipes/; Link as hero to… moves dish photos to hero/ and removes the orphan draft.
 
@@ -17456,9 +19240,9 @@ Leave it in **inbox**, Scan if needed, then **Link as hero to…** → Banana Br
 
 ---
 
-<a id="chapter-177-link-inbox-image-as-hero"></a>
+<a id="chapter-215-link-inbox-image-as-hero"></a>
 
-## Chapter 177: Link inbox image as hero
+## Chapter 215: Link inbox image as hero
 
 > **Overview:** Explain the current stem-match workflow, then add a manual "Use as hero for…" action so an Inbox draft (misplaced dish photo) can be attached as another recipe's hero and removed as a standalone draft.
 
@@ -17509,77 +19293,9 @@ The feature above makes step 1–2 a one-click UI action instead.
 
 ---
 
-<a id="chapter-178-migrate-disk-health"></a>
+<a id="chapter-216-migrate-disk-health"></a>
 
-## Chapter 178: Migrate disk health
-
-> **Overview:** Surface Docker/destination disk health in Settings and tighten library-copy preflight so users see low space or a non-mounted destination before a bad copy fills the container overlay again.
-
-## Problem
-
-A library copy to a path that is **writable but not bind-mounted** fills the container’s overlayfs (we saw ~48GB on `imageorganizer-backend-1`), which fills Docker Desktop’s VM disk (`Docker.raw`) and breaks Compose with `no space left on device`. Users cannot see Docker Desktop disk from the app today; [`GET /api/storage/stats`](backend/app/storage_stats.py) only reports catalog DB sizes.
-
-## Approach
-
-Add **filesystem free-space probes** plus a **Docker destination allowlist** on migrate preflight. Show the results in Settings so the user can fix mount/env or free Docker disk before copying.
-
-```mermaid
-flowchart TD
-  settings["Settings Copy library"] --> config["GET /api/config + disk health"]
-  config --> ready{"backup_media_ready and free space OK?"}
-  ready -->|no| block["Disable copy + fix steps"]
-  ready -->|yes| post["POST /api/library/move"]
-  post --> preflight["Preflight: allowlist dest + statvfs"]
-  preflight -->|fail| err["Clear error in move status"]
-  preflight -->|ok| copy["Copy to /media-backup only"]
-```
-
-## Backend
-
-Extend migrate helpers in [`backend/app/library_migrate.py`](backend/app/library_migrate.py):
-
-- `disk_usage(path) -> {total_bytes, free_bytes, used_bytes}` via `os.statvfs`
-- When `paths_from_env`: also probe `/` as `container_root` (Docker VM rootfs the overlay sits on)
-- Expose on config (or a small `GET /api/storage/disk` used by Settings):
-  - `media_disk` for `MEDIA_ROOT`
-  - `backup_disk` for `BACKUP_MEDIA_ROOT` when present
-  - `container_root_disk` when `paths_from_env`
-  - keep existing `backup_media_ready`
-
-Tighten `_preflight`:
-
-1. **Docker allowlist:** if `paths_from_env`, require `new_media_root` resolve equal to `backup_media_root()` (or under it). Reject host-style paths (`/Volumes/...`) and any other path that would create dirs on overlay.
-2. **Free space:** estimate library size (reuse `_count_library_files` / existing totals) and require dest `free_bytes` ≥ estimate (small margin, e.g. 5%). Clear error text if not.
-3. **Container root warning threshold:** if `paths_from_env` and `/` free &lt; ~2GB (or free/total &lt; 5%), set `container_disk_low: true` on config so UI can warn even before copy (does not replace allowlist).
-
-Wire fields through [`ConfigOut`](backend/app/models.py) / `_config_out()` in [`main.py`](backend/app/main.py) (prefer extending config to avoid a second round-trip; keep payloads numeric + ready flags only).
-
-Tests in [`backend/tests/test_library_migrate.py`](backend/tests/test_library_migrate.py): allowlist rejection when env paths; free-space failure stub via monkeypatched `statvfs`; `disk_usage` smoke.
-
-## Frontend
-
-In [`frontend/src/pages/Settings.tsx`](frontend/src/pages/Settings.tsx) under **Copy library to new drive**:
-
-- Show free space for media and backup mounts (human sizes).
-- If `container_disk_low`: warn — free Docker Desktop disk / recreate backend if a prior copy filled the container; link to the existing recreate instructions.
-- Keep blocking when `!backup_media_ready`; also block when backup free space &lt; catalog estimate if we already have storage stats / disk fields.
-- When Docker, lock destination input to `/media-backup` (or read-only prefill) so users cannot type a host path that looks writable after `mkdir`.
-
-## Docs
-
-Short notes in README migrate section + ARCHITECTURE (disk fields on config; Docker dest must be `/media-backup`) and CHANGELOG Unreleased.
-
-## Out of scope
-
-- Reading Docker Desktop’s allocated disk limit from the host
-- Auto-pruning images/containers from the API
-- Auto-editing `.env` / recreating Compose
-
----
-
-<a id="chapter-179-migrate-disk-health"></a>
-
-## Chapter 179: Migrate disk health
+## Chapter 216: Migrate disk health
 
 > **Overview:** Surface Docker/destination disk health in Settings and tighten library-copy preflight so users see low space or a non-mounted destination before a bad copy fills the container overlay again.
 
@@ -17645,9 +19361,77 @@ Short notes in README migrate section + ARCHITECTURE (disk fields on config; Doc
 
 ---
 
-<a id="chapter-180-opaque-calendar-sticky-chrome"></a>
+<a id="chapter-217-migrate-disk-health"></a>
 
-## Chapter 180: Opaque calendar sticky chrome
+## Chapter 217: Migrate disk health
+
+> **Overview:** Surface Docker/destination disk health in Settings and tighten library-copy preflight so users see low space or a non-mounted destination before a bad copy fills the container overlay again.
+
+## Problem
+
+A library copy to a path that is **writable but not bind-mounted** fills the container’s overlayfs (we saw ~48GB on `imageorganizer-backend-1`), which fills Docker Desktop’s VM disk (`Docker.raw`) and breaks Compose with `no space left on device`. Users cannot see Docker Desktop disk from the app today; [`GET /api/storage/stats`](backend/app/storage_stats.py) only reports catalog DB sizes.
+
+## Approach
+
+Add **filesystem free-space probes** plus a **Docker destination allowlist** on migrate preflight. Show the results in Settings so the user can fix mount/env or free Docker disk before copying.
+
+```mermaid
+flowchart TD
+  settings["Settings Copy library"] --> config["GET /api/config + disk health"]
+  config --> ready{"backup_media_ready and free space OK?"}
+  ready -->|no| block["Disable copy + fix steps"]
+  ready -->|yes| post["POST /api/library/move"]
+  post --> preflight["Preflight: allowlist dest + statvfs"]
+  preflight -->|fail| err["Clear error in move status"]
+  preflight -->|ok| copy["Copy to /media-backup only"]
+```
+
+## Backend
+
+Extend migrate helpers in [`backend/app/library_migrate.py`](backend/app/library_migrate.py):
+
+- `disk_usage(path) -> {total_bytes, free_bytes, used_bytes}` via `os.statvfs`
+- When `paths_from_env`: also probe `/` as `container_root` (Docker VM rootfs the overlay sits on)
+- Expose on config (or a small `GET /api/storage/disk` used by Settings):
+  - `media_disk` for `MEDIA_ROOT`
+  - `backup_disk` for `BACKUP_MEDIA_ROOT` when present
+  - `container_root_disk` when `paths_from_env`
+  - keep existing `backup_media_ready`
+
+Tighten `_preflight`:
+
+1. **Docker allowlist:** if `paths_from_env`, require `new_media_root` resolve equal to `backup_media_root()` (or under it). Reject host-style paths (`/Volumes/...`) and any other path that would create dirs on overlay.
+2. **Free space:** estimate library size (reuse `_count_library_files` / existing totals) and require dest `free_bytes` ≥ estimate (small margin, e.g. 5%). Clear error text if not.
+3. **Container root warning threshold:** if `paths_from_env` and `/` free &lt; ~2GB (or free/total &lt; 5%), set `container_disk_low: true` on config so UI can warn even before copy (does not replace allowlist).
+
+Wire fields through [`ConfigOut`](backend/app/models.py) / `_config_out()` in [`main.py`](backend/app/main.py) (prefer extending config to avoid a second round-trip; keep payloads numeric + ready flags only).
+
+Tests in [`backend/tests/test_library_migrate.py`](backend/tests/test_library_migrate.py): allowlist rejection when env paths; free-space failure stub via monkeypatched `statvfs`; `disk_usage` smoke.
+
+## Frontend
+
+In [`frontend/src/pages/Settings.tsx`](frontend/src/pages/Settings.tsx) under **Copy library to new drive**:
+
+- Show free space for media and backup mounts (human sizes).
+- If `container_disk_low`: warn — free Docker Desktop disk / recreate backend if a prior copy filled the container; link to the existing recreate instructions.
+- Keep blocking when `!backup_media_ready`; also block when backup free space &lt; catalog estimate if we already have storage stats / disk fields.
+- When Docker, lock destination input to `/media-backup` (or read-only prefill) so users cannot type a host path that looks writable after `mkdir`.
+
+## Docs
+
+Short notes in README migrate section + ARCHITECTURE (disk fields on config; Docker dest must be `/media-backup`) and CHANGELOG Unreleased.
+
+## Out of scope
+
+- Reading Docker Desktop’s allocated disk limit from the host
+- Auto-pruning images/containers from the API
+- Auto-editing `.env` / recreating Compose
+
+---
+
+<a id="chapter-218-opaque-calendar-sticky-chrome"></a>
+
+## Chapter 218: Opaque calendar sticky chrome
 
 > **Overview:** Restore an opaque sticky background for Calendar photo panels (and other pages with photo grids) so labels and Prev/Next stay readable while scrolling, without bringing back Inbox’s empty-state black frame over the view-skin.
 
@@ -17688,9 +19472,9 @@ No change to label/pagination component markup beyond that class if missing on d
 
 ---
 
-<a id="chapter-181-opaque-calendar-sticky-chrome"></a>
+<a id="chapter-219-opaque-calendar-sticky-chrome"></a>
 
-## Chapter 181: Opaque calendar sticky chrome
+## Chapter 219: Opaque calendar sticky chrome
 
 > **Overview:** Restore an opaque sticky background for Calendar photo panels (and other pages with photo grids) so labels and Prev/Next stay readable while scrolling, without bringing back Inbox’s empty-state black frame over the view-skin.
 
@@ -17731,9 +19515,9 @@ No change to label/pagination component markup beyond that class if missing on d
 
 ---
 
-<a id="chapter-182-people-autotag-options"></a>
+<a id="chapter-220-people-autotag-options"></a>
 
-## Chapter 182: People autotag options
+## Chapter 220: People autotag options
 
 > **Overview:** TABLED — Compare four approaches for inbox people labeling: heuristic suggestions (no ML), face detection, face recognition against known people, and face clustering. Parked for later; no implementation until revisited.
 
@@ -17967,48 +19751,9 @@ No code in this phase — comparison only, per investigation scope.
 
 ---
 
-<a id="chapter-183-per-passenger-price-display"></a>
+<a id="chapter-221-per-passenger-price-display"></a>
 
-## Chapter 183: Per-passenger price display
-
-> **Overview:** Show trip total with a per-person breakdown like `$2,000 ($500 per/person)` using the search’s adult count.
-
-# Per-passenger price label
-
-## Assumption
-
-Provider `price` / `totalPrice` is the **trip total for the searched passenger count**. Per-person = `Math.round(price / adults)`. (Matches Google Flights when searching with N adults.)
-
-## Data
-
-[`FlightResult`](src/types/search.ts) has no adult count today. In [`mapOffer`](src/components/search/SearchForm.tsx):
-
-1. Add `adults: number` to `FlightResult`.
-2. Pass `adults: form.adults` into `mapOffer` (or close over `form.adults` when mapping stream/complete results).
-
-## UI
-
-Shared format helper (inline or small util):
-
-```ts
-function formatPrice(total: number, adults: number): string {
-  const totalLabel = `$${total.toLocaleString()}`;
-  if (adults <= 1) return totalLabel;
-  const per = Math.round(total / adults);
-  return `${totalLabel} ($${per.toLocaleString()} per/person)`;
-}
-```
-
-- [`AlternativesList.tsx`](src/components/results/AlternativesList.tsx) — price cell uses this format
-- [`CheapestHeroCard.tsx`](src/components/results/CheapestHeroCard.tsx) — hero price uses the same (per/person as smaller secondary text under the big total when adults > 1)
-
-Sorting stays by total `price`.
-
----
-
-<a id="chapter-184-per-passenger-price-display"></a>
-
-## Chapter 184: Per-passenger price display
+## Chapter 221: Per-passenger price display
 
 > **Overview:** Show trip total with a per-person breakdown like `$2,000 ($500 per/person)` using the search’s adult count.
 
@@ -18045,9 +19790,197 @@ Sorting stays by total `price`.
 
 ---
 
-<a id="chapter-185-persist-collapsible-sections"></a>
+<a id="chapter-222-per-passenger-price-display"></a>
 
-## Chapter 185: Persist collapsible sections
+## Chapter 222: Per-passenger price display
+
+> **Overview:** Show trip total with a per-person breakdown like `$2,000 ($500 per/person)` using the search’s adult count.
+
+# Per-passenger price label
+
+## Assumption
+
+Provider `price` / `totalPrice` is the **trip total for the searched passenger count**. Per-person = `Math.round(price / adults)`. (Matches Google Flights when searching with N adults.)
+
+## Data
+
+[`FlightResult`](src/types/search.ts) has no adult count today. In [`mapOffer`](src/components/search/SearchForm.tsx):
+
+1. Add `adults: number` to `FlightResult`.
+2. Pass `adults: form.adults` into `mapOffer` (or close over `form.adults` when mapping stream/complete results).
+
+## UI
+
+Shared format helper (inline or small util):
+
+```ts
+function formatPrice(total: number, adults: number): string {
+  const totalLabel = `$${total.toLocaleString()}`;
+  if (adults <= 1) return totalLabel;
+  const per = Math.round(total / adults);
+  return `${totalLabel} ($${per.toLocaleString()} per/person)`;
+}
+```
+
+- [`AlternativesList.tsx`](src/components/results/AlternativesList.tsx) — price cell uses this format
+- [`CheapestHeroCard.tsx`](src/components/results/CheapestHeroCard.tsx) — hero price uses the same (per/person as smaller secondary text under the big total when adults > 1)
+
+Sorting stays by total `price`.
+
+---
+
+<a id="chapter-223-persist-categories-across-batches"></a>
+
+## Chapter 223: Persist categories across batches
+
+> **Overview:** Stop full Analyze from wiping categories. Keep named categories (even when empty) with stored prototype embeddings so future batches can match into them.
+
+## What went wrong
+
+Last Analyze scanned a new source batch (`added: 17`, `removed: 718`). [`run_clustering()`](backend/app/cluster.py) then did:
+
+```python
+UPDATE files SET category_id=NULL
+DELETE FROM categories
+```
+
+That destroyed every renamed category. Only Uncategorized remains (17 images).
+
+## Goal
+
+Categories are a durable library: they survive empty batches and new dumps. New images are matched into existing categories when similar; only leftovers invent new groups.
+
+## Approach
+
+### 1. Store category prototypes
+
+Add nullable `prototype_embedding BLOB` on `categories` (migrate in [`db.py`](backend/app/db.py)).
+
+- After any assignment that leaves a category with members, refresh prototype = mean of member embeddings.
+- [`_category_centroids()`](backend/app/cluster.py) prefers live member centroid when present; otherwise uses stored `prototype_embedding` so **empty** categories still match future batches.
+
+### 2. Make full Analyze incremental
+
+Rewrite [`run_clustering()`](backend/app/cluster.py) so it **never** deletes existing categories:
+
+1. Ensure Uncategorized exists
+2. Only assign files with `category_id IS NULL` and an embedding (new/unassigned)
+3. Match each to nearest existing category (live or prototype) if cosine ≥ `EXISTING_MATCH_THRESHOLD` (0.72)
+4. HDBSCAN-cluster leftovers (same looser path as uncategorized re-analyze for small leftovers, or current full settings when no prior cats)
+5. For each new cluster: merge into existing if centroid matches; else create a new category
+6. Remaining outliers → Uncategorized
+7. Refresh prototypes for categories that have members
+8. Return `{ new_category_ids, matched_existing, ... }`
+
+Already-assigned files keep their categories.
+
+### 3. Job wiring ([`jobs.py`](backend/app/jobs.py))
+
+After incremental cluster, call `name_categories(new_category_ids)` only — **do not** call `name_all_categories()` (that rewrites names of user-renamed groups).
+
+Status message should mention matched-to-existing vs new groups.
+
+### 4. Scan behavior
+
+[`scanner.py`](backend/app/scanner.py) already removes missing files from `files` and leaves categories alone — keep that. Empty categories with prototypes stay for the next batch.
+
+## Note on already-lost categories
+
+The previous renamed set cannot be recovered from this DB wipe. Going forward, names + prototypes persist. Empty manual **New category** rows also persist (they only start matching once they have at least one image or a prototype is set).
+
+## Out of scope
+
+- Restoring the wiped category names from the last full Analyze
+- Changing Apply / source-folder workflow
+
+---
+
+<a id="chapter-224-persist-categories-across-batches"></a>
+
+## Chapter 224: Persist categories across batches
+
+> **Overview:** Stop Analyze from wiping categories. Keep durable category metadata (names, order, prototype embeddings, sample captions) so future batches can group into the same library.
+
+## What went wrong
+
+Last Analyze scanned a new source batch (`added: 17`, `removed: 718`). [`run_clustering()`](backend/app/cluster.py) then did:
+
+```python
+UPDATE files SET category_id=NULL
+DELETE FROM categories
+```
+
+That destroyed every renamed category and its grouping metadata. Only Uncategorized remains (17 images).
+
+## Goal
+
+Categories are a durable library for **future groupings**. When a batch leaves the source folder, category **metadata stays** so the next dump can match into the same groups.
+
+## Metadata kept (even when a category is empty)
+
+| Field | Purpose |
+|-------|---------|
+| `name` / `slug` | User-facing label (renames preserved) |
+| `sort_order` | Stable UI order |
+| `prototype_embedding` | CLIP mean vector for matching new images |
+| `sample_captions` | Short BLIP captions from exemplars (helps naming continuity / debugging) |
+
+Uncategorized is special and is never deleted. User-created empty categories stay until explicitly deleted (existing empty-only delete rule).
+
+## Approach
+
+### 1. Schema ([`db.py`](backend/app/db.py))
+
+Migrate `categories`:
+
+- `prototype_embedding BLOB` (nullable)
+- `sample_captions TEXT` (nullable; JSON array of up to 3 strings)
+
+Helpers in [`cluster.py`](backend/app/cluster.py) / [`namer.py`](backend/app/namer.py):
+
+- `refresh_category_metadata(category_id)` — if the category has members, set prototype = mean embedding and refresh sample captions from exemplars; if empty, **leave stored metadata unchanged** (do not clear).
+- [`_category_centroids()`](backend/app/cluster.py) uses live member centroid when present, otherwise stored `prototype_embedding`.
+
+### 2. Incremental Analyze (never wipe categories)
+
+Rewrite [`run_clustering()`](backend/app/cluster.py):
+
+1. Ensure Uncategorized exists
+2. Assign only files with `category_id IS NULL` + embedding
+3. Match to nearest existing category via live/prototype cosine ≥ `0.72`
+4. Cluster leftovers; merge into existing if cluster centroid matches; else create new category
+5. Outliers → Uncategorized
+6. `refresh_category_metadata` for every category that gained members
+7. Return `{ new_category_ids, matched_existing, ... }`
+
+### 3. Job wiring ([`jobs.py`](backend/app/jobs.py))
+
+- `name_categories(new_category_ids)` only — never `name_all_categories()` on re-runs (preserves renamed names)
+- After naming new groups, refresh their metadata (prototype + captions)
+- Status message: matched vs new groups
+
+### 4. Scan
+
+Removing missing source files must **not** delete or clear category metadata. Empty categories with prototypes remain for the next batch.
+
+### 5. Re-analyze Uncategorized
+
+Reuse the same centroid/prototype helpers and call `refresh_category_metadata` after matches/merges so metadata stays current.
+
+## Note on already-lost categories
+
+The previous renamed set cannot be recovered from this wipe. Going forward, metadata persists across batches.
+
+## Out of scope
+
+- Restoring wiped names from the last Analyze
+- Changing Apply / source-folder workflow
+
+---
+
+<a id="chapter-225-persist-collapsible-sections"></a>
+
+## Chapter 225: Persist collapsible sections
 
 > **Overview:** Persist expanded/collapsed state for label-editor sections so user toggles survive remounts (e.g. single ↔ bulk selection, re-renders after label apply). Fix centrally in `CollapsibleSection` with optional localStorage keys shared across editor contexts.
 
@@ -18132,9 +20065,9 @@ Manual in Inbox:
 
 ---
 
-<a id="chapter-186-persist-collapsible-sections"></a>
+<a id="chapter-226-persist-collapsible-sections"></a>
 
-## Chapter 186: Persist collapsible sections
+## Chapter 226: Persist collapsible sections
 
 > **Overview:** Persist expanded/collapsed state for label-editor sections so user toggles survive remounts (e.g. single ↔ bulk selection, re-renders after label apply). Fix centrally in `CollapsibleSection` with optional localStorage keys shared across editor contexts.
 
@@ -18219,45 +20152,9 @@ Manual in Inbox:
 
 ---
 
-<a id="chapter-187-persist-search-form-settings"></a>
+<a id="chapter-227-persist-search-form-settings"></a>
 
-## Chapter 187: Persist search form settings
-
-> **Overview:** Save SearchForm fields to localStorage on change and restore them on load so a browser refresh keeps the last origin, destination, dates, stay days, and adults.
-
-# Persist last search settings across refresh
-
-## Problem
-
-[`SearchForm.tsx`](src/components/search/SearchForm.tsx) always initializes from hardcoded `DEFAULT_VALUES` (`MCO`/`LAX`, etc.). Refresh loses whatever the user last entered.
-
-## Approach
-
-Persist the form’s `SearchRequest` fields in **`localStorage`** (client-only). Both TO and FROM already share this form state, so one store covers all fields.
-
-### 1. Storage helper — [`src/lib/utils/searchFormStorage.ts`](src/lib/utils/searchFormStorage.ts)
-
-- Key: `datefare:lastSearch`
-- `loadSearchForm(): SearchRequest | null` — parse JSON; return null if missing/invalid
-- `saveSearchForm(form: SearchRequest): void` — write JSON
-- Validate loosely on load: require 3-letter origin/destination strings, ISO dates `YYYY-MM-DD`, positive ints for stay/adults, known `tripType`. Fall back to null (use defaults) if invalid.
-
-### 2. Wire into [`SearchForm.tsx`](src/components/search/SearchForm.tsx)
-
-- Keep `useState(DEFAULT_VALUES)` for SSR-safe first paint (avoid hydration mismatch).
-- `useEffect` on mount: `loadSearchForm()` → if present, `setForm(saved)`.
-- Persist on every field update inside `updateField` (and thus all inputs), so refresh mid-edit still restores last typed values.
-- Do **not** persist search results / progress from `SearchProvider`.
-
-## Verify
-
-Change From/To (e.g. FLL→BTV), refresh → fields still show FLL/BTV and other last-edited values.
-
----
-
-<a id="chapter-188-persist-search-form-settings"></a>
-
-## Chapter 188: Persist search form settings
+## Chapter 227: Persist search form settings
 
 > **Overview:** Save SearchForm fields to localStorage on change and restore them on load so a browser refresh keeps the last origin, destination, dates, stay days, and adults.
 
@@ -18291,9 +20188,299 @@ Change From/To (e.g. FLL→BTV), refresh → fields still show FLL/BTV and other
 
 ---
 
-<a id="chapter-189-recent-people-like-tags"></a>
+<a id="chapter-228-persist-search-form-settings"></a>
 
-## Chapter 189: Recent people like tags
+## Chapter 228: Persist search form settings
+
+> **Overview:** Save SearchForm fields to localStorage on change and restore them on load so a browser refresh keeps the last origin, destination, dates, stay days, and adults.
+
+# Persist last search settings across refresh
+
+## Problem
+
+[`SearchForm.tsx`](src/components/search/SearchForm.tsx) always initializes from hardcoded `DEFAULT_VALUES` (`MCO`/`LAX`, etc.). Refresh loses whatever the user last entered.
+
+## Approach
+
+Persist the form’s `SearchRequest` fields in **`localStorage`** (client-only). Both TO and FROM already share this form state, so one store covers all fields.
+
+### 1. Storage helper — [`src/lib/utils/searchFormStorage.ts`](src/lib/utils/searchFormStorage.ts)
+
+- Key: `datefare:lastSearch`
+- `loadSearchForm(): SearchRequest | null` — parse JSON; return null if missing/invalid
+- `saveSearchForm(form: SearchRequest): void` — write JSON
+- Validate loosely on load: require 3-letter origin/destination strings, ISO dates `YYYY-MM-DD`, positive ints for stay/adults, known `tripType`. Fall back to null (use defaults) if invalid.
+
+### 2. Wire into [`SearchForm.tsx`](src/components/search/SearchForm.tsx)
+
+- Keep `useState(DEFAULT_VALUES)` for SSR-safe first paint (avoid hydration mismatch).
+- `useEffect` on mount: `loadSearchForm()` → if present, `setForm(saved)`.
+- Persist on every field update inside `updateField` (and thus all inputs), so refresh mid-edit still restores last typed values.
+- Do **not** persist search results / progress from `SearchProvider`.
+
+## Verify
+
+Change From/To (e.g. FLL→BTV), refresh → fields still show FLL/BTV and other last-edited values.
+
+---
+
+<a id="chapter-229-prefer-birthtime-over-today-mtime"></a>
+
+## Chapter 229: Prefer birthtime over today mtime
+
+> **Overview:** When EXIF/ffprobe leave no capture date and file mtime falls on today, prefer the filesystem creation (birth) time if it is older—so copied/touched files keep a historical calendar date. Repair already-indexed “today” rows on the next scan without rehashing.
+
+# Prefer filesystem creation over today’s mtime
+
+## Cause
+
+[`_apply_mtime_fallback`](backend/app/metadata.py) sets `capture_date` from **mtime** when EXIF/ffprobe yield nothing. After a copy/touch, mtime is **today** (e.g. 2026-07-31) while macOS **Created** (birthtime) stays older (e.g. 2020-01-24). Filenames like `hardtop_instructions_1.jpg` have no parseable date, so the calendar shows today.
+
+```77:82:backend/app/metadata.py
+def _apply_mtime_fallback(result: dict, path: Path) -> dict:
+    if not result["capture_date"]:
+        fallback = datetime.fromtimestamp(path.stat().st_mtime)
+        ...
+```
+
+Scanner skips unchanged mtime ([`_upsert_file`](backend/app/scanner.py)), so already-wrong rows would not fix themselves without an update path.
+
+## Fix
+
+### 1. Fallback helper in [`metadata.py`](backend/app/metadata.py)
+
+Replace pure-mtime fallback with:
+
+1. Start from `st_mtime`
+2. If that **local calendar day is today**, and `st_birthtime` exists and its **date is earlier than today**, use birthtime instead
+3. Otherwise keep mtime
+
+Use `getattr(stat, "st_birthtime", None)` (macOS/BSD; Linux may omit — then keep mtime). Rename to something like `_apply_filesystem_date_fallback` and keep calling it from image/video extract paths.
+
+Do **not** invent filename parsing at scan in this pass (filename remains the existing “Use filename date” action). Birthtime covers the user’s “no date in filename + today” case.
+
+### 2. Repair on scan without full rehash
+
+In [`scanner.py`](backend/app/scanner.py) `_upsert_file`:
+
+- Select `id, mtime, capture_day` (not only mtime)
+- If mtime unchanged **and** `capture_day == today` (local ISO date), recompute filesystem fallback only; if the preferred day differs, `UPDATE` `capture_date` / `capture_day` and return (no SHA/pHash redo)
+- Otherwise keep current skip / full upsert behavior
+
+So the next **Scan inbox/archive** corrects existing bad “today” rows when birthtime is available.
+
+### 3. Tests
+
+Unit tests (tmp files + mocked/`os.utime`/patched `stat` birthtime) for:
+
+- mtime today + older birthtime → birthtime
+- mtime not today → mtime
+- no birthtime → mtime
+- scanner repair path when mtime unchanged but capture_day is today
+
+### 4. Docs
+
+- [`CHANGELOG.md`](CHANGELOG.md) Unreleased Fixed
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) one line on capture resolution: EXIF/ffprobe → filesystem birthtime when mtime is today → else mtime
+
+---
+
+<a id="chapter-230-prefer-birthtime-over-today-mtime"></a>
+
+## Chapter 230: Prefer birthtime over today mtime
+
+> **Overview:** When EXIF/ffprobe leave no capture date and file mtime falls on today, prefer the filesystem creation (birth) time if it is older—so copied/touched files keep a historical calendar date. Repair already-indexed “today” rows on the next scan without rehashing.
+
+# Prefer filesystem creation over today’s mtime
+
+## Cause
+
+[`_apply_mtime_fallback`](backend/app/metadata.py) sets `capture_date` from **mtime** when EXIF/ffprobe yield nothing. After a copy/touch, mtime is **today** (e.g. 2026-07-31) while macOS **Created** (birthtime) stays older (e.g. 2020-01-24). Filenames like `hardtop_instructions_1.jpg` have no parseable date, so the calendar shows today.
+
+```77:82:backend/app/metadata.py
+def _apply_mtime_fallback(result: dict, path: Path) -> dict:
+    if not result["capture_date"]:
+        fallback = datetime.fromtimestamp(path.stat().st_mtime)
+        ...
+```
+
+Scanner skips unchanged mtime ([`_upsert_file`](backend/app/scanner.py)), so already-wrong rows would not fix themselves without an update path.
+
+## Fix
+
+### 1. Fallback helper in [`metadata.py`](backend/app/metadata.py)
+
+Replace pure-mtime fallback with:
+
+1. Start from `st_mtime`
+2. If that **local calendar day is today**, and `st_birthtime` exists and its **date is earlier than today**, use birthtime instead
+3. Otherwise keep mtime
+
+Use `getattr(stat, "st_birthtime", None)` (macOS/BSD; Linux may omit — then keep mtime). Rename to something like `_apply_filesystem_date_fallback` and keep calling it from image/video extract paths.
+
+Do **not** invent filename parsing at scan in this pass (filename remains the existing “Use filename date” action). Birthtime covers the user’s “no date in filename + today” case.
+
+### 2. Repair on scan without full rehash
+
+In [`scanner.py`](backend/app/scanner.py) `_upsert_file`:
+
+- Select `id, mtime, capture_day` (not only mtime)
+- If mtime unchanged **and** `capture_day == today` (local ISO date), recompute filesystem fallback only; if the preferred day differs, `UPDATE` `capture_date` / `capture_day` and return (no SHA/pHash redo)
+- Otherwise keep current skip / full upsert behavior
+
+So the next **Scan inbox/archive** corrects existing bad “today” rows when birthtime is available.
+
+### 3. Tests
+
+Unit tests (tmp files + mocked/`os.utime`/patched `stat` birthtime) for:
+
+- mtime today + older birthtime → birthtime
+- mtime not today → mtime
+- no birthtime → mtime
+- scanner repair path when mtime unchanged but capture_day is today
+
+### 4. Docs
+
+- [`CHANGELOG.md`](CHANGELOG.md) Unreleased Fixed
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) one line on capture resolution: EXIF/ffprobe → filesystem birthtime when mtime is today → else mtime
+
+---
+
+<a id="chapter-231-reanalyze-uncategorized"></a>
+
+## Chapter 231: Reanalyze Uncategorized
+
+> **Overview:** Add a "Re-analyze Uncategorized" action that re-clusters only outlier images with looser settings, invents names for new groups, and leaves existing categories untouched.
+
+# Re-analyze Uncategorized
+
+## Problem
+
+Full Analyze left ~485 images in Uncategorized (HDBSCAN outliers). Users need a way to dig further into that bucket without wiping existing categories.
+
+## Approach
+
+Add a dedicated job that **only** re-clusters files currently in `slug = 'uncategorized'`, using **looser** HDBSCAN settings (`min_cluster_size=2`, `min_samples=1`), creates new categories for any groups found, BLIP-names **only those new categories**, and leaves remaining outliers in Uncategorized. Existing categories stay as-is.
+
+## Backend
+
+### [`backend/app/cluster.py`](backend/app/cluster.py)
+
+Add `run_clustering_uncategorized()`:
+
+1. Resolve Uncategorized category id (404/empty if missing or no embedded files)
+2. Load embeddings for files in that category only
+3. Run HDBSCAN with looser params (not `MIN_CLUSTER_SIZE=4`)
+4. For each positive label: insert a new category (`Group N` placeholder, unique `cluster-*` slug, `sort_order` after existing named cats)
+5. Reassign clustered files to those new categories; keep label `-1` in Uncategorized
+6. Return `{ new_category_ids, clusters, outliers, files }`
+
+### [`backend/app/namer.py`](backend/app/namer.py)
+
+Add `name_categories(category_ids: list[int])` — same BLIP exemplars + invent/slug logic as `name_all_categories`, but scoped to the given ids and respecting existing slugs.
+
+### [`backend/app/jobs.py`](backend/app/jobs.py)
+
+Add `start_reanalyze_uncategorized()` / `_run_reanalyze_uncategorized()` using the same `_lock` / `_state` as full analyze (mutual exclusion). Stages: `cluster` → `name` → `done`. No rescan/re-embed.
+
+### [`backend/app/main.py`](backend/app/main.py)
+
+```
+POST /api/analyze/uncategorized  → start job (409 if already running)
+```
+
+## Frontend
+
+### [`frontend/src/api/client.ts`](frontend/src/api/client.ts)
+
+Add `analyzeUncategorized()`.
+
+### [`frontend/src/pages/CategoryDetail.tsx`](frontend/src/pages/CategoryDetail.tsx)
+
+When `cat.slug === "uncategorized"`:
+
+- Show **Re-analyze Uncategorized** button in the toolbar
+- Poll `/api/status` while `running`
+- Disable while a job is running; on success invalidate category + categories queries
+- Short progress line under the toolbar (reuse status `message` / stage)
+
+## Behavior notes
+
+- Does not re-embed or touch already-named groups
+- Can be run repeatedly as Uncategorized shrinks
+- If clustering finds no new groups, Uncategorized is unchanged and the UI shows that via status/result
+
+---
+
+<a id="chapter-232-reanalyze-uncategorized"></a>
+
+## Chapter 232: Reanalyze Uncategorized
+
+> **Overview:** Add a "Re-analyze Uncategorized" action that re-clusters only outlier images with looser settings, invents names for new groups, and leaves existing categories untouched.
+
+# Re-analyze Uncategorized
+
+## Problem
+
+Full Analyze left ~485 images in Uncategorized (HDBSCAN outliers). Users need a way to dig further into that bucket without wiping existing categories.
+
+## Approach
+
+Add a dedicated job that **only** re-clusters files currently in `slug = 'uncategorized'`, using **looser** HDBSCAN settings (`min_cluster_size=2`, `min_samples=1`), creates new categories for any groups found, BLIP-names **only those new categories**, and leaves remaining outliers in Uncategorized. Existing categories stay as-is.
+
+## Backend
+
+### [`backend/app/cluster.py`](backend/app/cluster.py)
+
+Add `run_clustering_uncategorized()`:
+
+1. Resolve Uncategorized category id (404/empty if missing or no embedded files)
+2. Load embeddings for files in that category only
+3. Run HDBSCAN with looser params (not `MIN_CLUSTER_SIZE=4`)
+4. For each positive label: insert a new category (`Group N` placeholder, unique `cluster-*` slug, `sort_order` after existing named cats)
+5. Reassign clustered files to those new categories; keep label `-1` in Uncategorized
+6. Return `{ new_category_ids, clusters, outliers, files }`
+
+### [`backend/app/namer.py`](backend/app/namer.py)
+
+Add `name_categories(category_ids: list[int])` — same BLIP exemplars + invent/slug logic as `name_all_categories`, but scoped to the given ids and respecting existing slugs.
+
+### [`backend/app/jobs.py`](backend/app/jobs.py)
+
+Add `start_reanalyze_uncategorized()` / `_run_reanalyze_uncategorized()` using the same `_lock` / `_state` as full analyze (mutual exclusion). Stages: `cluster` → `name` → `done`. No rescan/re-embed.
+
+### [`backend/app/main.py`](backend/app/main.py)
+
+```
+POST /api/analyze/uncategorized  → start job (409 if already running)
+```
+
+## Frontend
+
+### [`frontend/src/api/client.ts`](frontend/src/api/client.ts)
+
+Add `analyzeUncategorized()`.
+
+### [`frontend/src/pages/CategoryDetail.tsx`](frontend/src/pages/CategoryDetail.tsx)
+
+When `cat.slug === "uncategorized"`:
+
+- Show **Re-analyze Uncategorized** button in the toolbar
+- Poll `/api/status` while `running`
+- Disable while a job is running; on success invalidate category + categories queries
+- Short progress line under the toolbar (reuse status `message` / stage)
+
+## Behavior notes
+
+- Does not re-embed or touch already-named groups
+- Can be run repeatedly as Uncategorized shrinks
+- If clustering finds no new groups, Uncategorized is unchanged and the UI shows that via status/result
+
+---
+
+<a id="chapter-233-recent-people-like-tags"></a>
+
+## Chapter 233: Recent people like tags
 
 > **Overview:** Add a localStorage-backed "Recently used" section for people pickers, mirroring the existing tag pattern in `FileTagPicker` and `BulkLabelEditors`.
 
@@ -18371,9 +20558,9 @@ Under `[Unreleased]` → **Added**: Recently used people chips in single and bul
 
 ---
 
-<a id="chapter-190-recipe-hero-dish-photo"></a>
+<a id="chapter-234-recipe-hero-dish-photo"></a>
 
-## Chapter 190: Recipe hero dish photo
+## Chapter 234: Recipe hero dish photo
 
 > **Overview:** Add an optional "hero" dish photo per recipe, dropped into a new hero/ folder and matched to recipes by filename stem during scan. Show it big on the recipe detail page and use it as the card thumbnail (falling back to the scan when absent).
 
@@ -18427,65 +20614,9 @@ Rebuild the backend (schema migration), drop `hero/banana_bread.jpg`, run Scan, 
 
 ---
 
-<a id="chapter-191-relayout-library-backup-ui"></a>
+<a id="chapter-235-relayout-library-backup-ui"></a>
 
-## Chapter 191: Relayout library backup UI
-
-> **Overview:** Reorganize Settings so routine “Update backup” is primary after cutover, fold one-time “Copy and switch” into a secondary/advanced block, show disk free once, and scope progress/status to the job that was started.
-
-# Relayout library / backup Settings
-
-## Problems (from the screenshot)
-
-- After cutover, **Copy and switch** still looks like the main action and shows “Copy to: `/Users/alex/Media`” (the backup), which reads backwards.
-- Cutover Docker steps and rewrite checkboxes stay visible when the user only wants incremental updates.
-- The same “Backup updated…” status appears under **both** sections (shared `moveStatus`).
-- Disk free is buried under migrate copy.
-
-## Layout (Docker, `paths_from_env`)
-
-Single parent section **Library disks** in [`frontend/src/pages/Settings.tsx`](frontend/src/pages/Settings.tsx):
-
-1. **Shared header** — one disk-free line + `container_disk_low` / mount-not-ready warnings.
-2. **Update backup** (first when `backup_media_ready`) — From → To host paths, short description, primary button, progress/status **only for sync jobs**.
-3. **Migrate to a new drive** — wrapped in `<details>` (closed by default when backup is ready; open when mount missing). Contains cutover blurb, destination summary, checkboxes, Copy and switch, progress/status **only for migrate jobs**.
-
-Native (non-Docker): keep a single **Migrate to a new drive** block with Destination folder (no Update backup unless we later expose backup env).
-
-## Status scoping
-
-Track local `libraryJob: "move" | "sync" | null`:
-
-- Set on mutate click; clear when `!moveStatus?.running && moveStatus?.done` after a short display, or when the other job starts.
-- Render progress/message only in the matching subsection (`libraryJob === "sync"` vs `"move"`).
-
-No backend change required.
-
-## Copy tweaks
-
-- Update backup title stays; From/To use `media_host_path` / `backup_media_host_path`.
-- Migrate details summary: “One-time full copy / cutover (advanced)”.
-- Soften cutover step (3) to allow keeping `BACKUP_MEDIA_HOST_PATH` on the old disk for Update backup (matches current .env).
-
-## CSS
-
-Light rules in [`frontend/src/index.css`](frontend/src/index.css) for `.settings-library-disks`, `.settings-job-status`, and `<details class="settings-advanced">` (spacing only; match existing settings typography).
-
-## Docs
-
-CHANGELOG Unreleased Changed: Settings library disks relayout. No ARCHITECTURE change (UI only).
-
-## Out of scope
-
-- Fixing identical media/backup free-space numbers (statvfs / mount reporting)
-- Backend job-type field on status API
-- Removing Copy and switch entirely
-
----
-
-<a id="chapter-192-relayout-library-backup-ui"></a>
-
-## Chapter 192: Relayout library backup UI
+## Chapter 235: Relayout library backup UI
 
 > **Overview:** Reorganize Settings so routine “Update backup” is primary after cutover, fold one-time “Copy and switch” into a secondary/advanced block, show disk free once, and scope progress/status to the job that was started.
 
@@ -18539,9 +20670,65 @@ CHANGELOG Unreleased Changed: Settings library disks relayout. No ARCHITECTURE c
 
 ---
 
-<a id="chapter-193-release-20260710"></a>
+<a id="chapter-236-relayout-library-backup-ui"></a>
 
-## Chapter 193: Release 2026.07.10
+## Chapter 236: Relayout library backup UI
+
+> **Overview:** Reorganize Settings so routine “Update backup” is primary after cutover, fold one-time “Copy and switch” into a secondary/advanced block, show disk free once, and scope progress/status to the job that was started.
+
+# Relayout library / backup Settings
+
+## Problems (from the screenshot)
+
+- After cutover, **Copy and switch** still looks like the main action and shows “Copy to: `/Users/alex/Media`” (the backup), which reads backwards.
+- Cutover Docker steps and rewrite checkboxes stay visible when the user only wants incremental updates.
+- The same “Backup updated…” status appears under **both** sections (shared `moveStatus`).
+- Disk free is buried under migrate copy.
+
+## Layout (Docker, `paths_from_env`)
+
+Single parent section **Library disks** in [`frontend/src/pages/Settings.tsx`](frontend/src/pages/Settings.tsx):
+
+1. **Shared header** — one disk-free line + `container_disk_low` / mount-not-ready warnings.
+2. **Update backup** (first when `backup_media_ready`) — From → To host paths, short description, primary button, progress/status **only for sync jobs**.
+3. **Migrate to a new drive** — wrapped in `<details>` (closed by default when backup is ready; open when mount missing). Contains cutover blurb, destination summary, checkboxes, Copy and switch, progress/status **only for migrate jobs**.
+
+Native (non-Docker): keep a single **Migrate to a new drive** block with Destination folder (no Update backup unless we later expose backup env).
+
+## Status scoping
+
+Track local `libraryJob: "move" | "sync" | null`:
+
+- Set on mutate click; clear when `!moveStatus?.running && moveStatus?.done` after a short display, or when the other job starts.
+- Render progress/message only in the matching subsection (`libraryJob === "sync"` vs `"move"`).
+
+No backend change required.
+
+## Copy tweaks
+
+- Update backup title stays; From/To use `media_host_path` / `backup_media_host_path`.
+- Migrate details summary: “One-time full copy / cutover (advanced)”.
+- Soften cutover step (3) to allow keeping `BACKUP_MEDIA_HOST_PATH` on the old disk for Update backup (matches current .env).
+
+## CSS
+
+Light rules in [`frontend/src/index.css`](frontend/src/index.css) for `.settings-library-disks`, `.settings-job-status`, and `<details class="settings-advanced">` (spacing only; match existing settings typography).
+
+## Docs
+
+CHANGELOG Unreleased Changed: Settings library disks relayout. No ARCHITECTURE change (UI only).
+
+## Out of scope
+
+- Fixing identical media/backup free-space numbers (statvfs / mount reporting)
+- Backend job-type field on status API
+- Removing Copy and switch entirely
+
+---
+
+<a id="chapter-237-release-20260710"></a>
+
+## Chapter 237: Release 2026.07.10
 
 > **Overview:** Document the SQLite lock fix in the development book and CHANGELOG, bump version strings to 2026.07.10, regenerate DEVELOPMENT_BOOK.md, then commit, tag, and push the release.
 
@@ -18626,9 +20813,9 @@ flowchart LR
 
 ---
 
-<a id="chapter-194-release-20260712b"></a>
+<a id="chapter-238-release-20260712b"></a>
 
-## Chapter 194: Release 2026.07.12b
+## Chapter 238: Release 2026.07.12b
 
 > **Overview:** Document the month-selectable photo grid feature, bump version strings to 2026.07.12b, regenerate the development book, then commit and tag the release.
 
@@ -18720,9 +20907,9 @@ Branch is currently **3 commits ahead** of `origin/main` (2026.07.11e, 2026.07.1
 
 ---
 
-<a id="chapter-195-release-20260714"></a>
+<a id="chapter-239-release-20260714"></a>
 
-## Chapter 195: Release 2026.07.14
+## Chapter 239: Release 2026.07.14
 
 > **Overview:** Ship the Browse AND intersection work (tags, people, cameras) as release **2026.07.14**: finalize CHANGELOG/README/versions, register plans and rebuild the development book, then commit, tag, and push to origin.
 
@@ -18793,9 +20980,9 @@ Push is included so the release is on origin (branch is currently even with `ori
 
 ---
 
-<a id="chapter-196-release-20260714"></a>
+<a id="chapter-240-release-20260714"></a>
 
-## Chapter 196: Release 2026.07.14
+## Chapter 240: Release 2026.07.14
 
 > **Overview:** Phase 1 (now): fix calendar day 500 from unresolved camera Query default. Phase 2 (after confirm): docs, version bump, commit/tag/push 2026.07.14.
 
@@ -18859,39 +21046,9 @@ Commit, tag `2026.07.14`, push HEAD + tag to origin.
 
 ---
 
-<a id="chapter-197-remove-sticky-control-frame"></a>
+<a id="chapter-241-remove-sticky-control-frame"></a>
 
-## Chapter 197: Remove sticky control frame
-
-> **Overview:** The frosted sticky bar still reads as a black slab. Remove its background, border, and shadow so Inbox filter buttons sit directly on the page/skin like Review chrome, with no full-width frame.
-
-## Problem
-
-The prior soften (`rgba(15,17,23,0.72)` + blur + border/shadow) still draws a full-width dark rectangle behind All / Untagged / Delete queue. Screenshots show a hard top edge and empty dark space around the buttons.
-
-## Approach
-
-In [`frontend/src/index.css`](frontend/src/index.css), make `.page-sticky-controls` / `.inbox-sticky-controls` chrome-less:
-
-- `background: transparent`
-- Remove `backdrop-filter` / `-webkit-backdrop-filter`
-- Remove `border-bottom` and `box-shadow`
-- Keep `position: sticky`, `z-index`, padding/margins, and overflow
-
-Filter buttons already use `.btn-secondary` fills; nested panels (alerts, label editors) keep their own backgrounds. Same shared class update covers Trash, Blurry, and Calendar sticky strips (intentional).
-
-No markup changes in [`Inbox.tsx`](frontend/src/pages/Inbox.tsx).
-
-## Docs
-
-- Update [`CHANGELOG.md`](CHANGELOG.md) Unreleased Fixed bullet to say sticky controls no longer paint a background frame (replace the frosted-chrome wording if present)
-- No ARCHITECTURE change
-
----
-
-<a id="chapter-198-remove-sticky-control-frame"></a>
-
-## Chapter 198: Remove sticky control frame
+## Chapter 241: Remove sticky control frame
 
 > **Overview:** The frosted sticky bar still reads as a black slab. Remove its background, border, and shadow so Inbox filter buttons sit directly on the page/skin like Review chrome, with no full-width frame.
 
@@ -18919,9 +21076,79 @@ No markup changes in [`Inbox.tsx`](frontend/src/pages/Inbox.tsx).
 
 ---
 
-<a id="chapter-199-review-restore-deletes"></a>
+<a id="chapter-242-remove-sticky-control-frame"></a>
 
-## Chapter 199: Review restore deletes
+## Chapter 242: Remove sticky control frame
+
+> **Overview:** The frosted sticky bar still reads as a black slab. Remove its background, border, and shadow so Inbox filter buttons sit directly on the page/skin like Review chrome, with no full-width frame.
+
+## Problem
+
+The prior soften (`rgba(15,17,23,0.72)` + blur + border/shadow) still draws a full-width dark rectangle behind All / Untagged / Delete queue. Screenshots show a hard top edge and empty dark space around the buttons.
+
+## Approach
+
+In [`frontend/src/index.css`](frontend/src/index.css), make `.page-sticky-controls` / `.inbox-sticky-controls` chrome-less:
+
+- `background: transparent`
+- Remove `backdrop-filter` / `-webkit-backdrop-filter`
+- Remove `border-bottom` and `box-shadow`
+- Keep `position: sticky`, `z-index`, padding/margins, and overflow
+
+Filter buttons already use `.btn-secondary` fills; nested panels (alerts, label editors) keep their own backgrounds. Same shared class update covers Trash, Blurry, and Calendar sticky strips (intentional).
+
+No markup changes in [`Inbox.tsx`](frontend/src/pages/Inbox.tsx).
+
+## Docs
+
+- Update [`CHANGELOG.md`](CHANGELOG.md) Unreleased Fixed bullet to say sticky controls no longer paint a background frame (replace the frosted-chrome wording if present)
+- No ARCHITECTURE change
+
+---
+
+<a id="chapter-243-rename-hero-headline"></a>
+
+## Chapter 243: Rename hero headline
+
+> **Overview:** Update the Home page hero headline to the new copy.
+
+# Rename Home hero headline
+
+In [`frontend/src/pages/Home.tsx`](frontend/src/pages/Home.tsx), change the `<h1>` text from:
+
+`Sort a dump of images by what they look like.`
+
+to:
+
+`Group random images into catagories`
+
+(Exact wording as specified, including the spelling.)
+
+---
+
+<a id="chapter-244-rename-hero-headline"></a>
+
+## Chapter 244: Rename hero headline
+
+> **Overview:** Update the Home page hero headline to the new copy.
+
+# Rename Home hero headline
+
+In [`frontend/src/pages/Home.tsx`](frontend/src/pages/Home.tsx), change the `<h1>` text from:
+
+`Sort a dump of images by what they look like.`
+
+to:
+
+`Group random images into catagories`
+
+(Exact wording as specified, including the spelling.)
+
+---
+
+<a id="chapter-245-review-restore-deletes"></a>
+
+## Chapter 245: Review restore deletes
 
 > **Overview:** Add per-item and bulk Restore for delete decisions on the Review page, reusing the existing `cancelReviewDecisions` API and `PhotoDetail` delete-queue mode already used in Inbox.
 
@@ -19064,9 +21291,61 @@ Add under `[Unreleased]` → **Added** in [`CHANGELOG.md`](imageOrganizer/CHANGE
 
 ---
 
-<a id="chapter-200-separate-kitchen-ledger-agent"></a>
+<a id="chapter-246-select-all-images"></a>
 
-## Chapter 200: Separate Kitchen Ledger agent
+## Chapter 246: Select all images
+
+> **Overview:** Add a Select all / Deselect all control on the category detail toolbar so users can select every loaded image for Move selected in one click.
+
+# Select all on category detail
+
+Add a toolbar control next to **Move selected** on [`CategoryDetail.tsx`](frontend/src/pages/CategoryDetail.tsx).
+
+## Behavior
+
+- **Select all**: set `selected` to every id in the currently loaded `images` array.
+- When every loaded image is already selected: show **Deselect all** and clear `selected`.
+- Disable when there are no images.
+- Optional keyboard: `Cmd/Ctrl+A` when not typing and lightbox closed — same toggle (matches existing key handling in this page).
+
+No backend changes. Scope is the images currently shown (same set used by the grid); the page already loads up to 200 via `categoryImages`.
+
+## UI
+
+- Secondary button in the existing toolbar row: `Select all` / `Deselect all (N)` when all selected.
+- Reuse `.btn.secondary`; no new card/layout styles.
+
+---
+
+<a id="chapter-247-select-all-images"></a>
+
+## Chapter 247: Select all images
+
+> **Overview:** Add a Select all / Deselect all control on the category detail toolbar so users can select every loaded image for Move selected in one click.
+
+# Select all on category detail
+
+Add a toolbar control next to **Move selected** on [`CategoryDetail.tsx`](frontend/src/pages/CategoryDetail.tsx).
+
+## Behavior
+
+- **Select all**: set `selected` to every id in the currently loaded `images` array.
+- When every loaded image is already selected: show **Deselect all** and clear `selected`.
+- Disable when there are no images.
+- Optional keyboard: `Cmd/Ctrl+A` when not typing and lightbox closed — same toggle (matches existing key handling in this page).
+
+No backend changes. Scope is the images currently shown (same set used by the grid); the page already loads up to 200 via `categoryImages`.
+
+## UI
+
+- Secondary button in the existing toolbar row: `Select all` / `Deselect all (N)` when all selected.
+- Reuse `.btn.secondary`; no new card/layout styles.
+
+---
+
+<a id="chapter-248-separate-kitchen-ledger-agent"></a>
+
+## Chapter 248: Separate Kitchen Ledger agent
 
 > **Overview:** Kitchen Ledger is already a separate git repo on disk. It appears under imageorganizer in Cursor only because this agent chat never successfully switched its workspace root. Fix by moving this agent to `/Users/alex/Documents/github/kitchenLedger`.
 
@@ -19109,9 +21388,9 @@ You can also drag the agent into a new folder via the Repositories “New Folder
 
 ---
 
-<a id="chapter-201-separate-kitchen-ledger-agent"></a>
+<a id="chapter-249-separate-kitchen-ledger-agent"></a>
 
-## Chapter 201: Separate Kitchen Ledger agent
+## Chapter 249: Separate Kitchen Ledger agent
 
 > **Overview:** Kitchen Ledger is already a separate git repo on disk. It appears under imageorganizer in Cursor only because this agent chat never successfully switched its workspace root. Fix by moving this agent to `/Users/alex/Documents/github/kitchenLedger`.
 
@@ -19154,9 +21433,9 @@ You can also drag the agent into a new folder via the Repositories “New Folder
 
 ---
 
-<a id="chapter-202-settings-three-column-disks"></a>
+<a id="chapter-250-settings-three-column-disks"></a>
 
-## Chapter 202: Settings three-column disks
+## Chapter 250: Settings three-column disks
 
 > **Overview:** Postpone Docker free-space reporting. Restructure Settings so Paths & patterns, Update backup, and advanced cutover sit in one responsive three-column row matching the mockup—using horizontal space instead of stacking Paths above Library disks.
 
@@ -19221,9 +21500,9 @@ CHANGELOG Unreleased Changed: Settings disk management three-column layout.
 
 ---
 
-<a id="chapter-203-settings-three-column-disks"></a>
+<a id="chapter-251-settings-three-column-disks"></a>
 
-## Chapter 203: Settings three-column disks
+## Chapter 251: Settings three-column disks
 
 > **Overview:** Postpone Docker free-space reporting. Restructure Settings so Paths & patterns, Update backup, and advanced cutover sit in one responsive three-column row matching the mockup—using horizontal space instead of stacking Paths above Library disks.
 
@@ -19288,40 +21567,9 @@ CHANGELOG Unreleased Changed: Settings disk management three-column layout.
 
 ---
 
-<a id="chapter-204-show-connections-in-results"></a>
+<a id="chapter-252-show-connections-in-results"></a>
 
-## Chapter 204: Show connections in results
-
-> **Overview:** Surface stop count on each flight result and show one airport icon per connection in the All Options table.
-
-# Add connection count to results
-
-## Data
-
-[`ProviderOffer`](src/lib/providers/types.ts) already has `stops`. [`FlightResult`](src/types/search.ts) does not — [`mapOffer`](src/components/search/SearchForm.tsx) drops it.
-
-1. Add `stops: number` to `FlightResult`.
-2. In `mapOffer`, set `stops: offer.stops`.
-
-## UI — [`AlternativesList.tsx`](src/components/results/AlternativesList.tsx)
-
-Add a **Connections** column (between Duration and Airline):
-
-- Label: `Nonstop` when `stops === 0`, else `1 stop` / `N stops`
-- Render **one Lucide `Plane` icon per stop** in a row (connection = stop). Nonstop: no icons.
-- Widen grid from `grid-cols-[1fr_1.5fr_1fr_auto]` to five columns, e.g. `grid-cols-[1fr_1.5fr_1fr_1fr_auto]`
-
-Also show stops on [`CheapestHeroCard`](src/components/results/CheapestHeroCard.tsx) next to nights/airline (text only, same Nonstop/N stops wording).
-
-## Note
-
-Layover airport codes are not in the current provider payload — icons are generic plane markers, one per stop count.
-
----
-
-<a id="chapter-205-show-connections-in-results"></a>
-
-## Chapter 205: Show connections in results
+## Chapter 252: Show connections in results
 
 > **Overview:** Surface stop count on each flight result and show one airport icon per connection in the All Options table.
 
@@ -19350,9 +21598,82 @@ Layover airport codes are not in the current provider payload — icons are gene
 
 ---
 
-<a id="chapter-206-slim-inbox-delete-refetch"></a>
+<a id="chapter-253-show-connections-in-results"></a>
 
-## Chapter 206: Slim inbox delete refetch
+## Chapter 253: Show connections in results
+
+> **Overview:** Surface stop count on each flight result and show one airport icon per connection in the All Options table.
+
+# Add connection count to results
+
+## Data
+
+[`ProviderOffer`](src/lib/providers/types.ts) already has `stops`. [`FlightResult`](src/types/search.ts) does not — [`mapOffer`](src/components/search/SearchForm.tsx) drops it.
+
+1. Add `stops: number` to `FlightResult`.
+2. In `mapOffer`, set `stops: offer.stops`.
+
+## UI — [`AlternativesList.tsx`](src/components/results/AlternativesList.tsx)
+
+Add a **Connections** column (between Duration and Airline):
+
+- Label: `Nonstop` when `stops === 0`, else `1 stop` / `N stops`
+- Render **one Lucide `Plane` icon per stop** in a row (connection = stop). Nonstop: no icons.
+- Widen grid from `grid-cols-[1fr_1.5fr_1fr_auto]` to five columns, e.g. `grid-cols-[1fr_1.5fr_1fr_1fr_auto]`
+
+Also show stops on [`CheapestHeroCard`](src/components/results/CheapestHeroCard.tsx) next to nights/airline (text only, same Nonstop/N stops wording).
+
+## Note
+
+Layover airport codes are not in the current provider payload — icons are generic plane markers, one per stop count.
+
+---
+
+<a id="chapter-254-show-dup-folders"></a>
+
+## Chapter 254: Show dup folders
+
+> **Overview:** Show each duplicate’s output category folder (parent of rel_path) in both list and grid views on the Duplicates page.
+
+# Show category/folder on duplicate members
+
+Output files live under `OUTPUT_DIR/<category-slug>/filename`. [`duplicates.py`](backend/app/duplicates.py) already returns `rel_path` like `telescope-telescope/IMG_….jpg`. No API change required.
+
+## UI — [`Duplicates.tsx`](frontend/src/pages/Duplicates.tsx)
+
+- Derive `folder` = parent of `rel_path` (everything before the last `/`), fallback `"·"` / root if none.
+- **List:** show folder above or beside the path, e.g. `telescope-telescope` muted, then filename (or keep full `rel_path` with folder emphasized).
+- **Grid:** replace filename-only label with two lines — folder (category slug) + truncated filename.
+- Lightbox meta: keep full `rel_path` (already includes folder).
+
+Light CSS in [`styles.css`](frontend/src/styles.css) for `.dup-folder` (muted, smaller).
+
+---
+
+<a id="chapter-255-show-dup-folders"></a>
+
+## Chapter 255: Show dup folders
+
+> **Overview:** Show each duplicate’s output category folder (parent of rel_path) in both list and grid views on the Duplicates page.
+
+# Show category/folder on duplicate members
+
+Output files live under `OUTPUT_DIR/<category-slug>/filename`. [`duplicates.py`](backend/app/duplicates.py) already returns `rel_path` like `telescope-telescope/IMG_….jpg`. No API change required.
+
+## UI — [`Duplicates.tsx`](frontend/src/pages/Duplicates.tsx)
+
+- Derive `folder` = parent of `rel_path` (everything before the last `/`), fallback `"·"` / root if none.
+- **List:** show folder above or beside the path, e.g. `telescope-telescope` muted, then filename (or keep full `rel_path` with folder emphasized).
+- **Grid:** replace filename-only label with two lines — folder (category slug) + truncated filename.
+- Lightbox meta: keep full `rel_path` (already includes folder).
+
+Light CSS in [`styles.css`](frontend/src/styles.css) for `.dup-folder` (muted, smaller).
+
+---
+
+<a id="chapter-256-slim-inbox-delete-refetch"></a>
+
+## Chapter 256: Slim inbox delete refetch
 
 > **Overview:** Mark-delete does not need the full invalidateAfterReviewChange burst. Narrow that helper so Inbox only refetches what a delete decision actually changes.
 
@@ -19406,9 +21727,101 @@ Mark delete in Inbox detail → logs show files + pending_delete count + review-
 
 ---
 
-<a id="chapter-207-sticky-search-form"></a>
+<a id="chapter-257-smarter-category-matching"></a>
 
-## Chapter 207: Sticky search form
+## Chapter 257: Smarter category matching
+
+> **Overview:** Prefer folding new images into the existing 100+ category library—learn from user moves, match members+centroids more aggressively, soft-assign leftovers, and stop inventing many new groups.
+
+# Smarter matching — prefer the existing library
+
+Today matching is a one-shot cosine ≥ `0.72` against a single centroid ([`cluster.py`](backend/app/cluster.py)). Leftovers still HDBSCAN into **new** `cluster-*` categories. With **100+ groups already**, new runs should mostly **fill existing buckets**, not invent more.
+
+## Goal
+
+Each Analyze / Re-analyze Uncategorized should:
+
+1. Get better at hitting the right **existing** category (learn from review)
+2. Soft-assign ambiguous leftovers into the best existing category when close enough
+3. Avoid creating many new groups — leftovers that still do not fit go to **Uncategorized**
+
+## 1. Learn from review — [`main.py`](backend/app/main.py)
+
+After reassign / merge, `refresh_category_metadata` on affected categories (reassign: prior cats + target; merge: target only).
+
+## 2. Richer, more aggressive match — [`cluster.py`](backend/app/cluster.py)
+
+- **Score** for category C = `max(sim(vec, centroid_C), max sim to member embeddings)` (cap ~64 members/cat).
+- **Primary threshold**: lower `EXISTING_MATCH_THRESHOLD` from `0.72` → **`0.64`** so more images land in existing groups.
+- **Soft floor**: if no primary match, assign to best existing if score ≥ **`0.55`** (individuals and leftover-cluster centroids). No second-best margin — with a large library, folding beats leaving orphans.
+- Empty cats still use stored `prototype_embedding`.
+
+## 3. Two-pass, then suppress new groups
+
+In `run_clustering` / `run_clustering_uncategorized`:
+
+1. Primary + soft match → refresh touched prototypes
+2. Rematch leftovers against updated library (primary + soft)
+3. If existing named categories ≥ **20**:
+   - **Do not create new categories** from HDBSCAN leftovers
+   - Remaining files → Uncategorized
+4. If library is still small (`< 20`): keep today’s leftover HDBSCAN → merge-or-create behavior (first-time library growth)
+
+## Out of scope
+
+No UI threshold slider. No forced wipe/re-embed.
+
+---
+
+<a id="chapter-258-smarter-category-matching"></a>
+
+## Chapter 258: Smarter category matching
+
+> **Overview:** Prefer folding new images into the existing 100+ category library—learn from user moves, match members+centroids more aggressively, soft-assign leftovers, and stop inventing many new groups.
+
+# Smarter matching — prefer the existing library
+
+Today matching is a one-shot cosine ≥ `0.72` against a single centroid ([`cluster.py`](backend/app/cluster.py)). Leftovers still HDBSCAN into **new** `cluster-*` categories. With **100+ groups already**, new runs should mostly **fill existing buckets**, not invent more.
+
+## Goal
+
+Each Analyze / Re-analyze Uncategorized should:
+
+1. Get better at hitting the right **existing** category (learn from review)
+2. Soft-assign ambiguous leftovers into the best existing category when close enough
+3. Avoid creating many new groups — leftovers that still do not fit go to **Uncategorized**
+
+## 1. Learn from review — [`main.py`](backend/app/main.py)
+
+After reassign / merge, `refresh_category_metadata` on affected categories (reassign: prior cats + target; merge: target only).
+
+## 2. Richer, more aggressive match — [`cluster.py`](backend/app/cluster.py)
+
+- **Score** for category C = `max(sim(vec, centroid_C), max sim to member embeddings)` (cap ~64 members/cat).
+- **Primary threshold**: lower `EXISTING_MATCH_THRESHOLD` from `0.72` → **`0.64`** so more images land in existing groups.
+- **Soft floor**: if no primary match, assign to best existing if score ≥ **`0.55`** (individuals and leftover-cluster centroids). No second-best margin — with a large library, folding beats leaving orphans.
+- Empty cats still use stored `prototype_embedding`.
+
+## 3. Two-pass, then suppress new groups
+
+In `run_clustering` / `run_clustering_uncategorized`:
+
+1. Primary + soft match → refresh touched prototypes
+2. Rematch leftovers against updated library (primary + soft)
+3. If existing named categories ≥ **20**:
+   - **Do not create new categories** from HDBSCAN leftovers
+   - Remaining files → Uncategorized
+4. If library is still small (`< 20`): keep today’s leftover HDBSCAN → merge-or-create behavior (first-time library growth)
+
+## Out of scope
+
+No UI threshold slider. No forced wipe/re-embed.
+
+---
+
+<a id="chapter-259-sticky-search-form"></a>
+
+## Chapter 259: Sticky search form
 
 > **Overview:** Make the search form card stick below the header while scrolling so results move underneath and the form stays on screen.
 
@@ -19441,9 +21854,9 @@ Run a search with many results, scroll down — form stays under the nav; price 
 
 ---
 
-<a id="chapter-208-sticky-search-form"></a>
+<a id="chapter-260-sticky-search-form"></a>
 
-## Chapter 208: Sticky search form
+## Chapter 260: Sticky search form
 
 > **Overview:** Make the search form card stick below the header while scrolling so results move underneath and the form stays on screen.
 
@@ -19476,9 +21889,159 @@ Run a search with many results, scroll down — form stays under the nav; price 
 
 ---
 
-<a id="chapter-209-throttle-inbox-scan-refetch"></a>
+<a id="chapter-261-switchable-dup-keep"></a>
 
-## Chapter 209: Throttle inbox scan refetch
+## Chapter 261: Switchable dup keep
+
+> **Overview:** Let users switch which file to keep vs delete in each duplicate group, and ensure “Copy of …” files are the default delete targets (non-copy kept).
+
+# Switchable keep/delete selectors on Duplicates
+
+## Problem
+
+Keep-file checkboxes are `disabled={m.keep}`, so you cannot switch which copy to delete. Backend already prefers non-`Copy of` as keep ([`_pick_keep`](backend/app/duplicates.py)); tighten copy detection if needed and make UI interactive.
+
+## Backend — [`duplicates.py`](backend/app/duplicates.py)
+
+- Treat filenames starting with `Copy of ` (case-insensitive) as copies (already mostly covered); also match `Copy_of_` / `copy-of-` prefixes common on dumps.
+- Sort members so **keep** appears first in each group (clearer UX).
+
+## Frontend — [`Duplicates.tsx`](frontend/src/pages/Duplicates.tsx)
+
+- Local `keepByHash: Record<string, string>` (group hash → kept `rel_path`), initialized from API `keep: true` when scan loads.
+- Helper `isKeep(group, member)` using override or API flag.
+- **`setKeep(group, relPath)`**: set that path as keep; remove it from `selected`; add all other members in the group to `selected`.
+- **Checkbox**: enable on all members.
+  - Checking a kept file → no-op or treat as “mark for delete” only if another keep exists — instead: checking the current keep calls nothing; unchecking an extra removes from delete; **clicking checkbox on a non-selected extra adds it**; **to switch keep**, use Keep control.
+  - Simpler rule: checkbox only toggles delete for **non-keep** files. Keep file checkbox stays off and disabled visually, but **Keep badge becomes a button** on every card — click “Keep” on any file to make it the kept one (and mark siblings for delete).
+- Grid + list: show Keep button on every member; active keep styled as now; inactive shows “Keep” outline button.
+- `selectAllExtras` uses current keep overrides.
+
+No change to delete API.
+
+---
+
+<a id="chapter-262-switchable-dup-keep"></a>
+
+## Chapter 262: Switchable dup keep
+
+> **Overview:** Let users switch which file to keep vs delete in each duplicate group, and ensure “Copy of …” files are the default delete targets (non-copy kept).
+
+# Switchable keep/delete selectors on Duplicates
+
+## Problem
+
+Keep-file checkboxes are `disabled={m.keep}`, so you cannot switch which copy to delete. Backend already prefers non-`Copy of` as keep ([`_pick_keep`](backend/app/duplicates.py)); tighten copy detection if needed and make UI interactive.
+
+## Backend — [`duplicates.py`](backend/app/duplicates.py)
+
+- Treat filenames starting with `Copy of ` (case-insensitive) as copies (already mostly covered); also match `Copy_of_` / `copy-of-` prefixes common on dumps.
+- Sort members so **keep** appears first in each group (clearer UX).
+
+## Frontend — [`Duplicates.tsx`](frontend/src/pages/Duplicates.tsx)
+
+- Local `keepByHash: Record<string, string>` (group hash → kept `rel_path`), initialized from API `keep: true` when scan loads.
+- Helper `isKeep(group, member)` using override or API flag.
+- **`setKeep(group, relPath)`**: set that path as keep; remove it from `selected`; add all other members in the group to `selected`.
+- **Checkbox**: enable on all members.
+  - Checking a kept file → no-op or treat as “mark for delete” only if another keep exists — instead: checking the current keep calls nothing; unchecking an extra removes from delete; **clicking checkbox on a non-selected extra adds it**; **to switch keep**, use Keep control.
+  - Simpler rule: checkbox only toggles delete for **non-keep** files. Keep file checkbox stays off and disabled visually, but **Keep badge becomes a button** on every card — click “Keep” on any file to make it the kept one (and mark siblings for delete).
+- Grid + list: show Keep button on every member; active keep styled as now; inactive shows “Keep” outline button.
+- `selectAllExtras` uses current keep overrides.
+
+No change to delete API.
+
+---
+
+<a id="chapter-263-text-match-and-auto-advance"></a>
+
+## Chapter 263: Text match and auto-advance
+
+> **Overview:** Improve assignment by matching images to existing category names via CLIP text embeddings (so “Motorola” screenshots prefer a Motorola category), and auto-advance to the next category after Move/Merge empties the current one.
+
+# Better category name matching + auto-advance when empty
+
+## Context
+
+Matching is **CLIP visual** similarity today, not OCR — so a Motorola dialog can land in “charts and graphs” if it looks more like other screenshots there. There is already a **motorola** category; we should prefer it when the image aligns with that **name**.
+
+## 1. Category-name text boost — [`embedder.py`](backend/app/embedder.py), [`cluster.py`](backend/app/cluster.py)
+
+- Add `embed_text(texts: list[str]) -> np.ndarray` using OpenCLIP `encode_text` (same ViT-B-32 model).
+- In `_build_match_library`, also store per-category **name text embedding** (from `categories.name`, normalized).
+- When scoring an image vector against a category, take:
+
+  `score = max(visual_score, cosine(image, name_text_embedding))`
+
+- Image–text cosines sit lower than image–image; use a dedicated floor, e.g. accept name-text match when `text_sim >= 0.24` even if visual soft floor fails (tunable constant `NAME_TEXT_MATCH_FLOOR`).
+- Apply in both match passes and leftover-cluster centroid matching (centroid vs name text is weak — for clusters, keep visual; for **individual** files, name-text boost matters most).
+
+No new OCR dependency — uses existing OpenCLIP.
+
+## 2. Auto-advance when category empties — [`CategoryDetail.tsx`](frontend/src/pages/CategoryDetail.tsx)
+
+After **Move selected** succeeds:
+
+- If `selected.size` was the full set of images in this category (or remaining total becomes 0), `navigate` to `nextCat` if any, else `prevCat`, else `/categories`.
+
+After **Merge all** succeeds:
+
+- Source category is deleted — navigate to **next** category in the pre-merge `navCats` list (the one after current), falling back to merge target, then `/categories`. (Today it always jumps to the merge target; prefer continuing review down the list.)
+
+Invalidate queries as today before/after navigate.
+
+## Out of scope
+
+Full OCR pipeline, re-analyzing the whole library automatically (user can Re-analyze Uncategorized / Analyze after deploy).
+
+---
+
+<a id="chapter-264-text-match-and-auto-advance"></a>
+
+## Chapter 264: Text match and auto-advance
+
+> **Overview:** Improve assignment by matching images to existing category names via CLIP text embeddings (so “Motorola” screenshots prefer a Motorola category), and auto-advance to the next category after Move/Merge empties the current one.
+
+# Better category name matching + auto-advance when empty
+
+## Context
+
+Matching is **CLIP visual** similarity today, not OCR — so a Motorola dialog can land in “charts and graphs” if it looks more like other screenshots there. There is already a **motorola** category; we should prefer it when the image aligns with that **name**.
+
+## 1. Category-name text boost — [`embedder.py`](backend/app/embedder.py), [`cluster.py`](backend/app/cluster.py)
+
+- Add `embed_text(texts: list[str]) -> np.ndarray` using OpenCLIP `encode_text` (same ViT-B-32 model).
+- In `_build_match_library`, also store per-category **name text embedding** (from `categories.name`, normalized).
+- When scoring an image vector against a category, take:
+
+  `score = max(visual_score, cosine(image, name_text_embedding))`
+
+- Image–text cosines sit lower than image–image; use a dedicated floor, e.g. accept name-text match when `text_sim >= 0.24` even if visual soft floor fails (tunable constant `NAME_TEXT_MATCH_FLOOR`).
+- Apply in both match passes and leftover-cluster centroid matching (centroid vs name text is weak — for clusters, keep visual; for **individual** files, name-text boost matters most).
+
+No new OCR dependency — uses existing OpenCLIP.
+
+## 2. Auto-advance when category empties — [`CategoryDetail.tsx`](frontend/src/pages/CategoryDetail.tsx)
+
+After **Move selected** succeeds:
+
+- If `selected.size` was the full set of images in this category (or remaining total becomes 0), `navigate` to `nextCat` if any, else `prevCat`, else `/categories`.
+
+After **Merge all** succeeds:
+
+- Source category is deleted — navigate to **next** category in the pre-merge `navCats` list (the one after current), falling back to merge target, then `/categories`. (Today it always jumps to the merge target; prefer continuing review down the list.)
+
+Invalidate queries as today before/after navigate.
+
+## Out of scope
+
+Full OCR pipeline, re-analyzing the whole library automatically (user can Re-analyze Uncategorized / Analyze after deploy).
+
+---
+
+<a id="chapter-265-throttle-inbox-scan-refetch"></a>
+
+## Chapter 265: Throttle inbox scan refetch
 
 > **Overview:** Stop reloading the full Inbox grid every few seconds during a scan. Keep lightweight status polling; refresh the grid once when the scan finishes (plus a much rarer mid-scan update if useful).
 
@@ -19542,9 +22105,9 @@ Same component handles trash: remove mid-scan trash list refetch; completion eff
 
 ---
 
-<a id="chapter-210-trash-view-and-restore"></a>
+<a id="chapter-266-trash-view-and-restore"></a>
 
-## Chapter 210: Trash view and restore
+## Chapter 266: Trash view and restore
 
 > **Overview:** Add a Trash page listing files in `.trash/`, with scan and restore back to the original location (from operations log). Requires soft-delete in apply (keep DB rows with location=trash) plus a small schema migration and new API endpoints.
 
@@ -19679,53 +22242,9 @@ Minimal — reuse `.page-header`, `.photo-grid`, toolbar pattern from [`Blurry.t
 
 ---
 
-<a id="chapter-211-update-cursor-book-submodule"></a>
+<a id="chapter-267-update-cursor-book-submodule"></a>
 
-## Chapter 211: Update cursor-book submodule
-
-> **Overview:** Bump imageOrganizer’s `tools/cursor-book` submodule to cursor-book v1.0.0 (HTML sibling output), regenerate the development book so `docs/DEVELOPMENT_BOOK.html` is committed, and sync the local skill for dual output.
-
-# Pull cursor-book update for the next book
-
-## What’s new upstream
-
-[`tools/cursor-book`](imageOrganizer/tools/cursor-book) is pinned at `36026cf`. Remote `main` / tag **`v1.0.0`** is at `7a276ef`:
-
-- Builder always writes a sibling **HTML** book next to the markdown (`output` → `.html`, or optional `output_html`)
-- Skill/README updated for dual commit (`DEVELOPMENT_BOOK.md` + `.html`)
-
-An untracked [`docs/DEVELOPMENT_BOOK.html`](imageOrganizer/docs/DEVELOPMENT_BOOK.html) already exists locally from a prior run; it is not in git yet.
-
-## Steps
-
-1. **Bump submodule** to `v1.0.0` (or `origin/main` — same commit):
-
-```bash
-cd tools/cursor-book && git fetch origin && git checkout v1.0.0
-cd ../.. && git add tools/cursor-book
-```
-
-2. **Optional config** — set `"output_html": "docs/DEVELOPMENT_BOOK.html"` in [`book.json`](imageOrganizer/book.json) to match the schema example (default already derives this from `output`).
-
-3. **Rebuild** via [`scripts/build_development_book.py`](imageOrganizer/scripts/build_development_book.py); expect both:
-
-   - `Wrote …/docs/DEVELOPMENT_BOOK.md`
-   - `Wrote …/docs/DEVELOPMENT_BOOK.html`
-
-4. **Sync consumer skill** — update [`.cursor/skills/development-book/SKILL.md`](imageOrganizer/.cursor/skills/development-book/SKILL.md) to mention committing both `.md` and `.html` (align with `tools/cursor-book/skills/development-book/SKILL.md`).
-
-5. **Commit** submodule pointer + regenerated books + skill (no app version bump / release unless you ask later — this is tooling for the next book).
-
-## Out of scope
-
-- Cutting `2026.07.23a` / a new app release
-- Changing ARCHITECTURE primary link away from the markdown book
-
----
-
-<a id="chapter-212-update-cursor-book-submodule"></a>
-
-## Chapter 212: Update cursor-book submodule
+## Chapter 267: Update cursor-book submodule
 
 > **Overview:** Bump imageOrganizer’s `tools/cursor-book` submodule to cursor-book v1.0.0 (HTML sibling output), regenerate the development book so `docs/DEVELOPMENT_BOOK.html` is committed, and sync the local skill for dual output.
 
@@ -19767,9 +22286,53 @@ cd ../.. && git add tools/cursor-book
 
 ---
 
-<a id="chapter-213-widen-content-max-width"></a>
+<a id="chapter-268-update-cursor-book-submodule"></a>
 
-## Chapter 213: Widen content max-width
+## Chapter 268: Update cursor-book submodule
+
+> **Overview:** Bump imageOrganizer’s `tools/cursor-book` submodule to cursor-book v1.0.0 (HTML sibling output), regenerate the development book so `docs/DEVELOPMENT_BOOK.html` is committed, and sync the local skill for dual output.
+
+# Pull cursor-book update for the next book
+
+## What’s new upstream
+
+[`tools/cursor-book`](imageOrganizer/tools/cursor-book) is pinned at `36026cf`. Remote `main` / tag **`v1.0.0`** is at `7a276ef`:
+
+- Builder always writes a sibling **HTML** book next to the markdown (`output` → `.html`, or optional `output_html`)
+- Skill/README updated for dual commit (`DEVELOPMENT_BOOK.md` + `.html`)
+
+An untracked [`docs/DEVELOPMENT_BOOK.html`](imageOrganizer/docs/DEVELOPMENT_BOOK.html) already exists locally from a prior run; it is not in git yet.
+
+## Steps
+
+1. **Bump submodule** to `v1.0.0` (or `origin/main` — same commit):
+
+```bash
+cd tools/cursor-book && git fetch origin && git checkout v1.0.0
+cd ../.. && git add tools/cursor-book
+```
+
+2. **Optional config** — set `"output_html": "docs/DEVELOPMENT_BOOK.html"` in [`book.json`](imageOrganizer/book.json) to match the schema example (default already derives this from `output`).
+
+3. **Rebuild** via [`scripts/build_development_book.py`](imageOrganizer/scripts/build_development_book.py); expect both:
+
+   - `Wrote …/docs/DEVELOPMENT_BOOK.md`
+   - `Wrote …/docs/DEVELOPMENT_BOOK.html`
+
+4. **Sync consumer skill** — update [`.cursor/skills/development-book/SKILL.md`](imageOrganizer/.cursor/skills/development-book/SKILL.md) to mention committing both `.md` and `.html` (align with `tools/cursor-book/skills/development-book/SKILL.md`).
+
+5. **Commit** submodule pointer + regenerated books + skill (no app version bump / release unless you ask later — this is tooling for the next book).
+
+## Out of scope
+
+- Cutting `2026.07.23a` / a new app release
+- Changing ARCHITECTURE primary link away from the markdown book
+
+---
+
+<a id="chapter-269-widen-content-max-width"></a>
+
+## Chapter 269: Widen content max-width
 
 > **Overview:** Widen the search form and results column from max-w-4xl to max-w-6xl so large screens use more horizontal space, matching the header width.
 
@@ -19794,9 +22357,9 @@ On a wide viewport, form and “All Options” table span roughly the same width
 
 ---
 
-<a id="chapter-214-widen-content-max-width"></a>
+<a id="chapter-270-widen-content-max-width"></a>
 
-## Chapter 214: Widen content max-width
+## Chapter 270: Widen content max-width
 
 > **Overview:** Widen the search form and results column from max-w-4xl to max-w-6xl so large screens use more horizontal space, matching the header width.
 

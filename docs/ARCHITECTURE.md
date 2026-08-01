@@ -50,7 +50,7 @@ Full interactive API spec: `http://localhost:8000/docs` when the backend is runn
 | `models.py` | Pydantic request/response models |
 | `config.py` | Paths, supported extensions, env vars |
 | `scanner.py` | Background scan of inbox/archive into `files`; releases before duplicate rebuild |
-| `metadata.py` | EXIF/ffprobe extraction, thumbnails |
+| `metadata.py` | EXIF/ffprobe extraction, thumbnails; capture fallback: birthtime when mtime is today, else mtime |
 | `video_play.py` | Browser-safe video for detail viewer: codec probe + cached H.264/AAC MP4 under `{APP_DATA_DIR}/video_play/` |
 | `image_rotate.py` | 90° left/right pixel rotate; preserves EXIF, normalizes Orientation |
 | `organizer.py` | Date-folder and rename preview/apply |
@@ -165,7 +165,7 @@ Supported media: common image formats (JPEG, PNG, HEIC, WebP, TIFF) and video (M
 
 1. User triggers scan (inbox or archive) → `POST /api/scan/inbox` or `/archive`.
 2. `scanner.py` claims the scan mutex immediately, then walks the folder in a background thread; status via `GET /api/scan/status` (`phase`: `scanning` → `pruning`).
-3. For each file: read metadata (`metadata.py`), compute SHA256/pHash, upsert `files` row, generate thumbnail.
+3. For each file: read metadata (`metadata.py`), compute SHA256/pHash, upsert `files` row, generate thumbnail. Capture date resolution: EXIF/ffprobe → filesystem birthtime when mtime is today and birth is older → else mtime. Unchanged-mtime rows with `capture_day` = today are repaired from birthtime without rehashing.
 4. After prune, the scan mutex is released (`running=false`). Inbox/archive scans then kick a **background duplicate-index rebuild** (`phase=building_duplicates`) that does not block a new scan.
 5. Scan and blur analysis are mutually exclusive (409 if the other is running). Dedupe rebuild does not block scan or blur. The UI disables Scan and shows a reason while sharpness analysis is active; the running flag always clears when the scan job finishes or fails.
 
@@ -193,9 +193,9 @@ The Inbox **Delete queue** filter (`pending_delete=true`) is separate: it shows 
 
 ### 5. Deduplication
 
-1. After inbox/archive scan, `start_dedupe_rebuild_background()` rebuilds groups (single-flight; coalesces if another scan finishes mid-rebuild). Exact SHA writes and perceptual writes use short commits; the O(n²) pHash pass runs with **no open DB connection** so Calendar and other APIs stay responsive.
+1. After inbox/archive scan, `start_dedupe_rebuild_background()` rebuilds groups (single-flight; coalesces if another scan finishes mid-rebuild). Exact SHA and pHash candidate lists are read first; the O(n²) pHash pass runs with **no open DB connection**; then groups are replaced in one commit so a failed rebuild cannot leave an empty index.
 2. `dedupe.py` groups by SHA256 (exact) and pHash distance (perceptual), **excluding `location='trash'`**. The Duplicates API also omits trash members and drops groups with fewer than two remaining files.
-3. UI at `/duplicates`; user picks keeper per group → `PATCH /api/duplicates/{id}/keeper`.
+3. UI at `/duplicates`; **Rebuild index** (`POST /api/duplicates/rebuild`) starts the same background job without a full media scan; user picks keeper per group → `PATCH /api/duplicates/{id}/keeper`.
 
 ### 6. Blur detection
 
@@ -297,7 +297,7 @@ Grouped by domain. See `/docs` for parameters and schemas.
 | People | CRUD, merge, assign-ids, unassign-ids |
 | Tags | CRUD, merge, assign-ids, unassign-ids, `GET /api/tags/cooccurring` |
 | Browse filters | `GET /api/browse/cooccurring` (tags + people + cameras in AND selection) |
-| Duplicates | `GET /api/duplicates`, `PATCH .../keeper` |
+| Duplicates | `GET /api/duplicates`, `POST /api/duplicates/rebuild`, `PATCH .../keeper` |
 | Review / organize | preview, decisions, cancel (restore delete), queue, apply |
 | Operations | `GET /api/operations` |
 | Trash | `GET /api/files?location=trash`, `POST /api/trash/restore` |

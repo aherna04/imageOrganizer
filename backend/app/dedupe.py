@@ -1,3 +1,4 @@
+import logging
 import re
 import sqlite3
 import threading
@@ -7,6 +8,8 @@ import imagehash
 
 from app.config import PHASH_THRESHOLD
 from app.db import get_conn
+
+logger = logging.getLogger(__name__)
 
 _COPY_SUFFIX = re.compile(r"(?:[\s_]\(\d+\)|_\(\d+\))(?=\.[^.]+$)")
 _ACTIVE_LOCATIONS_SQL = "location IN ('inbox', 'archive')"
@@ -45,7 +48,7 @@ def _load_group_files(conn: sqlite3.Connection, file_ids: list[int]) -> list[sql
     ).fetchall()
 
 
-def reconcile_default_keepers(conn: sqlite3.Connection) -> None:
+def reconcile_default_keepers(conn: sqlite3.Connection, *, commit: bool = True) -> None:
     groups = conn.execute("SELECT * FROM duplicate_groups").fetchall()
     for g in groups:
         file_rows = conn.execute(
@@ -75,7 +78,8 @@ def reconcile_default_keepers(conn: sqlite3.Connection) -> None:
                 "UPDATE duplicate_groups SET keeper_id = ? WHERE id = ?",
                 (choose_default_keeper(file_rows), g["id"]),
             )
-    conn.commit()
+    if commit:
+        conn.commit()
 
 
 def merge_labels_to_keeper(
@@ -176,12 +180,8 @@ def _compute_perceptual_groups(phash_rows: list[tuple[int, str]]) -> list[list[i
     return groups
 
 
-def _rebuild_exact_groups(conn: sqlite3.Connection) -> list[tuple[int, str]]:
-    """Clear groups, write exact SHA clusters; return phash pairs for offline compute."""
-    conn.execute("DELETE FROM duplicate_members")
-    conn.execute("DELETE FROM duplicate_groups")
-    conn.commit()
-
+def _load_exact_id_groups(conn: sqlite3.Connection) -> list[list[int]]:
+    """Read SHA256 clusters with 2+ active files (no writes)."""
     sha_rows = conn.execute(
         f"""
         SELECT sha256, GROUP_CONCAT(id) AS ids
@@ -192,25 +192,16 @@ def _rebuild_exact_groups(conn: sqlite3.Connection) -> list[tuple[int, str]]:
         HAVING COUNT(*) > 1
         """
     ).fetchall()
+    groups: list[list[int]] = []
     for row in sha_rows:
         ids = [int(x) for x in row["ids"].split(",")]
         file_rows = _load_group_files(conn, ids)
-        if len(file_rows) < 2:
-            continue
-        keeper_id = choose_default_keeper(file_rows)
-        cur = conn.execute(
-            "INSERT INTO duplicate_groups (group_type, keeper_id) VALUES ('exact', ?)",
-            (keeper_id,),
-        )
-        gid = cur.lastrowid
-        for f in file_rows:
-            conn.execute(
-                "INSERT INTO duplicate_members (group_id, file_id) VALUES (?, ?)",
-                (gid, f["id"]),
-            )
-        conn.commit()
-        time.sleep(0)
+        if len(file_rows) >= 2:
+            groups.append([int(f["id"]) for f in file_rows])
+    return groups
 
+
+def _load_phash_pairs(conn: sqlite3.Connection) -> list[tuple[int, str]]:
     phash_rows = conn.execute(
         f"""
         SELECT id, phash FROM files
@@ -218,31 +209,42 @@ def _rebuild_exact_groups(conn: sqlite3.Connection) -> list[tuple[int, str]]:
           AND {_ACTIVE_LOCATIONS_SQL}
         """
     ).fetchall()
-    conn.commit()
     return [(int(r["id"]), r["phash"]) for r in phash_rows]
 
 
-def _write_perceptual_groups(
-    conn: sqlite3.Connection, perceptual_groups: list[list[int]]
+def _insert_group(
+    conn: sqlite3.Connection, group_type: str, file_ids: list[int]
 ) -> None:
-    for group_ids in perceptual_groups:
-        file_rows = _load_group_files(conn, group_ids)
-        if len(file_rows) < 2:
-            continue
-        keeper_id = choose_default_keeper(file_rows)
-        cur = conn.execute(
-            "INSERT INTO duplicate_groups (group_type, keeper_id) VALUES ('perceptual', ?)",
-            (keeper_id,),
+    file_rows = _load_group_files(conn, file_ids)
+    if len(file_rows) < 2:
+        return
+    keeper_id = choose_default_keeper(file_rows)
+    cur = conn.execute(
+        "INSERT INTO duplicate_groups (group_type, keeper_id) VALUES (?, ?)",
+        (group_type, keeper_id),
+    )
+    gid = cur.lastrowid
+    for f in file_rows:
+        conn.execute(
+            "INSERT INTO duplicate_members (group_id, file_id) VALUES (?, ?)",
+            (gid, f["id"]),
         )
-        gid = cur.lastrowid
-        for f in file_rows:
-            conn.execute(
-                "INSERT INTO duplicate_members (group_id, file_id) VALUES (?, ?)",
-                (gid, f["id"]),
-            )
-        conn.commit()
-        time.sleep(0)
-    reconcile_default_keepers(conn)
+
+
+def _replace_duplicate_index(
+    conn: sqlite3.Connection,
+    exact_groups: list[list[int]],
+    perceptual_groups: list[list[int]],
+) -> None:
+    """Wipe and rewrite the duplicate index in one commit (caller commits)."""
+    conn.execute("DELETE FROM duplicate_members")
+    conn.execute("DELETE FROM duplicate_groups")
+    for ids in exact_groups:
+        _insert_group(conn, "exact", ids)
+    for ids in perceptual_groups:
+        _insert_group(conn, "perceptual", ids)
+    reconcile_default_keepers(conn, commit=False)
+    conn.commit()
 
 
 def rebuild_duplicate_groups(conn: sqlite3.Connection) -> None:
@@ -251,9 +253,10 @@ def rebuild_duplicate_groups(conn: sqlite3.Connection) -> None:
     Prefer `_run_dedupe_rebuild` in production so the O(n²) pHash pass runs
     with no open DB connection.
     """
-    phash_pairs = _rebuild_exact_groups(conn)
+    exact_groups = _load_exact_id_groups(conn)
+    phash_pairs = _load_phash_pairs(conn)
     perceptual_groups = _compute_perceptual_groups(phash_pairs)
-    _write_perceptual_groups(conn, perceptual_groups)
+    _replace_duplicate_index(conn, exact_groups, perceptual_groups)
 
 
 def get_duplicate_groups(conn: sqlite3.Connection) -> list[dict]:
@@ -334,13 +337,14 @@ def _run_dedupe_rebuild() -> None:
     while True:
         try:
             with get_conn() as conn:
-                phash_pairs = _rebuild_exact_groups(conn)
+                exact_groups = _load_exact_id_groups(conn)
+                phash_pairs = _load_phash_pairs(conn)
             # CPU-bound; no DB connection held so Calendar can use WAL freely.
             perceptual_groups = _compute_perceptual_groups(phash_pairs)
             with get_conn() as conn:
-                _write_perceptual_groups(conn, perceptual_groups)
+                _replace_duplicate_index(conn, exact_groups, perceptual_groups)
         except Exception:
-            pass
+            logger.exception("Duplicate index rebuild failed; previous groups left unchanged")
         if not dedupe_state.finish_or_rerun():
             break
 

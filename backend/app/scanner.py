@@ -1,4 +1,5 @@
 import threading
+from datetime import date
 from pathlib import Path
 
 from app.db import get_config, get_conn
@@ -7,6 +8,7 @@ from app.metadata import (
     compute_phash,
     compute_sha256,
     extract_metadata,
+    filesystem_fallback_datetime,
     iter_media_files,
 )
 
@@ -112,9 +114,25 @@ def _scan_root(scope: str, cfg: dict[str, str]) -> Path:
 
 
 def _upsert_file(conn, path: Path, location: str) -> None:
-    existing = conn.execute("SELECT id, mtime FROM files WHERE path = ?", (str(path),)).fetchone()
+    existing = conn.execute(
+        "SELECT id, mtime, capture_day FROM files WHERE path = ?",
+        (str(path),),
+    ).fetchone()
     meta = extract_metadata(path)
     if existing and existing["mtime"] == meta["mtime"]:
+        today = date.today().isoformat()
+        if existing["capture_day"] == today:
+            fallback = filesystem_fallback_datetime(path)
+            new_day = fallback.date().isoformat()
+            if new_day != today:
+                conn.execute(
+                    """
+                    UPDATE files
+                    SET capture_date = ?, capture_day = ?, updated_at = datetime('now')
+                    WHERE id = ?
+                    """,
+                    (fallback.isoformat(), new_day, existing["id"]),
+                )
         return
     sha = compute_sha256(path)
     phash = compute_phash(path)

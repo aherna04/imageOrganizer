@@ -4,6 +4,22 @@ Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
 ## [Unreleased]
 
+## [2026.08.01] - 2026-08-01
+
+### Added
+
+- Browse tag/person/camera results paginate (100 per page) with Prev/Next
+- Duplicates **Rebuild index** (`POST /api/duplicates/rebuild`) — rebuild SHA/pHash groups without a full media scan
+
+### Changed
+
+- Browse tag/person Delete is a quiet trailing trash icon (after Label photos), not a large red button
+
+### Fixed
+
+- When EXIF/ffprobe leave no capture date and file mtime is today, prefer filesystem creation (birth) time if older; next scan repairs already-indexed “today” rows without rehashing
+- Duplicate index rebuild no longer deletes groups before the new index is ready (failed rebuilds leave the previous index intact); rebuild errors are logged
+
 ## [2026.07.28] - 2026-07-28
 
 ### Added

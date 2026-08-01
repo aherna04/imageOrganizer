@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { MediaFile, Person, Tag, api } from "../api/client";
-import BrowseLabelManage from "../components/BrowseLabelManage";
+import BrowseLabelManage, { BrowseLabelDeleteButton } from "../components/BrowseLabelManage";
 import BulkEventAssignBar from "../components/BulkEventAssignBar";
 import BulkLabelEditors from "../components/BulkLabelEditors";
 import PhotoGridWithAlerts from "../components/PhotoGridWithAlerts";
@@ -12,6 +12,8 @@ import { invalidateAfterDateChange } from "../utils/invalidateAfterDateChange";
 import { invalidateAfterLabelChange } from "../utils/invalidateAfterLabelChange";
 import { personLabel } from "../utils/personLabel";
 import { togglePhotoSelection } from "../utils/photoSelection";
+
+const PAGE_SIZE = 100;
 
 function browseFilterPath(opts: {
   tagSlugs?: string[];
@@ -36,6 +38,7 @@ export default function BrowsePage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
   const [detailFile, setDetailFile] = useState<MediaFile | null>(null);
   const [labelMode, setLabelMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
@@ -128,6 +131,7 @@ export default function BrowsePage() {
     selectedTagIds.join(","),
     selectedPersonIds.join(","),
     selectedCameraNames.join("\0"),
+    page,
   ] as const;
 
   const { data: photos, refetch: refetchPhotos } = useQuery({
@@ -137,7 +141,8 @@ export default function BrowsePage() {
         tag_id: selectedTagIds.length ? selectedTagIds : undefined,
         person_id: selectedPersonIds.length ? selectedPersonIds : undefined,
         camera: selectedCameraNames.length ? selectedCameraNames : undefined,
-        page_size: 200,
+        page,
+        page_size: PAGE_SIZE,
       }),
     enabled: hasSelection && filtersResolved,
   });
@@ -163,8 +168,10 @@ export default function BrowsePage() {
   const cooccurringCameras = cooccurringData?.cameras ?? [];
 
   useEffect(() => {
+    setPage(1);
     setSelectedIds([]);
     selectionAnchorRef.current = null;
+    setDetailFile(null);
   }, [selectedTagIds.join(","), selectedPersonIds.join(","), selectedCameraNames.join("\0")]);
 
   const catalogPeople = useMemo(() => {
@@ -239,6 +246,20 @@ export default function BrowsePage() {
     setLabelMode(false);
     setSelectedIds([]);
     selectionAnchorRef.current = null;
+  };
+
+  const total = photos?.total ?? 0;
+  const pageSize = photos?.page_size ?? PAGE_SIZE;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const rangeStart = total === 0 ? 0 : (page - 1) * pageSize + 1;
+  const rangeEnd = Math.min(page * pageSize, total);
+  const showPagination = total > PAGE_SIZE;
+
+  const goToPage = (nextPage: number) => {
+    setPage(nextPage);
+    setSelectedIds([]);
+    selectionAnchorRef.current = null;
+    setDetailFile(null);
   };
 
   const addTagSlug = (nextSlug: string) => {
@@ -477,6 +498,14 @@ export default function BrowsePage() {
                       Label photos
                     </button>
                   )}
+                  {manageLabel && (
+                    <BrowseLabelDeleteButton
+                      key={`delete-${manageLabel.kind}-${manageLabel.entity.id}`}
+                      kind={manageLabel.kind}
+                      entity={manageLabel.entity}
+                      people={people}
+                    />
+                  )}
                 </div>
               </div>
 
@@ -557,6 +586,35 @@ export default function BrowsePage() {
                     />
                   )}
                 </>
+              )}
+
+              {showPagination && (
+                <div className="calendar-day-pagination">
+                  <span className="calendar-day-pagination-label">
+                    {total} photos · {rangeStart}–{rangeEnd}
+                  </span>
+                  <div className="calendar-day-pagination-controls">
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      disabled={page <= 1}
+                      onClick={() => goToPage(page - 1)}
+                    >
+                      Prev
+                    </button>
+                    <span className="calendar-day-pagination-page">
+                      Page {page} of {totalPages}
+                    </span>
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      disabled={page >= totalPages}
+                      onClick={() => goToPage(page + 1)}
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
               )}
 
               <PhotoGridWithAlerts

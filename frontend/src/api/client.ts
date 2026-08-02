@@ -60,6 +60,25 @@ export interface FileList {
   page_size: number;
 }
 
+export interface BrowseVennSet {
+  key: string;
+  kind: "person" | "tag" | "camera";
+  id: number | null;
+  name: string;
+  slug: string | null;
+  size: number;
+}
+
+export interface BrowseVennRegion {
+  members: string[];
+  count: number;
+}
+
+export interface BrowseVenn {
+  sets: BrowseVennSet[];
+  regions: BrowseVennRegion[];
+}
+
 export interface Config {
   inbox_path: string;
   archive_path: string;
@@ -524,6 +543,19 @@ export const api = {
     return request<{ tags: Tag[]; people: Person[]; cameras: InboxUsedCamera[] }>(
       `/api/browse/cooccurring?${q}`,
     );
+  },
+  listBrowseVenn: (opts: {
+    tagIds?: number[];
+    personIds?: number[];
+    cameraNames?: string[];
+    location?: string;
+  }) => {
+    const q = new URLSearchParams();
+    (opts.tagIds ?? []).forEach((id) => q.append("tag_id", String(id)));
+    (opts.personIds ?? []).forEach((id) => q.append("person_id", String(id)));
+    (opts.cameraNames ?? []).forEach((name) => q.append("camera", name));
+    if (opts.location) q.set("location", opts.location);
+    return request<BrowseVenn>(`/api/browse/venn?${q}`);
   },
   createTag: (name: string) =>
     request<Tag>("/api/tags", { method: "POST", body: JSON.stringify({ name }) }),

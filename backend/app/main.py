@@ -71,6 +71,9 @@ from app.models import (
     FixDatesFromFilenameOut,
     InboxPeopleOut,
     BrowseCooccurringOut,
+    BrowseVennOut,
+    BrowseVennRegionOut,
+    BrowseVennSetOut,
     InboxCameraOut,
     InboxCamerasOut,
     InboxTagsOut,
@@ -124,7 +127,7 @@ from app.scanner import combined_scan_status, scan_state, start_scan_background
 from app.blur_analysis import blur_analysis_state, start_blur_analysis_background
 from app.trash_restore import restore_from_trash
 
-app = FastAPI(title="Image Organizer", version="2026.08.01")
+app = FastAPI(title="Image Organizer", version="2026.08.02")
 
 app.add_middleware(
     CORSMiddleware,
@@ -1238,6 +1241,167 @@ def api_browse_cooccurring(
         location=location,
         media_type=media_type,
     )
+
+
+@app.get("/api/browse/venn", response_model=BrowseVennOut)
+def api_browse_venn(
+    tag_id: list[int] = Query(default=[]),
+    person_id: list[int] = Query(default=[]),
+    camera: list[str] = Query(default=[]),
+    location: str | None = None,
+    media_type: Literal["image", "video"] | None = None,
+):
+    """Exclusive Venn region counts for 2–5 Browse labels (people/tags/cameras)."""
+    return _browse_venn(
+        tag_ids=tag_id,
+        person_ids=person_id,
+        cameras=camera,
+        location=location,
+        media_type=media_type,
+    )
+
+
+def _browse_venn(
+    *,
+    tag_ids: list[int],
+    person_ids: list[int],
+    cameras: list[str],
+    location: str | None,
+    media_type: Literal["image", "video"] | None,
+) -> BrowseVennOut:
+    tag_ids = list(dict.fromkeys(tag_ids))
+    person_ids = list(dict.fromkeys(person_ids))
+    cameras = list(dict.fromkeys(c for c in cameras if c))
+    n = len(tag_ids) + len(person_ids) + len(cameras)
+    if n not in (2, 3, 4, 5):
+        raise HTTPException(
+            status_code=400,
+            detail="exactly 2 to 5 tag_id/person_id/camera labels are required",
+        )
+
+    scope_clauses: list[str] = []
+    scope_params: list = []
+    if location:
+        scope_clauses.append("f.location = ?")
+        scope_params.append(location)
+    else:
+        scope_clauses.append("f.location IN ('inbox', 'archive')")
+        scope_clauses.append(NOT_QUEUED_F.strip())
+    append_media_type_filter(scope_clauses, scope_params, "f.filename", media_type)
+    scope_where = " AND ".join(scope_clauses)
+
+    with get_conn() as conn:
+        # Build ordered set descriptors (people, then tags, then cameras).
+        set_meta: list[dict] = []
+        presence_exprs: list[str] = []
+        presence_params: list = []
+
+        for pid in person_ids:
+            row = conn.execute(
+                "SELECT id, name, slug FROM people WHERE id = ?", (pid,)
+            ).fetchone()
+            if not row:
+                raise HTTPException(status_code=404, detail=f"person_id {pid} not found")
+            key = f"person:{row['id']}"
+            set_meta.append(
+                {
+                    "key": key,
+                    "kind": "person",
+                    "id": row["id"],
+                    "name": row["name"],
+                    "slug": row["slug"],
+                }
+            )
+            presence_exprs.append(
+                "EXISTS (SELECT 1 FROM file_people fp "
+                "WHERE fp.file_id = f.id AND fp.person_id = ?)"
+            )
+            presence_params.append(pid)
+
+        for tid in tag_ids:
+            row = conn.execute(
+                "SELECT id, name, slug FROM tags WHERE id = ?", (tid,)
+            ).fetchone()
+            if not row:
+                raise HTTPException(status_code=404, detail=f"tag_id {tid} not found")
+            key = f"tag:{row['id']}"
+            set_meta.append(
+                {
+                    "key": key,
+                    "kind": "tag",
+                    "id": row["id"],
+                    "name": row["name"],
+                    "slug": row["slug"],
+                }
+            )
+            presence_exprs.append(
+                "EXISTS (SELECT 1 FROM file_tags ft "
+                "WHERE ft.file_id = f.id AND ft.tag_id = ?)"
+            )
+            presence_params.append(tid)
+
+        for cam in cameras:
+            key = f"camera:{cam}"
+            set_meta.append(
+                {
+                    "key": key,
+                    "kind": "camera",
+                    "id": None,
+                    "name": cam,
+                    "slug": None,
+                }
+            )
+            presence_exprs.append("f.camera = ?")
+            presence_params.append(cam)
+
+        mask_parts = [
+            f"(CASE WHEN ({expr}) THEN {1 << i} ELSE 0 END)"
+            for i, expr in enumerate(presence_exprs)
+        ]
+        mask_expr = " + ".join(mask_parts)
+
+        rows = conn.execute(
+            f"""
+            SELECT mask, COUNT(*) AS cnt
+            FROM (
+                SELECT ({mask_expr}) AS mask
+                FROM files f
+                WHERE {scope_where}
+            ) AS t
+            WHERE mask > 0
+            GROUP BY mask
+            """,
+            [*presence_params, *scope_params],
+        ).fetchall()
+
+    mask_counts = {int(r["mask"]): int(r["cnt"]) for r in rows}
+    n_sets = len(set_meta)
+    sizes = [0] * n_sets
+    for mask, cnt in mask_counts.items():
+        for i in range(n_sets):
+            if mask & (1 << i):
+                sizes[i] += cnt
+
+    sets_out = [
+        BrowseVennSetOut(
+            key=m["key"],
+            kind=m["kind"],
+            id=m["id"],
+            name=m["name"],
+            slug=m["slug"],
+            size=sizes[i],
+        )
+        for i, m in enumerate(set_meta)
+    ]
+
+    regions: list[BrowseVennRegionOut] = []
+    for mask in range(1, 1 << n_sets):
+        members = [set_meta[i]["key"] for i in range(n_sets) if mask & (1 << i)]
+        regions.append(
+            BrowseVennRegionOut(members=members, count=mask_counts.get(mask, 0))
+        )
+
+    return BrowseVennOut(sets=sets_out, regions=regions)
 
 
 def _browse_cooccurring(

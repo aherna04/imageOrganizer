@@ -257,6 +257,25 @@ class BrowseCooccurringOut(BaseModel):
     cameras: list[InboxCameraOut]
 
 
+class BrowseVennSetOut(BaseModel):
+    key: str
+    kind: Literal["person", "tag", "camera"]
+    id: int | None = None
+    name: str
+    slug: str | None = None
+    size: int
+
+
+class BrowseVennRegionOut(BaseModel):
+    members: list[str]
+    count: int
+
+
+class BrowseVennOut(BaseModel):
+    sets: list[BrowseVennSetOut]
+    regions: list[BrowseVennRegionOut]
+
+
 class InboxPeopleOut(BaseModel):
     people: list[CalendarMonthPersonOut]
 

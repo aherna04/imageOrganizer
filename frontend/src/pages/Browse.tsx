@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { MediaFile, Person, Tag, api } from "../api/client";
 import BrowseLabelManage, { BrowseLabelDeleteButton } from "../components/BrowseLabelManage";
+import BrowseVennDiagram from "../components/BrowseVennDiagram";
 import BulkEventAssignBar from "../components/BulkEventAssignBar";
 import BulkLabelEditors from "../components/BulkLabelEditors";
 import PhotoGridWithAlerts from "../components/PhotoGridWithAlerts";
@@ -19,6 +20,7 @@ function browseFilterPath(opts: {
   tagSlugs?: string[];
   personSlugs?: string[];
   cameraNames?: string[];
+  view?: "venn";
 }) {
   const tags = opts.tagSlugs ?? [];
   const persons = opts.personSlugs ?? [];
@@ -28,7 +30,17 @@ function browseFilterPath(opts: {
   for (const slug of tags) q.append("tag", slug);
   for (const slug of persons) q.append("person", slug);
   for (const name of cameras) q.append("camera", name);
+  if (opts.view === "venn") q.set("view", "venn");
   return `/browse/tags?${q.toString()}`;
+}
+
+function VennIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" className="browse-view-toggle-icon">
+      <circle cx="9" cy="12" r="6.5" fill="none" stroke="currentColor" strokeWidth="1.75" />
+      <circle cx="15" cy="12" r="6.5" fill="none" stroke="currentColor" strokeWidth="1.75" />
+    </svg>
+  );
 }
 
 export default function BrowsePage() {
@@ -125,6 +137,11 @@ export default function BrowsePage() {
   const filtersResolved =
     selectedTagIds.length === selectedTagSlugs.length &&
     selectedPersonIds.length === selectedPersonSlugs.length;
+  const viewMode = searchParams.get("view") === "venn" ? "venn" : "photos";
+  const selectedLabelCount =
+    selectedTagSlugs.length + selectedPersonSlugs.length + selectedCameraNames.length;
+  const vennEligible = selectedLabelCount >= 2 && selectedLabelCount <= 5 && filtersResolved;
+  const filterView = viewMode === "venn" ? ("venn" as const) : undefined;
 
   const browseFilesKey = [
     "browse-files",
@@ -161,6 +178,22 @@ export default function BrowsePage() {
         cameraNames: selectedCameraNames,
       }),
     enabled: hasSelection && filtersResolved,
+  });
+
+  const { data: vennData, isLoading: vennLoading, isError: vennError } = useQuery({
+    queryKey: [
+      "browse-venn",
+      selectedTagIds.join(","),
+      selectedPersonIds.join(","),
+      selectedCameraNames.join("\0"),
+    ],
+    queryFn: () =>
+      api.listBrowseVenn({
+        tagIds: selectedTagIds,
+        personIds: selectedPersonIds,
+        cameraNames: selectedCameraNames,
+      }),
+    enabled: viewMode === "venn" && vennEligible,
   });
 
   const cooccurringTags = cooccurringData?.tags ?? [];
@@ -215,6 +248,24 @@ export default function BrowsePage() {
   const invalidateBrowseFiles = () => {
     qc.invalidateQueries({ queryKey: ["browse-files"] });
     qc.invalidateQueries({ queryKey: ["browse-cooccurring"] });
+    qc.invalidateQueries({ queryKey: ["browse-venn"] });
+  };
+
+  const setViewMode = (mode: "photos" | "venn") => {
+    if (mode === "venn") {
+      setLabelMode(false);
+      setSelectedIds([]);
+      selectionAnchorRef.current = null;
+      setDetailFile(null);
+    }
+    navigate(
+      browseFilterPath({
+        tagSlugs: selectedTagSlugs,
+        personSlugs: selectedPersonSlugs,
+        cameraNames: selectedCameraNames,
+        view: mode === "venn" ? "venn" : undefined,
+      }),
+    );
   };
 
   const toggleSelect = (id: number, event: React.MouseEvent) => {
@@ -269,6 +320,7 @@ export default function BrowsePage() {
         tagSlugs: [...selectedTagSlugs, nextSlug],
         personSlugs: selectedPersonSlugs,
         cameraNames: selectedCameraNames,
+        view: filterView,
       }),
     );
   };
@@ -280,6 +332,7 @@ export default function BrowsePage() {
         tagSlugs: selectedTagSlugs,
         personSlugs: [...selectedPersonSlugs, nextSlug],
         cameraNames: selectedCameraNames,
+        view: filterView,
       }),
     );
   };
@@ -291,6 +344,7 @@ export default function BrowsePage() {
         tagSlugs: selectedTagSlugs,
         personSlugs: selectedPersonSlugs,
         cameraNames: [...selectedCameraNames, name],
+        view: filterView,
       }),
     );
   };
@@ -301,6 +355,7 @@ export default function BrowsePage() {
         tagSlugs: selectedTagSlugs.filter((s) => s !== removeSlug),
         personSlugs: selectedPersonSlugs,
         cameraNames: selectedCameraNames,
+        view: filterView,
       }),
     );
   };
@@ -311,6 +366,7 @@ export default function BrowsePage() {
         tagSlugs: selectedTagSlugs,
         personSlugs: selectedPersonSlugs.filter((s) => s !== removeSlug),
         cameraNames: selectedCameraNames,
+        view: filterView,
       }),
     );
   };
@@ -321,6 +377,7 @@ export default function BrowsePage() {
         tagSlugs: selectedTagSlugs,
         personSlugs: selectedPersonSlugs,
         cameraNames: selectedCameraNames.filter((c) => c !== name),
+        view: filterView,
       }),
     );
   };
@@ -477,10 +534,27 @@ export default function BrowsePage() {
               <div className={`browse-results-header${labelMode ? " browse-results-header-label-mode" : ""}`}>
                 <h3>{selectionLabel}</h3>
                 <div className="browse-results-header-actions">
+                  <div className="browse-view-toggle" role="group" aria-label="Browse view">
+                    <button
+                      type="button"
+                      className={`browse-view-toggle-btn${viewMode === "photos" ? " is-active" : ""}`}
+                      onClick={() => setViewMode("photos")}
+                    >
+                      Photos
+                    </button>
+                    <button
+                      type="button"
+                      className={`browse-view-toggle-btn${viewMode === "venn" ? " is-active" : ""}`}
+                      onClick={() => setViewMode("venn")}
+                    >
+                      <VennIcon />
+                      Venn
+                    </button>
+                  </div>
                   <span className="badge browse-results-count">
                     {photos?.total ?? 0} photos
                   </span>
-                  {manageLabel && (
+                  {viewMode === "photos" && manageLabel && (
                     <BrowseLabelManage
                       key={`${manageLabel.kind}-${manageLabel.entity.id}`}
                       kind={manageLabel.kind}
@@ -489,16 +563,17 @@ export default function BrowsePage() {
                       tags={tags}
                     />
                   )}
-                  {labelMode ? (
-                    <button type="button" className="btn btn-secondary" onClick={exitLabelMode}>
-                      Done labeling
-                    </button>
-                  ) : (
-                    <button type="button" className="btn btn-secondary" onClick={() => setLabelMode(true)}>
-                      Label photos
-                    </button>
-                  )}
-                  {manageLabel && (
+                  {viewMode === "photos" &&
+                    (labelMode ? (
+                      <button type="button" className="btn btn-secondary" onClick={exitLabelMode}>
+                        Done labeling
+                      </button>
+                    ) : (
+                      <button type="button" className="btn btn-secondary" onClick={() => setLabelMode(true)}>
+                        Label photos
+                      </button>
+                    ))}
+                  {viewMode === "photos" && manageLabel && (
                     <BrowseLabelDeleteButton
                       key={`delete-${manageLabel.kind}-${manageLabel.entity.id}`}
                       kind={manageLabel.kind}
@@ -551,92 +626,113 @@ export default function BrowsePage() {
                 </button>
               </div>
 
-              {labelMode && (
+              {viewMode === "venn" ? (
+                <div className="browse-venn-panel">
+                  {!vennEligible ? (
+                    <div className="empty-state">
+                      Select 2–5 people, tags, or cameras to show a Venn diagram.
+                    </div>
+                  ) : vennLoading ? (
+                    <div className="empty-state">Loading Venn diagram…</div>
+                  ) : vennError || !vennData ? (
+                    <div className="empty-state">Could not load Venn counts.</div>
+                  ) : (
+                    <BrowseVennDiagram
+                      data={vennData}
+                      onOpenIntersectionPhotos={() => setViewMode("photos")}
+                    />
+                  )}
+                </div>
+              ) : (
                 <>
-                  <BulkEventAssignBar
-                    selectedIds={selectedIds}
-                    totalCount={photos?.total}
-                    onSelectAll={() => setSelectedIds(photos?.items.map((f) => f.id) ?? [])}
-                    onClear={() => {
-                      setSelectedIds([]);
-                      selectionAnchorRef.current = null;
-                    }}
-                  />
+                  {labelMode && (
+                    <>
+                      <BulkEventAssignBar
+                        selectedIds={selectedIds}
+                        totalCount={photos?.total}
+                        onSelectAll={() => setSelectedIds(photos?.items.map((f) => f.id) ?? [])}
+                        onClear={() => {
+                          setSelectedIds([]);
+                          selectionAnchorRef.current = null;
+                        }}
+                      />
 
-                  {selectedIds.length === 1 && selectedFiles[0] && (
-                    <SingleFileLabelEditors
-                      file={selectedFiles[0]}
-                      onLabelsChange={handleLabelsChange}
-                      onDateChange={() => {
-                        invalidateAfterDateChange(qc);
-                        invalidateBrowseFiles();
-                      }}
-                      showTagSearch
-                    />
+                      {selectedIds.length === 1 && selectedFiles[0] && (
+                        <SingleFileLabelEditors
+                          file={selectedFiles[0]}
+                          onLabelsChange={handleLabelsChange}
+                          onDateChange={() => {
+                            invalidateAfterDateChange(qc);
+                            invalidateBrowseFiles();
+                          }}
+                          showTagSearch
+                        />
+                      )}
+                      {selectedIds.length >= 2 && (
+                        <BulkLabelEditors
+                          selectedFiles={selectedFiles}
+                          onLabelsChange={handleLabelsChange}
+                          onDateChange={() => {
+                            invalidateAfterDateChange(qc);
+                            invalidateBrowseFiles();
+                          }}
+                          showTagSearch
+                        />
+                      )}
+                    </>
                   )}
-                  {selectedIds.length >= 2 && (
-                    <BulkLabelEditors
-                      selectedFiles={selectedFiles}
-                      onLabelsChange={handleLabelsChange}
-                      onDateChange={() => {
-                        invalidateAfterDateChange(qc);
-                        invalidateBrowseFiles();
-                      }}
-                      showTagSearch
-                    />
+
+                  {showPagination && (
+                    <div className="calendar-day-pagination">
+                      <span className="calendar-day-pagination-label">
+                        {total} photos · {rangeStart}–{rangeEnd}
+                      </span>
+                      <div className="calendar-day-pagination-controls">
+                        <button
+                          type="button"
+                          className="btn btn-secondary"
+                          disabled={page <= 1}
+                          onClick={() => goToPage(page - 1)}
+                        >
+                          Prev
+                        </button>
+                        <span className="calendar-day-pagination-page">
+                          Page {page} of {totalPages}
+                        </span>
+                        <button
+                          type="button"
+                          className="btn btn-secondary"
+                          disabled={page >= totalPages}
+                          onClick={() => goToPage(page + 1)}
+                        >
+                          Next
+                        </button>
+                      </div>
+                    </div>
                   )}
+
+                  <PhotoGridWithAlerts
+                    files={photos?.items ?? []}
+                    activeDetailId={detailFile?.id}
+                    editableLabels
+                    onLabelsChange={handleLabelsChange}
+                    onAlertsChange={() => {
+                      invalidateAfterDateChange(qc);
+                      invalidateBrowseFiles();
+                    }}
+                    {...(labelMode
+                      ? {
+                          selectedIds,
+                          onToggleSelect: toggleSelect,
+                          onOpenDetail: setDetailFile,
+                          multiSelectMode: true,
+                        }
+                      : {
+                          onSelect: setDetailFile,
+                        })}
+                  />
                 </>
               )}
-
-              {showPagination && (
-                <div className="calendar-day-pagination">
-                  <span className="calendar-day-pagination-label">
-                    {total} photos · {rangeStart}–{rangeEnd}
-                  </span>
-                  <div className="calendar-day-pagination-controls">
-                    <button
-                      type="button"
-                      className="btn btn-secondary"
-                      disabled={page <= 1}
-                      onClick={() => goToPage(page - 1)}
-                    >
-                      Prev
-                    </button>
-                    <span className="calendar-day-pagination-page">
-                      Page {page} of {totalPages}
-                    </span>
-                    <button
-                      type="button"
-                      className="btn btn-secondary"
-                      disabled={page >= totalPages}
-                      onClick={() => goToPage(page + 1)}
-                    >
-                      Next
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              <PhotoGridWithAlerts
-                files={photos?.items ?? []}
-                activeDetailId={detailFile?.id}
-                editableLabels
-                onLabelsChange={handleLabelsChange}
-                onAlertsChange={() => {
-                  invalidateAfterDateChange(qc);
-                  invalidateBrowseFiles();
-                }}
-                {...(labelMode
-                  ? {
-                      selectedIds,
-                      onToggleSelect: toggleSelect,
-                      onOpenDetail: setDetailFile,
-                      multiSelectMode: true,
-                    }
-                  : {
-                      onSelect: setDetailFile,
-                    })}
-              />
             </>
           ) : (
             <div className="empty-state">Select a person, tag, or camera to browse photos.</div>
@@ -644,7 +740,7 @@ export default function BrowsePage() {
         </div>
       </div>
 
-      {detailFile && (
+      {detailFile && viewMode === "photos" && (
         <PhotoDetail
           file={detailFile}
           files={photos?.items ?? []}

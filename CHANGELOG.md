@@ -4,6 +4,12 @@ Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
 ## [Unreleased]
 
+## [2026.08.02] - 2026-08-02
+
+### Added
+
+- Browse **Photos / Venn** toggle for 2–5 selected labels (`GET /api/browse/venn`); circles (2–3), 4-ellipse / 5-petal layouts; set labels + full-intersection count; region chips for 4–5
+
 ## [2026.08.01] - 2026-08-01
 
 ### Added

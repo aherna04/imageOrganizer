@@ -129,10 +129,26 @@ def test_venn_three_sets(venn_conn):
     assert regions[("tag:2",)] == 0
 
 
+def test_venn_one_set(venn_conn):
+    out = _browse_venn(
+        tag_ids=[],
+        person_ids=[1],
+        cameras=[],
+        location=None,
+        media_type=None,
+    )
+    assert len(out.sets) == 1
+    assert out.sets[0].key == "person:1"
+    assert out.sets[0].size == 5
+    assert len(out.regions) == 1
+    assert out.regions[0].members == ["person:1"]
+    assert out.regions[0].count == 5
+
+
 def test_venn_rejects_wrong_label_count(venn_conn):
     with pytest.raises(HTTPException) as exc:
         _browse_venn(
-            tag_ids=[1],
+            tag_ids=[],
             person_ids=[],
             cameras=[],
             location=None,
@@ -182,4 +198,4 @@ def test_venn_rejects_six_labels(venn_conn):
             media_type=None,
         )
     assert exc.value.status_code == 400
-    assert "2 to 5" in str(exc.value.detail)
+    assert "1 to 5" in str(exc.value.detail)

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { BrowseVenn, BrowseVennRegion, BrowseVennSet } from "../api/client";
 
 const FILL = [
@@ -13,6 +13,7 @@ const STROKE = ["#9b6fd4", "#818cf8", "#5eead4", "#fbbf24", "#f9a8d4"];
 const VIEW_W = 900;
 const VIEW_H = 560;
 const LABEL_PAD = 28;
+const MORPH_MS = 400;
 
 type Shape = {
   cx: number;
@@ -23,7 +24,22 @@ type Shape = {
   set: BrowseVennSet;
   color: string;
   stroke: string;
+  opacity: number;
 };
+
+function colorForKey(key: string): { color: string; stroke: string } {
+  let h = 0;
+  for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0;
+  const i = h % FILL.length;
+  return { color: FILL[i], stroke: STROKE[i] };
+}
+
+function withStableColors(shapes: Omit<Shape, "opacity">[]): Shape[] {
+  return shapes.map((s) => {
+    const { color, stroke } = colorForKey(s.set.key);
+    return { ...s, color, stroke, opacity: 1 };
+  });
+}
 
 function scaleForSize(size: number, maxSize: number): number {
   if (maxSize <= 0) return 0.85;
@@ -48,25 +64,63 @@ function clamp(n: number, lo: number, hi: number): number {
   return Math.min(hi, Math.max(lo, n));
 }
 
-function layoutTwo(sets: BrowseVennSet[]): Shape[] {
-  const maxSize = Math.max(...sets.map((s) => s.size), 1);
-  const midX = VIEW_W / 2;
-  const midY = VIEW_H / 2;
-  return sets.map((set, i) => {
-    const s = scaleForSize(set.size, maxSize);
-    const r = 110 * s;
-    const gap = Math.min(110 * scaleForSize(sets[0].size, maxSize), 110 * scaleForSize(sets[1].size, maxSize)) * 0.58;
-    return {
-      cx: midX + (i === 0 ? -gap : gap),
-      cy: midY,
+function easeOutCubic(t: number): number {
+  return 1 - (1 - t) ** 3;
+}
+
+function lerp(a: number, b: number, t: number): number {
+  return a + (b - a) * t;
+}
+
+/** Shortest-path angle lerp in degrees. */
+function lerpAngle(a: number, b: number, t: number): number {
+  let d = ((b - a + 540) % 360) - 180;
+  return a + d * t;
+}
+
+function layoutOne(sets: BrowseVennSet[]): Shape[] {
+  const set = sets[0];
+  const s = scaleForSize(set.size, Math.max(set.size, 1));
+  const r = 140 * s;
+  return withStableColors([
+    {
+      cx: VIEW_W / 2,
+      cy: VIEW_H / 2,
       rx: r,
       ry: r,
       rotate: 0,
       set,
-      color: FILL[i],
-      stroke: STROKE[i],
-    };
-  });
+      color: FILL[0],
+      stroke: STROKE[0],
+    },
+  ]);
+}
+
+function layoutTwo(sets: BrowseVennSet[]): Shape[] {
+  const maxSize = Math.max(...sets.map((s) => s.size), 1);
+  const midX = VIEW_W / 2;
+  const midY = VIEW_H / 2;
+  return withStableColors(
+    sets.map((set, i) => {
+      const s = scaleForSize(set.size, maxSize);
+      const r = 110 * s;
+      const gap =
+        Math.min(
+          110 * scaleForSize(sets[0].size, maxSize),
+          110 * scaleForSize(sets[1].size, maxSize),
+        ) * 0.58;
+      return {
+        cx: midX + (i === 0 ? -gap : gap),
+        cy: midY,
+        rx: r,
+        ry: r,
+        rotate: 0,
+        set,
+        color: FILL[i],
+        stroke: STROKE[i],
+      };
+    }),
+  );
 }
 
 function layoutThree(sets: BrowseVennSet[]): Shape[] {
@@ -81,24 +135,23 @@ function layoutThree(sets: BrowseVennSet[]): Shape[] {
     { cx: midX - spread * 1.05, cy: midY + spread * 0.55 },
     { cx: midX + spread * 1.05, cy: midY + spread * 0.55 },
   ];
-  return sets.map((set, i) => ({
-    cx: positions[i].cx,
-    cy: positions[i].cy,
-    rx: rs[i],
-    ry: rs[i],
-    rotate: 0,
-    set,
-    color: FILL[i],
-    stroke: STROKE[i],
-  }));
+  return withStableColors(
+    sets.map((set, i) => ({
+      cx: positions[i].cx,
+      cy: positions[i].cy,
+      rx: rs[i],
+      ry: rs[i],
+      rotate: 0,
+      set,
+      color: FILL[i],
+      stroke: STROKE[i],
+    })),
+  );
 }
 
-/** Classic four elongated ellipses (candy-diagram style): equal size, shared core. */
 function layoutFour(sets: BrowseVennSet[]): Shape[] {
   const midX = VIEW_W / 2;
   const midY = VIEW_H / 2;
-  // Identical ellipses; small horizontal offsets + mirrored angles so pockets form.
-  // Outer pair ~±38° from vertical; inner pair ~±72° (steeper), like the candy reference.
   const bases = [
     { dx: -16, rotate: 38 },
     { dx: -5, rotate: 72 },
@@ -107,61 +160,72 @@ function layoutFour(sets: BrowseVennSet[]): Shape[] {
   ];
   const rx = 90;
   const ry = 228;
-  return sets.map((set, i) => ({
-    cx: midX + bases[i].dx,
-    cy: midY,
-    rx,
-    ry,
-    rotate: bases[i].rotate,
-    set,
-    color: FILL[i],
-    stroke: STROKE[i],
-  }));
+  return withStableColors(
+    sets.map((set, i) => ({
+      cx: midX + bases[i].dx,
+      cy: midY,
+      rx,
+      ry,
+      rotate: bases[i].rotate,
+      set,
+      color: FILL[i],
+      stroke: STROKE[i],
+    })),
+  );
 }
 
-/** Five radial petal ellipses: equal size, tight shared core. */
 function layoutFive(sets: BrowseVennSet[]): Shape[] {
   const midX = VIEW_W / 2;
   const midY = VIEW_H / 2;
   const spread = 42;
   const rx = 78;
   const ry = 168;
-  return sets.map((set, i) => {
-    const deg = -90 + i * 72;
-    const rad = (deg * Math.PI) / 180;
-    return {
-      cx: midX + Math.cos(rad) * spread,
-      cy: midY + Math.sin(rad) * spread,
-      rx,
-      ry,
-      rotate: deg,
-      set,
-      color: FILL[i],
-      stroke: STROKE[i],
-    };
-  });
+  return withStableColors(
+    sets.map((set, i) => {
+      const deg = -90 + i * 72;
+      const rad = (deg * Math.PI) / 180;
+      return {
+        cx: midX + Math.cos(rad) * spread,
+        cy: midY + Math.sin(rad) * spread,
+        rx,
+        ry,
+        rotate: deg,
+        set,
+        color: FILL[i],
+        stroke: STROKE[i],
+      };
+    }),
+  );
 }
 
-/** Region anchors for the candy-style 4-ellipse template (bitmask → x,y). */
+function computeLayout(sets: BrowseVennSet[]): Shape[] {
+  const n = sets.length;
+  if (n === 1) return layoutOne(sets);
+  if (n === 2) return layoutTwo(sets);
+  if (n === 3) return layoutThree(sets);
+  if (n === 4) return layoutFour(sets);
+  if (n === 5) return layoutFive(sets);
+  return [];
+}
+
 const FOUR_REGION_POS: Record<number, { x: number; y: number }> = {
-  1: { x: 300, y: 175 }, // A only (outer left lobe)
-  2: { x: 385, y: 145 }, // B only (inner left tip)
-  4: { x: 515, y: 145 }, // C only (inner right tip)
-  8: { x: 600, y: 175 }, // D only (outer right lobe)
-  3: { x: 355, y: 220 }, // AB
-  6: { x: 450, y: 165 }, // BC
-  12: { x: 545, y: 220 }, // CD
-  5: { x: 380, y: 300 }, // AC
-  10: { x: 520, y: 300 }, // BD
-  9: { x: 450, y: 390 }, // AD
-  7: { x: 395, y: 255 }, // ABC
-  14: { x: 505, y: 255 }, // BCD
-  11: { x: 410, y: 335 }, // ABD
-  13: { x: 490, y: 335 }, // ACD
-  15: { x: 450, y: 280 }, // ABCD
+  1: { x: 300, y: 175 },
+  2: { x: 385, y: 145 },
+  4: { x: 515, y: 145 },
+  8: { x: 600, y: 175 },
+  3: { x: 355, y: 220 },
+  6: { x: 450, y: 165 },
+  12: { x: 545, y: 220 },
+  5: { x: 380, y: 300 },
+  10: { x: 520, y: 300 },
+  9: { x: 450, y: 390 },
+  7: { x: 395, y: 255 },
+  14: { x: 505, y: 255 },
+  11: { x: 410, y: 335 },
+  13: { x: 490, y: 335 },
+  15: { x: 450, y: 280 },
 };
 
-/** Region anchors for 5-petal template (common pockets). */
 function fiveRegionPos(mask: number, shapes: Shape[]): { x: number; y: number } {
   const n = shapes.length;
   const midX = VIEW_W / 2;
@@ -170,9 +234,7 @@ function fiveRegionPos(mask: number, shapes: Shape[]): { x: number; y: number } 
   for (let i = 0; i < n; i++) {
     if (mask & (1 << i)) bits.push(i);
   }
-  if (bits.length === n) {
-    return { x: midX, y: midY };
-  }
+  if (bits.length === n) return { x: midX, y: midY };
   if (bits.length === 1) {
     const s = shapes[bits[0]];
     const rad = (s.rotate * Math.PI) / 180;
@@ -190,7 +252,6 @@ function fiveRegionPos(mask: number, shapes: Shape[]): { x: number; y: number } 
     x += (dx / len) * 14;
     y += (dy / len) * 14;
   } else if (bits.length >= 3) {
-    // Pull higher-order intersections toward the shared core
     x = midX + (x - midX) * 0.55;
     y = midY + (y - midY) * 0.55;
   }
@@ -203,8 +264,7 @@ function regionLabelPosCircles(shapes: Shape[], members: string[]): { x: number;
   const outSet = shapes.filter((c) => !keys.has(c.set.key));
 
   if (inSet.length === shapes.length) {
-    // For 3 circles of unequal radius, the visual triple-overlap is not the
-    // centroid of centers — use pairwise intersection points inside the third.
+    if (inSet.length === 1) return { x: inSet[0].cx, y: inSet[0].cy };
     if (inSet.length === 3) return threeCircleIntersectionCenter(inSet);
     return {
       x: inSet.reduce((s, c) => s + c.cx, 0) / inSet.length,
@@ -241,7 +301,6 @@ function regionLabelPosCircles(shapes: Shape[], members: string[]): { x: number;
   return { x, y };
 }
 
-/** Two intersection points of circles (ax,ay,ar) and (bx,by,br), or null. */
 function circlePairIntersections(
   ax: number,
   ay: number,
@@ -268,7 +327,6 @@ function circlePairIntersections(
   ];
 }
 
-/** Visual center of the region inside all three circles. */
 function threeCircleIntersectionCenter(circles: Shape[]): { x: number; y: number } {
   const [a, b, c] = circles;
   const pairs: [Shape, Shape, Shape][] = [
@@ -298,17 +356,25 @@ function threeCircleIntersectionCenter(circles: Shape[]): { x: number; y: number
 }
 
 function setNamePos(c: Shape, all: Shape[]): { x: number; y: number } {
+  const active = all.filter((s) => s.opacity > 0.05);
   let dx = 0;
   let dy = 0;
-  for (const o of all) {
-    if (o === c) continue;
+  for (const o of active) {
+    if (o.set.key === c.set.key) continue;
     dx += c.cx - o.cx;
     dy += c.cy - o.cy;
   }
-  // Prefer ellipse major-axis outward for tall ellipses
+
+  if (active.length <= 1 || (Math.abs(dx) < 1e-3 && Math.abs(dy) < 1e-3)) {
+    // Single circle (or coincident): label above
+    return {
+      x: clamp(c.cx, LABEL_PAD, VIEW_W - LABEL_PAD),
+      y: clamp(c.cy - c.ry - 28, LABEL_PAD + 8, VIEW_H - LABEL_PAD),
+    };
+  }
+
   if (Math.abs(c.rotate) > 5 || c.ry > c.rx * 1.2) {
     const rad = (c.rotate * Math.PI) / 180;
-    // Outward along petal/ellipse long axis, flipped if that points inward
     let ox = Math.cos(rad);
     let oy = Math.sin(rad);
     const toCenterX = VIEW_W / 2 - c.cx;
@@ -317,7 +383,6 @@ function setNamePos(c: Shape, all: Shape[]): { x: number; y: number } {
       ox = -ox;
       oy = -oy;
     }
-    // Also blend with away-from-others vector
     const len = Math.hypot(dx, dy) || 1;
     ox = ox * 0.65 + (dx / len) * 0.35;
     oy = oy * 0.65 + (dy / len) * 0.35;
@@ -365,6 +430,11 @@ function regionTitle(region: BrowseVennRegion, sets: BrowseVennSet[]): string {
   return region.members.map((k) => byKey.get(k) ?? k).join(" ∩ ");
 }
 
+function layoutSignature(sets: BrowseVennSet[]): string {
+  // Keys only — size/count updates must not cancel an in-flight morph.
+  return sets.map((s) => s.key).join(",");
+}
+
 type Props = {
   data: BrowseVenn;
   onOpenIntersectionPhotos?: () => void;
@@ -375,18 +445,127 @@ export default function BrowseVennDiagram({ data, onOpenIntersectionPhotos }: Pr
   const n = data.sets.length;
   const dense = n >= 4;
 
-  const shapes = useMemo(() => {
-    if (n === 2) return layoutTwo(data.sets);
-    if (n === 3) return layoutThree(data.sets);
-    if (n === 4) return layoutFour(data.sets);
-    if (n === 5) return layoutFive(data.sets);
-    return [];
-  }, [data.sets, n]);
+  const targetShapes = useMemo(() => computeLayout(data.sets), [data.sets]);
+
+  const [displayedShapes, setDisplayedShapes] = useState<Shape[]>(targetShapes);
+  const displayedRef = useRef<Shape[]>(targetShapes);
+  const animRef = useRef<number | null>(null);
+  const sigRef = useRef<string | null>(null);
+
+  const fullIntersection = useMemo(() => {
+    const key = regionKey(data.sets.map((s) => s.key));
+    return data.regions.find((r) => regionKey(r.members) === key) ?? null;
+  }, [data.regions, data.sets]);
 
   const fullIntersectionKey = useMemo(
     () => regionKey(data.sets.map((s) => s.key)),
     [data.sets],
   );
+
+  useEffect(() => {
+    const nextSig = layoutSignature(data.sets);
+    const from = displayedRef.current;
+    const toMap = new Map(targetShapes.map((s) => [s.set.key, s]));
+    const fromMap = new Map(from.map((s) => [s.set.key, s]));
+    const allKeys = new Set([...fromMap.keys(), ...toMap.keys()]);
+
+    const startPose = new Map<string, Shape>();
+    const endPose = new Map<string, Shape>();
+
+    for (const key of allKeys) {
+      const tgt = toMap.get(key);
+      const prev = fromMap.get(key);
+      if (tgt && prev) {
+        startPose.set(key, { ...prev, opacity: 1 });
+        endPose.set(key, { ...tgt, opacity: 1 });
+      } else if (tgt && !prev) {
+        const enter: Shape = {
+          ...tgt,
+          cx: VIEW_W / 2,
+          cy: VIEW_H / 2,
+          rx: 0,
+          ry: 0,
+          opacity: 0,
+        };
+        startPose.set(key, enter);
+        endPose.set(key, { ...tgt, opacity: 1 });
+      } else if (!tgt && prev) {
+        startPose.set(key, { ...prev, opacity: prev.opacity });
+        endPose.set(key, {
+          ...prev,
+          cx: VIEW_W / 2,
+          cy: VIEW_H / 2,
+          rx: 0,
+          ry: 0,
+          opacity: 0,
+        });
+      }
+    }
+
+    // First paint: snap without animating
+    if (sigRef.current === null) {
+      displayedRef.current = targetShapes;
+      setDisplayedShapes(targetShapes);
+      sigRef.current = nextSig;
+      return;
+    }
+
+    // Same set keys: refresh metadata/geometry targets in place without restarting morph
+    if (nextSig === sigRef.current) {
+      if (animRef.current == null) {
+        displayedRef.current = targetShapes;
+        setDisplayedShapes(targetShapes);
+      } else {
+        // Update end poses' set metadata via displayedRef on next tick end; soft-update labels
+        displayedRef.current = displayedRef.current.map((s) => {
+          const tgt = toMap.get(s.set.key);
+          return tgt ? { ...s, set: tgt.set, color: tgt.color, stroke: tgt.stroke } : s;
+        });
+        setDisplayedShapes(displayedRef.current);
+      }
+      return;
+    }
+
+    sigRef.current = nextSig;
+    if (animRef.current != null) cancelAnimationFrame(animRef.current);
+
+    const t0 = performance.now();
+    const tick = (now: number) => {
+      const raw = Math.min(1, (now - t0) / MORPH_MS);
+      const t = easeOutCubic(raw);
+      const next: Shape[] = [];
+      for (const key of allKeys) {
+        const a = startPose.get(key)!;
+        const b = endPose.get(key)!;
+        next.push({
+          set: toMap.has(key) ? toMap.get(key)!.set : a.set,
+          color: b.color,
+          stroke: b.stroke,
+          cx: lerp(a.cx, b.cx, t),
+          cy: lerp(a.cy, b.cy, t),
+          rx: lerp(a.rx, b.rx, t),
+          ry: lerp(a.ry, b.ry, t),
+          rotate: lerpAngle(a.rotate, b.rotate, t),
+          opacity: lerp(a.opacity, b.opacity, t),
+        });
+      }
+      displayedRef.current = next;
+      setDisplayedShapes(next);
+
+      if (raw < 1) {
+        animRef.current = requestAnimationFrame(tick);
+      } else {
+        displayedRef.current = targetShapes;
+        setDisplayedShapes(targetShapes);
+        animRef.current = null;
+      }
+    };
+    animRef.current = requestAnimationFrame(tick);
+
+    return () => {
+      if (animRef.current != null) cancelAnimationFrame(animRef.current);
+    };
+  }, [targetShapes, data.sets]);
 
   const hovered = data.regions.find((r) => regionKey(r.members) === hoverKey);
 
@@ -398,14 +577,42 @@ export default function BrowseVennDiagram({ data, onOpenIntersectionPhotos }: Pr
     [data.regions],
   );
 
-  if (shapes.length < 2) return null;
+  // Use target shapes for center position (stable), displayed for drawing
+  const layoutShapes = displayedShapes.filter((s) => s.opacity > 0.02);
+  if (targetShapes.length < 1 && layoutShapes.length < 1) return null;
 
   const resolvePos = (region: BrowseVennRegion): { x: number; y: number } => {
     const mask = membersToMask(region.members, data.sets);
+    // Prefer settled target layout for n=4/5 anchors; fall back to displayed for 1–3
+    const forGeom = targetShapes.length > 0 ? targetShapes : layoutShapes;
     if (n === 4 && FOUR_REGION_POS[mask]) return FOUR_REGION_POS[mask];
-    if (n === 5) return fiveRegionPos(mask, shapes);
-    return regionLabelPosCircles(shapes, region.members);
+    if (n === 5) return fiveRegionPos(mask, forGeom);
+    if (n === 1 && forGeom[0]) return { x: forGeom[0].cx, y: forGeom[0].cy };
+    return regionLabelPosCircles(forGeom, region.members);
   };
+
+  const centerPos = fullIntersection
+    ? resolvePos(fullIntersection)
+    : { x: VIEW_W / 2, y: VIEW_H / 2 };
+
+  // During morph, lerp center toward average of visible shapes for 2–3
+  const liveCenter =
+    n <= 3 && layoutShapes.length > 0
+      ? {
+          x: lerp(
+            centerPos.x,
+            layoutShapes.reduce((s, c) => s + c.cx, 0) / layoutShapes.length,
+            n === 1 ? 1 : 0.35,
+          ),
+          y: lerp(
+            centerPos.y,
+            layoutShapes.reduce((s, c) => s + c.cy, 0) / layoutShapes.length,
+            n === 1 ? 1 : 0.35,
+          ),
+        }
+      : centerPos;
+
+  const activeForLabels = layoutShapes;
 
   return (
     <div className="browse-venn">
@@ -415,22 +622,24 @@ export default function BrowseVennDiagram({ data, onOpenIntersectionPhotos }: Pr
         role="img"
         aria-label="Venn diagram of selected labels"
       >
-        {shapes.map((c) => (
+        {layoutShapes.map((c) => (
           <ellipse
             key={c.set.key}
             cx={c.cx}
             cy={c.cy}
-            rx={c.rx}
-            ry={c.ry}
+            rx={Math.max(c.rx, 0.01)}
+            ry={Math.max(c.ry, 0.01)}
             transform={`rotate(${c.rotate} ${c.cx} ${c.cy})`}
             fill={c.color}
             stroke={c.stroke}
             strokeWidth={2}
+            opacity={c.opacity}
           />
         ))}
 
-        {shapes.map((c) => {
-          const p = setNamePos(c, shapes);
+        {activeForLabels.map((c) => {
+          if (c.opacity < 0.15) return null;
+          const p = setNamePos(c, activeForLabels);
           return (
             <text
               key={`name-${c.set.key}`}
@@ -439,6 +648,7 @@ export default function BrowseVennDiagram({ data, onOpenIntersectionPhotos }: Pr
               textAnchor="middle"
               dominantBaseline="middle"
               className="browse-venn-set-label"
+              opacity={c.opacity}
             >
               {c.set.name}
               <tspan className="browse-venn-set-size"> ({c.set.size})</tspan>
@@ -446,51 +656,53 @@ export default function BrowseVennDiagram({ data, onOpenIntersectionPhotos }: Pr
           );
         })}
 
-        {data.regions.map((region) => {
-          const key = regionKey(region.members);
-          if (key !== fullIntersectionKey) return null;
-          const pos = resolvePos(region);
-          const isHover = hoverKey === key;
-          const clickable = Boolean(region.count > 0 && onOpenIntersectionPhotos);
-          return (
-            <g
-              key={key}
-              className={`browse-venn-region${isHover ? " is-hover" : ""}${clickable ? " is-clickable" : ""}`}
-              onMouseEnter={() => setHoverKey(key)}
-              onMouseLeave={() => setHoverKey(null)}
-              onClick={clickable ? onOpenIntersectionPhotos : undefined}
-              role={clickable ? "button" : undefined}
-              tabIndex={clickable ? 0 : undefined}
-              onKeyDown={
-                clickable
-                  ? (e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        onOpenIntersectionPhotos?.();
-                      }
+        {fullIntersection && (
+          <g
+            className={`browse-venn-region${hoverKey === fullIntersectionKey ? " is-hover" : ""}${
+              fullIntersection.count > 0 && onOpenIntersectionPhotos ? " is-clickable" : ""
+            }`}
+            onMouseEnter={() => setHoverKey(fullIntersectionKey)}
+            onMouseLeave={() => setHoverKey(null)}
+            onClick={
+              fullIntersection.count > 0 && onOpenIntersectionPhotos
+                ? onOpenIntersectionPhotos
+                : undefined
+            }
+            role={
+              fullIntersection.count > 0 && onOpenIntersectionPhotos ? "button" : undefined
+            }
+            tabIndex={
+              fullIntersection.count > 0 && onOpenIntersectionPhotos ? 0 : undefined
+            }
+            onKeyDown={
+              fullIntersection.count > 0 && onOpenIntersectionPhotos
+                ? (e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      onOpenIntersectionPhotos?.();
                     }
-                  : undefined
-              }
+                  }
+                : undefined
+            }
+          >
+            <circle
+              cx={n === 1 ? liveCenter.x : centerPos.x}
+              cy={n === 1 ? liveCenter.y : centerPos.y}
+              r={fullIntersection.count > 0 ? 22 : 16}
+              className="browse-venn-region-hit"
+              fill="transparent"
+            />
+            <text
+              x={n === 1 ? liveCenter.x : centerPos.x}
+              y={n === 1 ? liveCenter.y : centerPos.y}
+              textAnchor="middle"
+              dominantBaseline="central"
+              className={`browse-venn-region-count${fullIntersection.count === 0 ? " is-zero" : ""}`}
             >
-              <circle
-                cx={pos.x}
-                cy={pos.y}
-                r={region.count > 0 || isHover ? 22 : 16}
-                className="browse-venn-region-hit"
-                fill="transparent"
-              />
-              <text
-                x={pos.x}
-                y={pos.y}
-                textAnchor="middle"
-                dominantBaseline="central"
-                className={`browse-venn-region-count${region.count === 0 ? " is-zero" : ""}`}
-              >
-                {region.count}
-              </text>
-            </g>
-          );
-        })}
+              {fullIntersection.count}
+            </text>
+          </g>
+        )}
       </svg>
 
       <div className="browse-venn-legend" aria-live="polite">
@@ -503,7 +715,11 @@ export default function BrowseVennDiagram({ data, onOpenIntersectionPhotos }: Pr
               : ""}
           </span>
         ) : (
-          <span>Center count is the full intersection. Shape colors mark each label.</span>
+          <span>
+            {n === 1
+              ? "Circle shows this label’s photos."
+              : "Center count is the full intersection. Shape colors mark each label."}
+          </span>
         )}
       </div>
 

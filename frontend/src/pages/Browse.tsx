@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { MediaFile, Person, Tag, api } from "../api/client";
@@ -140,7 +140,7 @@ export default function BrowsePage() {
   const viewMode = searchParams.get("view") === "venn" ? "venn" : "photos";
   const selectedLabelCount =
     selectedTagSlugs.length + selectedPersonSlugs.length + selectedCameraNames.length;
-  const vennEligible = selectedLabelCount >= 2 && selectedLabelCount <= 5 && filtersResolved;
+  const vennEligible = selectedLabelCount >= 1 && selectedLabelCount <= 5 && filtersResolved;
   const filterView = viewMode === "venn" ? ("venn" as const) : undefined;
 
   const browseFilesKey = [
@@ -164,7 +164,7 @@ export default function BrowsePage() {
     enabled: hasSelection && filtersResolved,
   });
 
-  const { data: cooccurringData } = useQuery({
+  const { data: cooccurringData, isFetching: cooccurringFetching } = useQuery({
     queryKey: [
       "browse-cooccurring",
       selectedTagIds.join(","),
@@ -178,6 +178,7 @@ export default function BrowsePage() {
         cameraNames: selectedCameraNames,
       }),
     enabled: hasSelection && filtersResolved,
+    placeholderData: keepPreviousData,
   });
 
   const { data: vennData, isLoading: vennLoading, isError: vennError } = useQuery({
@@ -194,6 +195,7 @@ export default function BrowsePage() {
         cameraNames: selectedCameraNames,
       }),
     enabled: viewMode === "venn" && vennEligible,
+    placeholderData: keepPreviousData,
   });
 
   const cooccurringTags = cooccurringData?.tags ?? [];
@@ -388,9 +390,12 @@ export default function BrowsePage() {
 
   const selectedFiles = photos?.items.filter((f) => selectedIds.includes(f.id)) ?? [];
   const showResults = hasSelection && filtersResolved;
-  const peopleList = hasSelection ? filteredCoPeople : catalogPeople;
-  const camerasList = hasSelection ? filteredCoCameras : catalogCameras;
-  const tagsListMode = hasSelection;
+  // Prefer previous cooccurring payload while refetching (keepPreviousData) so lists
+  // don't blank. Until the first cooccurring response exists, fall back to catalog.
+  const useCooccurringSidebar = hasSelection && filtersResolved && cooccurringData != null;
+  const peopleList = useCooccurringSidebar ? filteredCoPeople : catalogPeople;
+  const camerasList = useCooccurringSidebar ? filteredCoCameras : catalogCameras;
+  const tagsListMode = useCooccurringSidebar;
 
   return (
     <div>
@@ -402,7 +407,7 @@ export default function BrowsePage() {
       </p>
 
       <div className="browse-layout">
-        <aside className="browse-sidebar">
+        <aside className={`browse-sidebar${cooccurringFetching && useCooccurringSidebar ? " is-refreshing" : ""}`}>
           <input
             type="search"
             placeholder="Filter list..."
@@ -440,7 +445,7 @@ export default function BrowsePage() {
                   ))}
               {peopleList.length === 0 && (
                 <li className="browse-empty">
-                  {hasSelection
+                  {useCooccurringSidebar
                     ? "No other people in this selection."
                     : "No people yet. Tag people on photos from Inbox or Calendar."}
                 </li>
@@ -519,7 +524,7 @@ export default function BrowsePage() {
                   ))}
               {camerasList.length === 0 && (
                 <li className="browse-empty">
-                  {hasSelection
+                  {useCooccurringSidebar
                     ? "No other cameras in this selection."
                     : "No cameras yet. Scan archive or inbox to read camera info from EXIF."}
                 </li>
@@ -630,9 +635,9 @@ export default function BrowsePage() {
                 <div className="browse-venn-panel">
                   {!vennEligible ? (
                     <div className="empty-state">
-                      Select 2–5 people, tags, or cameras to show a Venn diagram.
+                      Select 1–5 people, tags, or cameras to show a Venn diagram.
                     </div>
-                  ) : vennLoading ? (
+                  ) : vennLoading && !vennData ? (
                     <div className="empty-state">Loading Venn diagram…</div>
                   ) : vennError || !vennData ? (
                     <div className="empty-state">Could not load Venn counts.</div>

@@ -4,6 +4,18 @@ Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
 ## [Unreleased]
 
+## [2026.08.02a] - 2026-08-02
+
+### Added
+
+- Browse Venn supports a **single** selected label (one circle) and smooth layout morphing when labels are added or removed (1–5)
+- `start.sh` — bring up Compose, follow logs; Ctrl+C runs `docker compose down`
+
+### Fixed
+
+- Browse Venn no longer blinks/unmounts when changing labels (keep previous Venn data while refetching; morph by set key)
+- Browse sidebar co-occurring lists no longer blank/flash when adding or removing labels (keep previous data while refetching)
+
 ## [2026.08.02] - 2026-08-02
 
 ### Added

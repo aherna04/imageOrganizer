@@ -2510,6 +2510,12 @@ button.calendar-month-column-title:focus-visible {
   padding: 1rem;
   max-height: calc(100vh - 10rem);
   overflow-y: auto;
+  transition: opacity 0.15s ease;
+}
+
+.browse-sidebar.is-refreshing {
+  opacity: 0.72;
+  pointer-events: none;
 }
 
 .browse-search {

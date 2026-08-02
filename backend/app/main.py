@@ -127,7 +127,7 @@ from app.scanner import combined_scan_status, scan_state, start_scan_background
 from app.blur_analysis import blur_analysis_state, start_blur_analysis_background
 from app.trash_restore import restore_from_trash
 
-app = FastAPI(title="Image Organizer", version="2026.08.02")
+app = FastAPI(title="Image Organizer", version="2026.08.02a")
 
 app.add_middleware(
     CORSMiddleware,
@@ -1251,7 +1251,7 @@ def api_browse_venn(
     location: str | None = None,
     media_type: Literal["image", "video"] | None = None,
 ):
-    """Exclusive Venn region counts for 2–5 Browse labels (people/tags/cameras)."""
+    """Exclusive Venn region counts for 1–5 Browse labels (people/tags/cameras)."""
     return _browse_venn(
         tag_ids=tag_id,
         person_ids=person_id,
@@ -1273,10 +1273,10 @@ def _browse_venn(
     person_ids = list(dict.fromkeys(person_ids))
     cameras = list(dict.fromkeys(c for c in cameras if c))
     n = len(tag_ids) + len(person_ids) + len(cameras)
-    if n not in (2, 3, 4, 5):
+    if n not in (1, 2, 3, 4, 5):
         raise HTTPException(
             status_code=400,
-            detail="exactly 2 to 5 tag_id/person_id/camera labels are required",
+            detail="exactly 1 to 5 tag_id/person_id/camera labels are required",
         )
 
     scope_clauses: list[str] = []

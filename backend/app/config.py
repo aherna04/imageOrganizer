@@ -15,6 +15,9 @@ BACKUPS_DIR = APP_DATA_DIR / "backups"
 MOSAICS_DIR = APP_DATA_DIR / "mosaics"
 THUMBS_DIR = APP_DATA_DIR / "thumbs"
 VIDEO_PLAY_DIR = APP_DATA_DIR / "video_play"
+WORD_SILHOUETTE_FONTS_DIR = APP_DATA_DIR / "word_silhouette_fonts"
+WORD_SILHOUETTE_PREVIEWS_DIR = APP_DATA_DIR / "word_silhouette_previews"
+BUNDLED_FONTS_DIR = Path(__file__).resolve().parent / "fonts"
 
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".heic", ".heif", ".tiff", ".tif", ".webp"}
 VIDEO_EXTENSIONS = {".mp4", ".mov", ".m4v", ".mkv", ".webm", ".avi"}
@@ -61,3 +64,5 @@ def ensure_app_dirs() -> None:
     THUMBS_DIR.mkdir(parents=True, exist_ok=True)
     VIDEO_PLAY_DIR.mkdir(parents=True, exist_ok=True)
     BACKUPS_DIR.mkdir(parents=True, exist_ok=True)
+    WORD_SILHOUETTE_FONTS_DIR.mkdir(parents=True, exist_ok=True)
+    WORD_SILHOUETTE_PREVIEWS_DIR.mkdir(parents=True, exist_ok=True)

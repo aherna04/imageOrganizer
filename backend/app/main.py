@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Literal
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, File, Form, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
@@ -38,6 +38,18 @@ from app.metadata import thumb_cache_path
 from app.storage_stats import get_storage_stats
 from app.db_backup import create_database_backup, list_database_backups
 from app.mosaic import generate_mosaic, preview_mosaic, resolve_mosaic_output_path
+from app.word_silhouette import (
+    create_design,
+    delete_design,
+    generate_word_silhouette,
+    get_design,
+    list_designs,
+    preview_word_silhouette,
+    rename_design,
+    resolve_output_path as resolve_word_silhouette_output_path,
+    resolve_preview_path as resolve_word_silhouette_preview_path,
+    save_uploaded_font,
+)
 from app.models import (
     ApplyResultOut,
     CalendarMonthEventOut,
@@ -107,6 +119,11 @@ from app.models import (
     MosaicRequest,
     MosaicPreviewOut,
     MosaicGenerateOut,
+    WordSilhouetteDesignOut,
+    WordSilhouetteDesignUpdate,
+    WordSilhouetteRequest,
+    WordSilhouettePreviewOut,
+    WordSilhouetteGenerateOut,
     TagCreate,
     TagOut,
     TagUpdate,
@@ -127,7 +144,7 @@ from app.scanner import combined_scan_status, scan_state, start_scan_background
 from app.blur_analysis import blur_analysis_state, start_blur_analysis_background
 from app.trash_restore import restore_from_trash
 
-app = FastAPI(title="Image Organizer", version="2026.08.02a")
+app = FastAPI(title="Image Organizer", version="2026.08.06")
 
 app.add_middleware(
     CORSMiddleware,
@@ -384,6 +401,122 @@ def api_mosaic_output(filename: str):
         raise HTTPException(400, str(exc)) from exc
     if not path.is_file():
         raise HTTPException(404, "Mosaic not found")
+    return FileResponse(path, media_type="image/jpeg", filename=filename)
+
+
+def _word_silhouette_kwargs(body: WordSilhouetteRequest) -> dict:
+    if body.filter_type != "all" and body.filter_id is None:
+        raise HTTPException(400, f"filter_id required when filter_type is {body.filter_type}")
+    return {
+        "text": body.text,
+        "design_id": body.design_id,
+        "fill_mode": body.fill_mode,
+        "fill_file_id": body.fill_file_id,
+        "guide_file_id": body.guide_file_id,
+        "letter_file_ids": body.letter_file_ids,
+        "letter_frames": (
+            [f.model_dump() for f in body.letter_frames] if body.letter_frames else None
+        ),
+        "filter_type": body.filter_type,
+        "filter_id": body.filter_id,
+        "location": body.location,
+        "columns": body.columns,
+        "canvas_width": body.canvas_width,
+        "padding": body.padding,
+        "background": body.background,
+    }
+
+
+@app.get("/api/word-silhouette/designs", response_model=list[WordSilhouetteDesignOut])
+def api_word_silhouette_list_designs():
+    with get_conn() as conn:
+        return [WordSilhouetteDesignOut(**d) for d in list_designs(conn)]
+
+
+@app.post("/api/word-silhouette/designs", response_model=WordSilhouetteDesignOut)
+async def api_word_silhouette_create_design(
+    name: str = Form(...),
+    font: UploadFile = File(...),
+):
+    data = await font.read()
+    try:
+        path = save_uploaded_font(font.filename or "font.ttf", data)
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
+    with get_conn() as conn:
+        try:
+            design = create_design(conn, name, path)
+        except ValueError as exc:
+            path.unlink(missing_ok=True)
+            raise HTTPException(400, str(exc)) from exc
+    return WordSilhouetteDesignOut(**design)
+
+
+@app.patch("/api/word-silhouette/designs/{design_id}", response_model=WordSilhouetteDesignOut)
+def api_word_silhouette_rename_design(design_id: int, body: WordSilhouetteDesignUpdate):
+    with get_conn() as conn:
+        if not get_design(conn, design_id):
+            raise HTTPException(404, "Design not found")
+        try:
+            design = rename_design(conn, design_id, body.name)
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+    return WordSilhouetteDesignOut(**design)
+
+
+@app.delete("/api/word-silhouette/designs/{design_id}")
+def api_word_silhouette_delete_design(design_id: int):
+    with get_conn() as conn:
+        if not get_design(conn, design_id):
+            raise HTTPException(404, "Design not found")
+        try:
+            delete_design(conn, design_id)
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+    return {"ok": True}
+
+
+@app.post("/api/word-silhouette/preview", response_model=WordSilhouettePreviewOut)
+def api_word_silhouette_preview(body: WordSilhouetteRequest):
+    kwargs = _word_silhouette_kwargs(body)
+    with get_conn() as conn:
+        try:
+            result = preview_word_silhouette(conn, **kwargs)
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+    return WordSilhouettePreviewOut(**result)
+
+
+@app.post("/api/word-silhouette/generate", response_model=WordSilhouetteGenerateOut)
+def api_word_silhouette_generate(body: WordSilhouetteRequest):
+    kwargs = _word_silhouette_kwargs(body)
+    with get_conn() as conn:
+        try:
+            result = generate_word_silhouette(conn, **kwargs)
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+    return WordSilhouetteGenerateOut(**result)
+
+
+@app.get("/api/word-silhouette/output/{filename}")
+def api_word_silhouette_output(filename: str):
+    try:
+        path = resolve_word_silhouette_output_path(filename)
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
+    if not path.is_file():
+        raise HTTPException(404, "Word silhouette not found")
+    return FileResponse(path, media_type="image/jpeg", filename=filename)
+
+
+@app.get("/api/word-silhouette/preview-file/{filename}")
+def api_word_silhouette_preview_file(filename: str):
+    try:
+        path = resolve_word_silhouette_preview_path(filename)
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
+    if not path.is_file():
+        raise HTTPException(404, "Preview not found")
     return FileResponse(path, media_type="image/jpeg", filename=filename)
 
 

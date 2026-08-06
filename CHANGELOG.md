@@ -4,6 +4,17 @@ Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
 ## [Unreleased]
 
+## [2026.08.06] - 2026-08-06
+
+### Added
+
+- **Word Silhouette** — fill a word/phrase with photos (`single`, `mosaic`, or `per_letter`) using saved font designs; outputs under `{archive}/word-silhouettes/` tagged **word-silhouette**; sidebar page + **Use in Word Silhouette** from photo detail
+- Word Silhouette **per-letter pan/zoom** — reframe each glyph’s photo (drag + zoom) before generate
+
+### Changed
+
+- Word Silhouette **Single** (and all modes) use the same location + tag/person/event filters to browse fill photos
+
 ## [2026.08.02a] - 2026-08-02
 
 ### Added

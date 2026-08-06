@@ -60,6 +60,8 @@ Full interactive API spec: `http://localhost:8000/docs` when the backend is runn
 | `events.py` | Trip/event CRUD and file assignment |
 | `people.py` | People CRUD, file assignment, merge |
 | `tags.py` | Tag CRUD, file tags, event tags, merge |
+| `mosaic.py` | Photomosaic preview/generate from catalog tiles |
+| `word_silhouette.py` | Word Silhouette typography fills (single / mosaic / per-letter), font designs |
 
 ### Frontend (`frontend/src/`)
 
@@ -110,6 +112,7 @@ erDiagram
 | `events` | Named trips/occasions with color, optional date span |
 | `people` | Names tagged on individual photos |
 | `tags` | Generic labels (e.g. Cars, house project) |
+| `word_silhouette_designs` | Saved font designs for Word Silhouette (name, slug, font file path) |
 
 ### Junction tables
 
@@ -140,9 +143,11 @@ Configured in `backend/app/config.py` (inbox/archive/trash also overridable via 
 | `{MEDIA_ROOT}/inbox/` | New imports; scanned but not organized until Apply |
 | `{MEDIA_ROOT}/photos/` | Organized archive (date-based subfolders after Apply) |
 | `{MEDIA_ROOT}/photos/mosaics/` | Generated photomosaic JPEGs (indexed + tagged `mosaic`) |
+| `{MEDIA_ROOT}/photos/word-silhouettes/` | Generated Word Silhouette JPEGs (indexed + tagged `word-silhouette`) |
 | `{MEDIA_ROOT}/.trash/` | Soft-deleted files |
-| `{MEDIA_ROOT}/.imageOrganizer/` | Default catalog (co-located): `index.db`, `thumbs/`, `video_play/`, `backups/` |
+| `{MEDIA_ROOT}/.imageOrganizer/` | Default catalog (co-located): `index.db`, `thumbs/`, `video_play/`, `backups/`, `word_silhouette_fonts/`, `word_silhouette_previews/` |
 | `{APP_DATA_DIR}/` | Catalog location (defaults to `{MEDIA_ROOT}/.imageOrganizer`; override via env or bootstrap) |
+| `backend/app/fonts/` | Bundled OFL fonts seeded as Word Silhouette designs |
 
 Environment / bootstrap (resolve order: **env →** `~/.config/imageOrganizer/bootstrap.json` **→ defaults**):
 
@@ -277,6 +282,15 @@ Event-level tags (`event_tags`) label the event record itself and do not imply a
 - `POST /api/mosaic/preview` — tile count and output dimensions.
 - `POST /api/mosaic/generate` — writes JPEG to `{archive_path}/mosaics/`, indexes it as an archive file, auto-tags **mosaic**; served at `GET /api/mosaic/output/{filename}` (falls back to legacy `{APP_DATA_DIR}/mosaics/` for older files).
 
+### 11. Word Silhouette
+
+- **Word Silhouette** page (`/word-silhouette`): phrase + font design + fill mode (`single` | `mosaic` | `per_letter`). Photo pickers share archive/inbox + tag/person/event filters across modes.
+- Font designs live in `word_silhouette_designs` (bundled OFL fonts seeded on empty DB; uploads under `{APP_DATA_DIR}/word_silhouette_fonts/`).
+- `per_letter` accepts optional `letter_frames` (per-glyph `pan_x` / `pan_y` / `zoom`) to reframe each photo inside its letter mask.
+- `POST /api/word-silhouette/preview` — renders ephemeral JPEG under `{APP_DATA_DIR}/word_silhouette_previews/` + layout stats.
+- `POST /api/word-silhouette/generate` — writes JPEG to `{archive_path}/word-silhouettes/`, indexes as archive, auto-tags **word-silhouette**; `GET /api/word-silhouette/output/{filename}`.
+- Design CRUD: `GET/POST/PATCH/DELETE /api/word-silhouette/designs`.
+
 ## API overview
 
 Grouped by domain. See `/docs` for parameters and schemas.
@@ -288,6 +302,7 @@ Grouped by domain. See `/docs` for parameters and schemas.
 | Library migrate | `POST /api/library/move` (copy+verify; `rewrite_only`; `rewrite_paths`), `POST /api/library/backup-sync` (incremental update), `GET /api/library/move/status` (progress) |
 | Database backup | `POST /api/database/backup`, `GET /api/database/backups` |
 | Mosaic | `POST /api/mosaic/preview`, `POST /api/mosaic/generate`, `GET /api/mosaic/output/{filename}` |
+| Word Silhouette | `GET/POST/PATCH/DELETE /api/word-silhouette/designs`, `POST /api/word-silhouette/preview`, `POST /api/word-silhouette/generate`, `GET /api/word-silhouette/output/{filename}`, `GET /api/word-silhouette/preview-file/{filename}` |
 | Scan | `POST /api/scan/inbox`, `/archive`, `/trash`, `GET /api/scan/status` |
 | Blur analysis | `POST /api/blur-analysis/inbox`, `/archive`, `/all`, `GET /api/blur-analysis/status` |
 | Files | `GET /api/files` (filters: location, `capture_day`, `capture_year`, `capture_month`, event, repeated `person_id` AND, repeated `tag_id` AND, repeated `camera` AND, blurry), thumbnails, original, `GET /api/files/{id}/play` (browser-safe video; may serve cached transcode), metadata, `POST /api/files/{id}/rotate` (image-only 90° left/right; preserves EXIF) |
@@ -315,6 +330,7 @@ Grouped by domain. See `/docs` for parameters and schemas.
 | `/cameras` | Cameras catalog (card grid + search); scan archive |
 | `/browse`, `/browse/tags`, `/browse/:kind/:slug` | Filter by tag/person/camera AND intersection (`/browse/tags?tag=` / `?person=` / `?camera=`; co-occurring tags, people, and cameras subset in sidebar); Photos/Venn toggle (`?view=venn`) for 1–5 labels; Edit/Merge/Delete when a single person or tag is selected |
 | `/mosaic` | Photomosaic from source photo + filtered tile pool |
+| `/word-silhouette` | Word Silhouette: phrase + font design + photo fill (single / mosaic / per letter) |
 | `/duplicates` | Duplicate review |
 | `/blurry` | Analyze sharpness; review blurry photos; mark for delete |
 | `/trash` | Browse `.trash/` (paginated); scan and restore deleted photos |

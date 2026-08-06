@@ -1,6 +1,6 @@
 # Image Organizer
 
-**Version:** 2026.08.02a — see [CHANGELOG.md](CHANGELOG.md)
+**Version:** 2026.08.06 — see [CHANGELOG.md](CHANGELOG.md)
 
 Architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
@@ -86,6 +86,12 @@ The Inbox **Delete queue** filter is different: it shows photos *marked* for del
 1. Open any photo in detail → **Create mosaic**, or go to **Mosaic** in the sidebar
 2. On Mosaic, choose tile pool filters (tag, person, event, or all) and grid size
 3. **Generate** — output is saved under `{archive}/mosaics/` (e.g. `photos/mosaics/`), indexed as an archive photo, and tagged **mosaic**
+
+### Word Silhouette (optional)
+
+1. Open any photo in detail → **Use in Word Silhouette**, or go to **Word Silhouette** in the sidebar
+2. Enter a phrase, pick a font design (or upload a `.ttf`/`.otf`), and choose fill mode: single image, mosaic tiles, or per letter
+3. **Generate** — output is saved under `{archive}/word-silhouettes/`, indexed as an archive photo, and tagged **word-silhouette**
 
 ## Safety
 

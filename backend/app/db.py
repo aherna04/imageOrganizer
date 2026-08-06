@@ -133,6 +133,14 @@ CREATE TABLE IF NOT EXISTS operations_log (
     target_path TEXT,
     created_at TEXT DEFAULT (datetime('now'))
 );
+
+CREATE TABLE IF NOT EXISTS word_silhouette_designs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    slug TEXT NOT NULL UNIQUE,
+    font_path TEXT NOT NULL,
+    created_at TEXT DEFAULT (datetime('now'))
+);
 """
 
 
@@ -170,6 +178,7 @@ def init_db() -> None:
                 (key, value),
             )
         cleanup_orphan_junction_rows(conn)
+        seed_word_silhouette_designs(conn)
         conn.commit()
 
 
@@ -178,6 +187,39 @@ def _migrate_schema(conn: sqlite3.Connection) -> None:
     if "blur_score" not in cols:
         conn.execute("ALTER TABLE files ADD COLUMN blur_score REAL")
     _migrate_trash_location(conn)
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS word_silhouette_designs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            slug TEXT NOT NULL UNIQUE,
+            font_path TEXT NOT NULL,
+            created_at TEXT DEFAULT (datetime('now'))
+        )
+        """
+    )
+
+
+def seed_word_silhouette_designs(conn: sqlite3.Connection) -> None:
+    """Seed bundled OFL fonts when no designs exist yet."""
+    from app.config import BUNDLED_FONTS_DIR
+
+    count = conn.execute("SELECT COUNT(*) FROM word_silhouette_designs").fetchone()[0]
+    if count:
+        return
+    seeds = [
+        ("Unifraktur Maguntia", "unifraktur-maguntia", "UnifrakturMaguntia-Book.ttf"),
+        ("Playfair Display", "playfair-display", "PlayfairDisplay-Bold.ttf"),
+        ("Cinzel", "cinzel", "Cinzel-Variable.ttf"),
+    ]
+    for name, slug, filename in seeds:
+        font_file = BUNDLED_FONTS_DIR / filename
+        if not font_file.is_file():
+            continue
+        conn.execute(
+            "INSERT INTO word_silhouette_designs (name, slug, font_path) VALUES (?, ?, ?)",
+            (name, slug, str(font_file.resolve())),
+        )
 
 
 def _migrate_trash_location(conn: sqlite3.Connection) -> None:

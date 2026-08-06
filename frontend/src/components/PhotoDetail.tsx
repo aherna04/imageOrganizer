@@ -17,6 +17,7 @@ import PhotoCardLabels from "./PhotoCardLabels";
 import { invalidateAfterReviewChange } from "../utils/invalidateAfterReviewChange";
 import { invalidateAfterLabelChange } from "../utils/invalidateAfterLabelChange";
 import { mosaicSourcePath } from "../utils/mosaicPath";
+import { wordSilhouetteFillPath } from "../utils/wordSilhouettePath";
 import { personLabel } from "../utils/personLabel";
 
 interface Props {
@@ -348,6 +349,14 @@ export default function PhotoDetail({
                   onClick={() => navigate(mosaicSourcePath(file.id))}
                 >
                   Create mosaic
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  title="Use this photo in a Word Silhouette"
+                  onClick={() => navigate(wordSilhouetteFillPath(file.id))}
+                >
+                  Use in Word Silhouette
                 </button>
               </>
             )}

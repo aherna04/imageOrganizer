@@ -169,6 +169,64 @@ export interface MosaicRequest {
   columns?: number;
 }
 
+export interface WordSilhouetteDesign {
+  id: number;
+  name: string;
+  slug: string;
+  font_path: string;
+  created_at?: string | null;
+}
+
+export type WordSilhouetteFillMode = "single" | "mosaic" | "per_letter";
+
+export interface LetterFrame {
+  pan_x: number;
+  pan_y: number;
+  zoom: number;
+}
+
+export interface WordSilhouetteRequest {
+  text: string;
+  design_id: number;
+  fill_mode: WordSilhouetteFillMode;
+  fill_file_id?: number;
+  guide_file_id?: number;
+  letter_file_ids?: number[];
+  letter_frames?: LetterFrame[];
+  filter_type?: "all" | "tag" | "person" | "event";
+  filter_id?: number;
+  location?: "archive" | "all";
+  columns?: number;
+  canvas_width?: number;
+  padding?: number;
+  background?: string;
+}
+
+export interface WordSilhouettePreview {
+  preview_url: string;
+  preview_filename: string;
+  width: number;
+  height: number;
+  glyph_count: number;
+  fill_mode: WordSilhouetteFillMode;
+  tile_count: number;
+  columns: number;
+  rows: number;
+}
+
+export interface WordSilhouetteResult {
+  filename: string;
+  url: string;
+  file_id: number;
+  width: number;
+  height: number;
+  glyph_count: number;
+  fill_mode: WordSilhouetteFillMode;
+  tile_count: number;
+  columns: number;
+  rows: number;
+}
+
 export interface Metadata {
   capture_date: string | null;
   camera: string | null;
@@ -359,6 +417,50 @@ export const api = {
 
   mosaicGenerate: (body: MosaicRequest) =>
     request<MosaicResult>("/api/mosaic/generate", { method: "POST", body: JSON.stringify(body) }),
+
+  listWordSilhouetteDesigns: () =>
+    request<WordSilhouetteDesign[]>("/api/word-silhouette/designs"),
+
+  createWordSilhouetteDesign: async (name: string, font: File) => {
+    const form = new FormData();
+    form.append("name", name);
+    form.append("font", font);
+    const res = await fetch("/api/word-silhouette/designs", { method: "POST", body: form });
+    if (!res.ok) {
+      const text = await res.text();
+      let message = text || res.statusText;
+      try {
+        const parsed = JSON.parse(text) as { detail?: unknown };
+        if (typeof parsed?.detail === "string") message = parsed.detail;
+      } catch {
+        /* not JSON */
+      }
+      throw new Error(message);
+    }
+    return res.json() as Promise<WordSilhouetteDesign>;
+  },
+
+  renameWordSilhouetteDesign: (id: number, name: string) =>
+    request<WordSilhouetteDesign>(`/api/word-silhouette/designs/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify({ name }),
+    }),
+
+  deleteWordSilhouetteDesign: (id: number) =>
+    request<{ ok: boolean }>(`/api/word-silhouette/designs/${id}`, { method: "DELETE" }),
+
+  wordSilhouettePreview: (body: WordSilhouetteRequest) =>
+    request<WordSilhouettePreview>("/api/word-silhouette/preview", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+
+  wordSilhouetteGenerate: (body: WordSilhouetteRequest) =>
+    request<WordSilhouetteResult>("/api/word-silhouette/generate", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+
   updateConfig: (data: Partial<Config>) =>
     request<Config>("/api/config", { method: "PATCH", body: JSON.stringify(data) }),
 

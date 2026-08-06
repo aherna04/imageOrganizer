@@ -119,6 +119,66 @@ class MosaicGenerateOut(BaseModel):
     rows: int
 
 
+class WordSilhouetteDesignOut(BaseModel):
+    id: int
+    name: str
+    slug: str
+    font_path: str
+    created_at: str | None = None
+
+
+class WordSilhouetteDesignUpdate(BaseModel):
+    name: str = Field(..., min_length=1, max_length=120)
+
+
+class LetterFrame(BaseModel):
+    pan_x: float = Field(0, ge=-1, le=1)
+    pan_y: float = Field(0, ge=-1, le=1)
+    zoom: float = Field(1, ge=1, le=3)
+
+
+class WordSilhouetteRequest(BaseModel):
+    text: str = Field(..., min_length=1, max_length=80)
+    design_id: int
+    fill_mode: Literal["single", "mosaic", "per_letter"]
+    fill_file_id: int | None = None
+    guide_file_id: int | None = None
+    letter_file_ids: list[int] | None = None
+    letter_frames: list[LetterFrame] | None = None
+    filter_type: Literal["all", "tag", "person", "event"] = "all"
+    filter_id: int | None = None
+    location: Literal["archive", "all"] = "archive"
+    columns: int = Field(default=40, ge=10, le=120)
+    canvas_width: int = Field(default=1600, ge=400, le=4000)
+    padding: int = Field(default=48, ge=0, le=400)
+    background: str = Field(default="#ffffff", pattern=r"^#[0-9A-Fa-f]{6}$")
+
+
+class WordSilhouettePreviewOut(BaseModel):
+    preview_url: str
+    preview_filename: str
+    width: int
+    height: int
+    glyph_count: int
+    fill_mode: Literal["single", "mosaic", "per_letter"]
+    tile_count: int
+    columns: int
+    rows: int
+
+
+class WordSilhouetteGenerateOut(BaseModel):
+    filename: str
+    url: str
+    file_id: int
+    width: int
+    height: int
+    glyph_count: int
+    fill_mode: Literal["single", "mosaic", "per_letter"]
+    tile_count: int
+    columns: int
+    rows: int
+
+
 class FileOut(BaseModel):
     id: int
     path: str

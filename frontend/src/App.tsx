@@ -15,6 +15,7 @@ import Duplicates from "./pages/Duplicates";
 import Blurry from "./pages/Blurry";
 import Trash from "./pages/Trash";
 import Mosaic from "./pages/Mosaic";
+import WordSilhouette from "./pages/WordSilhouette";
 import Review from "./pages/Review";
 import Settings from "./pages/Settings";
 
@@ -71,6 +72,12 @@ export default function App() {
           <NavLink to="/mosaic" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}>
             Mosaic
           </NavLink>
+          <NavLink
+            to="/word-silhouette"
+            className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+          >
+            Word Silhouette
+          </NavLink>
           <NavLink to="/duplicates" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}>
             Duplicates
           </NavLink>
@@ -106,6 +113,7 @@ export default function App() {
             <Route path="/browse/tags" element={<BrowsePage />} />
             <Route path="/browse/:kind/:slug" element={<BrowsePage />} />
             <Route path="/mosaic" element={<Mosaic />} />
+            <Route path="/word-silhouette" element={<WordSilhouette />} />
             <Route path="/duplicates" element={<Duplicates />} />
             <Route path="/blurry" element={<Blurry />} />
             <Route path="/trash" element={<Trash />} />

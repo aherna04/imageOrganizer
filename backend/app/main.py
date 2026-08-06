@@ -46,6 +46,7 @@ from app.word_silhouette import (
     list_designs,
     preview_word_silhouette,
     rename_design,
+    resolve_font_path,
     resolve_output_path as resolve_word_silhouette_output_path,
     resolve_preview_path as resolve_word_silhouette_preview_path,
     save_uploaded_font,
@@ -144,7 +145,7 @@ from app.scanner import combined_scan_status, scan_state, start_scan_background
 from app.blur_analysis import blur_analysis_state, start_blur_analysis_background
 from app.trash_restore import restore_from_trash
 
-app = FastAPI(title="Image Organizer", version="2026.08.06")
+app = FastAPI(title="Image Organizer", version="2026.08.06a")
 
 app.add_middleware(
     CORSMiddleware,
@@ -474,6 +475,21 @@ def api_word_silhouette_delete_design(design_id: int):
         except ValueError as exc:
             raise HTTPException(400, str(exc)) from exc
     return {"ok": True}
+
+
+@app.get("/api/word-silhouette/designs/{design_id}/font")
+def api_word_silhouette_design_font(design_id: int):
+    with get_conn() as conn:
+        design = get_design(conn, design_id)
+        if not design:
+            raise HTTPException(404, "Design not found")
+        try:
+            path = resolve_font_path(design["font_path"])
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+    suffix = path.suffix.lower()
+    media = "font/ttf" if suffix == ".ttf" else "font/otf" if suffix == ".otf" else "application/octet-stream"
+    return FileResponse(path, media_type=media, filename=path.name)
 
 
 @app.post("/api/word-silhouette/preview", response_model=WordSilhouettePreviewOut)

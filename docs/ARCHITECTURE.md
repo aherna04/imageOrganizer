@@ -289,7 +289,7 @@ Event-level tags (`event_tags`) label the event record itself and do not imply a
 - `per_letter` accepts optional `letter_frames` (per-glyph `pan_x` / `pan_y` / `zoom`) to reframe each photo inside its letter mask.
 - `POST /api/word-silhouette/preview` — renders ephemeral JPEG under `{APP_DATA_DIR}/word_silhouette_previews/` + layout stats.
 - `POST /api/word-silhouette/generate` — writes JPEG to `{archive_path}/word-silhouettes/`, indexes as archive, auto-tags **word-silhouette**; `GET /api/word-silhouette/output/{filename}`.
-- Design CRUD: `GET/POST/PATCH/DELETE /api/word-silhouette/designs`.
+- Design CRUD: `GET/POST/PATCH/DELETE /api/word-silhouette/designs`; `GET /api/word-silhouette/designs/{id}/font` serves the design typeface for the letter-align editor.
 
 ## API overview
 
@@ -302,7 +302,7 @@ Grouped by domain. See `/docs` for parameters and schemas.
 | Library migrate | `POST /api/library/move` (copy+verify; `rewrite_only`; `rewrite_paths`), `POST /api/library/backup-sync` (incremental update), `GET /api/library/move/status` (progress) |
 | Database backup | `POST /api/database/backup`, `GET /api/database/backups` |
 | Mosaic | `POST /api/mosaic/preview`, `POST /api/mosaic/generate`, `GET /api/mosaic/output/{filename}` |
-| Word Silhouette | `GET/POST/PATCH/DELETE /api/word-silhouette/designs`, `POST /api/word-silhouette/preview`, `POST /api/word-silhouette/generate`, `GET /api/word-silhouette/output/{filename}`, `GET /api/word-silhouette/preview-file/{filename}` |
+| Word Silhouette | `GET/POST/PATCH/DELETE /api/word-silhouette/designs`, `GET /api/word-silhouette/designs/{id}/font`, `POST /api/word-silhouette/preview`, `POST /api/word-silhouette/generate`, `GET /api/word-silhouette/output/{filename}`, `GET /api/word-silhouette/preview-file/{filename}` |
 | Scan | `POST /api/scan/inbox`, `/archive`, `/trash`, `GET /api/scan/status` |
 | Blur analysis | `POST /api/blur-analysis/inbox`, `/archive`, `/all`, `GET /api/blur-analysis/status` |
 | Files | `GET /api/files` (filters: location, `capture_day`, `capture_year`, `capture_month`, event, repeated `person_id` AND, repeated `tag_id` AND, repeated `camera` AND, blurry), thumbnails, original, `GET /api/files/{id}/play` (browser-safe video; may serve cached transcode), metadata, `POST /api/files/{id}/rotate` (image-only 90° left/right; preserves EXIF) |

@@ -188,7 +188,10 @@ def _cover_crop(
     pan_y: float = 0.0,
     zoom: float = 1.0,
 ) -> Image.Image:
-    """Cover-crop into target size. pan in [-1,1] (0=center); zoom >= 1 tightens crop."""
+    """Cover-crop into target size. pan in [-1,1] (0=center); zoom >= 1 tightens crop.
+
+    Ensures both axes have pan slack so free 2D movement works even near zoom=1.
+    """
     target_w = max(1, target_w)
     target_h = max(1, target_h)
     pan_x = max(-1.0, min(1.0, float(pan_x)))
@@ -196,11 +199,36 @@ def _cover_crop(
     zoom = max(1.0, min(3.0, float(zoom)))
 
     src_w, src_h = img.size
-    scale = max(target_w / src_w, target_h / src_h) * zoom
+    if src_w <= 0 or src_h <= 0:
+        raise ValueError("Invalid image dimensions")
+
+    cover = max(target_w / src_w, target_h / src_h)
+    scale = cover * zoom
+    scale_cap = cover * 3.0
+    min_slack_x = max(2, int(0.02 * target_w))
+    min_slack_y = max(2, int(0.02 * target_h))
+
+    # Bump scale until both axes have pan room (or we hit the zoom cap).
+    for _ in range(40):
+        nw = max(1, int(round(src_w * scale)))
+        nh = max(1, int(round(src_h * scale)))
+        if nw - target_w >= min_slack_x and nh - target_h >= min_slack_y:
+            break
+        if scale >= scale_cap - 1e-9:
+            break
+        scale = min(scale_cap, scale * 1.05)
+
     nw = max(1, int(round(src_w * scale)))
     nh = max(1, int(round(src_h * scale)))
-    resized = img.resize((nw, nh), Image.Resampling.LANCZOS)
+    # If still short on an axis (tiny sources), pad by resizing up to at least target+slack
+    need_w = target_w + min_slack_x
+    need_h = target_h + min_slack_y
+    if nw < need_w or nh < need_h:
+        bump = max(need_w / nw, need_h / nh)
+        nw = max(1, int(round(nw * bump)))
+        nh = max(1, int(round(nh * bump)))
 
+    resized = img.resize((nw, nh), Image.Resampling.LANCZOS)
     max_left = max(0, nw - target_w)
     max_top = max(0, nh - target_h)
     # pan 0 → center; -1 → left/top edge; +1 → right/bottom edge

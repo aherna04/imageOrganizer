@@ -144,6 +144,19 @@ def test_cover_crop_pan_changes_pixels():
     assert left.getpixel((20, 20)) != right.getpixel((20, 20))
 
 
+def test_cover_crop_vertical_pan_at_zoom_one():
+    """Landscape into tall target: pan_y must differ after 2D slack bump."""
+    img = Image.new("RGB", (200, 80))
+    for y in range(80):
+        for x in range(200):
+            img.putpixel((x, y), (0, y * 3, 0))
+    top = _cover_crop(img, 40, 100, pan_x=0.0, pan_y=-1.0, zoom=1.0)
+    bottom = _cover_crop(img, 40, 100, pan_x=0.0, pan_y=1.0, zoom=1.0)
+    assert top.size == (40, 100)
+    assert bottom.size == (40, 100)
+    assert top.getpixel((20, 50)) != bottom.getpixel((20, 50))
+
+
 def test_fit_font_and_resolve():
     font_path = _font_file()
     resolved = resolve_font_path(str(font_path))

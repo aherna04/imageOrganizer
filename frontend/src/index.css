@@ -2288,6 +2288,20 @@ button.calendar-month-column-title:focus-visible {
   transform-origin: center center;
 }
 
+.letter-frame-pan-canvas {
+  display: block;
+  border-radius: 8px;
+  border: 1px solid #2a2f3a;
+  background: #fff;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.letter-frame-pan-canvas:active {
+  cursor: grabbing;
+}
+
 .letter-frame-pan-empty {
   display: flex;
   align-items: center;

@@ -4,6 +4,18 @@ Version format: `YYYY.MM.DD`; same-day releases append `a`–`z`.
 
 ## [Unreleased]
 
+## [2026.08.06a] - 2026-08-06
+
+### Changed
+
+- Word Silhouette remembers last phrase, design, fill mode, filters, photos, and letter frames (local)
+- Word Silhouette **Per letter**: clicking a gallery photo assigns it to the **selected** letter chip (replaces that slot)
+
+### Fixed
+
+- Word Silhouette letter align: free 2D pan (not just left/right) and accurate letter-mask preview matching the design font
+- Word Silhouette letter align drag moves the photo with the cursor
+
 ## [2026.08.06] - 2026-08-06
 
 ### Added

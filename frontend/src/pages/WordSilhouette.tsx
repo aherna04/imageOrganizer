@@ -10,9 +10,12 @@ import {
   api,
 } from "../api/client";
 import LetterFrameEditor, { defaultLetterFrame } from "../components/LetterFrameEditor";
-
-type FilterType = "all" | "tag" | "person" | "event";
-type LocationFilter = "archive" | "all";
+import {
+  loadWordSilhouettePrefs,
+  saveWordSilhouettePrefs,
+  type FilterType,
+  type LocationFilter,
+} from "../utils/wordSilhouettePrefs";
 
 function parseId(raw: string | null): number | null {
   if (!raw) return null;
@@ -31,25 +34,50 @@ function resizeFrames(prev: LetterFrame[], count: number): LetterFrame[] {
   return next;
 }
 
+function resizeLetterSlots(prev: (number | null)[], count: number): (number | null)[] {
+  if (count <= 0) return [];
+  const next = prev.slice(0, count);
+  while (next.length < count) next.push(null);
+  return next;
+}
+
+/** Build API letter_file_ids: fill nulls by cycling first assigned / fillFileId. */
+function resolveLetterFileIds(
+  slots: (number | null)[],
+  fillFileId: number | null,
+): number[] | undefined {
+  const assigned = slots.filter((id): id is number => id != null && id > 0);
+  if (assigned.length === 0 && fillFileId == null) return undefined;
+  const fallback = assigned[0] ?? fillFileId!;
+  return slots.map((id) => (id != null && id > 0 ? id : fallback));
+}
+
 export default function WordSilhouettePage() {
   const qc = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
   const fillFromUrl = parseId(searchParams.get("fill"));
+  const saved = useMemo(() => loadWordSilhouettePrefs(), []);
 
-  const [text, setText] = useState("elliott");
-  const [designId, setDesignId] = useState<number | null>(null);
-  const [fillMode, setFillMode] = useState<WordSilhouetteFillMode>("single");
-  const [fillFileId, setFillFileId] = useState<number | null>(fillFromUrl);
-  const [letterIds, setLetterIds] = useState<number[]>([]);
-  const [letterFrames, setLetterFrames] = useState<LetterFrame[]>([]);
-  const [debouncedFrames, setDebouncedFrames] = useState<LetterFrame[]>([]);
-  const [selectedGlyph, setSelectedGlyph] = useState(0);
-  const [filterType, setFilterType] = useState<FilterType>("all");
-  const [filterId, setFilterId] = useState<number | null>(null);
-  const [location, setLocation] = useState<LocationFilter>("archive");
-  const [columns, setColumns] = useState(40);
-  const [canvasWidth, setCanvasWidth] = useState(1600);
-  const [background, setBackground] = useState("#ffffff");
+  const [text, setText] = useState(saved.text);
+  const [designId, setDesignId] = useState<number | null>(saved.designId);
+  const [fillMode, setFillMode] = useState<WordSilhouetteFillMode>(saved.fillMode);
+  const [fillFileId, setFillFileId] = useState<number | null>(fillFromUrl ?? saved.fillFileId);
+  const [letterIds, setLetterIds] = useState<(number | null)[]>(() =>
+    resizeLetterSlots(saved.letterIds, visibleGlyphs(saved.text).length),
+  );
+  const [letterFrames, setLetterFrames] = useState<LetterFrame[]>(() =>
+    resizeFrames(saved.letterFrames, visibleGlyphs(saved.text).length),
+  );
+  const [debouncedFrames, setDebouncedFrames] = useState<LetterFrame[]>(letterFrames);
+  const [selectedGlyph, setSelectedGlyph] = useState(saved.selectedGlyph);
+  const [filterType, setFilterType] = useState<FilterType>(saved.filterType);
+  const [filterId, setFilterId] = useState<number | null>(
+    saved.filterType === "all" ? null : saved.filterId,
+  );
+  const [location, setLocation] = useState<LocationFilter>(saved.location);
+  const [columns, setColumns] = useState(saved.columns);
+  const [canvasWidth, setCanvasWidth] = useState(saved.canvasWidth);
+  const [background, setBackground] = useState(saved.background);
   const [result, setResult] = useState<WordSilhouetteResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [uploadName, setUploadName] = useState("");
@@ -63,6 +91,7 @@ export default function WordSilhouettePage() {
 
   useEffect(() => {
     setLetterFrames((prev) => resizeFrames(prev, glyphs.length));
+    setLetterIds((prev) => resizeLetterSlots(prev, glyphs.length));
     setSelectedGlyph((i) => (glyphs.length === 0 ? 0 : Math.min(i, glyphs.length - 1)));
   }, [glyphs.length]);
 
@@ -71,15 +100,50 @@ export default function WordSilhouettePage() {
     return () => window.clearTimeout(t);
   }, [letterFrames]);
 
+  useEffect(() => {
+    const t = window.setTimeout(() => {
+      saveWordSilhouettePrefs({
+        text,
+        designId,
+        fillMode,
+        fillFileId,
+        letterIds,
+        letterFrames,
+        selectedGlyph,
+        filterType,
+        filterId,
+        location,
+        columns,
+        canvasWidth,
+        background,
+      });
+    }, 300);
+    return () => window.clearTimeout(t);
+  }, [
+    text,
+    designId,
+    fillMode,
+    fillFileId,
+    letterIds,
+    letterFrames,
+    selectedGlyph,
+    filterType,
+    filterId,
+    location,
+    columns,
+    canvasWidth,
+    background,
+  ]);
+
   const { data: designs = [] } = useQuery({
     queryKey: ["word-silhouette-designs"],
     queryFn: api.listWordSilhouetteDesigns,
   });
 
   useEffect(() => {
-    if (designId == null && designs.length > 0) {
-      setDesignId(designs[0].id);
-    }
+    if (designs.length === 0) return;
+    if (designId != null && designs.some((d) => d.id === designId)) return;
+    setDesignId(designs[0].id);
   }, [designs, designId]);
 
   const { data: tags = [] } = useQuery({ queryKey: ["tags"], queryFn: api.listTags });
@@ -126,8 +190,10 @@ export default function WordSilhouettePage() {
       if (fillFileId == null) return null;
       if (filterType !== "all" && filterId == null) return null;
     }
+    const resolvedLetters =
+      fillMode === "per_letter" ? resolveLetterFileIds(letterIds, fillFileId) : undefined;
     if (fillMode === "per_letter") {
-      const hasLetters = letterIds.length > 0;
+      const hasLetters = resolvedLetters != null && resolvedLetters.length > 0;
       const hasFill = fillFileId != null;
       const hasPool = filterType === "all" || filterId != null;
       if (!hasLetters && !hasFill && !hasPool) return null;
@@ -139,7 +205,7 @@ export default function WordSilhouettePage() {
       fill_mode: fillMode,
       fill_file_id: fillFileId ?? undefined,
       guide_file_id: fillMode === "mosaic" ? fillFileId ?? undefined : undefined,
-      letter_file_ids: fillMode === "per_letter" && letterIds.length > 0 ? letterIds : undefined,
+      letter_file_ids: resolvedLetters,
       letter_frames:
         fillMode === "per_letter" && glyphs.length > 0
           ? resizeFrames(debouncedFrames, glyphs.length)
@@ -214,12 +280,18 @@ export default function WordSilhouettePage() {
 
   const selectedLetterPhotoId = useMemo(() => {
     if (glyphs.length === 0) return null;
-    if (letterIds.length > 0) return letterIds[selectedGlyph % letterIds.length] ?? null;
+    const slot = letterIds[selectedGlyph];
+    if (slot != null && slot > 0) return slot;
     if (fillFileId != null) return fillFileId;
     const items = pickList?.items ?? [];
     if (items.length === 0) return null;
     return items[selectedGlyph % items.length]?.id ?? null;
   }, [glyphs.length, letterIds, selectedGlyph, fillFileId, pickList?.items]);
+
+  const assignedLetterCount = useMemo(
+    () => letterIds.filter((id) => id != null && id > 0).length,
+    [letterIds],
+  );
 
   const selectFill = (file: MediaFile) => {
     setFillFileId(file.id);
@@ -228,9 +300,15 @@ export default function WordSilhouettePage() {
     setError(null);
   };
 
-  const toggleLetter = (id: number) => {
-    setLetterIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+  const assignLetterPhoto = (fileId: number) => {
+    setLetterIds((prev) => {
+      const next = resizeLetterSlots(prev, glyphs.length);
+      if (selectedGlyph < 0 || selectedGlyph >= next.length) return next;
+      next[selectedGlyph] = fileId;
+      return [...next];
+    });
     setResult(null);
+    setError(null);
   };
 
   return (
@@ -474,13 +552,17 @@ export default function WordSilhouettePage() {
 
         {fillMode === "per_letter" && (
           <p className="word-silhouette-hint">
-            Click photos to assign in order (cycles if fewer than letters). Or leave empty and use the tile
-            pool above.
-            {letterIds.length > 0 && (
+            Select a letter, then click a photo to assign it to that letter. Unassigned letters use the
+            pool (or cycle assigned photos).
+            {assignedLetterCount > 0 && (
               <>
                 {" "}
-                · {letterIds.length} selected{" "}
-                <button type="button" className="link-btn" onClick={() => setLetterIds([])}>
+                · {assignedLetterCount}/{glyphs.length} assigned{" "}
+                <button
+                  type="button"
+                  className="link-btn"
+                  onClick={() => setLetterIds(resizeLetterSlots([], glyphs.length))}
+                >
                   Clear letters
                 </button>
               </>
@@ -495,6 +577,7 @@ export default function WordSilhouettePage() {
             onSelectIndex={setSelectedGlyph}
             frames={letterFrames}
             photoFileId={selectedLetterPhotoId}
+            designId={designId}
             onChangeFrame={(index, frame) => {
               setLetterFrames((prev) => {
                 const next = resizeFrames(prev, glyphs.length);
@@ -509,25 +592,31 @@ export default function WordSilhouettePage() {
         {pickFiltersReady && (
           <div className="word-silhouette-pick-grid">
             {(pickList?.items ?? []).map((file) => {
+              const glyphSlots = letterIds
+                .map((id, i) => (id === file.id ? i : -1))
+                .filter((i) => i >= 0);
               const selected =
                 fillMode === "per_letter"
-                  ? letterIds.includes(file.id)
+                  ? letterIds[selectedGlyph] === file.id
                   : fillFileId === file.id;
-              const letterIndex =
-                fillMode === "per_letter" ? letterIds.indexOf(file.id) : -1;
+              const badgeIndex = glyphSlots[0] ?? -1;
               return (
                 <button
                   key={file.id}
                   type="button"
                   className={`word-silhouette-pick${selected ? " selected" : ""}`}
                   onClick={() =>
-                    fillMode === "per_letter" ? toggleLetter(file.id) : selectFill(file)
+                    fillMode === "per_letter" ? assignLetterPhoto(file.id) : selectFill(file)
                   }
-                  title={file.filename}
+                  title={
+                    fillMode === "per_letter" && glyphSlots.length > 0
+                      ? `Letter(s) ${glyphSlots.map((i) => i + 1).join(", ")}`
+                      : file.filename
+                  }
                 >
                   <img src={api.thumbUrl(file.id)} alt="" />
-                  {letterIndex >= 0 && (
-                    <span className="word-silhouette-pick-badge">{letterIndex + 1}</span>
+                  {badgeIndex >= 0 && (
+                    <span className="word-silhouette-pick-badge">{badgeIndex + 1}</span>
                   )}
                 </button>
               );
